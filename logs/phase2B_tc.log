@@ -1,0 +1,392 @@
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 793837 bytes 1252 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 66753 bytes 85 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 85 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 794098 bytes 1254 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 67014 bytes 87 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 87 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 794098 bytes 1254 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 67014 bytes 87 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 87 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 812671 bytes 1270 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 85587 bytes 103 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 103 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 813241 bytes 1275 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 86157 bytes 108 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 108 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 813241 bytes 1275 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 86157 bytes 108 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 108 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 813502 bytes 1277 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 86418 bytes 110 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 110 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 832084 bytes 1293 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 105000 bytes 126 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 126 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 832451 bytes 1296 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 105367 bytes 129 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 129 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 832537 bytes 1297 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 105453 bytes 130 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 130 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 832798 bytes 1299 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 105714 bytes 132 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 132 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 832798 bytes 1299 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 105714 bytes 132 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 132 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 832798 bytes 1299 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 105714 bytes 132 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 132 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 841677 bytes 1309 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 114593 bytes 142 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 142 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 851676 bytes 1318 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 124592 bytes 151 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 151 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 851783 bytes 1319 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 124699 bytes 152 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 152 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 851783 bytes 1319 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 124699 bytes 152 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 152 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 851783 bytes 1319 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 124699 bytes 152 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 152 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 851783 bytes 1319 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 124699 bytes 152 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 152 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 851783 bytes 1319 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 124699 bytes 152 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 152 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 858922 bytes 1326 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 131838 bytes 159 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 159 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 858922 bytes 1326 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 131838 bytes 159 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 159 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 858922 bytes 1326 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 131838 bytes 159 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 159 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 858922 bytes 1326 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 131838 bytes 159 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 159 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 858922 bytes 1326 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 131838 bytes 159 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 159 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 858922 bytes 1326 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 131838 bytes 159 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 159 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 865924 bytes 1333 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 138840 bytes 166 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 166 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 865924 bytes 1333 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 138840 bytes 166 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 166 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 865924 bytes 1333 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 138840 bytes 166 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 166 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 866135 bytes 1335 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 139051 bytes 168 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 168 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 866221 bytes 1336 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 139137 bytes 169 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 169 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 866221 bytes 1336 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 139137 bytes 169 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 169 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 866421 bytes 1338 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 139337 bytes 171 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 171 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 866421 bytes 1338 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 139337 bytes 171 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 171 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 866601 bytes 1340 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 139517 bytes 173 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 1294 drop_overlimit 0 new_flow_count 173 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 872070 bytes 1356 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 144986 bytes 189 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 188 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876675 bytes 1365 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149591 bytes 198 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 195 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876675 bytes 1365 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149591 bytes 198 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 195 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876675 bytes 1365 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149591 bytes 198 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 195 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876675 bytes 1365 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149591 bytes 198 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 195 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876717 bytes 1366 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149633 bytes 199 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 196 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876717 bytes 1366 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149633 bytes 199 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 196 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876717 bytes 1366 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149633 bytes 199 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 196 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876717 bytes 1366 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149633 bytes 199 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 196 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 876978 bytes 1368 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 149894 bytes 201 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 198 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 877141 bytes 1370 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 150057 bytes 203 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 200 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 877493 bytes 1374 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 150409 bytes 207 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 204 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 877493 bytes 1374 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 150409 bytes 207 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 204 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+qdisc tbf 1: root refcnt 2 rate 1Gbit burst 32750b lat 50ms 
+ Sent 877493 bytes 1374 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 8003: parent 1:1 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 150409 bytes 207 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 2655 drop_overlimit 0 new_flow_count 204 ecn_mark 0
+  new_flows_len 0 old_flows_len 0

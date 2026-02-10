@@ -162,3 +162,93 @@ git add README.md
 git commit -m "Add complete methodology for Phase 1, Phase 2A and Phase 2B"
 git push```
 
+cd ~/ccn-linux-qdisc-study
+
+cat << 'EOF' > README.md
+# CCN Linux Queue Discipline Study
+
+This repository documents a systematic experimental study of Linux queue disciplines under baseline and congested conditions using Traffic Control (tc) and iperf3. All experiments were executed on Ubuntu 24.04 LTS using a single-node setup with controlled bottlenecks.
+
+---
+
+## System Configuration
+
+- OS: Ubuntu 24.04.2 LTS (Noble)
+- Architecture: x86_64 GNU/Linux
+- Network Interface: wlp1s0
+- Tools Used:
+  - tc (Traffic Control)
+  - iperf3
+  - gnuplot
+  - git
+
+---
+
+## Phase 1: Baseline Throughput (pfifo_fast)
+
+### Objective
+Establish baseline throughput behavior without any artificial bottleneck using the default Linux queue discipline.
+
+### Queue Setup
+```bash
+sudo tc qdisc del dev wlp1s0 root 2>/dev/null
+sudo tc qdisc add dev wlp1s0 root pfifo_fast
+tc qdisc show dev wlp1s0
+Phase 3: Fairness and Congestion Control Analysis
+
+Phase 3 evaluates fairness and active queue management behavior under sustained parallel TCP flows.
+
+Phase 3A: pfifo_fast Fairness Test
+Queue Setup
+sudo tc qdisc del dev wlp1s0 root 2>/dev/null
+sudo tc qdisc add dev wlp1s0 root pfifo_fast
+tc qdisc show dev wlp1s0
+
+Queue Monitoring
+watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a phase3A_tc.log"
+
+Traffic Generation
+iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile phase3A_iperf.log
+
+Data Extraction
+grep "^\[SUM\]" phase3A_iperf.log | awk '{t++; print t "," $6}' > phase3A_throughput.csv
+awk '/dropped/ {t++; print t "," $4}' phase3A_tc.log > phase3A_drops.csv
+
+Phase 3B: fq_codel Fairness Test
+Queue Replacement
+sudo tc qdisc del dev wlp1s0 root
+sudo tc qdisc add dev wlp1s0 root fq_codel
+tc qdisc show dev wlp1s0
+
+Queue Monitoring
+watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a phase3B_tc.log"
+
+Traffic Generation
+iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile phase3B_iperf.log
+
+Data Extraction
+grep "^\[SUM\]" phase3B_iperf.log | awk '{t++; print t "," $6}' > phase3B_throughput.csv
+awk '/dropped/ {t++; print t "," $4}' phase3B_tc.log > phase3B_drops.csv
+
+Summary
+
+Phase 1 establishes a non-congested baseline.
+
+Phase 2 introduces a controlled bottleneck and compares queue disciplines.
+
+Phase 3 demonstrates fairness and active queue management behavior.
+
+fq_codel consistently exhibits improved congestion control compared to pfifo_fast.
+
+All experiments are reproducible using the documented commands.
+EOF
+
+
+---
+
+## ✅ COMMIT & PUSH README (FINAL)
+
+```bash
+git add README.md
+git commit -m "Complete README with full Phase 1–3 command-line methodology"
+git push

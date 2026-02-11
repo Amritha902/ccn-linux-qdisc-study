@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ACAPE Complete System Diagrams</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .diagram-card {
+            background: white;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 48px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .section-label {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .implemented { background: #27ae60; }
+        .future { background: #95a5a6; }
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .legend {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        .legend-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border: 1px solid #34495e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ ACAPE Complete System Architecture</h1>
+        <p class="subtitle">Adaptive Condition-Aware Packet Engine - Detailed Implementation Diagrams</p>
+
+        <!-- DIAGRAM 1: COMPLETE SYSTEM WITH ALGORITHMS -->
+        <div class="diagram-card">
+            <h2>📊 DIAGRAM 1: Complete System Architecture with All Algorithms</h2>
+            <span class="section-label implemented">✅ IMPLEMENTED: Part 1 & 2</span>
+            <span class="section-label future">🔮 FUTURE: Part 3 (eBPF)</span>
+            
+            <svg viewBox="0 0 1600 2000" xmlns="http://www.w3.org/2000/svg">
+                <!-- Title Section -->
+                <rect x="50" y="20" width="1500" height="80" fill="#34495e" rx="10"/>
+                <text x="800" y="50" text-anchor="middle" font-size="28" font-weight="bold" fill="white">
+                    ACAPE: ADAPTIVE CONDITION-AWARE PACKET ENGINE
+                </text>
+                <text x="800" y="80" text-anchor="middle" font-size="18" fill="#ecf0f1">
+                    Complete System with Algorithms &amp; Implementation Tools
+                </text>
+
+                <!-- ============ PART 1: BASELINE CHARACTERIZATION ============ -->
+                <rect x="50" y="120" width="1500" height="450" fill="#e8f4f8" stroke="#3498db" stroke-width="4" rx="12"/>
+                <text x="800" y="155" text-anchor="middle" font-size="26" font-weight="bold" fill="#2c3e50">
+                    PART 1: BASELINE CHARACTERIZATION (IMPLEMENTED ✅)
+                </text>
+
+                <!-- Traffic Generation -->
+                <rect x="100" y="180" width="350" height="160" fill="#3498db" stroke="#2c3e50" stroke-width="2" rx="8"/>
+                <text x="275" y="210" text-anchor="middle" font-size="18" font-weight="bold" fill="white">
+                    TRAFFIC GENERATION
+                </text>
+                <text x="275" y="240" text-anchor="middle" font-size="13" fill="white">
+                    iperf3 -c &lt;receiver&gt; -P 8 -t 30
+                </text>
+                <text x="275" y="265" text-anchor="middle" font-size="12" fill="white">
+                    • 8 parallel TCP flows
+                </text>
+                <text x="275" y="285" text-anchor="middle" font-size="12" fill="white">
+                    • 30 second duration
+                </text>
+                <text x="275" y="305" text-anchor="middle" font-size="12" fill="white">
+                    • JSON output for parsing
+                </text>
+                <text x="275" y="325" text-anchor="middle" font-size="12" fill="white">
+                    Command: --logfile results.json
+                </text>
+
+                <!-- Queue Disciplines Tested -->
+                <rect x="500" y="180" width="350" height="160" fill="#9b59b6" stroke="#2c3e50" stroke-width="2" rx="8"/>
+                <text x="675" y="210" text-anchor="middle" font-size="18" font-weight="bold" fill="white">
+                    QUEUE DISCIPLINES
+                </text>
+                <text x="675" y="240" text-anchor="middle" font-size="13" fill="white">
+                    Test Scenarios:
+                </text>
+                <text x="675" y="265" text-anchor="middle" font-size="12" fill="white">
+                    1. pfifo_fast (default FIFO)
+                </text>
+                <text x="675" y="285" text-anchor="middle" font-size="12" fill="white">
+                    2. fq_codel (AQM)
+                </text>
+                <text x="675" y="305" text-anchor="middle" font-size="12" fill="white">
+                    3. With/Without TBF bottleneck
+                </text>
+                <text x="675" y="325" text-anchor="middle" font-size="11" fill="white">
+                    tc qdisc add dev eth0 root pfifo_fast
+                </text>
+
+                <!-- Metrics Collection -->
+                <rect x="900" y="180" width="350" height="160" fill="#e67e22" stroke="#2c3e50" stroke-width="2" rx="8"/>
+                <text x="1075" y="210" text-anchor="middle" font-size="18" font-weight="bold" fill="white">
+                    METRICS COLLECTION
+                </text>
+                <text x="1075" y="240" text-anchor="middle" font-size="13" fill="white">
+                    Commands Used:
+                </text>
+                <text x="1075" y="265" text-anchor="middle" font-size="11" fill="white">
+                    • tc -s qdisc show dev eth0
+                </text>
+                <text x="1075" y="285" text-anchor="middle" font-size="11" fill="white">
+                    • ss -ti (TCP info)
+                </text>
+                <text x="1075" y="305" text-anchor="middle" font-size="11" fill="white">
+                    • ip -s link show eth0
+                </text>
+                <text x="1075" y="325" text-anchor="middle" font-size="11" fill="white">
+                    • Parse JSON: jq, Python pandas
+                </text>
+
+                <!-- Arrows -->
+                <path d="M 275 340 L 275 380" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrow)"/>
+                <path d="M 675 340 L 675 380" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrow)"/>
+                <path d="M 1075 340 L 1075 380" stroke="#2c3e50" stroke-width="3" marker-end="url(#arrow)"/>
+
+                <!-- Analysis Layer -->
+                <rect x="300" y="390" width="1000" height="160" fill="#1abc9c" stroke="#2c3e50" stroke-width="2" rx="8"/>
+                <text x="800" y="420" text-anchor="middle" font-size="18" font-weight="bold" fill="white">
+                    BASELINE ANALYSIS &amp; VISUALIZATION
+                </text>
+                <text x="800" y="450" text-anchor="middle" font-size="13" fill="white">
+                    Python Scripts: matplotlib, pandas, numpy
+                </text>
+                <text x="800" y="475" text-anchor="middle" font-size="12" fill="white">
+                    • Throughput vs Time plots
+                </text>
+                <text x="800" y="495" text-anchor="middle" font-size="12" fill="white">
+                    • Drop rate analysis
+                </text>
+                <text x="800" y="515" text-anchor="middle" font-size="12" fill="white">
+                    • Queue backlog evolution
+                </text>
+                <text x="800" y="535" text-anchor="middle" font-size="12" fill="white">
+                    • Statistical comparison (mean, variance, P99)
+                </text>
+
+                <!-- ============ PART 2: ADAPTIVE CONTROL ============ -->
+                <rect x="50" y="600" width="1500" height="750" fill="#fef5e7" stroke="#f39c12" stroke-width="4" rx="12"/>
+                <text x="800" y="635" text-anchor="middle" font-size="26" font-weight="bold" fill="#2c3e50">
+                    PART 2: HEURISTIC-BASED ADAPTIVE CONTROL (IMPLEMENTED ✅)
+                </text>
+
+                <!-- Monitoring Module -->
+                <rect x="100" y="660" width="450" height="240" fill="#3498db" stroke="#2c3e50" stroke-width="3" rx="8"/>
+                <text x="325" y="690" text-anchor="middle" font-size="20" font-weight="bold" fill="white">
+                    MODULE 1: METRICS MONITOR
+                </text>
+                <text x="325" y="720" text-anchor="middle" font-size="14" fill="white" font-weight="bold">
+                    Real-Time Collection Loop
+                </text>
+                
+                <!-- Commands box -->
+                <rect x="130" y="740" width="390" height="140" fill="#2980b9" stroke="#1a5276" stroke-width="1" rx="5"/>
+                <text x="325" y="765" text-anchor="middle" font-size="13" fill="white" font-weight="bold">
+                    Commands (every 100ms - 1s):
+                </text>
+                <text x="150" y="790" font-size="11" fill="white" font-family="monospace">
+                    1. tc -s -j qdisc show dev eth0
+                </text>
+                <text x="150" y="810" font-size="11" fill="white" font-family="monospace">
+                    2. Parse JSON output
+                </text>
+                <text x="150" y="830" font-size="11" fill="white" font-family="monospace">
+                    3. Extract: sent, drops, backlog
+                </text>
+                <text x="150" y="850" font-size="11" fill="white" font-family="monospace">
+                    4. Store in time-series arrays
+                </text>
+                <text x="150" y="870" font-size="11" fill="white" font-family="monospace">
+                    5. Compute Δdrops, Δpackets
+                </text>
+
+                <!-- Arrow to Algorithm -->
+                <path d="M 550 780 L 620 780" stroke="#2c3e50" stroke-width="4" marker-end="url(#arrow)"/>
+
+                <!-- Classification Algorithm -->
+                <rect x="650" y="660" width="550" height="240" fill="#e74c3c" stroke="#2c3e50" stroke-width="3" rx="8"/>
+                <text x="925" y="690" text-anchor="middle" font-size="20" font-weight="bold" fill="white">
+                    MODULE 2: STATE CLASSIFICATION
+                </text>
+                <text x="925" y="720" text-anchor="middle" font-size="14" fill="white" font-weight="bold">
+                    Heuristic Decision Algorithm
+                </text>
+
+                <!-- Algorithm box -->
+                <rect x="680" y="740" width="490" height="140" fill="#c0392b" stroke="#7f1d1d" stroke-width="1" rx="5"/>
+                <text x="925" y="765" text-anchor="middle" font-size="13" fill="white" font-weight="bold">
+                    Algorithm: classify_network_state()
+                </text>
+                <text x="700" y="790" font-size="10" fill="white" font-family="monospace">
+                    D(t) = (drops_now - drops_prev) / Δt
+                </text>
+                <text x="700" y="810" font-size="10" fill="white" font-family="monospace">
+                    G_b(t) = backlog_now - backlog_prev
+                </text>
+                <text x="700" y="830" font-size="10" fill="white" font-family="monospace">
+                    σ² = variance(throughput_history)
+                </text>
+                <text x="700" y="850" font-size="10" fill="white" font-family="monospace">
+                    IF D(t) > α AND G_b(t) > β: CONGESTED
+                </text>
+                <text x="700" y="870" font-size="10" fill="white" font-family="monospace">
+                    ELIF σ² > γ: BURST | ELSE: NORMAL
+                </text>
+
+                <!-- Arrow down -->
+                <path d="M 925 900 L 925 930" stroke="#2c3e50" stroke-width="4" marker-end="url(#arrow)"/>
+
+                <!-- Policy Decision Engine -->
+                <rect x="250" y="950" width="1100" height="180" fill="#f39c12" stroke="#2c3e50" stroke-width="3" rx="8"/>
+                <text x="800" y="980" text-anchor="middle" font-size="20" font-weight="bold" fill="white">
+                    MODULE 3: POLICY DECISION ENGINE
+                </text>
+                <text x="800" y="1010" text-anchor="middle" font-size="14" fill="white" font-weight="bold">
+                    State → Parameter Mapping
+                </text>
+
+                <!-- Decision table -->
+                <rect x="300" y="1030" width="240" height="80" fill="#e67e22" stroke="#2c3e50" stroke-width="1" rx="4"/>
+                <text x="420" y="1055" text-anchor="middle" font-size="12" fill="white" font-weight="bold">
+                    IF CONGESTED:
+                </text>
+                <text x="420" y="1075" text-anchor="middle" font-size="10" fill="white">
+                    target = 3ms
+                </text>
+                <text x="420" y="1093" text-anchor="middle" font-size="10" fill="white">
+                    limit = 800
+                </text>
+
+                <rect x="580" y="1030" width="240" height="80" fill="#e67e22" stroke="#2c3e50" stroke-width="1" rx="4"/>
+                <text x="700" y="1055" text-anchor="middle" font-size="12" fill="white" font-weight="bold">
+                    IF BURST:
+                </text>
+                <text x="700" y="1075" text-anchor="middle" font-size="10" fill="white">
+                    quantum = 500
+                </text>
+                <text x="700" y="1093" text-anchor="middle" font-size="10" fill="white">
+                    limit = 1200
+                </text>
+
+                <rect x="860" y="1030" width="240" height="80" fill="#e67e22" stroke="#2c3e50" stroke-width="1" rx="4"/>
+                <text x="980" y="1055" text-anchor="middle" font-size="12" fill="white" font-weight="bold">
+                    IF HIGH_FLOW:
+                </text>
+                <text x="980" y="1075" text-anchor="middle" font-size="10" fill="white">
+                    flows = 2048
+                </text>
+                <text x="980" y="1093" text-anchor="middle" font-size="10" fill="white">
+                    quantum = 300
+                </text>
+
+                <rect x="1140" y="1030" width="240" height="80" fill="#e67e22" stroke="#2c3e50" stroke-width="1" rx="4"/>
+                <text x="1260" y="1055" text-anchor="middle" font-size="12" fill="white" font-weight="bold">
+                    ELSE (NORMAL):
+                </text>
+                <text x="1260" y="1075" text-anchor="middle" font-size="10" fill="white">
+                    Reset defaults
+                </text>
+                <text x="1260" y="1093" text-anchor="middle" font-size="10" fill="white">
+                    target = 5ms
+                </text>
+
+                <!-- Arrow down -->
+                <path d="M 800 1130 L 800 1170" stroke="#2c3e50" stroke-width="4" marker-end="url(#arrow)"/>
+
+                <!-- Actuation Layer -->
+                <rect x="300" y="1190" width="1000" height="140" fill="#27ae60" stroke="#2c3e50" stroke-width="3" rx="8"/>
+                <text x="800" y="1220" text-anchor="middle" font-size="20" font-weight="bold" fill="white">
+                    MODULE 4: ACTUATION LAYER
+                </text>
+                <text x="800" y="1250" text-anchor="middle" font-size="14" fill="white" font-weight="bold">
+                    Runtime Parameter Adjustment
+                </text>
+                <text x="800" y="1280" text-anchor="middle" font-size="12" fill="white" font-family="monospace">
+                    tc qdisc change dev eth0 root fq_codel target &lt;X&gt;ms limit &lt;Y&gt; quantum &lt;Z&gt;
+                </text>
+                <text x="800" y="1305" text-anchor="middle" font-size="11" fill="white">
+                    + Logging: CSV with timestamp, state, parameters, metrics
+                </text>
+
+                <!-- ============ PART 3: FUTURE eBPF ENHANCEMENT ============ -->
+                <rect x="50" y="1380" width="1500" height="540" fill="#ecf0f1" stroke="#95a5a6" stroke-width="4" rx="12" stroke-dasharray="10,5"/>
+                <text x="800" y="1415" text-anchor="middle" font-size="26" font-weight="bold" fill="#7f8c8d">
+                    PART 3: eBPF-ENHANCED ADAPTIVE (FUTURE WORK 🔮)
+                </text>
+
+                <!-- Future label -->
+                <rect x="700" y="1430" width="200" height="40" fill="#95a5a6" rx="20"/>
+                <text x="800" y="1455" text-anchor="middle" font-size="16" font-weight="bold" fill="white">
+                    PLANNED ENHANCEMENT
+                </text>
+
+                <!-- eBPF Layer -->
+                <rect x="100" y="1490" width="650" height="200" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="2" rx="8"/>
+                <text x="425" y="1520" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">
+                    eBPF IN-KERNEL LAYER
+                </text>
+                <text x="425" y="1545" text-anchor="middle" font-size="13" fill="#34495e">
+                    (Nanosecond-level per-packet processing)
+                </text>
+                
+                <rect x="130" y="1560" width="590" height="110" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1" rx="5"/>
+                <text x="425" y="1585" text-anchor="middle" font-size="12" fill="white" font-weight="bold">
+                    eBPF Program @ TC Hook:
+                </text>
+                <text x="150" y="1610" font-size="10" fill="white" font-family="monospace">
+                    • Per-packet metrics collection
+                </text>
+                <text x="150" y="1630" font-size="10" fill="white" font-family="monospace">
+                    • flow_table[5-tuple] = {packets, bytes, timestamp}
+                </text>
+                <text x="150" y="1650" font-size="10" fill="white" font-family="monospace">
+                    • Priority assignment based on state
+                </text>
+
+                <!-- Enhanced Userspace -->
+                <rect x="800" y="1490" width="650" height="200" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="2" rx="8"/>
+                <text x="1125" y="1520" text-anchor="middle" font-size="18" font-weight="bold" fill="#2c3e50">
+                    ENHANCED USERSPACE
+                </text>
+                <text x="1125" y="1545" text-anchor="middle" font-size="13" fill="#34495e">
+                    (Advanced policy with eBPF data)
+                </text>
+                
+                <rect x="830" y="1560" width="590" height="110" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1" rx="5"/>
+                <text x="1125" y="1585" text-anchor="middle" font-size="12" fill="white" font-weight="bold">
+                    Enhanced Controller:
+                </text>
+                <text x="850" y="1610" font-size="10" fill="white" font-family="monospace">
+                    • Read eBPF maps (zero-copy)
+                </text>
+                <text x="850" y="1630" font-size="10" fill="white" font-family="monospace">
+                    • Per-flow classification
+                </text>
+                <text x="850" y="1650" font-size="10" fill="white" font-family="monospace">
+                    • Update eBPF policy maps + tc parameters
+                </text>
+
+                <!-- Benefits -->
+                <rect x="200" y="1720" width="1200" height="180" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2" rx="8"/>
+                <text x="800" y="1750" text-anchor="middle" font-size="18" font-weight="bold" fill="white">
+                    🎯 Expected Improvements from eBPF Enhancement
+                </text>
+                <text x="300" y="1785" font-size="13" fill="white">
+                    ✓ Per-packet visibility (vs aggregate)
+                </text>
+                <text x="300" y="1810" font-size="13" fill="white">
+                    ✓ Nanosecond-level metrics
+                </text>
+                <text x="300" y="1835" font-size="13" fill="white">
+                    ✓ Per-flow differentiation
+                </text>
+                <text x="300" y="1860" font-size="13" fill="white">
+                    ✓ Zero syscall overhead for reads
+                </text>
+
+                <text x="900" y="1785" font-size="13" fill="white">
+                    ✓ Faster adaptation (100ms → packet-level)
+                </text>
+                <text x="900" y="1810" font-size="13" fill="white">
+                    ✓ Multi-timescale control
+                </text>
+                <text x="900" y="1835" font-size="13" fill="white">
+                    ✓ Better fairness
+                </text>
+                <text x="900" y="1860" font-size="13" fill="white">
+                    ✓ Predictive congestion control
+                </text>
+
+                <!-- Arrow definitions -->
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#2c3e50"/>
+                    </marker>
+                </defs>
+            </svg>
+
+            <div class="legend">
+                <h3 style="margin-top:0;">Legend:</h3>
+                <div class="legend-item">
+                    <span class="legend-box" style="background:#3498db;"></span>
+                    <span>Data Collection / Input</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box" style="background:#e74c3c;"></span>
+                    <span>Algorithm / Logic</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box" style="background:#f39c12;"></span>
+                    <span>Decision / Policy</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box" style="background:#27ae60;"></span>
+                    <span>Actuation / Output</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-box" style="background:#95a5a6;"></span>
+                    <span>Future Work (eBPF)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAGRAM 2: COMMAND-LEVEL IMPLEMENTATION -->
+        <div class="diagram-card">
+            <h2>⚙️ DIAGRAM 2: Command-Line Implementation Details</h2>
+            <span class="section-label implemented">Complete Command Reference</span>
+
+            <svg viewBox="0 0 1600 1800" xmlns="http://www.w3.org/2000/svg">
+                <!-- Title -->
+                <rect x="50" y="20" width="1500" height="60" fill="#2c3e50" rx="8"/>
+                <text x="800" y="60" text-anchor="middle" font-size="24" font-weight="bold" fill="white">
+                    IMPLEMENTATION: ALL COMMANDS &amp; TOOLS USED
+                </text>
+
+                <!-- Setup Phase -->
+                <text x="100" y="120" font-size="22" font-weight="bold" fill="#2c3e50">
+                    PHASE 0: ENVIRONMENT SETUP
+                </text>
+                <rect x="100" y="140" width="1400" height="200" fill="#ecf0f1" stroke="#34495e" stroke-width="2" rx="8"/>
+                
+                <text x="120" y="170" font-size="14" font-weight="bold" fill="#2c3e50">
+                    1. Install Required Tools:
+                </text>
+                <text x="140" y="195" font-size="12" font-family="monospace" fill="#16a085">
+                    sudo apt update
+                </text>
+                <text x="140" y="215" font-size="12" font-family="monospace" fill="#16a085">
+                    sudo apt install -y iperf3 iproute2 python3 python3-pip jq
+                </text>
+                <text x="140" y="235" font-size="12" font-family="monospace" fill="#16a085">
+                    pip3 install matplotlib pandas numpy
+                </text>
+
+                <text x="120" y="265" font-size="14" font-weight="bold" fill="#2c3e50">
+                    2. Network Configuration:
+                </text>
+                <text x="140" y="290" font-size="12" font-family="monospace" fill="#16a085">
+                    ip link set dev eth0 up
+                </text>
+                <text x="140" y="310" font-size="12" font-family="monospace" fill="#16a085">
+                    ethtool -K eth0 gso off tso off gro off
+                </text>
+
+                <!-- Part 1 Commands -->
+                <text x="100" y="380" font-size="22" font-weight="bold" fill="#2c3e50">
+                    PART 1: BASELINE TESTING COMMANDS
+                </text>
+                <rect x="100" y="400" width="1400" height="450" fill="#e8f4f8" stroke="#3498db" stroke-width="3" rx="8"/>
+                
+                <!-- Test 1a -->
+                <rect x="120" y="420" width="660" height="180" fill="#3498db" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="450" y="445" text-anchor="middle" font-size="16" font-weight="bold" fill="white">
+                    Test 1a: pfifo_fast (No Bottleneck)
+                </text>
+                <text x="140" y="475" font-size="11" font-family="monospace" fill="white">
+                    # On sender machine
+                </text>
+                <text x="140" y="495" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc del dev eth0 root  # Clear existing
+                </text>
+                <text x="140" y="515" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc add dev eth0 root pfifo_fast
+                </text>
+                <text x="140" y="535" font-size="11" font-family="monospace" fill="white">
+                    iperf3 -c &lt;receiver_ip&gt; -P 8 -t 30 -i 1 --logfile test1a.json -J
+                </text>
+                <text x="140" y="560" font-size="11" font-family="monospace" fill="white">
+                    # Monitor in parallel (separate terminal)
+                </text>
+                <text x="140" y="580" font-size="11" font-family="monospace" fill="white">
+                    watch -n 1 'tc -s qdisc show dev eth0'
+                </text>
+
+                <!-- Test 1b -->
+                <rect x="820" y="420" width="660" height="180" fill="#3498db" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="1150" y="445" text-anchor="middle" font-size="16" font-weight="bold" fill="white">
+                    Test 1b: pfifo_fast + TBF Bottleneck
+                </text>
+                <text x="840" y="475" font-size="11" font-family="monospace" fill="white">
+                    # Add TBF rate limiter
+                </text>
+                <text x="840" y="495" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc add dev eth0 root handle 1: tbf rate 100mbit burst 32kbit latency 400ms
+                </text>
+                <text x="840" y="515" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc add dev eth0 parent 1:1 pfifo_fast
+                </text>
+                <text x="840" y="535" font-size="11" font-family="monospace" fill="white">
+                    iperf3 -c &lt;receiver_ip&gt; -P 8 -t 30 -i 1 --logfile test1b.json -J
+                </text>
+                <text x="840" y="560" font-size="11" font-family="monospace" fill="white">
+                    # Collect stats
+                </text>
+                <text x="840" y="580" font-size="11" font-family="monospace" fill="white">
+                    tc -s -j qdisc show dev eth0 > qdisc_stats_1b.json
+                </text>
+
+                <!-- Test 2a -->
+                <rect x="120" y="620" width="660" height="180" fill="#9b59b6" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="450" y="645" text-anchor="middle" font-size="16" font-weight="bold" fill="white">
+                    Test 2a: fq_codel (No Bottleneck)
+                </text>
+                <text x="140" y="675" font-size="11" font-family="monospace" fill="white">
+                    # Switch to fq_codel
+                </text>
+                <text x="140" y="695" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc del dev eth0 root
+                </text>
+                <text x="140" y="715" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc add dev eth0 root fq_codel
+                </text>
+                <text x="140" y="735" font-size="11" font-family="monospace" fill="white">
+                    iperf3 -c &lt;receiver_ip&gt; -P 8 -t 30 -i 1 --logfile test2a.json -J
+                </text>
+                <text x="140" y="760" font-size="11" font-family="monospace" fill="white">
+                    # Verify qdisc
+                </text>
+                <text x="140" y="780" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc show dev eth0
+                </text>
+
+                <!-- Test 2b -->
+                <rect x="820" y="620" width="660" height="180" fill="#9b59b6" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="1150" y="645" text-anchor="middle" font-size="16" font-weight="bold" fill="white">
+                    Test 2b: fq_codel + TBF Bottleneck
+                </text>
+                <text x="840" y="675" font-size="11" font-family="monospace" fill="white">
+                    # TBF + fq_codel hierarchy
+                </text>
+                <text x="840" y="695" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc add dev eth0 root handle 1: tbf rate 100mbit burst 32kbit latency 400ms
+                </text>
+                <text x="840" y="715" font-size="11" font-family="monospace" fill="white">
+                    tc qdisc add dev eth0 parent 1:1 fq_codel
+                </text>
+                <text x="840" y="735" font-size="11" font-family="monospace" fill="white">
+                    iperf3 -c &lt;receiver_ip&gt; -P 8 -t 30 -i 1 --logfile test2b.json -J
+                </text>
+                <text x="840" y="760" font-size="11" font-family="monospace" fill="white">
+                    # Save complete stats
+                </text>
+                <text x="840" y="780" font-size="11" font-family="monospace" fill="white">
+                    tc -s -j qdisc show dev eth0 > qdisc_stats_2b.json
+                </text>
+
+                <!-- Part 2 Commands -->
+                <text x="100" y="890" font-size="22" font-weight="bold" fill="#2c3e50">
+                    PART 2: ADAPTIVE CONTROL IMPLEMENTATION
+                </text>
+                <rect x="100" y="910" width="1400" height="800" fill="#fef5e7" stroke="#f39c12" stroke-width="3" rx="8"/>
+                
+                <!-- Monitoring Script -->
+                <text x="120" y="940" font-size="16" font-weight="bold" fill="#2c3e50">
+                    Python Control Script: adaptive_controller.py
+                </text>
+                
+                <rect x="120" y="960" width="1440" height="720" fill="#fff" stroke="#34495e" stroke-width="1" rx="5"/>
+                <text x="140" y="985" font-size="11" font-family="monospace" fill="#16a085">
+                    #!/usr/bin/env python3
+                </text>
+                <text x="140" y="1005" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    import subprocess, json, time, csv
+                </text>
+                <text x="140" y="1025" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    from collections import deque
+                </text>
+                
+                <text x="140" y="1055" font-size="11" font-family="monospace" fill="#c0392b">
+                    # Configuration
+                </text>
+                <text x="140" y="1075" font-size="11" font-family="monospace" fill="#2c3e50">
+                    INTERFACE = "eth0"
+                </text>
+                <text x="140" y="1095" font-size="11" font-family="monospace" fill="#2c3e50">
+                    SAMPLE_INTERVAL = 0.1  # 100ms
+                </text>
+                <text x="140" y="1115" font-size="11" font-family="monospace" fill="#2c3e50">
+                    HISTORY_SIZE = 10
+                </text>
+                
+                <text x="140" y="1145" font-size="11" font-family="monospace" fill="#c0392b">
+                    # Thresholds
+                </text>
+                <text x="140" y="1165" font-size="11" font-family="monospace" fill="#2c3e50">
+                    CONGESTION_DROP_RATE = 0.05  # 5%
+                </text>
+                <text x="140" y="1185" font-size="11" font-family="monospace" fill="#2c3e50">
+                    BURST_VARIANCE_THRESHOLD = 0.3
+                </text>
+                <text x="140" y="1205" font-size="11" font-family="monospace" fill="#2c3e50">
+                    HIGH_BACKLOG_THRESHOLD = 1000  # packets
+                </text>
+                
+                <text x="140" y="1235" font-size="11" font-family="monospace" fill="#8e44ad">
+                    def collect_metrics():
+                </text>
+                <text x="160" y="1255" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    result = subprocess.run(['tc', '-s', '-j', 'qdisc', 'show', 'dev', INTERFACE],
+                </text>
+                <text x="160" y="1275" font-size="11" font-family="monospace" fill="#7f8c8d">
+                                            capture_output=True, text=True)
+                </text>
+                <text x="160" y="1295" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    data = json.loads(result.stdout)[0]
+                </text>
+                <text x="160" y="1315" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    return {'sent': data['bytes'], 'drops': data['drops'], 'backlog': data['backlog']}
+                </text>
+                
+                <text x="140" y="1345" font-size="11" font-family="monospace" fill="#8e44ad">
+                    def classify_state(drop_rate, backlog, variance):
+                </text>
+                <text x="160" y="1365" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    if drop_rate > CONGESTION_DROP_RATE and backlog > HIGH_BACKLOG_THRESHOLD:
+                </text>
+                <text x="180" y="1385" font-size="11" font-family="monospace" fill="#16a085">
+                        return "CONGESTED"
+                </text>
+                <text x="160" y="1405" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    elif variance > BURST_VARIANCE_THRESHOLD:
+                </text>
+                <text x="180" y="1425" font-size="11" font-family="monospace" fill="#16a085">
+                        return "BURST"
+                </text>
+                <text x="160" y="1445" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    else:
+                </text>
+                <text x="180" y="1465" font-size="11" font-family="monospace" fill="#16a085">
+                        return "NORMAL"
+                </text>
+                
+                <text x="140" y="1495" font-size="11" font-family="monospace" fill="#8e44ad">
+                    def apply_action(state):
+                </text>
+                <text x="160" y="1515" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    if state == "CONGESTED":
+                </text>
+                <text x="180" y="1535" font-size="11" font-family="monospace" fill="#e67e22">
+                        subprocess.run(['tc', 'qdisc', 'change', 'dev', INTERFACE, 'root', 'fq_codel',
+                </text>
+                <text x="180" y="1555" font-size="11" font-family="monospace" fill="#e67e22">
+                                        'target', '3ms', 'limit', '800'])
+                </text>
+                <text x="160" y="1575" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    elif state == "BURST":
+                </text>
+                <text x="180" y="1595" font-size="11" font-family="monospace" fill="#e67e22">
+                        subprocess.run(['tc', 'qdisc', 'change', 'dev', INTERFACE, 'root', 'fq_codel',
+                </text>
+                <text x="180" y="1615" font-size="11" font-family="monospace" fill="#e67e22">
+                                        'quantum', '500', 'limit', '1200'])
+                </text>
+                <text x="160" y="1635" font-size="11" font-family="monospace" fill="#7f8c8d">
+                    # ... logging ...
+                </text>
+
+                <text x="140" y="1665" font-size="11" font-family="monospace" fill="#c0392b">
+                    # Main control loop
+                </text>
+            </svg>
+        </div>
+
+        <!-- Summary -->
+        <div class="diagram-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 style="color: white; border-color: white;">📋 Implementation Summary</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-top: 0;">✅ Part 1: Completed</h3>
+                    <ul style="line-height: 1.8;">
+                        <li>4 test scenarios executed</li>
+                        <li>Baseline data collected</li>
+                        <li>Metrics visualized</li>
+                        <li>Statistical analysis done</li>
+                    </ul>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-top: 0;">✅ Part 2: Completed</h3>
+                    <ul style="line-height: 1.8;">
+                        <li>Heuristic algorithm implemented</li>
+                        <li>Closed-loop control working</li>
+                        <li>State classification functional</li>
+                        <li>Adaptive parameters tested</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <h3 style="margin-top: 0;">🔮 Part 3: Future Enhancement</h3>
+                <p><strong>Timeline:</strong> 7 weeks</p>
+                <p><strong>Technology:</strong> eBPF (BCC framework)</p>
+                <p><strong>Benefits:</strong> Per-packet visibility, nanosecond metrics, multi-timescale control</p>
+                <p><strong>No kernel modification required</strong> - Uses standard Linux eBPF subsystem</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1122,6 +1122,128 @@ Code and documentation available under **MIT License**.
 - Kathie Nichols and Van Jacobson for CoDel algorithm
 - iperf3 development team
 - BCC/eBPF community
+Perfect 👍 This is exactly how you should prepare before a review.
+
+I’ll give you:
+
+✅ Clear Step-by-step summary (with commands you ran)
+
+✅ Clean technical explanation of what you built
+
+✅ A polished problem statement pitch you can say in review
+
+No confusion. Structured. Presentation-ready.
+
+🔵 PHASE 2 — What We Did (Step-by-Step With Commands)
+🔹 Step 1 — Clean Previous Setup
+
+We removed old qdiscs and namespaces to avoid interference.
+
+sudo tc qdisc del dev wlp4s0 root 2>/dev/null
+sudo ip netns del ns1 2>/dev/null
+sudo ip netns del ns2 2>/dev/null
+sudo ip link del veth1 2>/dev/null
+
+
+Why?
+To start with a clean experimental environment.
+
+🔹 Step 2 — Create Two Network Namespaces
+sudo ip netns add ns1
+sudo ip netns add ns2
+
+
+These simulate two separate machines.
+
+🔹 Step 3 — Create Virtual Ethernet Pair (Virtual Cable)
+sudo ip link add veth1 type veth peer name veth2
+
+
+This creates:
+
+veth1 ↔ veth2
+
+🔹 Step 4 — Move Each End Into Different Namespace
+sudo ip link set veth1 netns ns1
+sudo ip link set veth2 netns ns2
+
+
+Now:
+
+ns1 → veth1
+ns2 → veth2
+
+🔹 Step 5 — Bring Interfaces Up
+sudo ip netns exec ns1 ip link set lo up
+sudo ip netns exec ns2 ip link set lo up
+
+sudo ip netns exec ns1 ip link set veth1 up
+sudo ip netns exec ns2 ip link set veth2 up
+
+🔹 Step 6 — Assign IP Addresses
+sudo ip netns exec ns1 ip addr add 10.0.0.1/24 dev veth1
+sudo ip netns exec ns2 ip addr add 10.0.0.2/24 dev veth2
+
+🔹 Step 7 — Verify Connectivity
+sudo ip netns exec ns1 ping 10.0.0.2
+
+
+Ping successful → link works.
+
+🔹 Step 8 — Create Artificial Bottleneck (10 Mbit)
+sudo ip netns exec ns1 tc qdisc add dev veth1 root handle 1: tbf rate 10mbit burst 32kbit latency 50ms
+sudo ip netns exec ns1 tc qdisc add dev veth1 parent 1:1 fq_codel
+
+
+This created:
+
+TBF (rate limiter 10mbit)
+   ↳ fq_codel (queue manager)
+
+
+This is your controlled congestion point.
+
+🔹 Step 9 — Generate High Traffic
+
+Server side:
+
+sudo ip netns exec ns2 iperf3 -s
+
+
+Client side:
+
+sudo ip netns exec ns1 iperf3 -c 10.0.0.2 -P 16 -t 60
+
+
+This generated:
+
+~9.9 Mbit/sec throughput.
+
+Which means:
+
+👉 Link was fully saturated.
+
+🔹 Step 10 — Observe Queue Statistics
+sudo ip netns exec ns1 tc -s qdisc show dev veth1
+
+
+This shows:
+
+backlog
+
+drops
+
+overlimits
+
+This proves real congestion.
+
+
+
+
+We created a fully controlled congestion testbed inside Linux using network namespaces and virtual Ethernet pairs.
+Instead of relying on unpredictable WiFi or internet traffic, we simulated two virtual hosts and introduced an artificial bottleneck using TBF and fq_codel.
+Then we generated high TCP load using iperf3 to saturate the link and observe queue behavior using tc statistics.
+
 
 ---
 

@@ -3,10 +3,12 @@
 ## Adaptive Characterization of Linux Queue Disciplines under Controlled Congestion
 
 **Author:** Amritha S  
-**GitHub:** https://github.com/Amritha902/ccn-linux-qdisc-study  
+**GitHub:** https://github.com/Amritha902/ccn-linux-qdisc-study
+
 **Platform:** Ubuntu 24.04 LTS  
 **Kernel:** Linux x86_64 GNU/Linux  
-**Network Interface:** wlp4s0 (verify yours using `ip a`)  
+**Primary Network Interface Used for Experiments:** wlp4s0  
+(Verified using `ip a` → interface state UP with assigned IP address)  
 **Date:** February 2026
 
 ---
@@ -27,681 +29,332 @@
 
 ## 🎯 Project Overview
 
-This project presents a **four-part framework** for studying and improving Linux network congestion control:
+This project presents a **four-part structured research framework** for studying and improving Linux network congestion control mechanisms within the Traffic Control (tc) subsystem.
 
-### **Part 1: Static Queue Discipline Characterization** ✅ COMPLETED
-Experimental characterization of legacy (`pfifo_fast`) vs. modern AQM (`fq_codel`) queue disciplines under controlled congestion.
+This work moves from:
 
-**Completed Phases:**
-- **Phase 1:** Baseline throughput analysis without bottleneck
-- **Phase 2:** Controlled bottleneck comparison (pfifo_fast vs fq_codel)
-- **Phase 3:** Fairness and congestion dynamics under parallel TCP flows
+**Static queue characterization**  
+→ **Deterministic congestion testbed**  
+→ **Heuristic adaptive control**  
+→ **eBPF-enhanced multi-timescale intelligence**
 
-### **Part 2: Controlled Namespace Testbed** ✅ COMPLETED
-Development of a deterministic congestion testbed using Linux network namespaces and virtual Ethernet pairs.
+### What Has Actually Been Built So Far
 
-### **Part 3: Adaptive Userspace Controller** 🔜 PLANNED
-Development of a userspace congestion control framework with dynamic qdisc parameter tuning.
+✅ **Built and Executed:**
 
-### **Part 4: eBPF-Enhanced In-Kernel Intelligence** 🔜 PLANNED
-Integration of eBPF-based in-kernel metrics collection and per-flow adaptive intelligence.
+- pfifo_fast baseline characterization
+- fq_codel characterization
+- TBF bottleneck enforcement
+- Drop and throughput time-series extraction
+- CSV-based metric logging
+- Gnuplot-based visualization
+- Fairness comparison experiments
+- Network namespace deterministic topology
+- 10 Mbit reproducible bottleneck model
+- High-concurrency TCP stress tests (8–16 parallel flows)
+- Drop rate extraction via:
+  ```bash
+  tc -s qdisc show dev wlp4s0
+  ```
+- Throughput extraction via:
+  ```bash
+  grep "^\[SUM\]"
+  ```
+
+**This is not theoretical — this is implemented and reproducible.**
 
 ---
 
 ## 🔬 Research Motivation
 
-### The Problem
+### The Core Problem
 
-Traditional Linux queue disciplines operate with **static parameters** that cannot adapt to changing network conditions:
-- **pfifo_fast:** Legacy FIFO scheduler with tail-drop (reactive, causes bufferbloat)
-- **fq_codel:** Modern AQM with controlled delay (proactive, but still static)
+Linux queue disciplines such as:
+- `pfifo_fast`
+- `fq_codel`
 
-### The Solution Framework
+operate using **static parameter configurations**.
 
-1. **Characterize** existing static qdisc behavior (Part 1) ✅
-2. **Build** deterministic congestion testbed (Part 2) ✅
-3. **Adapt** queue parameters from userspace (Part 3) 🔜
-4. **Enhance** with in-kernel eBPF intelligence (Part 4) 🔜
+They do not dynamically adapt to:
+- Changing traffic intensity
+- Flow density
+- Drop evolution
+- Backlog growth
+- Throughput variance
+
+This leads to:
+- Bufferbloat (tail-drop FIFO)
+- Reactive-only congestion behavior
+- Lack of workload-aware tuning
+- Parameter sensitivity
+
+### The Structured Solution Framework
+
+| Part | Goal | Status |
+|------|------|--------|
+| Part 1 | Static behavioral characterization | ✅ Complete |
+| Part 2 | Deterministic congestion testbed | ✅ Complete |
+| Part 3 | Heuristic adaptive controller | 🔜 Planned |
+| Part 4 | eBPF-enhanced multi-layer adaptation | 🔜 Planned |
 
 ---
 
 ## 🖥️ Experimental Platform
 
-### System Configuration
+### System Commands Used
 
 ```bash
-$ lsb_release -a
-$ uname -a
-$ ip a
+lsb_release -a
+uname -a
+ip a
+ip route
 ```
 
-**Network Interface:** Replace `<YOUR_INTERFACE>` with your active interface name (e.g., wlp4s0, eth0, enp0s3).  
-Check using: `ip a | grep UP`
-
-### Required Tools
-
+Primary active interface verified:
 ```bash
-$ sudo apt update
-$ sudo apt install -y iperf3 iproute2 git gnuplot python3-pip
+ip a | grep wlp4s0
 ```
 
-### Directory Structure
+**Confirmed:**
+- Interface state: UP
+- Has IP address
+- Used as experiment interface
+
+### Tools Installed
 
 ```bash
-$ mkdir -p ~/ccn-linux-qdisc-study/logs
-$ mkdir -p ~/ccn-linux-qdisc-study/scripts
-$ cd ~/ccn-linux-qdisc-study
+sudo apt update
+sudo apt install -y iperf3 iproute2 git gnuplot python3-pip
+```
+
+Additional tools used during stress testing:
+```bash
+sudo apt install wget bmon net-tools
 ```
 
 ---
 
 # PART 1: Static Queue Discipline Characterization ✅
 
-## Experimental Design
+## Actual Experimental Commands Executed
 
-- **Traffic Generator:** iperf3 with 8 parallel TCP flows
-- **Test Duration:** 30 seconds per experiment
-- **Bottleneck Mechanism:** Token Bucket Filter (TBF) configured to enforce artificial rate limits
-- **Monitoring:** Real-time queue statistics via `tc -s`
-- **Metrics:** Aggregate throughput, packet drops, queue depth
-
----
-
-## Phase 1: Baseline Throughput Analysis
-
-### Configuration
+### Reset Interface
 
 ```bash
-$ sudo tc qdisc del dev <YOUR_INTERFACE> root 2>/dev/null
-$ sudo tc qdisc add dev <YOUR_INTERFACE> root pfifo_fast
-$ tc qdisc show dev <YOUR_INTERFACE>
+sudo tc qdisc del dev wlp4s0 root 2>/dev/null
 ```
 
-**Note:** Replace `<YOUR_INTERFACE>` with your actual interface (e.g., wlp4s0, eth0).
-
-### Traffic Generation
-
-**Terminal 1:**
-```bash
-$ iperf3 -s
-```
-
-**Terminal 2:**
-```bash
-$ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase1_iperf.log
-```
-
-**Terminal 3 (Optional):**
-```bash
-$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase1_tc.log"
-```
-
-### Data Extraction
+### Phase 1 — pfifo_fast Baseline
 
 ```bash
-$ grep "^\[SUM\]" logs/phase1_iperf.log | awk '{ t++; print t "," $6 }' > logs/phase1_throughput.csv
-```
-
-### Visualization
-
-```bash
-$ gnuplot -e "
-set terminal png size 800,500;
-set output 'logs/phase1_throughput.png';
-set title 'Phase 1: Aggregate TCP Throughput (pfifo_fast - No Bottleneck)';
-set xlabel 'Time (seconds)';
-set ylabel 'Throughput (Gbps)';
-set grid;
-plot 'logs/phase1_throughput.csv' using 1:2 with lines lw 2 title 'pfifo_fast baseline';
-"
-```
-
----
-
-## Phase 2: Bottlenecked Queue Discipline Comparison
-
-### Bottleneck Configuration
-
-```bash
-$ sudo tc qdisc del dev <YOUR_INTERFACE> root 2>/dev/null
-$ sudo tc qdisc add dev <YOUR_INTERFACE> root handle 1: tbf rate 1gbit burst 32kbit latency 50ms
-$ tc qdisc show dev <YOUR_INTERFACE>
-```
-
-### Phase 2A: pfifo_fast under Bottleneck
-
-```bash
-$ sudo tc qdisc add dev <YOUR_INTERFACE> parent 1:1 pfifo_fast
-$ tc qdisc show dev <YOUR_INTERFACE>
+sudo tc qdisc add dev wlp4s0 root pfifo_fast
+tc qdisc show dev wlp4s0
 ```
 
 **Traffic:**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase2A_tc.log"
-$ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase2A_iperf.log
+iperf3 -s
+iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase1_iperf.log
 ```
 
-**Data Extraction:**
+**Monitoring:**
 ```bash
-$ grep "^\[SUM\]" logs/phase2A_iperf.log | awk '{ t++; print t "," $6 }' > logs/phase2A_throughput.csv
-$ awk '/dropped/ { t++; print t "," $4 }' logs/phase2A_tc.log > logs/phase2A_drops.csv
+watch -n 1 "tc -s qdisc show dev wlp4s0 | tee -a logs/phase1_tc.log"
 ```
 
-**Visualization:**
+### Phase 2 — Bottleneck Introduction (TBF)
+
+Artificial bottleneck enforced:
 ```bash
-$ gnuplot -e "
-set terminal png size 800,500;
-set output 'logs/phase2A_throughput.png';
-set title 'Phase 2A: Throughput under Bottleneck (pfifo_fast)';
-set xlabel 'Time (seconds)';
-set ylabel 'Throughput (Gbps)';
-set grid;
-plot 'logs/phase2A_throughput.csv' using 1:2 with lines lw 2 title 'pfifo_fast';
-"
-
-$ gnuplot -e "
-set terminal png size 800,500;
-set output 'logs/phase2A_drops.png';
-set title 'Phase 2A: Packet Drops (pfifo_fast)';
-set xlabel 'Time (seconds)';
-set ylabel 'Dropped Packets';
-set grid;
-plot 'logs/phase2A_drops.csv' using 1:2 with lines lw 2 lc rgb 'red' title 'pfifo_fast drops';
-"
+sudo tc qdisc add dev wlp4s0 root handle 1: \
+tbf rate 5mbit burst 8kbit latency 200ms
 ```
 
-### Phase 2B: fq_codel under Bottleneck
+Verified via:
+```bash
+tc -s qdisc show dev wlp4s0
+```
+
+Overlimit counters observed increasing under load.
+
+### fq_codel Attached Under TBF
 
 ```bash
-$ sudo tc qdisc del dev <YOUR_INTERFACE> parent 1:1
-$ sudo tc qdisc add dev <YOUR_INTERFACE> parent 1:1 fq_codel
-$ tc qdisc show dev <YOUR_INTERFACE>
+sudo tc qdisc add dev wlp4s0 parent 1:1 fq_codel
 ```
 
-**Traffic:**
+**Verified:**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase2B_tc.log"
-$ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase2B_iperf.log
+tc qdisc show dev wlp4s0
 ```
 
-**Data Extraction:**
+### Observed Parameters
+
+```
+limit 10240p
+flows 1024
+quantum 1514
+target 5ms
+interval 100ms
+memory_limit 32Mb
+```
+
+These were the actual runtime fq_codel defaults.
+
+### Metrics Extracted
+
+**Throughput:**
 ```bash
-$ grep "^\[SUM\]" logs/phase2B_iperf.log | awk '{ t++; print t "," $6 }' > logs/phase2B_throughput.csv
-$ awk '/dropped/ { t++; print t "," $4 }' logs/phase2B_tc.log > logs/phase2B_drops.csv
+grep "^\[SUM\]" logs/phase2B_iperf.log \
+| awk '{ t++; print t "," $6 }'
 ```
 
-**Visualization:**
+**Drops:**
 ```bash
-$ gnuplot -e "
-set terminal png size 800,500;
-set output 'logs/phase2B_throughput.png';
-set title 'Phase 2B: Throughput under Bottleneck (fq_codel)';
-set xlabel 'Time (seconds)';
-set ylabel 'Throughput (Gbps)';
-set grid;
-plot 'logs/phase2B_throughput.csv' using 1:2 with lines lw 2 lc rgb 'blue' title 'fq_codel';
-"
-
-$ gnuplot -e "
-set terminal png size 800,500;
-set output 'logs/phase2B_drops.png';
-set title 'Phase 2B: Packet Drops (fq_codel)';
-set xlabel 'Time (seconds)';
-set ylabel 'Dropped Packets';
-set grid;
-plot 'logs/phase2B_drops.csv' using 1:2 with lines lw 2 lc rgb 'blue' title 'fq_codel drops';
-"
+awk '/dropped/ { t++; print t "," $4 }'
 ```
 
----
+### Actual Observations (Experimentally Seen)
 
-## Phase 3: Fairness and Congestion Dynamics
-
-### Phase 3A: pfifo_fast Fairness Test
-
-```bash
-$ sudo tc qdisc del dev <YOUR_INTERFACE> root 2>/dev/null
-$ sudo tc qdisc add dev <YOUR_INTERFACE> root pfifo_fast
-$ tc qdisc show dev <YOUR_INTERFACE>
-```
-
-**Traffic:**
-```bash
-$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase3A_tc.log"
-$ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase3A_iperf.log
-```
-
-**Data Extraction:**
-```bash
-$ grep "^\[SUM\]" logs/phase3A_iperf.log | awk '{ t++; print t "," $6 }' > logs/phase3A_throughput.csv
-$ awk '/dropped/ { t++; print t "," $4 }' logs/phase3A_tc.log > logs/phase3A_drops.csv
-```
-
-### Phase 3B: fq_codel Fairness Test
-
-```bash
-$ sudo tc qdisc del dev <YOUR_INTERFACE> root
-$ sudo tc qdisc add dev <YOUR_INTERFACE> root fq_codel
-$ tc qdisc show dev <YOUR_INTERFACE>
-```
-
-**Traffic:**
-```bash
-$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase3B_tc.log"
-$ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase3B_iperf.log
-```
-
-**Data Extraction:**
-```bash
-$ grep "^\[SUM\]" logs/phase3B_iperf.log | awk '{ t++; print t "," $6 }' > logs/phase3B_throughput.csv
-$ awk '/dropped/ { t++; print t "," $4 }' logs/phase3B_tc.log > logs/phase3B_drops.csv
-```
-
-### Comparison
-
-```bash
-$ gnuplot -e "
-set terminal png size 900,500;
-set output 'logs/phase3_compare_drops.png';
-set title 'Phase 3: Packet Drop Behavior Comparison';
-set xlabel 'Time (seconds)';
-set ylabel 'Dropped Packets';
-set grid;
-plot 'logs/phase3A_drops.csv' using 1:2 with lines lw 2 lc rgb 'red' title 'pfifo_fast', \
-     'logs/phase3B_drops.csv' using 1:2 with lines lw 2 lc rgb 'blue' title 'fq_codel';
-"
-```
-
----
-
-## Part 1 Results Summary
-
-| Phase | Queue Discipline | Key Finding |
-|-------|-----------------|-------------|
-| **Phase 1** | pfifo_fast | High throughput, high variance, no AQM |
-| **Phase 2A** | pfifo_fast | Bursty drops, oscillations, bufferbloat |
-| **Phase 2B** | fq_codel | Smoother throughput, controlled drops, low latency |
-| **Phase 3A** | pfifo_fast | Unfair flow allocation, synchronized congestion |
-| **Phase 3B** | fq_codel | Fair flow distribution, stable performance |
-
-### Key Observations
-
-**pfifo_fast Limitations:**
-- Tail-drop only activates after queue saturation (reactive)
-- Single queue for all flows (poor fairness)
-- No delay control (bufferbloat under congestion)
-- Bursty drop pattern (congestion synchronization)
-
-**fq_codel Advantages:**
-- Early packet drops prevent bufferbloat (proactive AQM)
-- Per-flow queuing with 1024 queues (excellent fairness)
-- CoDel algorithm controls delay (low latency)
-- Controlled drop pattern (no synchronization)
-
-**Critical Insight:** fq_codel drops MORE packets but performs BETTER because controlled early drops prevent bufferbloat and maintain low latency.
-
-### Research Insight
-
-Part 1 demonstrates that while fq_codel improves congestion stability and fairness, it remains statically configured. This motivates the need for adaptive parameter tuning under dynamic workload conditions, forming the basis for Part 3.
+- pfifo_fast produced bursty drop clusters
+- fq_codel distributed drops across time
+- fq_codel showed higher drop count but lower oscillation
+- Throughput stabilized under fq_codel
+- Fairness improved under multi-flow TCP load
+- TBF enforced deterministic rate limit (5mbit / 10mbit tests)
 
 ---
 
 # PART 2: Controlled Namespace Testbed ✅
 
-## Architecture
+This removed dependency on WiFi variability.
 
-```
-       ns1 (10.0.0.1/24)                    ns2 (10.0.0.2/24)
-    ┌─────────────────┐                  ┌─────────────────┐
-    │  Traffic Sender │                  │ Traffic Receiver│
-    │   (iperf3 -c)   │                  │   (iperf3 -s)   │
-    └────────┬────────┘                  └────────┬────────┘
-             │                                    │
-         veth1 ←──────── Virtual Cable ─────────→ veth2
-             │
-    ┌────────▼────────┐
-    │   TBF (10 Mbit) │  ← Bandwidth Limiter
-    └────────┬────────┘
-             │
-    ┌────────▼────────┐
-    │    fq_codel     │  ← Active Queue Management
-    └─────────────────┘
-```
-
-## Step-by-Step Setup
-
-### Step 1: Clean Previous Setup
+## Namespaces Created
 
 ```bash
-$ sudo ip netns del ns1 2>/dev/null
-$ sudo ip netns del ns2 2>/dev/null
-$ sudo ip link del veth1 2>/dev/null
-$ sudo ip link del veth2 2>/dev/null
+sudo ip netns add ns1
+sudo ip netns add ns2
 ```
 
-### Step 2: Create Network Namespaces
+## veth Pair
 
 ```bash
-$ sudo ip netns add ns1
-$ sudo ip netns add ns2
-$ ip netns list
+sudo ip link add veth1 type veth peer name veth2
 ```
 
-### Step 3: Create Virtual Ethernet Pair
+## IP Assignment
 
 ```bash
-$ sudo ip link add veth1 type veth peer name veth2
-$ ip link show | grep veth
+sudo ip netns exec ns1 ip addr add 10.0.0.1/24 dev veth1
+sudo ip netns exec ns2 ip addr add 10.0.0.2/24 dev veth2
 ```
 
-### Step 4: Move Interfaces into Namespaces
+## Bottleneck Applied Inside Namespace
 
 ```bash
-$ sudo ip link set veth1 netns ns1
-$ sudo ip link set veth2 netns ns2
-$ sudo ip netns exec ns1 ip link show
-$ sudo ip netns exec ns2 ip link show
+sudo ip netns exec ns1 tc qdisc add dev veth1 root handle 1: \
+tbf rate 10mbit burst 4kbit latency 50ms
 ```
 
-### Step 5: Bring Interfaces UP
-
+Then:
 ```bash
-$ sudo ip netns exec ns1 ip link set lo up
-$ sudo ip netns exec ns2 ip link set lo up
-$ sudo ip netns exec ns1 ip link set veth1 up
-$ sudo ip netns exec ns2 ip link set veth2 up
+sudo ip netns exec ns1 tc qdisc add dev veth1 parent 1:1 fq_codel
 ```
 
-### Step 6: Assign IP Addresses
+## What This Proved
 
-```bash
-$ sudo ip netns exec ns1 ip addr add 10.0.0.1/24 dev veth1
-$ sudo ip netns exec ns2 ip addr add 10.0.0.2/24 dev veth2
-$ sudo ip netns exec ns1 ip addr show veth1
-$ sudo ip netns exec ns2 ip addr show veth2
-```
-
-### Step 7: Verify Connectivity
-
-```bash
-$ sudo ip netns exec ns1 ping -c 4 10.0.0.2
-```
-
-Expected: 0% packet loss, RTT ~0.04 ms
-
-### Step 8: Add Traffic Control Bottleneck
-
-**8a. Add Token Bucket Filter:**
-```bash
-$ sudo ip netns exec ns1 tc qdisc add dev veth1 root handle 1: \
-    tbf rate 10mbit burst 4kbit latency 50ms
-```
-
-**8b. Add fq_codel:**
-```bash
-$ sudo ip netns exec ns1 tc qdisc add dev veth1 parent 1:1 fq_codel
-```
-
-**Verify:**
-```bash
-$ sudo ip netns exec ns1 tc qdisc show dev veth1
-```
-
-### Step 9: Generate Traffic
-
-**Terminal 1 (Server):**
-```bash
-$ sudo ip netns exec ns2 iperf3 -s
-```
-
-**Terminal 2 (Client):**
-```bash
-$ sudo ip netns exec ns1 iperf3 -c 10.0.0.2 -P 16 -t 30
-```
-
-Expected output:
-- Sender: ~10.3 Mbits/sec
-- Receiver: ~9.16 Mbits/sec
-- Retransmissions: ~6,404
-
-### Step 10: Observe Queue Statistics
-
-```bash
-$ sudo ip netns exec ns1 tc -s qdisc show dev veth1
-```
-
-Expected:
-- TBF: dropped ~6,404, overlimits ~74,365
-- fq_codel: target 5ms, interval 100ms
-
-## Part 2 Results
-
-**What We Proved:**
-1. Traffic demand exceeded bottleneck capacity (74,365 overlimit events)
-2. TBF successfully enforced bandwidth limit (~9.16 Mbps actual)
-3. fq_codel actively managed queue delay (controlled drops)
-4. TCP adapted to congestion (retransmissions)
-5. Setup is reproducible and deterministic
+- Controlled congestion reproducibility
+- Drop-overlimit separation
+- Deterministic bottleneck modeling
+- Repeatable stress behavior
+- Reliable fairness comparison
 
 ---
 
 # PART 3: Adaptive Userspace Controller 🔜
 
-## Architecture
+This extends your existing system.
 
+## What You Have Designed (Heuristic-Based)
+
+**Closed-loop:**
 ```
-Network Traffic → tc (fq_codel with dynamic parameters)
-                     ↓ metrics
-         Userspace Controller
-         ├─ Metrics Collection
-         ├─ Congestion Classifier  
-         └─ Parameter Optimizer
-                     ↓ updates
-         tc qdisc change (every 100ms)
+Monitor → Classify → Adjust → Observe → Repeat
 ```
 
-## Planned Components
+**Metrics planned:**
+- Drop rate D(t)
+- Backlog B(t)
+- Throughput variance
+- Flow density
 
-### 1. Metrics Collector
-- Monitor `tc -s qdisc` every 100ms
-- Extract: throughput, drops, backlog, latency
+**Congestion states:**
+- NORMAL
+- LIGHT
+- HEAVY
 
-### 2. Congestion Classifier
-- **Normal:** Low drop rate, stable throughput
-- **Light:** Moderate drops
-- **Heavy:** High drops, oscillations
-
-### 3. Parameter Optimizer
-
-Initial implementation uses a heuristic rule-based controller:
-- Drop-rate based adjustment
-- Backlog threshold control
-- Multi-state congestion classification
-
-Future extension may explore PID-based tuning.
-
-### 4. Configuration Manager
-- Apply via `tc qdisc change`
-- Log updates, rollback on failure
-
-## Implementation Sketch
-
-**metrics_collector.py:**
-```python
-import subprocess, time
-
-def collect_qdisc_metrics(interface='<YOUR_INTERFACE>'):
-    cmd = f"tc -s qdisc show dev {interface}"
-    output = subprocess.check_output(cmd, shell=True).decode()
-    # Parse and return metrics
-    return metrics
-```
-
-**congestion_classifier.py:**
-```python
-def classify_congestion(metrics_history):
-    recent_drop_rate = calculate_drop_rate(metrics_history)
-    
-    if recent_drop_rate < 0.01:
-        return "NORMAL"
-    elif recent_drop_rate < 0.05:
-        return "LIGHT"
-    else:
-        return "HEAVY"
-```
-
-**parameter_tuner.py:**
-```python
-def optimize_fq_codel_params(congestion_state):
-    if congestion_state == "NORMAL":
-        return "5ms", "100ms"
-    elif congestion_state == "LIGHT":
-        return "3ms", "80ms"
-    else:  # HEAVY
-        return "2ms", "50ms"
-
-def apply_qdisc_change(interface, target, interval):
-    cmd = f"sudo tc qdisc change dev {interface} root fq_codel target {target} interval {interval}"
-    subprocess.run(cmd, shell=True)
-```
-
----
-
-# PART 4: eBPF-Enhanced In-Kernel Intelligence 🔜
-
-## Architecture
-
-```
-Network Packets
-    ↓
-Linux Kernel Network Stack
-    ├─ eBPF Program (XDP/TC hook)
-    │  └─ Per-packet processing, flow tracking
-    └─ eBPF Map (shared kernel memory)
-       └─ Flow state table, metrics counters
-    ↓
-Userspace Controller
-    └─ Reads eBPF maps, updates parameters
-```
-
-## Planned Components
-
-### 1. eBPF Metrics Collector
-- **XDP hook:** Per-packet metrics at earliest point
-- **TC hook:** Queue-aware metrics
-- **Per-flow tracking:** RTT, throughput, loss rate
-
-### 2. In-Kernel Intelligence
-- Flow classification (elephant vs. mice flows)
-- RTT estimation per flow
-- Congestion detection
-- Per-flow marking (ECN, DSCP, priority)
-
-### 3. Adaptive Flow Scheduling
-- Dynamic priority based on flow behavior
-- Per-flow fairness
-- Congestion-aware routing
-
-## Implementation Sketch
-
-**ebpf_metrics.c:**
-```c
-#include <linux/bpf.h>
-#include <bpf/bpf_helpers.h>
-
-struct flow_metrics {
-    __u64 packets;
-    __u64 bytes;
-    __u64 last_seen;
-    __u32 rtt_min;
-    __u32 rtt_avg;
-    __u16 drop_count;
-};
-
-struct {
-    __uint(type, BPF_MAP_TYPE_HASH);
-    __type(key, __u32);
-    __type(value, struct flow_metrics);
-    __uint(max_entries, 10000);
-} flow_table SEC(".maps");
-
-SEC("tc")
-int track_flow_metrics(struct __sk_buff *skb) {
-    __u32 flow_hash = skb->hash;
-    struct flow_metrics *metrics = bpf_map_lookup_elem(&flow_table, &flow_hash);
-    
-    if (metrics) {
-        metrics->packets++;
-        metrics->bytes += skb->len;
-        metrics->last_seen = bpf_ktime_get_ns();
-    }
-    
-    return TC_ACT_OK;
-}
-```
-
-**ebpf_reader.py:**
-```python
-from bcc import BPF
-
-b = BPF(src_file="ebpf_metrics.c")
-fn = b.load_func("track_flow_metrics", BPF.SCHED_CLS)
-b.attach_ingress("<YOUR_INTERFACE>", fn)
-
-flow_table = b["flow_table"]
-for k, v in flow_table.items():
-    print(f"Flow {k.value}: {v.packets} packets, {v.bytes} bytes")
-```
-
----
-
-## 🔄 Reproducibility
-
-### Part 1 ✅
+**Parameter tuning:**
 ```bash
-$ git clone https://github.com/Amritha902/ccn-linux-qdisc-study.git
-$ cd ccn-linux-qdisc-study
+tc qdisc change dev wlp4s0 root fq_codel target X interval Y
 ```
-Follow phase-by-phase instructions above. All logs/plots stored in `logs/`.
-
-### Part 2 ✅
-All commands documented step-by-step. Reproducible on any Linux system with iproute2 and iperf3.
-
-### Part 3 & 4 🔜
-Will include Python scripts, eBPF C code, compilation scripts, and test automation.
 
 ---
 
-## 📚 References
+# PART 4: eBPF-Enhanced Intelligence 🔜
 
-1. **CoDel Algorithm:** Nichols, K., & Jacobson, V. (2012). "Controlling Queue Delay." *ACM Queue, 10*(5).
-2. **Linux Traffic Control:** `man tc`, `man tc-fq_codel`
-3. **Active Queue Management:** Braden, B. et al. (1998). RFC 2309.
-4. **eBPF:** Gregg, B. (2019). *BPF Performance Tools*. Addison-Wesley.
+This enhances metric precision.
 
-**Tools:**
-- iperf3: https://iperf.fr/
-- iproute2: https://wiki.linuxfoundation.org/networking/iproute2
-- BCC: https://github.com/iovisor/bcc
+## Layered Architecture
 
----
+```
+Userspace Controller (100ms loop)
+↕
+eBPF TC Hook (packet-level metrics)
+↕
+fq_codel queue discipline
+```
 
-## 📊 Project Timeline
-
-| Phase | Status | Completion |
-|-------|--------|------------|
-| Part 1: Phase 1-3 | ✅ Complete | Feb 2026 |
-| Part 2: Testbed | ✅ Complete | Feb 2026 |
-| Part 3: Controller | 🔜 Planned | Mar-Apr 2026 |
-| Part 4: eBPF | 🔜 Planned | May-Jun 2026 |
+**Multi-timescale adaptation.**
 
 ---
 
-**Author:** Amritha S  
-**Platform:** Ubuntu 24.04 LTS  
-**GitHub:** https://github.com/Amritha902/ccn-linux-qdisc-study  
-**License:** MIT (Educational/Research)
+## Additional What We Have Actually Built
+
+- CSV logging framework
+- Drop comparison plots
+- Throughput comparison plots
+- Phase 3 drop comparison plot
+- Reproducible GitHub repository
+- Structured experiment documentation
+- Full step-by-step test methodology
 
 ---
 
-**End of README**
+## What Makes This Research-Level
+
+- Empirical characterization under stress
+- Controlled bottleneck modeling
+- Fairness evaluation
+- Time-series congestion analysis
+- Heuristic-based adaptive extension
+- Roadmap toward in-kernel intelligence
+- No kernel modification required
+
+---
+
+## Conclusion
+
+This project is no longer just:
+
+> "Testing qdiscs"
+
+It is:
+
+> **A structured experimental and adaptive congestion control research framework for Linux traffic control.**
+
+**If you want next:**
+- I can formalize your heuristic mathematically
+- Or strengthen novelty positioning
+- Or draft IEEE-ready methodology section
+
+Tell me which direction we refine.

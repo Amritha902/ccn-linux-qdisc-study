@@ -6,7 +6,7 @@
 **GitHub:** https://github.com/Amritha902/ccn-linux-qdisc-study  
 **Platform:** Ubuntu 24.04 LTS  
 **Kernel:** Linux x86_64 GNU/Linux  
-**Network Interface:** wlp1s0  
+**Network Interface:** wlp4s0 (verify yours using `ip a`)  
 **Date:** February 2026
 
 ---
@@ -75,7 +75,8 @@ $ uname -a
 $ ip a
 ```
 
-**Interface used:** `wlp1s0`
+**Network Interface:** Replace `<YOUR_INTERFACE>` with your active interface name (e.g., wlp4s0, eth0, enp0s3).  
+Check using: `ip a | grep UP`
 
 ### Required Tools
 
@@ -100,7 +101,7 @@ $ cd ~/ccn-linux-qdisc-study
 
 - **Traffic Generator:** iperf3 with 8 parallel TCP flows
 - **Test Duration:** 30 seconds per experiment
-- **Bottleneck Mechanism:** Token Bucket Filter (TBF) at 1 Gbit/s
+- **Bottleneck Mechanism:** Token Bucket Filter (TBF) configured to enforce artificial rate limits
 - **Monitoring:** Real-time queue statistics via `tc -s`
 - **Metrics:** Aggregate throughput, packet drops, queue depth
 
@@ -111,10 +112,12 @@ $ cd ~/ccn-linux-qdisc-study
 ### Configuration
 
 ```bash
-$ sudo tc qdisc del dev wlp1s0 root 2>/dev/null
-$ sudo tc qdisc add dev wlp1s0 root pfifo_fast
-$ tc qdisc show dev wlp1s0
+$ sudo tc qdisc del dev <YOUR_INTERFACE> root 2>/dev/null
+$ sudo tc qdisc add dev <YOUR_INTERFACE> root pfifo_fast
+$ tc qdisc show dev <YOUR_INTERFACE>
 ```
+
+**Note:** Replace `<YOUR_INTERFACE>` with your actual interface (e.g., wlp4s0, eth0).
 
 ### Traffic Generation
 
@@ -130,7 +133,7 @@ $ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase1_iperf.log
 
 **Terminal 3 (Optional):**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a logs/phase1_tc.log"
+$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase1_tc.log"
 ```
 
 ### Data Extraction
@@ -160,21 +163,21 @@ plot 'logs/phase1_throughput.csv' using 1:2 with lines lw 2 title 'pfifo_fast ba
 ### Bottleneck Configuration
 
 ```bash
-$ sudo tc qdisc del dev wlp1s0 root 2>/dev/null
-$ sudo tc qdisc add dev wlp1s0 root handle 1: tbf rate 1gbit burst 32kbit latency 50ms
-$ tc qdisc show dev wlp1s0
+$ sudo tc qdisc del dev <YOUR_INTERFACE> root 2>/dev/null
+$ sudo tc qdisc add dev <YOUR_INTERFACE> root handle 1: tbf rate 1gbit burst 32kbit latency 50ms
+$ tc qdisc show dev <YOUR_INTERFACE>
 ```
 
 ### Phase 2A: pfifo_fast under Bottleneck
 
 ```bash
-$ sudo tc qdisc add dev wlp1s0 parent 1:1 pfifo_fast
-$ tc qdisc show dev wlp1s0
+$ sudo tc qdisc add dev <YOUR_INTERFACE> parent 1:1 pfifo_fast
+$ tc qdisc show dev <YOUR_INTERFACE>
 ```
 
 **Traffic:**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a logs/phase2A_tc.log"
+$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase2A_tc.log"
 $ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase2A_iperf.log
 ```
 
@@ -210,14 +213,14 @@ plot 'logs/phase2A_drops.csv' using 1:2 with lines lw 2 lc rgb 'red' title 'pfif
 ### Phase 2B: fq_codel under Bottleneck
 
 ```bash
-$ sudo tc qdisc del dev wlp1s0 parent 1:1
-$ sudo tc qdisc add dev wlp1s0 parent 1:1 fq_codel
-$ tc qdisc show dev wlp1s0
+$ sudo tc qdisc del dev <YOUR_INTERFACE> parent 1:1
+$ sudo tc qdisc add dev <YOUR_INTERFACE> parent 1:1 fq_codel
+$ tc qdisc show dev <YOUR_INTERFACE>
 ```
 
 **Traffic:**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a logs/phase2B_tc.log"
+$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase2B_tc.log"
 $ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase2B_iperf.log
 ```
 
@@ -257,14 +260,14 @@ plot 'logs/phase2B_drops.csv' using 1:2 with lines lw 2 lc rgb 'blue' title 'fq_
 ### Phase 3A: pfifo_fast Fairness Test
 
 ```bash
-$ sudo tc qdisc del dev wlp1s0 root 2>/dev/null
-$ sudo tc qdisc add dev wlp1s0 root pfifo_fast
-$ tc qdisc show dev wlp1s0
+$ sudo tc qdisc del dev <YOUR_INTERFACE> root 2>/dev/null
+$ sudo tc qdisc add dev <YOUR_INTERFACE> root pfifo_fast
+$ tc qdisc show dev <YOUR_INTERFACE>
 ```
 
 **Traffic:**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a logs/phase3A_tc.log"
+$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase3A_tc.log"
 $ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase3A_iperf.log
 ```
 
@@ -277,14 +280,14 @@ $ awk '/dropped/ { t++; print t "," $4 }' logs/phase3A_tc.log > logs/phase3A_dro
 ### Phase 3B: fq_codel Fairness Test
 
 ```bash
-$ sudo tc qdisc del dev wlp1s0 root
-$ sudo tc qdisc add dev wlp1s0 root fq_codel
-$ tc qdisc show dev wlp1s0
+$ sudo tc qdisc del dev <YOUR_INTERFACE> root
+$ sudo tc qdisc add dev <YOUR_INTERFACE> root fq_codel
+$ tc qdisc show dev <YOUR_INTERFACE>
 ```
 
 **Traffic:**
 ```bash
-$ watch -n 1 "tc -s qdisc show dev wlp1s0 | tee -a logs/phase3B_tc.log"
+$ watch -n 1 "tc -s qdisc show dev <YOUR_INTERFACE> | tee -a logs/phase3B_tc.log"
 $ iperf3 -c 127.0.0.1 -P 8 -t 30 --logfile logs/phase3B_iperf.log
 ```
 
@@ -336,6 +339,10 @@ plot 'logs/phase3A_drops.csv' using 1:2 with lines lw 2 lc rgb 'red' title 'pfif
 - Controlled drop pattern (no synchronization)
 
 **Critical Insight:** fq_codel drops MORE packets but performs BETTER because controlled early drops prevent bufferbloat and maintain low latency.
+
+### Research Insight
+
+Part 1 demonstrates that while fq_codel improves congestion stability and fairness, it remains statically configured. This motivates the need for adaptive parameter tuning under dynamic workload conditions, forming the basis for Part 3.
 
 ---
 
@@ -505,8 +512,13 @@ Network Traffic → tc (fq_codel with dynamic parameters)
 - **Heavy:** High drops, oscillations
 
 ### 3. Parameter Optimizer
-- **PID Controller** or **Reinforcement Learning**
-- Adjust target/interval based on congestion level
+
+Initial implementation uses a heuristic rule-based controller:
+- Drop-rate based adjustment
+- Backlog threshold control
+- Multi-state congestion classification
+
+Future extension may explore PID-based tuning.
 
 ### 4. Configuration Manager
 - Apply via `tc qdisc change`
@@ -518,7 +530,7 @@ Network Traffic → tc (fq_codel with dynamic parameters)
 ```python
 import subprocess, time
 
-def collect_qdisc_metrics(interface='wlp1s0'):
+def collect_qdisc_metrics(interface='<YOUR_INTERFACE>'):
     cmd = f"tc -s qdisc show dev {interface}"
     output = subprocess.check_output(cmd, shell=True).decode()
     # Parse and return metrics
@@ -634,7 +646,7 @@ from bcc import BPF
 
 b = BPF(src_file="ebpf_metrics.c")
 fn = b.load_func("track_flow_metrics", BPF.SCHED_CLS)
-b.attach_ingress("wlp1s0", fn)
+b.attach_ingress("<YOUR_INTERFACE>", fn)
 
 flow_table = b["flow_table"]
 for k, v in flow_table.items():

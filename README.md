@@ -297,7 +297,125 @@ sudo ip netns exec ns2 iperf3 -c 10.0.0.1 -P 8 -t 30
 - Repeatable stress behavior across experimental runs
 - Reliable fairness comparison baseline
 - Elimination of WiFi variability and background traffic noise
+## Experimental Results — `fq_codel` Benchmark
 
+### Test Configuration
+
+| Parameter | Value |
+|---|---|
+| Topology | `ns1 ↔ veth ↔ ns2` |
+| Bottleneck | `tbf rate 10mbit burst 32kbit latency 100ms` |
+| Queue discipline | `fq_codel` |
+| Concurrent flows | 8 TCP streams |
+| Test duration | 20 seconds |
+
+Metrics collected: iperf3 JSON (per-flow throughput), `tc -s qdisc` (drops / backlog), ping RTT samples (0.1s interval).
+
+---
+
+### 1️⃣ Throughput Distribution
+
+**Per-Flow Throughput (Mbps)**
+
+| Flow | Throughput (Mbps) |
+|------|-------------------|
+| 1 | 1.206 |
+| 2 | 1.206 |
+| 3 | 1.206 |
+| 4 | 1.206 |
+| 5 | 1.258 |
+| 6 | 1.206 |
+| 7 | 1.258 |
+| 8 | 1.206 |
+
+**Aggregate Throughput: ≈ 10.1 Mbps (sender side)**
+
+---
+
+### 2️⃣ Fairness Evaluation
+
+**Jain's Fairness Index:**
+
+$$J = \frac{(\sum x_i)^2}{n \sum x_i^2}$$
+```
+Jain Fairness Index = 0.9997
+```
+
+**Interpretation:**
+- Value ≈ 1.0 indicates near-perfect fairness
+- All flows received almost identical bandwidth share
+- No starvation observed; no single flow dominated the bottleneck
+- `fq_codel` successfully enforced per-flow fairness under contention
+
+This confirms proper flow queuing and deficit round-robin behavior within `fq_codel`.
+
+---
+
+### 3️⃣ Latency Characterization
+
+RTT measurements (ping at 100 ms interval):
+
+| Metric | Value |
+|--------|-------|
+| Average RTT | 0.541 ms |
+| P95 RTT | 2.200 ms |
+| P99 RTT | 2.445 ms |
+| Maximum RTT | 5.280 ms |
+
+**Interpretation:**
+- Average latency remained sub-millisecond
+- Tail latency (P95, P99) remained below 3 ms
+- No bufferbloat behavior observed
+- Queue delay remained tightly bounded despite 8 concurrent flows
+
+This demonstrates effective active queue management.
+
+---
+
+### 4️⃣ Congestion Behavior Observations
+
+During sustained multi-flow load:
+- Drops increased gradually, not in burst clusters
+- Backlog remained controlled
+- No oscillatory collapse observed
+- Throughput stabilized near bottleneck capacity
+
+The deterministic namespace testbed successfully isolated and reproduced controlled congestion conditions.
+
+---
+
+### 5️⃣ Key Experimental Findings
+
+Under a controlled 10 Mbit bottleneck with 8 TCP flows:
+
+| Result | Value |
+|--------|-------|
+| ✅ Aggregate throughput | ≈ link capacity |
+| ✅ Jain fairness index | 0.9997 (near perfect) |
+| ✅ P95 latency | ≈ 2.2 ms |
+| ✅ Queue stability | No buildup instability |
+| ✅ Flow equity | No starvation or unfair allocation |
+
+**This validates:**
+- Correct TBF bottleneck enforcement
+- Proper `fq_codel` fairness behavior
+- Effective queue delay control under sustained congestion
+- Deterministic reproducibility of results
+
+---
+
+### Research Significance
+
+The namespace-based deterministic testbed provides:
+- Isolation from WiFi variability
+- Reproducible congestion modeling
+- Controlled evaluation of AQM behavior
+- Quantitative fairness and latency measurement
+
+This establishes a stable baseline for:
+- Comparison against `pfifo_fast`
+- Evaluation of adaptive controller (Part 3)
+- Flow-aware eBPF extensions (Part 4)
 ---
 
 # PART 3: Adaptive Userspace Controller

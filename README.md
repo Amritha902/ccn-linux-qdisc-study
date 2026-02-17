@@ -229,6 +229,8 @@ awk '/dropped/ { t++; print t "," $4 }'
 ---
 
 # PART 2: Controlled Namespace Testbed
+<img width="1288" height="491" alt="image" src="https://github.com/user-attachments/assets/7020bdc7-457c-45b7-90d5-75dec926820f" />
+
 
 **STATUS: COMPLETE**
 
@@ -1112,3 +1114,4 @@ This work demonstrates that meaningful latency and stability improvements can be
 **For questions or contributions:**  
 GitHub: https://github.com/Amritha902/ccn-linux-qdisc-study  
 Author: Amritha S
+![Uploading image.png…]()

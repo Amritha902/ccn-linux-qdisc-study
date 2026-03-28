@@ -1,0 +1,7 @@
+.
+├── Makefile
+├── project_tree.txt
+├── tc_monitor.c
+└── tc_monitor.o
+
+1 directory, 4 files

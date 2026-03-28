@@ -1,0 +1,3 @@
+t_s,drop_rate_per_s,drops_experiment,backlog_pkts,throughput_mbps,state,active_flows,elephant_flows,target_ms,interval_ms,limit_pkts,ebpf_mode
+0.51,0.0000,0,0,0.0000,NORMAL,0,0,5.00,50.0,256,tc-only
+1.02,0.0000,0,0,0.0000,NORMAL,0,0,5.00,50.0,256,tc-only

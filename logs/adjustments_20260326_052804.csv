@@ -1,0 +1,8 @@
+t,state,old_target,new_target,old_limit,new_limit,reason
+4.55,HEAVY,5,4.5,1024,921,mult-decrease β=0.9
+9.60,HEAVY,4.5,4.05,921,828,mult-decrease β=0.9
+14.65,HEAVY,4.05,3.645,828,745,mult-decrease β=0.9
+19.70,HEAVY,3.645,3.2805,745,670,mult-decrease β=0.9
+24.75,HEAVY,3.2805,2.9524500000000002,670,603,mult-decrease β=0.9
+29.80,HEAVY,2.9524500000000002,2.6572050000000003,603,542,mult-decrease β=0.9
+34.86,HEAVY,2.6572050000000003,2.3914845000000002,542,487,mult-decrease β=0.9

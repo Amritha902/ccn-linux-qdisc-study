@@ -1,0 +1,21 @@
+t,state,reason,old_target,new_target,old_limit,new_limit
+3.06,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+6.10,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+9.15,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+12.20,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+15.23,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+18.27,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+21.50,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+24.55,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+27.70,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+30.76,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+33.81,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+36.84,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+39.96,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+43.11,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+46.16,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+49.19,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+52.23,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+55.27,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+58.32,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+61.68,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024

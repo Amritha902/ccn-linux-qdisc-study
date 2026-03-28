@@ -1,0 +1,109 @@
+.
+├── 222.pdf
+├── acape_architecture.md
+├── acape_diagrams.html
+├── adaptive_controller.py
+├── analysis
+│   └── plot_results.py
+├── ccnqdisc (1).pdf
+├── complete_system_diagrams.html
+├── ebpf
+│   ├── Makefile
+│   ├── project_tree.txt
+│   ├── tc_monitor.c
+│   └── tc_monitor.o
+├── logs
+│   ├── adaptive_controller.csv
+│   ├── adjustments_20260326_051557.csv
+│   ├── adjustments_20260326_051757.csv
+│   ├── adjustments_20260326_051824.csv
+│   ├── adjustments_20260326_052804.csv
+│   ├── adjustments_20260326_052853.csv
+│   ├── ebpf_adj_20260326_054652.csv
+│   ├── ebpf_adj_20260326_055008.csv
+│   ├── ebpf_adj_20260326_055146.csv
+│   ├── ebpf_adj_20260326_055411.csv
+│   ├── ebpf_adj_20260326_060021.csv
+│   ├── ebpf_metrics_20260326_054652.csv
+│   ├── ebpf_metrics_20260326_055008.csv
+│   ├── ebpf_metrics_20260326_055146.csv
+│   ├── ebpf_metrics_20260326_055411.csv
+│   ├── ebpf_metrics_20260326_060021.csv
+│   ├── iperf_051739.log
+│   ├── iperf_051822.log
+│   ├── iperf_052758.log
+│   ├── iperf_052851.log
+│   ├── iperf_053725.log
+│   ├── iperf_053729.log
+│   ├── iperf_20260326_051555.log
+│   ├── iperf_p4_054646.log
+│   ├── iperf_p4_055000.log
+│   ├── iperf_p4_055146.log
+│   ├── iperf_p4_055402.log
+│   ├── iperf_server.log
+│   ├── metrics_20260326_051557.csv
+│   ├── metrics_20260326_051757.csv
+│   ├── metrics_20260326_051824.csv
+│   ├── metrics_20260326_052804.csv
+│   ├── metrics_20260326_052853.csv
+│   ├── phase1_iperf.log
+│   ├── phase1_tc.log
+│   ├── phase1_throughput.csv
+│   ├── phase1_throughput.png
+│   ├── phase2A_drops.csv
+│   ├── phase2A_drops.png
+│   ├── phase2A_iperf.log
+│   ├── phase2A_tc.log
+│   ├── phase2A_throughput.csv
+│   ├── phase2A_throughput.png
+│   ├── phase2B_drops.csv
+│   ├── phase2B_iperf.log
+│   ├── phase2B_tc.log
+│   ├── phase2B_throughput.csv
+│   ├── phase2B_throughput.png
+│   ├── phase2_compare_drops.png
+│   ├── phase3A_drops.csv
+│   ├── phase3A_drops.png
+│   ├── phase3A_iperf.log
+│   ├── phase3A_tc.log
+│   ├── phase3A_throughput.csv
+│   ├── phase3A_throughput.png
+│   ├── phase3B_drops.csv
+│   ├── phase3B_drops.png
+│   ├── phase3B_iperf.log
+│   ├── phase3B_tc.log
+│   ├── phase3B_throughput.csv
+│   ├── phase3B_throughput.png
+│   ├── phase3_compare_drops.png
+│   └── README.md
+├── part3_adaptive_controller.py
+├── plots
+│   ├── part3_adjustments.png
+│   ├── part3_drop_analysis.png
+│   ├── part3_overview.png
+│   ├── part3_state_timeline.png
+│   ├── part4_ebpf_overview.png
+│   └── part4_vs_part3_comparison.png
+├── project.txt
+├── proj.txt
+├── README.md
+├── REPORT.md
+├── results_controllertry1
+│   ├── backlog.png
+│   ├── drop_rate.png
+│   ├── tc_drops.png
+│   └── throughput.png
+├── results.md
+├── run_clean.sh
+├── run_experiment.sh
+├── scripts
+│   ├── controller.py
+│   ├── part4_ebpf_controller.py
+│   ├── plot_part3.py
+│   ├── plot_part4.py
+│   ├── run_part3.sh
+│   └── setup_ns.sh
+├── structure.txt
+└── three_part_architecture.html
+
+7 directories, 100 files

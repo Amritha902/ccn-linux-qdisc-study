@@ -1,0 +1,12 @@
+t,state,reason,old_target,new_target,old_limit,new_limit
+4.25,HEAVY,mult-decrease β=0.90,5.00,4.50,1024,921
+7.28,HEAVY,mult-decrease β=0.90,4.50,4.05,921,829
+10.31,HEAVY,mult-decrease β=0.90,4.05,3.65,829,746
+13.35,HEAVY,mult-decrease β=0.90,3.65,3.28,746,671
+16.49,HEAVY,mult-decrease β=0.90,3.28,2.95,671,604
+19.52,HEAVY,mult-decrease β=0.90,2.95,2.66,604,544
+22.55,HEAVY,mult-decrease β=0.90,2.66,2.39,544,489
+25.59,HEAVY,mult-decrease β=0.90,2.39,2.15,489,440
+32.08,HEAVY,mult-decrease β=0.90,2.15,1.94,440,396
+35.13,HEAVY,mult-decrease β=0.90,1.94,1.74,396,357
+38.22,HEAVY,mult-decrease β=0.90,1.74,1.57,357,321

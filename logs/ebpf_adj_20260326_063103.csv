@@ -1,0 +1,27 @@
+t,state,reason,old_target,new_target,old_limit,new_limit
+3.04,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+6.08,NORMAL,add-increase α=0.5,5.00,5.00,1024,1024
+11.13,HEAVY,mult-decrease β=0.90,5.00,4.50,1024,921
+14.18,HEAVY,mult-decrease β=0.90,4.50,4.05,921,829
+17.22,HEAVY,mult-decrease β=0.90,4.05,3.65,829,746
+20.25,HEAVY,mult-decrease β=0.90,3.65,3.28,746,671
+23.28,HEAVY,mult-decrease β=0.90,3.28,2.95,671,604
+26.32,HEAVY,mult-decrease β=0.90,2.95,2.66,604,544
+29.35,HEAVY,mult-decrease β=0.90,2.66,2.39,544,489
+32.37,HEAVY,mult-decrease β=0.90,2.39,2.15,489,440
+35.40,HEAVY,mult-decrease β=0.90,2.15,1.94,440,396
+38.43,HEAVY,mult-decrease β=0.90,1.94,1.74,396,357
+41.48,HEAVY,mult-decrease β=0.90,1.74,1.57,357,321
+44.61,HEAVY,mult-decrease β=0.90,1.57,1.41,321,289
+47.64,HEAVY,mult-decrease β=0.90,1.41,1.27,289,260
+50.67,HEAVY,mult-decrease β=0.90,1.27,1.14,260,256
+53.73,HEAVY,mult-decrease β=0.90,1.14,1.03,256,256
+56.75,HEAVY,mult-decrease β=0.90,1.03,1.00,256,256
+59.78,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+62.81,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+65.84,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+68.87,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+71.90,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+74.93,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+77.96,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256
+80.99,HEAVY,mult-decrease β=0.90,1.00,1.00,256,256

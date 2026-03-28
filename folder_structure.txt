@@ -1,0 +1,230 @@
+.
+├── 222.pdf
+├── acape_adjustments.png
+├── acape_architecture.md
+├── acape_controller.py
+├── acape_diagrams.html
+├── acape_gradients.png
+├── acape_overview.png
+├── acape_report.html
+├── ACAPE_Results_Analysis.html
+├── ACAPE_Visual_Summary.html
+├── adaptive_controller.py
+├── Adaptive Linux AQM a 2022.md
+├── analysis
+│   └── plot_results.py
+├── ccnqdisc (1).pdf
+├── complete_system_diagrams.html
+├── ebpf
+│   ├── Makefile
+│   ├── project_tree.txt
+│   ├── tc_monitor_bcc.c
+│   ├── tc_monitor.c
+│   └── tc_monitor.o
+├── folder_structure.txt
+├── IMPLEMENTATION_GUIDE.sh
+├── logs
+│   ├── acape_adj_20260328_071737.csv
+│   ├── acape_adj_20260328_073121.csv
+│   ├── acape_adj_20260328_073501.csv
+│   ├── acape_adj_20260328_073933.csv
+│   ├── acape_adj_20260328_074014.csv
+│   ├── acape_adj_20260328_090222.csv
+│   ├── acape_adj_20260328_091002.csv
+│   ├── acape_adj_20260328_091207.csv
+│   ├── acape_adj_20260328_091226.csv
+│   ├── acape_adj_20260328_144155.csv
+│   ├── acape_adj_20260328_151857.csv
+│   ├── acape_adj_20260328_154521.csv
+│   ├── acape_adj_20260328_155133.csv
+│   ├── acape_adj_20260328_155950.csv
+│   ├── acape_adj_20260328_164828.csv
+│   ├── acape_adj_20260328_171340.csv
+│   ├── acape_adj_20260328_171343.csv
+│   ├── acape_adj_20260328_172221.csv
+│   ├── acape_adj_20260328_182602.csv
+│   ├── acape_metrics_20260328_071737.csv
+│   ├── acape_metrics_20260328_073121.csv
+│   ├── acape_metrics_20260328_073501.csv
+│   ├── acape_metrics_20260328_073933.csv
+│   ├── acape_metrics_20260328_074014.csv
+│   ├── acape_metrics_20260328_090222.csv
+│   ├── acape_metrics_20260328_091002.csv
+│   ├── acape_metrics_20260328_091207.csv
+│   ├── acape_metrics_20260328_091226.csv
+│   ├── acape_metrics_20260328_144155.csv
+│   ├── acape_metrics_20260328_151857.csv
+│   ├── acape_metrics_20260328_154521.csv
+│   ├── acape_metrics_20260328_155133.csv
+│   ├── acape_metrics_20260328_155950.csv
+│   ├── acape_metrics_20260328_164828.csv
+│   ├── acape_metrics_20260328_171340.csv
+│   ├── acape_metrics_20260328_171343.csv
+│   ├── acape_metrics_20260328_172221.csv
+│   ├── acape_metrics_20260328_182602.csv
+│   ├── acape_state_20260328_071737.csv
+│   ├── acape_state_20260328_073121.csv
+│   ├── acape_state_20260328_073501.csv
+│   ├── acape_state_20260328_073933.csv
+│   ├── acape_state_20260328_074014.csv
+│   ├── acape_state_20260328_090222.csv
+│   ├── acape_state_20260328_091002.csv
+│   ├── acape_state_20260328_091207.csv
+│   ├── acape_state_20260328_091226.csv
+│   ├── acape_state_20260328_144155.csv
+│   ├── acape_state_20260328_151857.csv
+│   ├── acape_state_20260328_154521.csv
+│   ├── acape_state_20260328_155133.csv
+│   ├── acape_state_20260328_155950.csv
+│   ├── acape_state_20260328_164828.csv
+│   ├── acape_state_20260328_171340.csv
+│   ├── acape_state_20260328_171343.csv
+│   ├── acape_state_20260328_172221.csv
+│   ├── acape_state_20260328_182602.csv
+│   ├── adaptive_controller.csv
+│   ├── adjustments_20260326_051557.csv
+│   ├── adjustments_20260326_051757.csv
+│   ├── adjustments_20260326_051824.csv
+│   ├── adjustments_20260326_052804.csv
+│   ├── adjustments_20260326_052853.csv
+│   ├── adjustments_20260326_062554.csv
+│   ├── adjustments_20260326_062930.csv
+│   ├── adjustments_20260326_064518.csv
+│   ├── adjustments_20260326_064556.csv
+│   ├── ebpf_adj_20260326_054652.csv
+│   ├── ebpf_adj_20260326_055008.csv
+│   ├── ebpf_adj_20260326_055146.csv
+│   ├── ebpf_adj_20260326_055411.csv
+│   ├── ebpf_adj_20260326_060021.csv
+│   ├── ebpf_adj_20260326_062734.csv
+│   ├── ebpf_adj_20260326_063103.csv
+│   ├── ebpf_adj_20260326_063110.csv
+│   ├── ebpf_adj_20260326_063241.csv
+│   ├── ebpf_metrics_20260326_054652.csv
+│   ├── ebpf_metrics_20260326_055008.csv
+│   ├── ebpf_metrics_20260326_055146.csv
+│   ├── ebpf_metrics_20260326_055411.csv
+│   ├── ebpf_metrics_20260326_060021.csv
+│   ├── ebpf_metrics_20260326_062734.csv
+│   ├── ebpf_metrics_20260326_063103.csv
+│   ├── ebpf_metrics_20260326_063110.csv
+│   ├── ebpf_metrics_20260326_063241.csv
+│   ├── iperf_051739.log
+│   ├── iperf_051822.log
+│   ├── iperf_052758.log
+│   ├── iperf_052851.log
+│   ├── iperf_053725.log
+│   ├── iperf_053729.log
+│   ├── iperf_073933.log
+│   ├── iperf_074004.log
+│   ├── iperf_084605.log
+│   ├── iperf_090212.log
+│   ├── iperf_090914.log
+│   ├── iperf_090947.log
+│   ├── iperf_091223.log
+│   ├── iperf_144145.log
+│   ├── iperf_151853.log
+│   ├── iperf_154511.log
+│   ├── iperf_155107.log
+│   ├── iperf_155946.log
+│   ├── iperf_164821.log
+│   ├── iperf_171337.log
+│   ├── iperf_171343.log
+│   ├── iperf_172215.log
+│   ├── iperf_172546.log
+│   ├── iperf_182547.log
+│   ├── iperf_20260326_051555.log
+│   ├── iperf_20260326_064516.log
+│   ├── iperf_20260326_064554.log
+│   ├── iperf_acape_071727.log
+│   ├── iperf_p3_traffic.log
+│   ├── iperf_p4_054646.log
+│   ├── iperf_p4_055000.log
+│   ├── iperf_p4_055146.log
+│   ├── iperf_p4_055402.log
+│   ├── iperf_p4_traffic.log
+│   ├── iperf_server.log
+│   ├── metrics_20260326_051557.csv
+│   ├── metrics_20260326_051757.csv
+│   ├── metrics_20260326_051824.csv
+│   ├── metrics_20260326_052804.csv
+│   ├── metrics_20260326_052853.csv
+│   ├── metrics_20260326_062554.csv
+│   ├── metrics_20260326_062930.csv
+│   ├── metrics_20260326_064518.csv
+│   ├── metrics_20260326_064556.csv
+│   ├── phase1_iperf.log
+│   ├── phase1_tc.log
+│   ├── phase1_throughput.csv
+│   ├── phase1_throughput.png
+│   ├── phase2A_drops.csv
+│   ├── phase2A_drops.png
+│   ├── phase2A_iperf.log
+│   ├── phase2A_tc.log
+│   ├── phase2A_throughput.csv
+│   ├── phase2A_throughput.png
+│   ├── phase2B_drops.csv
+│   ├── phase2B_iperf.log
+│   ├── phase2B_tc.log
+│   ├── phase2B_throughput.csv
+│   ├── phase2B_throughput.png
+│   ├── phase2_compare_drops.png
+│   ├── phase2_iperf.log
+│   ├── phase3A_drops.csv
+│   ├── phase3A_drops.png
+│   ├── phase3A_iperf.log
+│   ├── phase3A_tc.log
+│   ├── phase3A_throughput.csv
+│   ├── phase3A_throughput.png
+│   ├── phase3B_drops.csv
+│   ├── phase3B_drops.png
+│   ├── phase3B_iperf.log
+│   ├── phase3B_tc.log
+│   ├── phase3B_throughput.csv
+│   ├── phase3B_throughput.png
+│   ├── phase3_compare_drops.png
+│   └── README.md
+├── Makefile
+├── part3_adaptive_controller.py
+├── plots
+│   ├── acape_adjustments.png
+│   ├── acape_gradients.png
+│   ├── acape_overview.png
+│   ├── acape_vs_part3.png
+│   ├── part3_adjustments.png
+│   ├── part3_drop_analysis.png
+│   ├── part3_overview.png
+│   ├── part3_state_timeline.png
+│   ├── part4_ebpf_overview.png
+│   └── part4_vs_part3_comparison.png
+├── project.txt
+├── proj.txt
+├── README.md
+├── REPORT.md
+├── results.md
+├── run_all.sh
+├── run_clean.sh
+├── run_experiment.sh
+├── scripts
+│   ├── acape_complete.py
+│   ├── acape_controller.py
+│   ├── acape_exporter.py
+│   ├── acape_final.py
+│   ├── acape_v5.py
+│   ├── cleanup_repo.sh
+│   ├── controller.py
+│   ├── ebpf_dashboard.py
+│   ├── part3_adaptive_controller.py
+│   ├── part4_ebpf_controller.py
+│   ├── plot_acape.py
+│   ├── plot_part3.py
+│   ├── plot_part4.py
+│   ├── run_acape_final.sh
+│   ├── run_part3.sh
+│   └── setup_ns.sh
+├── setup_ns.sh
+├── structure.txt
+├── tc_monitor.c
+└── three_part_architecture.html
+
+6 directories, 222 files

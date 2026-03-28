@@ -1,0 +1,4 @@
+t_s,dr_gradient,bl_gradient,rtt_gradient,regime,trajectory,predicted,workload
+2.575,0.0000,0.0000,0.0000,NORMAL,STABLE,NORMAL,MICE
+5.179,0.0000,0.0000,0.0000,NORMAL,STABLE,NORMAL,MICE
+7.778,0.0000,0.0000,0.0000,NORMAL,STABLE,NORMAL,MICE

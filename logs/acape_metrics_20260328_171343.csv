@@ -1,0 +1,5 @@
+t_s,drop_rate_per_s,drops_exp,backlog_pkts,throughput_mbps,rtt_proxy_ms,active_flows,elephant_flows,mice_flows,elephant_ratio,regime,trajectory,predicted_regime,workload_profile,target_ms,interval_ms,limit_pkts,quantum_bytes,ebpf_pkts,ebpf_bytes
+0.513,0.0000,0,0,0.0000,0.000,0,0,0,0.000,NORMAL,STABLE,NORMAL,MICE,5.00,50.0,256,300,0,0
+1.028,0.0000,0,0,0.0000,0.000,0,0,0,0.000,NORMAL,STABLE,NORMAL,MICE,5.00,50.0,256,300,0,0
+1.543,0.0000,0,0,0.0000,0.000,0,0,0,0.000,NORMAL,STABLE,NORMAL,MICE,5.00,50.0,256,300,0,0
+2.059,0.0000,0,0,0.0000,0.000,0,0,0,0.000,NORMAL,STABLE,NORMAL,MICE,5.00,50.0,256,300,0,0

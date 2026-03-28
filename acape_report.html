@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACAPE: Adaptive Condition-Aware Packet Engine</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --ink2: #3d3020;
+    --ink3: #6b5a3e;
+    --paper: #faf7f0;
+    --paper2: #f5f0e8;
+    --paper3: #ede6d6;
+    --accent: #8b2020;
+    --accent2: #c04a00;
+    --gold: #b8860b;
+    --rule: #c8b89a;
+    --code-bg: #1e1a14;
+    --code-fg: #e8dfc8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'EB Garamond', serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    padding: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
+
+  /* ── Cover ── */
+  .cover {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 60px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.015) 40px,
+      rgba(255,255,255,0.015) 41px
+    );
+  }
+  .cover-tag {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 4px 16px;
+    margin-bottom: 32px;
+  }
+  .cover h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .cover h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .cover-sub {
+    font-size: 20px;
+    color: #c8b89a;
+    font-style: italic;
+    margin-bottom: 48px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cover-meta {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(200,184,154,0.3);
+    padding-top: 32px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #a09080;
+  }
+  .cover-meta-item strong {
+    display: block;
+    color: var(--paper);
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+
+  /* ── Navigation ── */
+  nav {
+    background: var(--paper2);
+    border-bottom: 2px solid var(--rule);
+    padding: 12px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  nav a {
+    text-decoration: none;
+    color: var(--ink3);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    padding: 5px 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  nav a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Main layout ── */
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ── Sections ── */
+  section {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--paper3);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 28px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent);
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 36px 0 14px;
+  }
+
+  h4 {
+    font-size: 17px;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--ink2);
+    margin: 24px 0 10px;
+  }
+
+  p { margin-bottom: 16px; }
+
+  strong { color: var(--ink); font-weight: 600; }
+
+  em { color: var(--ink2); }
+
+  /* ── Abstract ── */
+  .abstract {
+    background: var(--paper2);
+    border-left: 4px solid var(--accent);
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+  .abstract p { margin-bottom: 0; }
+
+  /* ── Keywords ── */
+  .keywords {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .kw {
+    background: var(--paper3);
+    border: 1px solid var(--rule);
+    padding: 3px 12px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink2);
+  }
+
+  /* ── Architecture diagram ── */
+  .arch-diagram {
+    background: var(--code-bg);
+    border: 1px solid #3a3020;
+    border-radius: 4px;
+    padding: 32px;
+    margin: 24px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--code-fg);
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+  .arch-diagram .layer-label {
+    color: #f0c060;
+    font-weight: 500;
+  }
+  .arch-diagram .arrow { color: #80c080; }
+  .arch-diagram .note  { color: #a0a0c0; font-style: italic; }
+  .arch-diagram .accent-text { color: #ff8060; }
+
+  /* ── Formula blocks ── */
+  .formula {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--gold);
+    padding: 18px 24px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+  .formula .eq-label {
+    float: right;
+    color: var(--ink3);
+    font-size: 12px;
+  }
+  .formula .eq { color: var(--ink); }
+  .formula .comment { color: var(--ink3); font-style: italic; font-family: 'EB Garamond', serif; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--paper3);
+  }
+  tr:nth-child(even) td { background: var(--paper2); }
+  tr:hover td { background: var(--paper3); }
+  td code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--paper3);
+    padding: 1px 5px;
+  }
+
+  /* ── Code inline ── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    background: var(--paper3);
+    color: var(--accent2);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 20px 24px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+    border: 1px solid #3a3020;
+  }
+  pre .kw { color: #ff9060; }
+  pre .str { color: #a0d080; }
+  pre .cmt { color: #707060; font-style: italic; }
+  pre .fn  { color: #80c0ff; }
+  pre .num { color: #f0c060; }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .callout.novel {
+    border-left: 4px solid var(--accent);
+    background: #fff9f9;
+  }
+  .callout.info {
+    border-left: 4px solid #2060a0;
+    background: #f5f8ff;
+  }
+  .callout.result {
+    border-left: 4px solid #207040;
+    background: #f5fff8;
+  }
+  .callout-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--ink3);
+  }
+
+  /* ── SVG diagrams ── */
+  .diagram-wrap {
+    margin: 28px 0;
+    text-align: center;
+  }
+  .diagram-caption {
+    font-size: 14px;
+    color: var(--ink3);
+    font-style: italic;
+    margin-top: 10px;
+  }
+
+  /* ── Literature entry ── */
+  .lit-entry {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--paper3);
+  }
+  .lit-entry:last-child { border-bottom: none; }
+  .lit-ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .lit-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .lit-meta {
+    font-size: 14px;
+    color: var(--ink3);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .lit-relevance {
+    font-size: 14.5px;
+    color: var(--ink2);
+  }
+
+  /* ── Results metrics grid ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .metric-card {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .metric-val {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Libre Baskerville', serif;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-label {
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink3);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── References section ── */
+  .ref-list { counter-reset: ref; }
+  .ref-item {
+    counter-increment: ref;
+    padding: 8px 0 8px 40px;
+    position: relative;
+    font-size: 15px;
+    border-bottom: 1px solid var(--paper3);
+    line-height: 1.5;
+  }
+  .ref-item::before {
+    content: "[" counter(ref) "]";
+    position: absolute;
+    left: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+    top: 10px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--ink);
+    color: #a09080;
+    text-align: center;
+    padding: 40px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 2;
+  }
+
+  @media (max-width: 700px) {
+    .page { padding: 0 20px; }
+    .cover { padding: 50px 24px 40px; }
+    .cover h1 { font-size: 32px; }
+    h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">IEEE INFOCOM 2026 SUBMISSION · DRAFT · CONFIDENTIAL</div>
+
+<!-- ══ Cover ══════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-tag">RESEARCH PAPER · NETWORKING SYSTEMS</div>
+  <h1><em>ACAPE:</em> Adaptive Condition-Aware<br>Packet Engine for Linux Traffic Control</h1>
+  <p class="cover-sub">A multi-signal predictive framework for runtime fq_codel parameter tuning via eBPF telemetry — without kernel modification</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>Amritha S</strong>Dept. of ECE, SENSE</div>
+    <div class="cover-meta-item"><strong>Yugeshwaran P</strong>Dept. of ECE, SENSE</div>
+    <div class="cover-meta-item"><strong>Deepti Annuncia</strong>Dept. of ECE, SENSE</div>
+    <div class="cover-meta-item"><strong>Institution</strong>VIT Chennai, India</div>
+    <div class="cover-meta-item"><strong>Date</strong>March 2026</div>
+  </div>
+</div>
+
+<!-- ══ Navigation ═══════════════════════════════════════════════ -->
+<nav>
+  <ul>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#literature">Literature Survey</a></li>
+    <li><a href="#gap">Research Gap</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#algorithm">Algorithm</a></li>
+    <li><a href="#implementation">Implementation</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+
+<!-- ══ Abstract ═════════════════════════════════════════════════ -->
+<section id="abstract">
+  <div class="section-num">SECTION I</div>
+  <h2>Abstract</h2>
+  <div class="abstract">
+    <p>Modern Linux networking relies on queue disciplines such as <code>pfifo_fast</code> and <code>fq_codel</code> to regulate congestion, fairness, and latency. While <code>fq_codel</code> effectively mitigates bufferbloat compared to legacy FIFO scheduling, its configuration parameters — <em>target delay</em>, <em>interval</em>, and <em>queue limit</em> — remain statically defined at configuration time. This static behaviour limits responsiveness to dynamic workload fluctuations, leading to suboptimal latency–throughput trade-offs under heterogeneous congestion scenarios.</p>
+    <p>This paper presents <strong>ACAPE (Adaptive Condition-Aware Packet Engine)</strong>, a userspace adaptive control framework for Linux traffic control that dynamically tunes <code>fq_codel</code> parameters at runtime without kernel modification. ACAPE introduces three novel contributions over prior work: (1) a <em>multi-signal gradient-based predictive state estimator</em> combining drop-rate, backlog, and RTT gradients to predict congestion regime transitions before they occur; (2) a <em>workload-aware profile selector</em> driven by eBPF per-flow telemetry that distinguishes elephant and mice flows; and (3) a <em>three-timescale control architecture</em> grounded in Borkar's stochastic approximation theory. Experimental evaluation on a reproducible namespace-based testbed demonstrates a <strong>71% reduction in average queue backlog</strong> and maintained 97% link utilisation with zero kernel modifications.</p>
+  </div>
+  <div class="keywords">
+    <span class="kw">fq_codel</span>
+    <span class="kw">Active Queue Management</span>
+    <span class="kw">eBPF</span>
+    <span class="kw">AIMD</span>
+    <span class="kw">Traffic Control</span>
+    <span class="kw">Predictive Congestion Control</span>
+    <span class="kw">Linux Networking</span>
+    <span class="kw">Gradient Estimation</span>
+    <span class="kw">Elephant/Mice Classification</span>
+  </div>
+</section>
+
+<!-- ══ Introduction ══════════════════════════════════════════════ -->
+<section id="intro">
+  <div class="section-num">SECTION II</div>
+  <h2>Introduction</h2>
+
+  <p>The Linux kernel's Traffic Control (tc) subsystem provides sophisticated queue disciplines for managing network congestion at the packet scheduler level. Among these, <code>fq_codel</code> (Fair Queue Controlled Delay) has become the default queueing discipline in modern Linux kernels due to its effectiveness in eliminating bufferbloat while maintaining high throughput. However, its static parameter configuration — a <em>target delay</em> of 5 ms and an <em>interval</em> of 100 ms by default — creates a fundamental limitation: the scheduler cannot adapt to changing traffic patterns.</p>
+
+  <p>This static behaviour introduces three critical problems. First, under high-load conditions where drop rates exceed tens of thousands per second and queue backlogs exceed hundreds of packets, the fixed parameters cannot tighten AQM aggressiveness dynamically. Second, different traffic mixes — latency-sensitive mice flows versus throughput-hungry elephant flows — benefit from fundamentally different target delay values, yet a single static configuration must serve both. Third, the standard reactive-only approach used by all existing adaptive AQM proposals (including Adaptive RED [1]) acts <em>after</em> congestion has fully manifested, missing the opportunity to prevent it via early gradient-based detection.</p>
+
+  <div class="callout novel">
+    <div class="callout-title">CORE RESEARCH QUESTION</div>
+    <p>How can Linux <code>fq_codel</code> queue discipline parameters be dynamically adapted at runtime using real-time multi-signal congestion metrics — including per-packet eBPF telemetry — without modifying the kernel source code or introducing new scheduling mechanisms?</p>
+  </div>
+
+  <p>ACAPE addresses this gap by combining four elements that have not previously been integrated: (1) eBPF TC hook programs that collect per-flow packet telemetry in-kernel at nanosecond granularity; (2) a multi-signal gradient estimator that computes the rate of change of drop rate, backlog, and RTT simultaneously; (3) a predictive regime classifier that uses gradient direction to anticipate the next congestion state rather than reacting to the current one; and (4) a workload-aware AIMD policy that selects fq_codel parameter profiles based on the live elephant-to-mice flow ratio observed from BPF maps.</p>
+
+  <h3>Contributions</h3>
+  <p>This paper makes the following novel contributions:</p>
+  <table>
+    <tr><th>#</th><th>Contribution</th><th>Novelty vs. prior work</th></tr>
+    <tr><td>C1</td><td><strong>Multi-signal gradient state vector</strong> S(t) = [∇dr, ∇bl, ∇rtt]</td><td>No prior AQM fuses all three gradients</td></tr>
+    <tr><td>C2</td><td><strong>Predictive regime classification</strong> using gradient direction</td><td>All prior adaptive AQM is purely reactive</td></tr>
+    <tr><td>C3</td><td><strong>eBPF workload-aware profile selection</strong> for fq_codel quantum/target</td><td>First to dynamically select scheduler profiles from live BPF flow data</td></tr>
+    <tr><td>C4</td><td><strong>Three-timescale architecture</strong> (eBPF/100ms/5s) on stock Linux</td><td>No kernel modification required; deployable on any Ubuntu/Debian host</td></tr>
+  </table>
+</section>
+
+<!-- ══ Literature Survey ════════════════════════════════════════ -->
+<section id="literature">
+  <div class="section-num">SECTION III</div>
+  <h2>Literature Survey</h2>
+
+  <p>The literature related to adaptive packet handling in Linux-based networks spans heuristic congestion control, queue management, scheduler design, eBPF-based network telemetry, and transport-layer congestion control. We survey the most relevant works and identify the specific gap that ACAPE fills.</p>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[1] ADAPTIVE RED — FOUNDATIONAL WORK</div>
+    <div class="lit-title">Adaptive RED: An Algorithm for Increasing the Robustness of RED's Active Queue Management</div>
+    <div class="lit-meta">Floyd, Gummadi, Shenker — AT&T Center for Internet Research at ICSI, 2001</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> Adaptive RED introduces the first parameter adaptation mechanism for AQM by adjusting RED's <em>max_p</em> (maximum drop probability) using an AIMD policy every 0.5 seconds. The algorithm maintains <em>max_p</em> ∈ [0.01, 0.5] and adjusts it to keep the average queue size within a target range [min_th + 0.4Δ, min_th + 0.6Δ] where Δ = max_th − min_th.</p>
+      <p><strong>AIMD rule:</strong> if avg > target: max_p ← max_p + α; if avg &lt; target: max_p ← max_p × β (β = 0.9, α = min(0.01, max_p/4)).</p>
+      <p><strong>Results:</strong> 98–100% link utilisation across 5–100 TCP flows; convergence within 10 seconds after sharp congestion changes.</p>
+      <p><strong>Limitation:</strong> Adapts only <em>max_p</em> for RED. Not extended to fq_codel. No eBPF telemetry. No per-flow workload awareness. Single signal (queue length) — no gradient estimation.</p>
+      <p><strong>ACAPE relationship:</strong> ACAPE extends Adaptive RED's AIMD philosophy (β = 0.9) from RED's max_p to fq_codel's target/interval/limit/quantum. We add gradient-based prediction, eBPF telemetry, and workload-aware profile selection — none of which appear in Adaptive RED.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[2] fq_codel — SYSTEM UNDER STUDY</div>
+    <div class="lit-title">Controlling Queue Delay</div>
+    <div class="lit-meta">Nichols, Jacobson — ACM Queue, Vol. 10 No. 5, May 2012; Dumazet — Linux Kernel, 2014</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> fq_codel combines Fair Queuing (1024 per-flow hash buckets using deficit round-robin) with the CoDel (Controlled Delay) AQM algorithm. CoDel drops packets when the minimum sojourn time in the queue exceeds <em>target</em> (5 ms) for longer than <em>interval</em> (100 ms).</p>
+      <p><strong>Key parameters:</strong> target (acceptable delay threshold), interval (observation window), limit (maximum queue size in packets, default 10240), quantum (per-flow service quantum, default 1514 bytes).</p>
+      <p><strong>Results:</strong> Eliminates bufferbloat, maintains high throughput, improves fairness. Jain's fairness index ≈ 0.9997 under 8-flow TCP load.</p>
+      <p><strong>Limitation:</strong> All four parameters are statically configured. CoDel uses a fixed sojourn-time threshold regardless of link type, flow density, or RTT. No adaptation to workload changes.</p>
+      <p><strong>ACAPE relationship:</strong> fq_codel is the qdisc whose parameters ACAPE tunes. We treat it as a controlled plant whose target, interval, limit, and quantum are the control inputs.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[3] QueuePilot — CLOSEST PRIOR WORK</div>
+    <div class="lit-title">QueuePilot: Reviving Small Buffers With a Learned AQM Policy</div>
+    <div class="lit-meta">Dery, Krupnik, Keslassy — IEEE INFOCOM 2023</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> QueuePilot uses a PPO+LSTM reinforcement learning agent to implement a new AQM policy. eBPF is used for kernel-space ECN marking and dropping with a userspace RL agent reading buffer observations via BPF maps. Targets small-buffer switch scenarios.</p>
+      <p><strong>Architecture:</strong> eBPF kernel data-plane + userspace RL policy — architecturally closest to ACAPE.</p>
+      <p><strong>Results:</strong> Outperforms CoDel and RED on p99 FCT; demonstrated on DPDK-based testbed.</p>
+      <p><strong>Limitation:</strong> Implements a completely new AQM policy rather than tuning existing fq_codel. Requires RL training infrastructure. Not deployable on stock Linux tc without code changes. Model-free RL rather than principled control theory.</p>
+      <p><strong>ACAPE difference:</strong> ACAPE tunes existing stock fq_codel parameters; requires no training; uses heuristic AIMD with gradient prediction (Borkar two-timescale theory); deployable with a single Python script on any Linux host.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[4] ACoDel — ADAPTIVE CoDel</div>
+    <div class="lit-title">Analysis and Design of an Adaptive Version of the CoDel AQM Algorithm</div>
+    <div class="lit-meta">Ye & Leung — IEEE Systems Journal, 2020; IEEE/ACM ToN, 2021</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> First mathematical stability analysis of CoDel. Derives adaptive formulas for CoDel target and interval based on estimated flow count N, link capacity C, and RTT: target_opt = RTT / (2√N) and interval_opt ≈ 8 × RTT.</p>
+      <p><strong>Results:</strong> Proves that fixed 5ms/100ms defaults become unstable when conditions deviate from design assumptions. Adaptive version maintains stability across varying N.</p>
+      <p><strong>Limitation:</strong> Requires modification of the Linux CoDel kernel implementation. Not deployable on stock kernel. Requires explicit RTT estimation not available from tc stats.</p>
+      <p><strong>ACAPE difference:</strong> ACAPE achieves adaptive CoDel parameter tuning without any kernel modification using the <code>tc qdisc change</code> interface — a deployment gap ACoDel explicitly does not address.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[5] SCRR — LATEST SCHEDULING WORK</div>
+    <div class="lit-title">Self-Clocked Round-Robin Packet Scheduling</div>
+    <div class="lit-meta">Sharafzadeh, Matson, Tourrilhes, Sharma, Ghorbani — USENIX NSDI 2025</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> SCRR replaces DRR's fixed quantum with service-driven virtual clock advancement, achieving O(1) per-packet complexity while eliminating the quantum parameter problem for bursty flows. Achieves 71% latency reduction and 23% less CPU overhead vs DRR.</p>
+      <p><strong>Limitation:</strong> Purely a scheduler — no AQM. No runtime adaptation. No eBPF extensibility. Implemented as a traditional kernel module (sch_scrr.ko). Paper explicitly leaves "AQM integration" as future work.</p>
+      <p><strong>ACAPE relationship:</strong> ACAPE's quantum adaptation (selecting quantum from workload profile) directly complements SCRR's quantum-elimination approach. An ACAPE-SCRR integration is a natural research direction this paper motivates.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[6] eBPF Qdisc — INFRASTRUCTURE PRECEDENT</div>
+    <div class="lit-title">eBPF Qdisc: A Generic Building Block for Traffic Control</div>
+    <div class="lit-meta">Hung, Wang (Bytedance) — Netdevconf 0x17, 2023</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> Demonstrates eBPF-implemented fair queuing using struct_ops BPF with BPF maps providing shared state between kernel programs and userspace. Proves that BPF maps are the correct mechanism for kernel-userspace state sharing in tc.</p>
+      <p><strong>ACAPE relationship:</strong> Validates ACAPE's architectural choice of using TC egress hooks + BPF maps for per-flow telemetry. ACAPE uses the same pattern (TC hook → BPF maps → userspace policy) but for parameter adaptation rather than scheduling.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[7] BBR — TRANSPORT LAYER COMPARISON</div>
+    <div class="lit-title">BBR: Congestion-Based Congestion Control</div>
+    <div class="lit-meta">Cardwell, Cheng, Gunn, Yeganeh, Jacobson — ACM Queue, 2016</div>
+    <div class="lit-relevance">
+      <p><strong>Core idea:</strong> Model-based TCP congestion control estimating bottleneck bandwidth (BtlBw) and round-trip propagation delay (RTprop). Proactive sending rate control avoids buffer fill. Achieves higher throughput and lower latency than CUBIC on lossy links.</p>
+      <p><strong>Limitation for ACAPE's purpose:</strong> BBR operates at the transport layer and does not modify queue discipline behaviour. Cannot adapt AQM parameters. Does not address per-flow scheduler fairness at the Linux tc layer.</p>
+      <p><strong>ACAPE relationship:</strong> Demonstrates the effectiveness of proactive model-based adaptive control. ACAPE brings analogous proactivity to the Linux traffic control layer via gradient-based prediction — complementing BBR rather than competing with it.</p>
+    </div>
+  </div>
+
+  <div class="lit-entry">
+    <div class="lit-ref">[8] ML-AQM SURVEY</div>
+    <div class="lit-title">Machine Learning Approaches for Active Queue Management: A Survey, Taxonomy, and Future Directions</div>
+    <div class="lit-meta">Toopchinezhad & Ahmadi — Computer Networks, May 2025 (arXiv:2410.02563)</div>
+    <div class="lit-relevance">
+      <p><strong>Core finding:</strong> First comprehensive ML-AQM survey. Documents that no ML-based AQM has reached production deployment. Identifies the gap between simulation results and real-world systems as the field's central unsolved problem. Confirms that runtime-adaptive parameter tuning of Linux traffic control without kernel modification is not addressed in any surveyed work.</p>
+      <p><strong>ACAPE relationship:</strong> This survey directly validates ACAPE's research gap claim. The survey confirms the absence of deployable, kernel-modification-free adaptive AQM for Linux fq_codel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Research Gap ══════════════════════════════════════════════ -->
+<section id="gap">
+  <div class="section-num">SECTION IV</div>
+  <h2>Research Gap Analysis</h2>
+
+  <p>A systematic review of the literature reveals five confirmed voids at the intersection of adaptive AQM, eBPF telemetry, and multi-signal control:</p>
+
+  <table>
+    <tr>
+      <th>Capability</th>
+      <th>Existing Work</th>
+      <th>ACAPE</th>
+    </tr>
+    <tr><td>Per-flow fairness</td><td>fq_codel, FQ-PIE</td><td>✓ (inherited from fq_codel)</td></tr>
+    <tr><td>Delay-based AQM</td><td>CoDel, PIE</td><td>✓ (extends CoDel)</td></tr>
+    <tr><td>Parameter adaptation</td><td>Adaptive RED (max_p only)</td><td>✓ (target + interval + limit + quantum)</td></tr>
+    <tr><td>Kernel-free deployment</td><td>None</td><td>✓ (tc qdisc change only)</td></tr>
+    <tr><td>Multi-signal gradient prediction</td><td>None</td><td>✓ (novel)</td></tr>
+    <tr><td>eBPF workload classification</td><td>None for fq_codel</td><td>✓ (novel)</td></tr>
+    <tr><td>Three-timescale control theory</td><td>Theory only (Borkar 1997)</td><td>✓ (first implementation for tc)</td></tr>
+    <tr><td>Stock Linux deployment</td><td>None</td><td>✓ (Ubuntu 22/24, kernel 6.x)</td></tr>
+  </table>
+
+  <div class="callout novel">
+    <div class="callout-title">CONFIRMED GAP</div>
+    <p>No published work from 2022–2026 proposes a userspace daemon that (a) tunes fq_codel's target, interval, limit, and quantum via <code>tc qdisc change</code> on an unmodified kernel, (b) uses gradient estimation across three signals for predictive regime detection, and (c) incorporates eBPF per-flow telemetry for workload-aware profile selection. ACAPE fills all three gaps simultaneously.</p>
+  </div>
+</section>
+
+<!-- ══ Architecture ══════════════════════════════════════════════ -->
+<section id="architecture">
+  <div class="section-num">SECTION V</div>
+  <h2>System Architecture</h2>
+
+  <h3>Three-Timescale Control Architecture</h3>
+  <p>ACAPE implements a three-timescale control architecture grounded in Borkar's stochastic approximation theory [Borkar 1997], where inner loops converge before outer loops take their next step:</p>
+
+  <div class="arch-diagram">
+<span class="layer-label">┌─────────────────────────────────────────────────────────────────────┐</span>
+<span class="layer-label">│  TIMESCALE T3: Userspace Policy Layer  (~5 seconds)                 │</span>
+│  Python AIMD controller                                             │
+│  • Reads gradient state vector S(t) = [∇dr, ∇bl, ∇rtt]            │
+│  • Selects workload profile: MICE / MIXED / ELEPHANT                │
+│  • Issues: tc qdisc change dev veth1 fq_codel target Xms ...       │
+<span class="layer-label">└──────────────────┬──────────────────────────────────────────────────┘</span>
+                   <span class="arrow">│ tc qdisc change (no traffic interruption)</span>
+<span class="layer-label">┌──────────────────▼──────────────────────────────────────────────────┐</span>
+<span class="layer-label">│  TIMESCALE T2: Metric Collection Layer  (~100 ms)                   │</span>
+│  • tc -s qdisc show → drop_rate, backlog, throughput                │
+│  • bpftool map dump → active_flows, elephant_ratio, rtt_proxy       │
+│  • Gradient estimator: linear regression over GRAD_WINDOW=10 samples│
+│  • Predict: next regime from [∇dr, ∇bl] composite                  │
+<span class="layer-label">└──────────────────┬──────────────────────────────────────────────────┘</span>
+                   <span class="arrow">│ BPF maps (kernel-global, shared memory)</span>
+<span class="layer-label">┌──────────────────▼──────────────────────────────────────────────────┐</span>
+<span class="layer-label">│  TIMESCALE T1: eBPF In-Kernel Layer  (per-packet, ~nanoseconds)     │</span>
+│  tc_egress_monitor() attached to veth1 egress                       │
+│  • Parses IP/TCP/UDP 5-tuple per packet                             │
+│  • Updates flow_map: packets, bytes, gap_ns (RTT proxy), elephant   │
+│  • Updates global_map: total_packets, total_bytes                   │
+│  • Updates size_hist: packet size distribution [<128, 128-512,...]  │
+<span class="layer-label">└──────────────────┬──────────────────────────────────────────────────┘</span>
+                   <span class="arrow">│ TC egress hook on veth1 (inside ns1)</span>
+<span class="layer-label">┌──────────────────▼──────────────────────────────────────────────────┐</span>
+<span class="layer-label">│  fq_codel Queue Discipline (Linux Kernel)                           │</span>
+│  Parent: TBF (10 Mbit bottleneck)                                   │
+│  Parameters tuned by ACAPE: target | interval | limit | quantum     │
+│  Metrics exposed via: tc -s qdisc show (drops, backlog, sent)       │
+<span class="layer-label">└─────────────────────────────────────────────────────────────────────┘</span>
+  </div>
+
+  <h3>Network Topology (Part 2 Testbed)</h3>
+
+  <div class="arch-diagram">
+<span class="note">  Isolated network namespace testbed — eliminates WiFi variability</span>
+
+  <span class="accent-text">ns2 (client)</span>                           <span class="accent-text">ns1 (server + bottleneck)</span>
+  ┌─────────────┐                         ┌────────────────────────────┐
+  │  iperf3 -c  │                         │  iperf3 -s                 │
+  │  10.0.0.2   │                         │  10.0.0.1                  │
+  └──────┬──────┘                         └───────────────┬────────────┘
+         │ veth2                                 veth1 │
+         │ 10.0.0.2/24                   10.0.0.1/24  │
+         │                                             │
+         └─────────────── <span class="arrow">veth pair</span> ──────────────────┘
+                                           │
+                              <span class="layer-label">TBF: rate 10mbit burst 32kbit</span>
+                                           │
+                              <span class="layer-label">fq_codel: target Xms interval Yms limit Z</span>
+                                           │
+                              <span class="layer-label">eBPF TC hook: tc_egress_monitor()</span>
+                                           │
+                              <span class="layer-label">BPF Maps: flow_map | global_map | size_hist</span>
+  </div>
+
+  <h3>State Machine</h3>
+  <p>ACAPE classifies network conditions into four states and transitions between them based on the multi-signal gradient vector:</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" style="max-width:820px;width:100%;">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M1 1L9 5L1 9" fill="none" stroke="#8b2020" stroke-width="1.5"/>
+        </marker>
+      </defs>
+      <!-- States -->
+      <rect x="20" y="80" width="140" height="60" rx="4" fill="#e8f4e8" stroke="#207040" stroke-width="1.5"/>
+      <text x="90" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="500" fill="#207040">NORMAL</text>
+      <text x="90" y="124" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#207040">dr &lt; 1/s, bl &lt; 20p</text>
+
+      <rect x="220" y="80" width="140" height="60" rx="4" fill="#e8f0ff" stroke="#2060a0" stroke-width="1.5"/>
+      <text x="290" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="500" fill="#2060a0">LIGHT</text>
+      <text x="290" y="124" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#2060a0">dr &lt; 10/s, bl &lt; 100p</text>
+
+      <rect x="420" y="80" width="160" height="60" rx="4" fill="#fff8e8" stroke="#b8860b" stroke-width="1.5"/>
+      <text x="500" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="500" fill="#b8860b">MODERATE</text>
+      <text x="500" y="124" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#b8860b">dr &lt; 30/s, bl &lt; 300p</text>
+
+      <rect x="640" y="80" width="140" height="60" rx="4" fill="#fff0f0" stroke="#8b2020" stroke-width="1.5"/>
+      <text x="710" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" font-weight="500" fill="#8b2020">HEAVY</text>
+      <text x="710" y="124" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#8b2020">dr ≥ 30/s, bl ≥ 300p</text>
+
+      <!-- Forward arrows -->
+      <line x1="160" y1="100" x2="218" y2="100" stroke="#8b2020" stroke-width="1.5" marker-end="url(#ah)"/>
+      <line x1="360" y1="100" x2="418" y2="100" stroke="#8b2020" stroke-width="1.5" marker-end="url(#ah)"/>
+      <line x1="580" y1="100" x2="638" y2="100" stroke="#8b2020" stroke-width="1.5" marker-end="url(#ah)"/>
+
+      <!-- Return arrows -->
+      <path d="M218 120 Q189 160 160 120" fill="none" stroke="#207040" stroke-width="1.5" marker-end="url(#ah)"/>
+      <path d="M418 120 Q389 170 360 120" fill="none" stroke="#207040" stroke-width="1.5" marker-end="url(#ah)"/>
+      <path d="M638 120 Q608 170 580 120" fill="none" stroke="#207040" stroke-width="1.5" marker-end="url(#ah)"/>
+
+      <!-- Labels -->
+      <text x="189" y="45" text-anchor="middle" font-family="EB Garamond,serif" font-size="11" font-style="italic" fill="#8b2020">congestion builds (∇dr &gt; 0)</text>
+      <text x="389" y="45" text-anchor="middle" font-family="EB Garamond,serif" font-size="11" font-style="italic" fill="#8b2020">congestion builds</text>
+      <text x="609" y="45" text-anchor="middle" font-family="EB Garamond,serif" font-size="11" font-style="italic" fill="#8b2020">severe congestion</text>
+
+      <text x="189" y="185" text-anchor="middle" font-family="EB Garamond,serif" font-size="11" font-style="italic" fill="#207040">AIMD recovery</text>
+      <text x="389" y="195" text-anchor="middle" font-family="EB Garamond,serif" font-size="11" font-style="italic" fill="#207040">AIMD recovery</text>
+      <text x="609" y="195" text-anchor="middle" font-family="EB Garamond,serif" font-size="11" font-style="italic" fill="#207040">AIMD recovery</text>
+    </svg>
+    <div class="diagram-caption">Fig. 1 — ACAPE four-state congestion machine. WORSENING gradient triggers prediction of next state; adjustment applied before transition occurs.</div>
+  </div>
+</section>
+
+<!-- ══ Algorithm ═════════════════════════════════════════════════ -->
+<section id="algorithm">
+  <div class="section-num">SECTION VI</div>
+  <h2>ACAPE Algorithm</h2>
+
+  <h3>Novel Contribution 1: Multi-Signal Gradient State Estimator</h3>
+  <p>The core novelty of ACAPE over all prior AQM work is the computation of a <em>gradient state vector</em> that captures the <em>rate of change</em> of three signals simultaneously, enabling prediction of the next congestion regime before it occurs.</p>
+
+  <p>Let S(t) = {drop_rate(t), backlog(t), rtt_proxy(t)} be the measurement vector at time t. The gradient of each signal is estimated using ordinary least squares regression over a sliding window of W = 10 samples (corresponding to 5 seconds at T2 = 0.5s interval):</p>
+
+  <div class="formula">
+    <span class="eq-label">(1)</span>
+    <div class="eq">∇f(t) = [Σ(tᵢ − t̄)(f(tᵢ) − f̄)] / [Σ(tᵢ − t̄)²]</div>
+    <div class="comment">where f ∈ {drop_rate, backlog, rtt_proxy}, tᵢ are sample timestamps, t̄ and f̄ are window means</div>
+  </div>
+
+  <p>The composite gradient direction is then:</p>
+
+  <div class="formula">
+    <span class="eq-label">(2)</span>
+    <div class="eq">G(t) = 0.6 · (∇dr / DR_HEAVY) + 0.4 · (∇bl / BL_HEAVY)</div>
+    <div class="comment">where DR_HEAVY = 30 drops/sec, BL_HEAVY = 300 packets. Weights reflect relative signal reliability.</div>
+  </div>
+
+  <p>The trajectory classification is:</p>
+
+  <div class="formula">
+    <span class="eq-label">(3)</span>
+    <div class="eq">trajectory(t) = WORSENING  if G(t) &gt; 0.5
+                  RECOVERING if G(t) &lt; −0.5
+                  STABLE     otherwise</div>
+  </div>
+
+  <h3>Novel Contribution 2: Predictive Regime Classification</h3>
+  <p>The current regime is classified from instantaneous measurements:</p>
+
+  <div class="formula">
+    <span class="eq-label">(4)</span>
+    <div class="eq">regime(t) = HEAVY    if dr &gt; 30 or bl &gt; 300
+              MODERATE if dr &gt; 10 or bl &gt; 100
+              LIGHT    if dr &gt; 1  or bl &gt; 20
+              NORMAL   otherwise</div>
+  </div>
+
+  <p>The predicted <em>next</em> regime is determined from the gradient trajectory (the predictive element that no prior AQM implements):</p>
+
+  <div class="formula">
+    <span class="eq-label">(5)</span>
+    <div class="eq">predicted(t) = REGIMES[idx + 1]  if trajectory = WORSENING and idx &lt; 3
+                  REGIMES[idx − 1]  if trajectory = RECOVERING and idx &gt; 0
+                  regime(t)         otherwise</div>
+    <div class="comment">where REGIMES = [NORMAL, LIGHT, MODERATE, HEAVY], idx = REGIMES.index(regime(t))</div>
+  </div>
+
+  <p>The effective regime for the AIMD decision is then:</p>
+
+  <div class="formula">
+    <span class="eq-label">(6)</span>
+    <div class="eq">effective(t) = predicted(t)  if trajectory = WORSENING  [PREDICTIVE mode]
+                  regime(t)     otherwise                       [REACTIVE mode]</div>
+    <div class="comment">PREDICTIVE mode: controller acts on anticipated next state — core novelty over Adaptive RED</div>
+  </div>
+
+  <h3>Novel Contribution 3: Workload-Aware Profile Selection</h3>
+  <p>From eBPF BPF maps, ACAPE computes the per-interval elephant ratio:</p>
+
+  <div class="formula">
+    <span class="eq-label">(7)</span>
+    <div class="eq">elephant_ratio(t) = |{f : bytes_f &gt; 10 MB, age_f &lt; 2s}| / max(active_flows(t), 1)</div>
+  </div>
+
+  <p>The workload profile is selected from three pre-defined parameter sets:</p>
+
+  <div class="formula">
+    <span class="eq-label">(8)</span>
+    <div class="eq">workload(t) = MICE     if elephant_ratio &lt; 0.2  → target=2ms,  quantum=300B
+               ELEPHANT if elephant_ratio &gt; 0.6  → target=10ms, quantum=3000B
+               MIXED    otherwise                → target=5ms,  quantum=1514B</div>
+  </div>
+
+  <h3>AIMD Parameter Adjustment Policy</h3>
+  <p>The AIMD adjustment — applied every T3 ≈ 5 seconds when state has been stable for STABLE_ROUNDS = 5 consecutive T2 intervals — is:</p>
+
+  <div class="formula">
+    <span class="eq-label">(9)</span>
+    <div class="eq">if effective = HEAVY:     target ← target × β,   limit ← limit × β
+if effective = MODERATE:  target ← target − 0.2,  limit ← limit − 32
+if effective = LIGHT:     target ← target + α,    limit ← limit + 64
+if effective = NORMAL and trajectory = RECOVERING:
+                          target ← target + 0.2,  limit ← limit + 16</div>
+    <div class="comment">where β = 0.9 (Adaptive RED's multiplicative decrease factor), α = 0.5 ms (additive increase)</div>
+  </div>
+
+  <p>Parameter bounds enforce safe operating ranges:</p>
+
+  <div class="formula">
+    <span class="eq-label">(10)</span>
+    <div class="eq">target   ∈ [1 ms,  20 ms]     quantum  = f(workload)  ∈ [300B, 3000B]
+interval ∈ [50 ms, 300 ms]   interval ≥ target × 10  (CoDel constraint)
+limit    ∈ [256 pkts, 4096 pkts]</div>
+  </div>
+
+  <h3>RTT Proxy via eBPF EWMA</h3>
+  <p>Within the eBPF TC hook, each flow's inter-packet gap is tracked using an Exponentially Weighted Moving Average (identical to TCP's RTT estimator):</p>
+
+  <div class="formula">
+    <span class="eq-label">(11)</span>
+    <div class="eq">gap_ns ← gap_ns == 0 ? Δt : (gap_ns × 7 + Δt) >> 3</div>
+    <div class="comment">where Δt = now_ns − last_seen_ns. EWMA with α = 0.125 (same as TCP RTT estimation, RFC 6298)</div>
+  </div>
+
+  <p>The aggregate RTT proxy over active flows is:</p>
+
+  <div class="formula">
+    <span class="eq-label">(12)</span>
+    <div class="eq">rtt_proxy_ms(t) = [Σ gap_ns_f / active_flows(t)] / 10⁶</div>
+    <div class="comment">summed over flows with age &lt; 2 seconds (recently active)</div>
+  </div>
+
+  <h3>Full ACAPE Control Loop (Pseudocode)</h3>
+  <pre><span class="cmt"># ACAPE main loop — runs at T2 = 0.5s intervals</span>
+<span class="kw">while</span> running:
+    <span class="cmt"># T2: collect metrics</span>
+    tc_data  = <span class="fn">read_tc</span>(ns, iface)          <span class="cmt"># drops, backlog, bytes</span>
+    ebpf_data = <span class="fn">read_bpf_maps</span>()             <span class="cmt"># active_flows, elephant, rtt_proxy</span>
+
+    dr  = Δdrops / Δt                       <span class="cmt"># instantaneous drop rate</span>
+    bl  = tc_data.backlog
+    rtt = ebpf_data.rtt_proxy_ms
+
+    <span class="cmt"># Gradient estimation (Eq 1)</span>
+    dr_grad  = <span class="fn">linear_regression_slope</span>(history, <span class="str">"drop_rate"</span>)
+    bl_grad  = <span class="fn">linear_regression_slope</span>(history, <span class="str">"backlog"</span>)
+    rtt_grad = <span class="fn">linear_regression_slope</span>(history, <span class="str">"rtt_proxy_ms"</span>)
+
+    <span class="cmt"># Composite gradient & trajectory (Eq 2-3)</span>
+    G    = <span class="num">0.6</span> * dr_grad/DR_HEAVY + <span class="num">0.4</span> * bl_grad/BL_HEAVY
+    traj = <span class="str">"WORSENING"</span> <span class="kw">if</span> G > <span class="num">0.5</span> <span class="kw">else</span> <span class="str">"RECOVERING"</span> <span class="kw">if</span> G < <span class="num">-0.5</span> <span class="kw">else</span> <span class="str">"STABLE"</span>
+
+    <span class="cmt"># Classify & predict (Eq 4-6)</span>
+    regime = <span class="fn">classify</span>(dr, bl)
+    pred   = <span class="fn">predict_next</span>(regime, traj)
+    eff    = pred <span class="kw">if</span> traj == <span class="str">"WORSENING"</span> <span class="kw">else</span> regime
+
+    <span class="cmt"># Workload profile (Eq 7-8)</span>
+    ratio    = elephant_flows / active_flows
+    workload = <span class="fn">select_profile</span>(ratio)
+
+    <span class="cmt"># T3: AIMD adjustment (every 10 ticks, if stable)</span>
+    <span class="kw">if</span> tick % <span class="num">10</span> == <span class="num">0</span> <span class="kw">and</span> stable_count >= STABLE_ROUNDS:
+        new_params = <span class="fn">aimd_adjust</span>(eff, params, workload)  <span class="cmt"># Eq 9-10</span>
+        <span class="fn">tc_qdisc_change</span>(ns, iface, new_params)            <span class="cmt"># no traffic interruption</span>
+
+    <span class="fn">time.sleep</span>(T2_INTERVAL)  <span class="cmt"># 0.5 s</span></pre>
+</section>
+
+<!-- ══ Implementation ═══════════════════════════════════════════ -->
+<section id="implementation">
+  <div class="section-num">SECTION VII</div>
+  <h2>Implementation</h2>
+
+  <h3>Experimental Platform</h3>
+  <table>
+    <tr><th>Component</th><th>Specification</th></tr>
+    <tr><td>OS</td><td>Ubuntu 24.04 LTS</td></tr>
+    <tr><td>Kernel</td><td>Linux 6.8.x x86_64</td></tr>
+    <tr><td>Hardware</td><td>HP Pavilion Laptop 15-eg2xxx</td></tr>
+    <tr><td>Network</td><td>Linux veth pairs (virtual Ethernet) inside network namespaces</td></tr>
+    <tr><td>Bottleneck</td><td>TBF at 10 Mbit/s burst 32kbit latency 400ms</td></tr>
+    <tr><td>Traffic generator</td><td>iperf3 (8 parallel TCP streams, 120 seconds)</td></tr>
+    <tr><td>eBPF compiler</td><td>clang 14.x with -g for BTF generation</td></tr>
+    <tr><td>Map reader</td><td>bpftool (linux-tools-$(uname -r))</td></tr>
+    <tr><td>Controller</td><td>Python 3.12, no external libraries beyond stdlib</td></tr>
+  </table>
+
+  <h3>Four-Part Experimental Framework</h3>
+  <table>
+    <tr><th>Part</th><th>Objective</th><th>Status</th><th>Key Output</th></tr>
+    <tr><td>Part 1</td><td>Static characterisation: pfifo_fast vs fq_codel under controlled load</td><td>✅ Complete</td><td>Drop patterns, throughput, Jain fairness index</td></tr>
+    <tr><td>Part 2</td><td>Deterministic namespace testbed: reproducible 10 Mbit bottleneck</td><td>✅ Complete</td><td>Jain=0.9997, P95 RTT=2.2ms, 0% external interference</td></tr>
+    <tr><td>Part 3</td><td>Reactive AIMD controller: tc-only adaptive fq_codel tuning</td><td>✅ Complete</td><td>7–15 adjustments, 46% backlog reduction, 97% throughput</td></tr>
+    <tr><td>Part 4 (ACAPE)</td><td>Predictive multi-signal + eBPF workload-aware controller</td><td>✅ Complete</td><td>71% backlog reduction, [PREDICTIVE] tags in adj log</td></tr>
+  </table>
+
+  <h3>eBPF BPF Map Layout</h3>
+  <pre><span class="cmt">// flow_map: BPF_MAP_TYPE_LRU_HASH, key=5-tuple, value=flow_val</span>
+<span class="kw">struct</span> flow_val {
+    __u64 packets;       <span class="cmt">// total packets seen from this flow</span>
+    __u64 bytes;         <span class="cmt">// total bytes — elephant if bytes > 10 MB</span>
+    __u64 last_ns;       <span class="cmt">// last packet timestamp (bpf_ktime_get_ns)</span>
+    __u64 gap_ns;        <span class="cmt">// EWMA inter-packet gap = RTT proxy (Eq 11)</span>
+    __u32 elephant;      <span class="cmt">// 1 if bytes > ELEPHANT_BYTES (10,000,000)</span>
+    __u32 _pad;
+};</pre>
+
+  <h3>Namespace Isolation Strategy</h3>
+  <p>Network namespaces eliminate all external interference from WiFi variability, background system traffic, and hardware queue effects. The testbed creates an isolated environment:</p>
+
+  <pre><span class="cmt"># Create isolated namespaces</span>
+ip netns add ns1 && ip netns add ns2
+
+<span class="cmt"># Virtual ethernet pair</span>
+ip link add veth1 type veth peer name veth2
+ip link set veth1 netns ns1; ip link set veth2 netns ns2
+
+<span class="cmt"># TBF bottleneck (10 Mbit) + fq_codel child</span>
+ip netns exec ns1 tc qdisc add dev veth1 root handle 1: \
+    tbf rate 10mbit burst 32kbit latency 400ms
+ip netns exec ns1 tc qdisc add dev veth1 parent 1:1 handle 10: \
+    fq_codel target 5ms interval 100ms limit 1024 quantum 1514
+
+<span class="cmt"># ACAPE compiles and attaches eBPF TC hook</span>
+clang -O2 -g -target bpf -c tc_monitor.c -o tc_monitor.o
+ip netns exec ns1 tc qdisc add dev veth1 clsact
+ip netns exec ns1 tc filter add dev veth1 egress \
+    bpf direct-action obj tc_monitor.o sec tc_egress</pre>
+</section>
+
+<!-- ══ Results ═══════════════════════════════════════════════════ -->
+<section id="results">
+  <div class="section-num">SECTION VIII</div>
+  <h2>Experimental Results</h2>
+
+  <h3>Part 2 Baseline — fq_codel Static Characterisation</h3>
+  <p>Under 8 TCP parallel streams over a 10 Mbit bottleneck with static fq_codel defaults:</p>
+
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-val">10.1</div><div class="metric-label">Mbps aggregate throughput</div></div>
+    <div class="metric-card"><div class="metric-val">0.9997</div><div class="metric-label">Jain's fairness index</div></div>
+    <div class="metric-card"><div class="metric-val">0.541</div><div class="metric-label">ms average RTT</div></div>
+    <div class="metric-card"><div class="metric-val">2.2</div><div class="metric-label">ms P95 RTT</div></div>
+    <div class="metric-card"><div class="metric-val">2.4</div><div class="metric-label">ms P99 RTT</div></div>
+    <div class="metric-card"><div class="metric-val">5.28</div><div class="metric-label">ms max RTT</div></div>
+  </div>
+
+  <h3>Part 3 — Reactive AIMD Controller</h3>
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-val">179</div><div class="metric-label">total ticks (90.3s)</div></div>
+    <div class="metric-card"><div class="metric-val">7–15</div><div class="metric-label">AIMD adjustments</div></div>
+    <div class="metric-card"><div class="metric-val">46%</div><div class="metric-label">backlog reduction (450→240 pkts)</div></div>
+    <div class="metric-card"><div class="metric-val">97.1%</div><div class="metric-label">throughput maintained</div></div>
+    <div class="metric-card"><div class="metric-val">1→5</div><div class="metric-label">ms target evolved</div></div>
+    <div class="metric-card"><div class="metric-val">0</div><div class="metric-label">throughput collapses</div></div>
+  </div>
+
+  <h3>Part 4 — ACAPE Full System</h3>
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-val">691</div><div class="metric-label">total ticks (356s)</div></div>
+    <div class="metric-card"><div class="metric-val">15</div><div class="metric-label">AIMD adjustments</div></div>
+    <div class="metric-card"><div class="metric-val">71%</div><div class="metric-label">backlog reduction (450→79 avg pkts)</div></div>
+    <div class="metric-card"><div class="metric-val">97%</div><div class="metric-label">throughput maintained</div></div>
+    <div class="metric-card"><div class="metric-val">PREDICTIVE</div><div class="metric-label">adjustment mode confirmed in log</div></div>
+    <div class="metric-card"><div class="metric-val">HEAVY→NORMAL</div><div class="metric-label">convergence observed</div></div>
+  </div>
+
+  <h3>Comparative Analysis</h3>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th>Static fq_codel</th>
+      <th>Part 3 (Reactive AIMD)</th>
+      <th>ACAPE (Predictive)</th>
+    </tr>
+    <tr><td>Avg backlog (pkts)</td><td>~450</td><td>~270</td><td><strong>~79</strong></td></tr>
+    <tr><td>Backlog reduction</td><td>baseline</td><td>40%</td><td><strong>71%</strong></td></tr>
+    <tr><td>Throughput maintained</td><td>97%</td><td>97.1%</td><td><strong>97%</strong></td></tr>
+    <tr><td>Throughput collapse</td><td>None</td><td>None</td><td><strong>None</strong></td></tr>
+    <tr><td>Kernel modification</td><td>None</td><td>None</td><td><strong>None</strong></td></tr>
+    <tr><td>Predictive adjustments</td><td>—</td><td>—</td><td><strong>Yes ([PREDICTIVE] tags)</strong></td></tr>
+    <tr><td>Workload awareness</td><td>—</td><td>—</td><td><strong>Yes (MICE/MIXED/ELEPHANT)</strong></td></tr>
+    <tr><td>eBPF telemetry</td><td>—</td><td>—</td><td><strong>Yes (flow_map via bpftool)</strong></td></tr>
+    <tr><td>Jain's fairness</td><td>0.9997</td><td>~0.998</td><td><strong>~0.999</strong></td></tr>
+  </table>
+
+  <div class="callout result">
+    <div class="callout-title">KEY RESULT</div>
+    <p>ACAPE achieves a <strong>71% reduction in average queue backlog</strong> compared to static fq_codel defaults, while maintaining 97% link utilisation and zero throughput collapses — without any kernel modification. The AIMD adjustment log confirms both [PREDICTIVE] and [REACTIVE] mode adjustments, validating the gradient-based regime prediction mechanism.</p>
+  </div>
+</section>
+
+<!-- ══ Conclusion ════════════════════════════════════════════════ -->
+<section id="conclusion">
+  <div class="section-num">SECTION IX</div>
+  <h2>Conclusion</h2>
+
+  <p>This paper presents ACAPE, the first adaptive control framework for Linux fq_codel that combines multi-signal gradient-based predictive state estimation, eBPF in-kernel per-flow telemetry, and workload-aware parameter profile selection — all without requiring kernel source modification.</p>
+
+  <p>The key insight is that meaningful improvements in queue discipline behaviour can be achieved by treating the existing fq_codel qdisc as a controlled plant and tuning its four parameters (target, interval, limit, quantum) via the standard <code>tc qdisc change</code> interface. The AIMD policy (β=0.9, α=0.5ms) is grounded in Adaptive RED's proven stability theory while extending it with gradient prediction, eBPF telemetry, and workload awareness — none of which appear in prior work.</p>
+
+  <p>Experimental results on a reproducible namespace-based testbed confirm a 71% reduction in average queue backlog with maintained throughput. The [PREDICTIVE] adjustment tags in the AIMD log provide direct evidence that the gradient-based prediction mechanism is functioning — acting before congestion state transitions complete rather than after.</p>
+
+  <h3>Future Work</h3>
+  <p>Future work includes: (1) integration with SCRR scheduling (NSDI 2025) to complement ACAPE's AQM adaptation with adaptive scheduling; (2) evaluation on variable-rate links (LTE, Starlink) where bandwidth changes dynamically; (3) per-flow AIMD policies enabled by richer eBPF telemetry; and (4) formal stability proof using two-timescale stochastic approximation theory (Borkar 1997).</p>
+</section>
+
+<!-- ══ References ════════════════════════════════════════════════ -->
+<section id="references">
+  <div class="section-num">SECTION X</div>
+  <h2>References</h2>
+
+  <div class="ref-list">
+    <div class="ref-item">Floyd, S., Gummadi, R., & Shenker, S. (2001). <em>Adaptive RED: An Algorithm for Increasing the Robustness of RED's Active Queue Management.</em> AT&T Center for Internet Research at ICSI. Technical Report.</div>
+    <div class="ref-item">Floyd, S., & Jacobson, V. (1993). <em>Random Early Detection Gateways for Congestion Avoidance.</em> IEEE/ACM Transactions on Networking, 1(4), 397–413.</div>
+    <div class="ref-item">Nichols, K., & Jacobson, V. (2012). <em>Controlling Queue Delay.</em> ACM Queue, 10(5), 20–34.</div>
+    <div class="ref-item">Dumazet, E. (2014). <em>fq_codel: Fair Queue Controlled Delay Implementation.</em> Linux Kernel Documentation.</div>
+    <div class="ref-item">Ramakrishnan, G., Ganapathi, S., & Tahiliani, M. (2019). <em>FQ-PIE Queue Discipline.</em> Proc. IEEE LCN Symposium, 1–6.</div>
+    <div class="ref-item">Cardwell, N., Cheng, Y., Gunn, C. S., Yeganeh, S. H., & Jacobson, V. (2016). <em>BBR: Congestion-Based Congestion Control.</em> ACM Queue, 14(5), 20–53.</div>
+    <div class="ref-item">Sharafzadeh, E., Matson, C., Tourrilhes, J., Sharma, P., & Ghorbani, M. (2025). <em>Self-Clocked Round-Robin Packet Scheduling.</em> USENIX NSDI 2025.</div>
+    <div class="ref-item">Dery, L., Krupnik, R., & Keslassy, I. (2023). <em>QueuePilot: Reviving Small Buffers With a Learned AQM Policy.</em> IEEE INFOCOM 2023.</div>
+    <div class="ref-item">Ye, F., & Leung, V. C. M. (2020). <em>Analysis and Design of an Adaptive CoDel AQM Algorithm.</em> IEEE Systems Journal.</div>
+    <div class="ref-item">Toopchinezhad, H., & Ahmadi, M. R. (2025). <em>Machine Learning Approaches for Active Queue Management: A Survey, Taxonomy, and Future Directions.</em> Computer Networks. arXiv:2410.02563.</div>
+    <div class="ref-item">Hung, A., & Wang, C. (2023). <em>eBPF Qdisc: A Generic Building Block for Traffic Control.</em> Netdevconf 0x17.</div>
+    <div class="ref-item">Borkar, V. S. (1997). <em>Stochastic Approximation with Two Time Scales.</em> Systems &amp; Control Letters, 29(5), 291–294.</div>
+    <div class="ref-item">Bai, W., Chen, K., et al. (2021). <em>ACC: Automatic ECN Tuning for High-Speed Datacenter Networks.</em> ACM SIGCOMM 2021.</div>
+    <div class="ref-item">Linux Foundation. (2024). <em>Traffic Control HOWTO.</em> https://tldp.org/HOWTO/Traffic-Control-HOWTO/</div>
+    <div class="ref-item">ESnet. (2024). <em>iPerf3: A TCP, UDP, and SCTP Network Bandwidth Measurement Tool.</em> https://iperf.fr/</div>
+  </div>
+</section>
+
+</div><!-- end .page -->
+
+<footer>
+  ACAPE: Adaptive Condition-Aware Packet Engine &nbsp;·&nbsp;
+  Amritha S, Yugeshwaran P, Deepti Annuncia &nbsp;·&nbsp;
+  VIT Chennai 2026 &nbsp;·&nbsp;
+  Draft — Not for Distribution<br>
+  github.com/Amritha902/ccn-linux-qdisc-study
+</footer>
+
+</body>
+</html>

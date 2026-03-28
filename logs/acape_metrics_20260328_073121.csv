@@ -1,0 +1,1 @@
+t_s,drop_rate_per_s,drops_exp,backlog_pkts,throughput_mbps,rtt_proxy_ms,active_flows,elephant_flows,mice_flows,elephant_ratio,regime,trajectory,predicted_regime,workload_profile,target_ms,interval_ms,limit_pkts,quantum_bytes,ebpf_pkts,ebpf_bytes

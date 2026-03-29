@@ -1,0 +1,16 @@
+t_s,avg_q,old_maxp,new_maxp,old_target_ms,new_target_ms,old_limit,new_limit,reason
+0.0,0.5,0.05,0.045,5.0,4.64,1024,954,below_min_th_relax
+1.02,2.0,0.04,0.035,4.64,4.72,954,970,below_min_th_relax
+2.54,4.3,0.025,0.02,4.72,4.84,970,993,below_min_th_relax
+24.72,37.2,0.02,0.03,4.84,4.76,993,977,proportional_increase
+33.31,48.6,0.04,0.05,4.76,4.6,977,947,proportional_increase
+37.36,54.1,0.05,0.06,4.6,4.52,947,931,proportional_increase
+46.46,65.4,0.07,0.08,4.52,4.36,931,901,proportional_increase
+50.51,70.4,0.08,0.09,4.36,4.28,901,885,proportional_increase
+61.13,81.8,0.1,0.11,4.28,4.12,885,855,proportional_increase
+65.68,87.4,0.11,0.12,4.12,4.04,855,839,proportional_increase
+76.3,98.5,0.13,0.14,4.04,3.88,839,808,proportional_increase
+87.41,110.0,0.15,0.16,3.88,3.72,808,778,proportional_increase
+92.46,115.6,0.16,0.17,3.72,3.64,778,762,proportional_increase
+102.56,126.7,0.18,0.19,3.64,3.48,762,732,proportional_increase
+107.61,132.1,0.19,0.2,3.48,3.4,732,716,proportional_increase

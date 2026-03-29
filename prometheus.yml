@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  # ACAPE custom exporter - reads BPF maps + tc stats
+  - job_name: 'acape'
+    static_configs:
+      - targets: ['localhost:9101']
+    labels:
+      experiment: 'acape_fqcodel'
+      host: 'vit-chennai-2026'
+
+  # Default prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

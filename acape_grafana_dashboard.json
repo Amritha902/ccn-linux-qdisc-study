@@ -1,0 +1,195 @@
+{
+  "title": "ACAPE: Adaptive Condition-Aware Packet Engine",
+  "description": "Live eBPF telemetry + fq_codel adaptive control dashboard — Amritha S, VIT Chennai 2026",
+  "tags": ["acape","ebpf","fq_codel","networking"],
+  "timezone": "browser",
+  "refresh": "2s",
+  "time": {"from": "now-5m", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "title": "eBPF Status",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 0},
+      "targets": [{"expr": "acape_ebpf_active", "legendFormat": "eBPF Active"}],
+      "options": {
+        "colorMode": "background",
+        "thresholds": {"steps": [
+          {"color": "red", "value": 0},
+          {"color": "green", "value": 1}
+        ]}
+      },
+      "fieldConfig": {"defaults": {
+        "mappings": [
+          {"type": "value", "options": {"0": {"text": "❌ NOT ATTACHED"}, "1": {"text": "✅ ATTACHED"}}}
+        ]
+      }}
+    },
+    {
+      "id": 2,
+      "title": "Active Flows",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 0},
+      "targets": [{"expr": "acape_ebpf_active_flows", "legendFormat": "Active Flows"}],
+      "options": {"colorMode": "background"},
+      "fieldConfig": {"defaults": {"thresholds": {"steps": [
+        {"color": "blue", "value": 0},
+        {"color": "green", "value": 1}
+      ]}}}
+    },
+    {
+      "id": 3,
+      "title": "fq_codel Target (ms)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 8, "y": 0},
+      "targets": [{"expr": "acape_fqcodel_target_ms", "legendFormat": "target ms"}],
+      "options": {"colorMode": "value"},
+      "fieldConfig": {"defaults": {
+        "unit": "ms",
+        "thresholds": {"steps": [
+          {"color": "green", "value": 0},
+          {"color": "yellow", "value": 3},
+          {"color": "red", "value": 5}
+        ]}
+      }}
+    },
+    {
+      "id": 4,
+      "title": "Queue Backlog",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 12, "y": 0},
+      "targets": [{"expr": "acape_backlog_packets", "legendFormat": "backlog"}],
+      "options": {"colorMode": "background"},
+      "fieldConfig": {"defaults": {
+        "unit": "pkts",
+        "thresholds": {"steps": [
+          {"color": "green", "value": 0},
+          {"color": "yellow", "value": 100},
+          {"color": "red", "value": 300}
+        ]}
+      }}
+    },
+    {
+      "id": 5,
+      "title": "Elephant Ratio",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 16, "y": 0},
+      "targets": [{"expr": "acape_ebpf_elephant_ratio", "legendFormat": "elephant ratio"}],
+      "options": {"colorMode": "background"},
+      "fieldConfig": {"defaults": {
+        "unit": "percentunit",
+        "thresholds": {"steps": [
+          {"color": "blue", "value": 0},
+          {"color": "yellow", "value": 0.2},
+          {"color": "red", "value": 0.6}
+        ]}
+      }}
+    },
+    {
+      "id": 6,
+      "title": "Throughput (Mbps)",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 4, "x": 20, "y": 0},
+      "targets": [{"expr": "acape_throughput_mbps", "legendFormat": "throughput"}],
+      "options": {"colorMode": "background"},
+      "fieldConfig": {"defaults": {
+        "unit": "Mbps",
+        "thresholds": {"steps": [
+          {"color": "red", "value": 0},
+          {"color": "yellow", "value": 5},
+          {"color": "green", "value": 9}
+        ]}
+      }}
+    },
+
+    {
+      "id": 10,
+      "title": "Drop Rate (drops/sec)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [{"expr": "acape_drop_rate_per_sec", "legendFormat": "drop rate"}],
+      "fieldConfig": {"defaults": {
+        "color": {"mode": "fixed", "fixedColor": "red"},
+        "unit": "short",
+        "custom": {"fillOpacity": 20}
+      }}
+    },
+    {
+      "id": 11,
+      "title": "Queue Backlog Over Time",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "targets": [{"expr": "acape_backlog_packets", "legendFormat": "backlog (pkts)"}],
+      "fieldConfig": {"defaults": {
+        "color": {"mode": "fixed", "fixedColor": "yellow"},
+        "unit": "short",
+        "custom": {"fillOpacity": 20}
+      }}
+    },
+
+    {
+      "id": 20,
+      "title": "ACAPE fq_codel Parameter Evolution (target + limit + quantum)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12},
+      "targets": [
+        {"expr": "acape_fqcodel_target_ms",     "legendFormat": "target (ms)"},
+        {"expr": "acape_fqcodel_limit_packets",  "legendFormat": "limit (pkts)"},
+        {"expr": "acape_fqcodel_quantum_bytes/100", "legendFormat": "quantum/100 (bytes/100)"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}}
+    },
+
+    {
+      "id": 30,
+      "title": "eBPF Flow Classification — Elephant vs Mice",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "targets": [
+        {"expr": "acape_ebpf_active_flows",   "legendFormat": "active flows"},
+        {"expr": "acape_ebpf_elephant_flows", "legendFormat": "elephant flows"},
+        {"expr": "acape_ebpf_mice_flows",     "legendFormat": "mice flows"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}}
+    },
+    {
+      "id": 31,
+      "title": "RTT Proxy (ms) from eBPF inter-packet gap",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+      "targets": [{"expr": "acape_ebpf_rtt_proxy_ms", "legendFormat": "RTT proxy (ms)"}],
+      "fieldConfig": {"defaults": {
+        "unit": "ms",
+        "color": {"mode": "fixed", "fixedColor": "purple"}
+      }}
+    },
+
+    {
+      "id": 40,
+      "title": "Packet Size Distribution (eBPF histogram)",
+      "type": "barchart",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+      "targets": [
+        {"expr": "acape_pkt_size_small",  "legendFormat": "<128B"},
+        {"expr": "acape_pkt_size_medium", "legendFormat": "128-512B"},
+        {"expr": "acape_pkt_size_large",  "legendFormat": "512-1500B"},
+        {"expr": "acape_pkt_size_jumbo",  "legendFormat": ">1500B"}
+      ]
+    },
+    {
+      "id": 41,
+      "title": "Throughput Over Time",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 28},
+      "targets": [
+        {"expr": "acape_throughput_mbps", "legendFormat": "throughput (Mbps)"},
+        {"expr": "10",                    "legendFormat": "10 Mbit limit"}
+      ],
+      "fieldConfig": {"defaults": {
+        "unit": "Mbps",
+        "color": {"mode": "fixed", "fixedColor": "teal"}
+      }}
+    }
+  ],
+  "schemaVersion": 38
+}

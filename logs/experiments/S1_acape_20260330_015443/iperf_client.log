@@ -1,0 +1,41 @@
+Connecting to host 10.0.0.1, port 5299
+[  5] local 10.0.0.2 port 42810 connected to 10.0.0.1 port 5299
+[  7] local 10.0.0.2 port 42824 connected to 10.0.0.1 port 5299
+[  9] local 10.0.0.2 port 42830 connected to 10.0.0.1 port 5299
+[ 11] local 10.0.0.2 port 42842 connected to 10.0.0.1 port 5299
+[ 13] local 10.0.0.2 port 42848 connected to 10.0.0.1 port 5299
+[ 15] local 10.0.0.2 port 42852 connected to 10.0.0.1 port 5299
+[ 17] local 10.0.0.2 port 42858 connected to 10.0.0.1 port 5299
+[ 19] local 10.0.0.2 port 42860 connected to 10.0.0.1 port 5299
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-120.10 sec  83.3 GBytes  5.96 Gbits/sec    4   4.09 MBytes       
+[  7]   0.00-120.10 sec  83.6 GBytes  5.98 Gbits/sec    5   4.09 MBytes       
+[  9]   0.00-120.10 sec  83.7 GBytes  5.98 Gbits/sec    5   4.13 MBytes       
+[ 11]   0.00-120.10 sec  85.0 GBytes  6.08 Gbits/sec   45   4.18 MBytes       
+[ 13]   0.00-120.10 sec  85.1 GBytes  6.09 Gbits/sec    4   4.13 MBytes       
+[ 15]   0.00-120.10 sec  83.9 GBytes  6.00 Gbits/sec    1   4.13 MBytes       
+[ 17]   0.00-120.10 sec  85.2 GBytes  6.10 Gbits/sec    2   4.16 MBytes       
+[ 19]   0.00-120.10 sec  85.1 GBytes  6.09 Gbits/sec    4   4.15 MBytes       
+[SUM]   0.00-120.10 sec   675 GBytes  48.3 Gbits/sec   70             
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate         Retr
+[  5]   0.00-120.10 sec  83.3 GBytes  5.96 Gbits/sec    4             sender
+[  5]   0.00-120.10 sec  83.3 GBytes  5.96 Gbits/sec                  receiver
+[  7]   0.00-120.10 sec  83.6 GBytes  5.98 Gbits/sec    5             sender
+[  7]   0.00-120.10 sec  83.6 GBytes  5.98 Gbits/sec                  receiver
+[  9]   0.00-120.10 sec  83.7 GBytes  5.98 Gbits/sec    5             sender
+[  9]   0.00-120.10 sec  83.7 GBytes  5.98 Gbits/sec                  receiver
+[ 11]   0.00-120.10 sec  85.0 GBytes  6.08 Gbits/sec   45             sender
+[ 11]   0.00-120.10 sec  85.0 GBytes  6.08 Gbits/sec                  receiver
+[ 13]   0.00-120.10 sec  85.1 GBytes  6.09 Gbits/sec    4             sender
+[ 13]   0.00-120.10 sec  85.1 GBytes  6.09 Gbits/sec                  receiver
+[ 15]   0.00-120.10 sec  83.9 GBytes  6.00 Gbits/sec    1             sender
+[ 15]   0.00-120.10 sec  83.9 GBytes  6.00 Gbits/sec                  receiver
+[ 17]   0.00-120.10 sec  85.2 GBytes  6.10 Gbits/sec    2             sender
+[ 17]   0.00-120.10 sec  85.2 GBytes  6.10 Gbits/sec                  receiver
+[ 19]   0.00-120.10 sec  85.1 GBytes  6.09 Gbits/sec    4             sender
+[ 19]   0.00-120.10 sec  85.1 GBytes  6.09 Gbits/sec                  receiver
+[SUM]   0.00-120.10 sec   675 GBytes  48.3 Gbits/sec   70             sender
+[SUM]   0.00-120.10 sec   675 GBytes  48.3 Gbits/sec                  receiver
+
+iperf Done.

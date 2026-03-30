@@ -1,0 +1,4 @@
+scenario,scenario_name,controller,bottleneck,flows,duration_s,avg_backlog,max_backlog,std_backlog,avg_drop_rate,avg_throughput,min_throughput,stab_time_s,tgt_initial,tgt_final,tgt_reduction,avg_limit,n_samples
+S1,"Baseline (10Mbit, 8 flows)",static,10mbit,8,120,433.6,488.0,68.2,4575.4,9.985,6.399,120,5.0,5.0,0.0,1024.0,239
+S1,"Baseline (10Mbit, 8 flows)",adaptive_red,10mbit,8,120,412.3,482.0,72.7,11056.3,19.787,8.831,120,5.0,5.0,0.0,863.0,239
+S1,"Baseline (10Mbit, 8 flows)",acape,10mbit,8,120,313.8,482.0,93.0,79561.9,29.684,7.318,120,5.0,0.999,4.001,476.0,239

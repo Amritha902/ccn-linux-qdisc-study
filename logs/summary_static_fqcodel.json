@@ -1,7 +1,8 @@
 {
   "system": "static_fqcodel",
-  "total_mbps": 9.57,
-  "per_flow_mbps": 1.196,
+  "total_mbps": 4.78,
+  "per_flow_mbps": 0.239,
   "jain": 1.0,
-  "retransmits": 34130
+  "retransmits": 99403,
+  "flows": 20
 }

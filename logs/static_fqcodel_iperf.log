@@ -10,3 +10,6 @@ iperf_json_finish: pthread_mutex_lock: Success
 iperf_errexit: pthread_mutex_unlock: Invalid argument
 iperf_json_finish: pthread_mutex_lock: Success
 iperf_errexit: pthread_mutex_unlock: Invalid argument
+*** stack smashing detected ***: terminated
+iperf_json_finish: pthread_mutex_lock: Success
+iperf_errexit: pthread_mutex_unlock: Invalid argument

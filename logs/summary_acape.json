@@ -1,7 +1,8 @@
 {
   "system": "acape",
-  "total_mbps": 9.57,
-  "per_flow_mbps": 1.196,
-  "jain": 0.9999,
-  "retransmits": 56991
+  "total_mbps": 4.78,
+  "per_flow_mbps": 0.239,
+  "jain": 1.0,
+  "retransmits": 119361,
+  "flows": 20
 }

@@ -1,0 +1,3 @@
+[recorder] Starting: label=cake ns=ns_router iface=veth_rs duration=330s
+[recorder] Writing to: /home/ammu/ccn-linux-qdisc-study/logs/cake_recorded.csv
+[recorder] t=0.0s bl=5p tgt=5.0ms tp=7897.856Mbps dr=91010.0/s

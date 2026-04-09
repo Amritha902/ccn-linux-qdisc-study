@@ -1,0 +1,23 @@
+[recorder] Starting: label=pie ns=ns_router iface=veth_rs duration=330s
+[recorder] Writing to: /home/ammu/ccn-linux-qdisc-study/logs/pie_recorded.csv
+[recorder] t=0.0s bl=0p tgt=15.0ms tp=59683.527Mbps dr=774100.0/s
+[recorder] t=10.0s bl=9p tgt=15.0ms tp=9.997Mbps dr=133.6/s
+[recorder] t=20.1s bl=10p tgt=15.0ms tp=9.99Mbps dr=101.6/s
+[recorder] t=30.1s bl=15p tgt=15.0ms tp=9.997Mbps dr=94.6/s
+[recorder] t=40.2s bl=13p tgt=15.0ms tp=10.001Mbps dr=89.6/s
+[recorder] t=50.2s bl=12p tgt=15.0ms tp=9.985Mbps dr=94.6/s
+[recorder] t=60.2s bl=15p tgt=15.0ms tp=9.992Mbps dr=92.7/s
+[recorder] t=70.3s bl=14p tgt=15.0ms tp=9.995Mbps dr=95.6/s
+[recorder] t=80.3s bl=12p tgt=15.0ms tp=10.013Mbps dr=105.4/s
+[recorder] t=90.4s bl=13p tgt=15.0ms tp=10.002Mbps dr=94.5/s
+[recorder] t=100.4s bl=11p tgt=15.0ms tp=9.991Mbps dr=94.6/s
+[recorder] t=110.5s bl=10p tgt=15.0ms tp=10.019Mbps dr=96.6/s
+[recorder] t=120.5s bl=15p tgt=15.0ms tp=9.998Mbps dr=96.7/s
+[recorder] t=130.6s bl=16p tgt=15.0ms tp=9.992Mbps dr=101.5/s
+[recorder] t=140.6s bl=16p tgt=15.0ms tp=10.011Mbps dr=81.6/s
+[recorder] t=150.7s bl=11p tgt=15.0ms tp=10.007Mbps dr=109.6/s
+[recorder] t=160.7s bl=16p tgt=15.0ms tp=9.998Mbps dr=85.6/s
+[recorder] t=170.7s bl=13p tgt=15.0ms tp=10.009Mbps dr=102.6/s
+[recorder] t=180.8s bl=14p tgt=15.0ms tp=9.991Mbps dr=89.7/s
+[recorder] t=190.8s bl=10p tgt=15.0ms tp=10.021Mbps dr=104.5/s
+[recorder] t=200.9s bl=12p tgt=15.0ms tp=10.018Mbps dr=86.6/s

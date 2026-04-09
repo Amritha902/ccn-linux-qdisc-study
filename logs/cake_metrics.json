@@ -1,0 +1,4802 @@
+[
+  {
+    "t": 0.0,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 24612200.0,
+    "throughput_mbps": 1800125.553,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 1.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 208.4,
+    "throughput_mbps": 10.012,
+    "sojourn_ms": 13.42
+  },
+  {
+    "t": 2.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 3.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 4.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 5.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 15.71
+  },
+  {
+    "t": 6.0,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 10.021,
+    "sojourn_ms": 12.29
+  },
+  {
+    "t": 7.0,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 19.07
+  },
+  {
+    "t": 8.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 9.0,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 143.6,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 10.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 162.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 11.0,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 152.4,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 12.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 13.0,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 177.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 14.0,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 166.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 15.1,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 16.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 180.4,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 17.1,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 152.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 18.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 167.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 19.1,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 160.6,
+    "throughput_mbps": 10.003,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 20.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 147.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 21.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 22.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 23.1,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 19.03
+  },
+  {
+    "t": 24.1,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 25.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 165.4,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 26.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 27.1,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 11.22
+  },
+  {
+    "t": 28.1,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 29.1,
+    "backlog_pkts": 4,
+    "target_ms": 5.0,
+    "drop_rate": 171.4,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 4.48
+  },
+  {
+    "t": 30.1,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 17.95
+  },
+  {
+    "t": 31.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 176.4,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 32.1,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 19.07
+  },
+  {
+    "t": 33.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 34.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 158.4,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 35.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 36.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 154.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 37.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 151.6,
+    "throughput_mbps": 9.99,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 38.1,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 166.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 39.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 160.4,
+    "throughput_mbps": 10.018,
+    "sojourn_ms": 14.53
+  },
+  {
+    "t": 40.1,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 165.4,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 17.95
+  },
+  {
+    "t": 41.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 10.02,
+    "sojourn_ms": 10.06
+  },
+  {
+    "t": 42.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 147.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 43.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 179.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 44.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 45.1,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 46.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 47.2,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 48.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 174.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 49.2,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 174.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 50.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 51.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 52.2,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 164.4,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 53.2,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 54.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 55.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 56.2,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 140.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 57.2,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 58.2,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 59.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 60.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 169.4,
+    "throughput_mbps": 9.981,
+    "sojourn_ms": 12.34
+  },
+  {
+    "t": 61.2,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 185.5,
+    "throughput_mbps": 10.023,
+    "sojourn_ms": 10.06
+  },
+  {
+    "t": 62.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 184.4,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 11.22
+  },
+  {
+    "t": 63.2,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 64.2,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 165.4,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 65.2,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 10.012,
+    "sojourn_ms": 14.54
+  },
+  {
+    "t": 66.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 67.2,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 68.2,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 69.2,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 172.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 70.2,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 71.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 72.2,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 8.97
+  },
+  {
+    "t": 73.2,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 175.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 74.2,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 75.2,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 19.04
+  },
+  {
+    "t": 76.2,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 177.4,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 7.84
+  },
+  {
+    "t": 77.2,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 164.4,
+    "throughput_mbps": 9.99,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 78.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 164.4,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 79.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 15.66
+  },
+  {
+    "t": 80.3,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 161.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 81.3,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 158.4,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 82.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 83.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 175.4,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 11.22
+  },
+  {
+    "t": 84.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 10.014,
+    "sojourn_ms": 13.42
+  },
+  {
+    "t": 85.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 86.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 159.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 11.21
+  },
+  {
+    "t": 87.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 88.3,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 177.4,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 7.84
+  },
+  {
+    "t": 89.3,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 90.3,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 157.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 91.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 11.22
+  },
+  {
+    "t": 92.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 10.013,
+    "sojourn_ms": 13.42
+  },
+  {
+    "t": 93.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 94.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 174.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 95.3,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 172.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 96.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 97.3,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 98.3,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 99.3,
+    "backlog_pkts": 6,
+    "target_ms": 5.0,
+    "drop_rate": 177.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 6.72
+  },
+  {
+    "t": 100.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 171.3,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 101.3,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 179.3,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 102.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 170.4,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 103.3,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 153.6,
+    "throughput_mbps": 10.003,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 104.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 170.6,
+    "throughput_mbps": 10.003,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 105.3,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 106.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 107.3,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 7.85
+  },
+  {
+    "t": 108.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.019,
+    "sojourn_ms": 13.41
+  },
+  {
+    "t": 109.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 110.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 111.4,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 112.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 113.4,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 114.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 178.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 115.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 116.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 117.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 15.66
+  },
+  {
+    "t": 118.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 119.4,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 161.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 8.95
+  },
+  {
+    "t": 120.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 121.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 122.4,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 174.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 123.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 169.4,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 124.4,
+    "backlog_pkts": 5,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 5.6
+  },
+  {
+    "t": 125.4,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 126.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 127.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 128.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 129.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 130.4,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 131.4,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 132.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.02,
+    "sojourn_ms": 15.65
+  },
+  {
+    "t": 133.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 134.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 135.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 136.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 137.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 138.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 154.4,
+    "throughput_mbps": 9.981,
+    "sojourn_ms": 12.34
+  },
+  {
+    "t": 139.4,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 140.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 174.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 141.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 142.5,
+    "backlog_pkts": 18,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 20.17
+  },
+  {
+    "t": 143.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.987,
+    "sojourn_ms": 15.7
+  },
+  {
+    "t": 144.5,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 169.4,
+    "throughput_mbps": 10.02,
+    "sojourn_ms": 8.94
+  },
+  {
+    "t": 145.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 139.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 146.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 147.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 148.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 149.5,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 174.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 150.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 151.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 182.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 152.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 173.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 153.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 177.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 154.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 155.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 156.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 170.6,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 157.5,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 158.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 177.4,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 159.5,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 160.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 175.5,
+    "throughput_mbps": 9.987,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 161.5,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 10.023,
+    "sojourn_ms": 7.82
+  },
+  {
+    "t": 162.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 163.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 148.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 164.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 165.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 166.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 174.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 167.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 12.34
+  },
+  {
+    "t": 168.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 10.02,
+    "sojourn_ms": 14.53
+  },
+  {
+    "t": 169.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 138.6,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 170.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 171.5,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 172.5,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 16.82
+  },
+  {
+    "t": 173.5,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 17.9
+  },
+  {
+    "t": 174.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 175.6,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 175.4,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 176.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.022,
+    "sojourn_ms": 12.29
+  },
+  {
+    "t": 177.6,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 175.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 178.6,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 179.6,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 180.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 172.4,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 181.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 182.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 183.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 184.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 185.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 149.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 186.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 187.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 188.6,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 189.6,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 172.4,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 19.05
+  },
+  {
+    "t": 190.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 172.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 191.6,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 156.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 192.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 193.6,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 144.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 194.6,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 19.05
+  },
+  {
+    "t": 195.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 196.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 10.018,
+    "sojourn_ms": 13.42
+  },
+  {
+    "t": 197.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 170.4,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 198.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 169.4,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 199.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 173.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 200.6,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 19.04
+  },
+  {
+    "t": 201.6,
+    "backlog_pkts": 19,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 21.31
+  },
+  {
+    "t": 202.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 189.4,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 203.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 164.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 204.6,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 205.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 206.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 207.7,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 208.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 209.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 167.4,
+    "throughput_mbps": 10.02,
+    "sojourn_ms": 14.53
+  },
+  {
+    "t": 210.7,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 211.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 150.4,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 212.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 213.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 214.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 172.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 215.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 216.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 217.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 163.4,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 218.7,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 166.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 19.04
+  },
+  {
+    "t": 219.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 163.4,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 220.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 221.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 175.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 222.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 223.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 179.4,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 224.7,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 160.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 225.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 226.7,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 166.6,
+    "throughput_mbps": 10.003,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 227.7,
+    "backlog_pkts": 6,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 6.72
+  },
+  {
+    "t": 228.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 170.4,
+    "throughput_mbps": 9.992,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 229.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 174.4,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 230.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 231.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 232.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 233.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 10.019,
+    "sojourn_ms": 15.65
+  },
+  {
+    "t": 234.7,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 166.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 235.7,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 145.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 236.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 237.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 238.8,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 239.8,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 240.8,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 241.8,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 172.4,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 242.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 243.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 180.4,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 244.8,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 17.9
+  },
+  {
+    "t": 245.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 246.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 247.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 248.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 249.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 149.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 250.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 148.6,
+    "throughput_mbps": 9.987,
+    "sojourn_ms": 16.82
+  },
+  {
+    "t": 251.8,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 17.9
+  },
+  {
+    "t": 252.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 253.8,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 199.4,
+    "throughput_mbps": 10.012,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 254.8,
+    "backlog_pkts": 6,
+    "target_ms": 5.0,
+    "drop_rate": 182.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 6.72
+  },
+  {
+    "t": 255.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 256.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 169.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 257.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 10.013,
+    "sojourn_ms": 14.54
+  },
+  {
+    "t": 258.8,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 259.8,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 260.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 16.78
+  },
+  {
+    "t": 261.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 172.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 262.8,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 263.8,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 264.8,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.982,
+    "sojourn_ms": 15.71
+  },
+  {
+    "t": 265.8,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 184.4,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 266.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 148.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 267.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 158.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 268.8,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 181.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 269.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 270.9,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 170.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 271.9,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 272.9,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 177.4,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 273.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 274.9,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 275.9,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.989,
+    "sojourn_ms": 17.94
+  },
+  {
+    "t": 276.9,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 173.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 277.9,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 278.9,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 177.4,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 279.9,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 170.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 280.9,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 281.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 282.9,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 283.9,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.987,
+    "sojourn_ms": 15.7
+  },
+  {
+    "t": 284.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 285.9,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 166.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 286.9,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 19.05
+  },
+  {
+    "t": 287.9,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 288.9,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 289.9,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 290.9,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 180.4,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 291.9,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 11.22
+  },
+  {
+    "t": 292.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 176.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 293.9,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 294.9,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 173.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 295.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.989,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 296.9,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 19.02
+  },
+  {
+    "t": 297.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 177.4,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 298.9,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 299.9,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 178.5,
+    "throughput_mbps": 10.013,
+    "sojourn_ms": 7.83
+  },
+  {
+    "t": 300.9,
+    "backlog_pkts": 6,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 6.72
+  },
+  {
+    "t": 301.9,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 137.6,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 303.0,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 145.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 304.0,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 305.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 150.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 306.0,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 307.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 140.6,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 15.66
+  },
+  {
+    "t": 308.0,
+    "backlog_pkts": 18,
+    "target_ms": 5.0,
+    "drop_rate": 138.6,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 20.17
+  },
+  {
+    "t": 309.0,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 310.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 311.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 312.0,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 140.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 313.0,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.982,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 314.0,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 148.6,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 16.78
+  },
+  {
+    "t": 315.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 146.6,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 15.66
+  },
+  {
+    "t": 316.0,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 137.5,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 19.05
+  },
+  {
+    "t": 317.0,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 318.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 319.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 320.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 145.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 321.0,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 17.94
+  },
+  {
+    "t": 322.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 323.0,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 135.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 324.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 325.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 150.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 326.0,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 327.0,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 328.0,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 144.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 329.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 142.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 330.0,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 19.05
+  },
+  {
+    "t": 331.0,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 14.54
+  },
+  {
+    "t": 332.0,
+    "backlog_pkts": 18,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 9.982,
+    "sojourn_ms": 20.2
+  },
+  {
+    "t": 333.0,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.013,
+    "sojourn_ms": 15.66
+  },
+  {
+    "t": 334.0,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 147.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 335.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 336.1,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 143.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 337.1,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 145.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 338.1,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 8.95
+  },
+  {
+    "t": 339.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 15.71
+  },
+  {
+    "t": 340.1,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 341.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 342.1,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 140.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 343.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 138.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 344.1,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 345.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 144.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 346.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 156.6,
+    "throughput_mbps": 9.989,
+    "sojourn_ms": 15.7
+  },
+  {
+    "t": 347.1,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 152.6,
+    "throughput_mbps": 10.012,
+    "sojourn_ms": 17.9
+  },
+  {
+    "t": 348.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 155.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 349.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 139.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 350.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 351.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 352.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 353.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 354.1,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 147.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 355.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 160.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 356.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 143.6,
+    "throughput_mbps": 10.012,
+    "sojourn_ms": 14.54
+  },
+  {
+    "t": 357.1,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 358.1,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 142.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 359.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 360.1,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 361.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 362.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 363.1,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 364.1,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 19.07
+  },
+  {
+    "t": 365.1,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 156.4,
+    "throughput_mbps": 10.016,
+    "sojourn_ms": 13.42
+  },
+  {
+    "t": 366.1,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 367.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 138.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 368.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 369.2,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 8.97
+  },
+  {
+    "t": 370.2,
+    "backlog_pkts": 19,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 21.29
+  },
+  {
+    "t": 371.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 372.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 156.4,
+    "throughput_mbps": 9.989,
+    "sojourn_ms": 11.21
+  },
+  {
+    "t": 373.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 132.6,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 374.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 375.2,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 376.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 138.6,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 377.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 10.018,
+    "sojourn_ms": 13.42
+  },
+  {
+    "t": 378.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 131.5,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 379.2,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 16.78
+  },
+  {
+    "t": 380.2,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 145.4,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 11.22
+  },
+  {
+    "t": 381.2,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 132.6,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 17.91
+  },
+  {
+    "t": 382.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 383.2,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 143.6,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 17.9
+  },
+  {
+    "t": 384.2,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 385.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 153.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 386.2,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 131.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 387.2,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 142.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 15.71
+  },
+  {
+    "t": 388.2,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 10.018,
+    "sojourn_ms": 17.89
+  },
+  {
+    "t": 389.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 147.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 390.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 391.2,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 7.84
+  },
+  {
+    "t": 392.2,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 393.2,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 394.2,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 140.6,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 15.7
+  },
+  {
+    "t": 395.2,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 396.2,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 157.4,
+    "throughput_mbps": 10.017,
+    "sojourn_ms": 16.77
+  },
+  {
+    "t": 397.3,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 135.6,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 398.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 145.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 11.21
+  },
+  {
+    "t": 399.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 400.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 10.012,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 401.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 131.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 402.3,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 146.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 403.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 404.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 141.6,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 405.3,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 406.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 407.3,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 17.9
+  },
+  {
+    "t": 408.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 409.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 410.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 411.3,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 412.3,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 413.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 140.6,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 13.46
+  },
+  {
+    "t": 414.3,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 415.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 416.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 156.4,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 417.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 134.5,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 418.3,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 419.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 420.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 143.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 421.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 145.6,
+    "throughput_mbps": 9.989,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 422.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 171.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 423.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 141.6,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 424.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 160.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 425.3,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 426.3,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 427.3,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 147.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 428.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 429.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 145.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 430.4,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 167.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 431.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 142.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 432.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 15.7
+  },
+  {
+    "t": 433.4,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 434.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 132.6,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 435.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 147.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 436.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 176.4,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 437.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 438.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 12.34
+  },
+  {
+    "t": 439.4,
+    "backlog_pkts": 18,
+    "target_ms": 5.0,
+    "drop_rate": 128.6,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 20.14
+  },
+  {
+    "t": 440.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 441.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 442.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 443.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 444.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 445.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 446.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 144.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 447.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 448.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 449.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 150.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 450.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 137.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 451.4,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 452.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 168.4,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 453.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 16.78
+  },
+  {
+    "t": 454.4,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 455.4,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 456.4,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 162.4,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 457.4,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 140.5,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 458.4,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 9.992,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 459.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 132.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 460.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 461.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 462.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 154.4,
+    "throughput_mbps": 10.003,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 463.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 127.6,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 464.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 465.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 146.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 466.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 467.5,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 16.83
+  },
+  {
+    "t": 468.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 14.54
+  },
+  {
+    "t": 469.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 11.21
+  },
+  {
+    "t": 470.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 149.6,
+    "throughput_mbps": 10.003,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 471.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 472.5,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 473.5,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 474.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 146.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 475.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 139.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 476.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 477.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 164.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 478.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 479.5,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 480.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 149.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 481.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 165.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 11.21
+  },
+  {
+    "t": 482.5,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 8.95
+  },
+  {
+    "t": 483.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 484.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 166.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 485.5,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 486.5,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 487.5,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 156.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 488.5,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 489.5,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 137.6,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 490.5,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 491.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 141.6,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 492.6,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.984,
+    "sojourn_ms": 16.83
+  },
+  {
+    "t": 493.6,
+    "backlog_pkts": 18,
+    "target_ms": 5.0,
+    "drop_rate": 138.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 20.17
+  },
+  {
+    "t": 494.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 10.022,
+    "sojourn_ms": 15.65
+  },
+  {
+    "t": 495.6,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 496.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 14.59
+  },
+  {
+    "t": 497.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 14.54
+  },
+  {
+    "t": 498.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 499.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 161.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 500.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 141.6,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 501.6,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 143.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 17.92
+  },
+  {
+    "t": 502.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 163.4,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 503.6,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 504.6,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 16.78
+  },
+  {
+    "t": 505.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 138.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 506.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 507.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 146.6,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 508.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 509.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 144.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 510.6,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 143.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 511.6,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.987,
+    "sojourn_ms": 10.09
+  },
+  {
+    "t": 512.6,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 138.6,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 15.66
+  },
+  {
+    "t": 513.6,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 514.6,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 144.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 515.6,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 516.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 14.58
+  },
+  {
+    "t": 517.6,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 10.019,
+    "sojourn_ms": 10.06
+  },
+  {
+    "t": 518.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 161.4,
+    "throughput_mbps": 9.98,
+    "sojourn_ms": 13.47
+  },
+  {
+    "t": 519.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 10.022,
+    "sojourn_ms": 13.41
+  },
+  {
+    "t": 520.6,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 143.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 521.6,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 522.6,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 9.992,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 523.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 524.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 147.5,
+    "throughput_mbps": 10.005,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 525.7,
+    "backlog_pkts": 18,
+    "target_ms": 5.0,
+    "drop_rate": 150.6,
+    "throughput_mbps": 9.99,
+    "sojourn_ms": 20.18
+  },
+  {
+    "t": 526.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 155.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 527.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 528.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 159.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 529.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 530.7,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 531.7,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 130.6,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 532.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 140.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 533.7,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.011,
+    "sojourn_ms": 19.02
+  },
+  {
+    "t": 534.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 535.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 140.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 536.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 150.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 537.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 538.7,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 11.2
+  },
+  {
+    "t": 539.7,
+    "backlog_pkts": 10,
+    "target_ms": 5.0,
+    "drop_rate": 152.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 11.19
+  },
+  {
+    "t": 540.7,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 156.6,
+    "throughput_mbps": 9.988,
+    "sojourn_ms": 8.97
+  },
+  {
+    "t": 541.7,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 162.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 16.79
+  },
+  {
+    "t": 542.7,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 142.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 543.7,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 544.7,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 153.4,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 545.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 546.7,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 163.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 16.8
+  },
+  {
+    "t": 547.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 155.6,
+    "throughput_mbps": 10.002,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 548.7,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 549.7,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 135.6,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 550.7,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 140.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 19.05
+  },
+  {
+    "t": 551.7,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 552.7,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 131.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 553.7,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 145.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 554.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 146.6,
+    "throughput_mbps": 10.0,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 555.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 148.6,
+    "throughput_mbps": 10.001,
+    "sojourn_ms": 14.56
+  },
+  {
+    "t": 556.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 144.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 557.8,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 10.07
+  },
+  {
+    "t": 558.8,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.983,
+    "sojourn_ms": 19.07
+  },
+  {
+    "t": 559.8,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 560.8,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 131.6,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 561.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 562.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 138.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 563.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 564.8,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 149.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 8.95
+  },
+  {
+    "t": 565.8,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 133.6,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 566.8,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 165.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 16.81
+  },
+  {
+    "t": 567.8,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 10.007,
+    "sojourn_ms": 8.95
+  },
+  {
+    "t": 568.8,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 569.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 570.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 138.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 571.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 157.5,
+    "throughput_mbps": 10.006,
+    "sojourn_ms": 13.43
+  },
+  {
+    "t": 572.8,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 132.6,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 19.02
+  },
+  {
+    "t": 573.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 574.8,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 150.5,
+    "throughput_mbps": 9.994,
+    "sojourn_ms": 10.09
+  },
+  {
+    "t": 575.8,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 143.6,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 12.31
+  },
+  {
+    "t": 576.8,
+    "backlog_pkts": 5,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 5.6
+  },
+  {
+    "t": 577.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 135.6,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 578.8,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 8.96
+  },
+  {
+    "t": 579.8,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 146.5,
+    "throughput_mbps": 10.008,
+    "sojourn_ms": 15.67
+  },
+  {
+    "t": 580.8,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 151.5,
+    "throughput_mbps": 9.993,
+    "sojourn_ms": 13.45
+  },
+  {
+    "t": 581.8,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 151.6,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 15.68
+  },
+  {
+    "t": 582.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 148.5,
+    "throughput_mbps": 10.009,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 583.8,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 131.6,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 14.57
+  },
+  {
+    "t": 584.8,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 144.6,
+    "throughput_mbps": 9.986,
+    "sojourn_ms": 0.0
+  },
+  {
+    "t": 585.9,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 10.021,
+    "sojourn_ms": 8.94
+  },
+  {
+    "t": 586.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 151.4,
+    "throughput_mbps": 9.992,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 587.9,
+    "backlog_pkts": 9,
+    "target_ms": 5.0,
+    "drop_rate": 168.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 10.08
+  },
+  {
+    "t": 588.9,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 589.9,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.997,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 590.9,
+    "backlog_pkts": 8,
+    "target_ms": 5.0,
+    "drop_rate": 153.6,
+    "throughput_mbps": 10.013,
+    "sojourn_ms": 8.95
+  },
+  {
+    "t": 591.9,
+    "backlog_pkts": 12,
+    "target_ms": 5.0,
+    "drop_rate": 156.5,
+    "throughput_mbps": 9.998,
+    "sojourn_ms": 13.44
+  },
+  {
+    "t": 592.9,
+    "backlog_pkts": 16,
+    "target_ms": 5.0,
+    "drop_rate": 163.4,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 17.93
+  },
+  {
+    "t": 593.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 160.6,
+    "throughput_mbps": 10.004,
+    "sojourn_ms": 12.32
+  },
+  {
+    "t": 594.9,
+    "backlog_pkts": 17,
+    "target_ms": 5.0,
+    "drop_rate": 158.5,
+    "throughput_mbps": 9.985,
+    "sojourn_ms": 19.07
+  },
+  {
+    "t": 595.9,
+    "backlog_pkts": 15,
+    "target_ms": 5.0,
+    "drop_rate": 142.6,
+    "throughput_mbps": 10.023,
+    "sojourn_ms": 16.76
+  },
+  {
+    "t": 596.9,
+    "backlog_pkts": 11,
+    "target_ms": 5.0,
+    "drop_rate": 154.5,
+    "throughput_mbps": 9.995,
+    "sojourn_ms": 12.33
+  },
+  {
+    "t": 597.9,
+    "backlog_pkts": 14,
+    "target_ms": 5.0,
+    "drop_rate": 141.5,
+    "throughput_mbps": 9.996,
+    "sojourn_ms": 15.69
+  },
+  {
+    "t": 598.9,
+    "backlog_pkts": 13,
+    "target_ms": 5.0,
+    "drop_rate": 147.5,
+    "throughput_mbps": 10.01,
+    "sojourn_ms": 14.55
+  },
+  {
+    "t": 599.9,
+    "backlog_pkts": 7,
+    "target_ms": 5.0,
+    "drop_rate": 153.5,
+    "throughput_mbps": 9.999,
+    "sojourn_ms": 7.84
+  },
+  {
+    "t": 600.9,
+    "backlog_pkts": 0,
+    "target_ms": 5.0,
+    "drop_rate": 18.9,
+    "throughput_mbps": 1.417,
+    "sojourn_ms": 0.0
+  }
+]

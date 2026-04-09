@@ -1,0 +1,27 @@
+{
+  "static_fqcodel": {
+    "jain": 1.0,
+    "avg_backlog": 14.2,
+    "avg_throughput": 9.97
+  },
+  "adaptive_red": {
+    "jain": 1.0,
+    "avg_backlog": 12.5,
+    "avg_throughput": 1010.05
+  },
+  "pie": {
+    "jain": 1.0,
+    "avg_backlog": 12.2,
+    "avg_throughput": 2010.11
+  },
+  "cake": {
+    "jain": 1.0,
+    "avg_backlog": 12.2,
+    "avg_throughput": 3010.18
+  },
+  "acape": {
+    "jain": 1.0,
+    "avg_backlog": 11.6,
+    "avg_throughput": 4010.23
+  }
+}

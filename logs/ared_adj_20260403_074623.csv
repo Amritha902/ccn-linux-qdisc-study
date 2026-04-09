@@ -1,0 +1,4 @@
+t_s,avg_q,old_maxp,new_maxp,old_target_ms,new_target_ms,old_limit,new_limit,reason
+0.0,0.0,0.05,0.045,5.0,4.64,1024,954,below_min_th_relax
+1.02,0.1,0.04,0.035,4.64,4.72,954,970,below_min_th_relax
+2.55,0.2,0.025,0.02,4.72,4.84,970,993,below_min_th_relax

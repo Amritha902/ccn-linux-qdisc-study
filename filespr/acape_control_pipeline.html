@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACAPE — Full Control Pipeline</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #080c10;
+  --bg2: #0c1218;
+  --bg3: #101820;
+  --border: rgba(80,180,255,0.12);
+  --border-bright: rgba(80,180,255,0.35);
+  --accent: #38bfff;
+  --accent2: #00e5a0;
+  --warn: #ffb020;
+  --danger: #ff4466;
+  --purple: #c084fc;
+  --dim: rgba(180,220,255,0.35);
+  --text: rgba(220,240,255,0.9);
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(8,20,35,0.95);
+  border-bottom: 1px solid var(--border-bright);
+  flex-shrink: 0;
+}
+.logo {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+.logo span { color: var(--accent2); }
+.header-sub { font-size: 9px; color: var(--dim); letter-spacing: 1px; margin-top: 1px; }
+.tab-row { display: flex; gap: 6px; }
+.tab {
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+.tab.active { border-color: var(--accent); color: var(--accent); background: rgba(56,191,255,0.08); }
+.tab:hover { border-color: var(--accent); color: var(--accent); }
+.ctrl-btns { display: flex; gap: 8px; }
+.cbtn {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  background: rgba(56,191,255,0.06);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.cbtn:hover { background: rgba(56,191,255,0.15); }
+.cbtn.active { background: rgba(56,191,255,0.2); border-color: var(--accent); }
+#speed-label { font-size: 9px; color: var(--dim); line-height: 1.4; text-align: right; }
+
+/* ── MAIN LAYOUT ── */
+#main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* ── ALGORITHM COLUMNS ── */
+.algo-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  min-width: 0;
+}
+.algo-col:last-child { border-right: none; }
+
+.algo-header {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.algo-tag {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.algo-tag.static { color: #888; }
+.algo-tag.ared { color: var(--warn); }
+.algo-tag.acape { color: var(--accent2); }
+.algo-desc { font-size: 9px; color: var(--dim); }
+.regime-pill {
+  margin-left: auto;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border: 1px solid;
+}
+
+/* ── PIPELINE SECTIONS ── */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+}
+
+.layer {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  flex-shrink: 0;
+}
+
+.layer-title {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.layer-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.layer-num {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--dim);
+}
+
+/* LAYER 1 — SIGNALS */
+.signals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.signal-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 6px 8px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.signal-box.flash { animation: signalFlash 0.4s ease; }
+@keyframes signalFlash {
+  0% { background: var(--bg3); }
+  50% { background: rgba(56,191,255,0.12); }
+  100% { background: var(--bg3); }
+}
+.signal-box.flash-warn { animation: signalWarn 0.4s ease; }
+@keyframes signalWarn {
+  0% { background: var(--bg3); }
+  50% { background: rgba(255,176,32,0.15); }
+  100% { background: var(--bg3); }
+}
+.signal-box.flash-danger { animation: signalDanger 0.4s ease; }
+@keyframes signalDanger {
+  0% { background: var(--bg3); }
+  50% { background: rgba(255,68,102,0.15); }
+  100% { background: var(--bg3); }
+}
+.sig-label { font-size: 8px; color: var(--dim); letter-spacing: 1px; }
+.sig-value { font-size: 15px; font-weight: 600; margin: 2px 0; line-height: 1; }
+.sig-trend { font-size: 10px; display: flex; align-items: center; gap: 3px; }
+.trend-up { color: var(--danger); }
+.trend-dn { color: var(--accent2); }
+.trend-flat { color: var(--dim); }
+.sig-bar {
+  height: 2px;
+  background: var(--border);
+  margin-top: 4px;
+  border-radius: 1px;
+  overflow: hidden;
+}
+.sig-bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.5s ease, background 0.5s;
+}
+
+/* LAYER 2 — DECISION ENGINE */
+.decision-section { margin-bottom: 6px; }
+.ds-title { font-size: 8px; color: var(--dim); letter-spacing: 1px; margin-bottom: 4px; }
+
+/* Gradient rows */
+.grad-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.grad-name { width: 60px; color: var(--dim); font-size: 9px; flex-shrink: 0; }
+.grad-arrow { font-size: 12px; width: 16px; text-align: center; }
+.grad-bar-wrap { flex: 1; height: 3px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.grad-bar { height: 100%; border-radius: 1px; transition: width 0.4s, background 0.4s; }
+.grad-value { width: 40px; text-align: right; font-size: 9px; }
+
+/* Regime */
+.regime-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  margin-bottom: 4px;
+  transition: all 0.4s;
+}
+.regime-label {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
+  transition: color 0.4s;
+}
+.regime-icon { font-size: 20px; }
+.regime-desc { font-size: 9px; color: var(--dim); flex: 1; }
+
+/* Decision rules */
+.rule-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 6px;
+  margin-bottom: 2px;
+  border-left: 2px solid var(--border);
+  border-radius: 0 2px 2px 0;
+  background: rgba(0,0,0,0.2);
+  transition: all 0.3s;
+  font-size: 9px;
+}
+.rule-row.active {
+  border-left-color: var(--accent2);
+  background: rgba(0,229,160,0.06);
+}
+.rule-cond { color: var(--dim); flex: 1; }
+.rule-arrow { color: var(--accent); flex-shrink: 0; }
+.rule-action { color: var(--accent2); flex: 1; }
+.rule-inactive { opacity: 0.35; }
+
+/* LAYER 3 — ACTUATION */
+.param-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.param-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 6px 8px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.param-box.updated {
+  animation: paramFlash 0.5s ease;
+}
+@keyframes paramFlash {
+  0% { border-color: var(--border); }
+  40% { border-color: var(--accent2); box-shadow: 0 0 8px rgba(0,229,160,0.4); }
+  100% { border-color: var(--border); }
+}
+.param-name-row { display: flex; justify-content: space-between; align-items: center; }
+.param-key { font-size: 8px; color: var(--dim); letter-spacing: 1px; }
+.param-delta {
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.param-delta.show { opacity: 1; }
+.param-val {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 2px 0;
+  line-height: 1;
+  transition: color 0.4s;
+}
+.param-track2 {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.param-fill2 {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.6s ease, background 0.4s;
+}
+
+/* ── QUEUE VISUAL ── */
+#queue-row {
+  display: flex;
+  height: 100px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.queue-cell {
+  flex: 1;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.queue-cell:last-child { border-right: none; }
+.qc-title {
+  font-size: 8px;
+  color: var(--dim);
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.queue-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: rgba(0,0,0,0.3);
+}
+
+/* ── FLOW ARROW ── */
+.flow-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--accent);
+  animation: pulse 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* scrollbar */
+.pipeline::-webkit-scrollbar { width: 4px; }
+.pipeline::-webkit-scrollbar-track { background: transparent; }
+.pipeline::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* disabled overlay */
+.disabled-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8,12,16,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ARED single path */
+.ared-path {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ared-box {
+  background: var(--bg3);
+  border: 1px solid rgba(255,176,32,0.2);
+  border-radius: 2px;
+  padding: 6px 8px;
+}
+.ared-box.active-box { border-color: var(--warn); animation: aredFlash 0.5s ease; }
+@keyframes aredFlash {
+  0%,100% { box-shadow: none; }
+  50% { box-shadow: 0 0 10px rgba(255,176,32,0.4); }
+}
+.ared-arrow-down { text-align: center; color: var(--warn); font-size: 12px; line-height: 1.2; }
+.ared-label { font-size: 8px; color: rgba(255,176,32,0.6); letter-spacing: 1px; }
+.ared-value { font-size: 14px; font-weight: 600; color: var(--warn); }
+.ared-note { font-size: 8px; color: var(--dim); margin-top: 2px; }
+
+/* packet dots */
+.pkt {
+  position: absolute;
+  border-radius: 50%;
+  width: 6px; height: 6px;
+  pointer-events: none;
+}
+
+/* Log */
+#log-area {
+  position: absolute;
+  bottom: 108px;
+  right: 8px;
+  width: 220px;
+  max-height: 80px;
+  overflow: hidden;
+  z-index: 20;
+  pointer-events: none;
+}
+.log-line {
+  font-size: 9px;
+  color: var(--dim);
+  padding: 1px 0;
+  animation: fadeIn 0.3s;
+}
+.log-line.a { color: var(--accent2); }
+.log-line.w { color: var(--warn); }
+.log-line.d { color: var(--danger); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* grad-combined */
+.grad-combined {
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gc-label { font-size: 8px; color: var(--dim); }
+.gc-value { font-size: 13px; font-weight: 600; margin-left: auto; }
+
+/* static no-activity text */
+.no-activity {
+  padding: 6px;
+  text-align: center;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 1px;
+  border: 1px dashed var(--border);
+  border-radius: 2px;
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div>
+    <div class="logo">ACA<span>PE</span> <span style="font-size:10px;font-family:var(--mono);font-weight:400;color:var(--dim)">vs</span> <span style="color:var(--warn)">ARED</span> <span style="font-size:10px;font-family:var(--mono);font-weight:400;color:var(--dim)">vs</span> <span style="color:#888">Static</span></div>
+    <div class="header-sub">FULL CONTROL PIPELINE · fq_codel · VIT Chennai 2026 · 23BEC1368</div>
+  </div>
+  <div class="tab-row" id="tab-row">
+    <button class="tab" onclick="setScenario('light')">🟢 LIGHT</button>
+    <button class="tab active" onclick="setScenario('stable')">🔵 STABLE</button>
+    <button class="tab" onclick="setScenario('heavy')">🔴 HEAVY</button>
+    <button class="tab" onclick="setScenario('burst')">⚡ BURST</button>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <div id="speed-label">Speed<br><span id="speed-val">1×</span></div>
+    <div class="ctrl-btns">
+      <button class="cbtn" onclick="cycleSpeed()">⚡ SPEED</button>
+      <button class="cbtn active" id="play-btn" onclick="togglePlay()">⏸ PAUSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN 3-COLUMN LAYOUT -->
+<div id="main">
+
+  <!-- STATIC fq_codel -->
+  <div class="algo-col">
+    <div class="algo-header">
+      <div>
+        <div class="algo-tag static">STATIC fq_codel</div>
+        <div class="algo-desc">Fixed params — no controller</div>
+      </div>
+      <div class="regime-pill" id="static-regime-pill" style="color:#888;border-color:#444">—</div>
+    </div>
+    <div class="pipeline">
+
+      <!-- L1 -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">1</div>SIGNAL COLLECTION</div>
+        <div class="signals-grid">
+          <div class="signal-box" id="st-backlog-box">
+            <div class="sig-label">BACKLOG</div>
+            <div class="sig-value" id="st-backlog-val" style="color:#aaa">—</div>
+            <div class="sig-trend"><span id="st-backlog-trend" class="trend-flat">→</span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="st-backlog-bar" style="width:0%;background:#888"></div></div>
+          </div>
+          <div class="signal-box" id="st-drop-box">
+            <div class="sig-label">DROP RATE</div>
+            <div class="sig-value" id="st-drop-val" style="color:#aaa">—</div>
+            <div class="sig-trend"><span id="st-drop-trend" class="trend-flat">→</span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="st-drop-bar" style="width:0%;background:#888"></div></div>
+          </div>
+          <div class="signal-box" id="st-rtt-box">
+            <div class="sig-label">RTT (ms)</div>
+            <div class="sig-value" id="st-rtt-val" style="color:#aaa">—</div>
+            <div class="sig-trend"><span id="st-rtt-trend" class="trend-flat">→</span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="st-rtt-bar" style="width:0%;background:#888"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L2 — DISABLED -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">2</div>DECISION ENGINE</div>
+        <div class="no-activity">NO GRADIENT COMPUTATION</div>
+        <div class="no-activity" style="margin-top:4px">NO REGIME DETECTION</div>
+        <div class="no-activity" style="margin-top:4px">NO ADAPTIVE DECISIONS</div>
+      </div>
+
+      <!-- L3 — FIXED -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">3</div>fq_codel PARAMS (FIXED)</div>
+        <div class="param-grid">
+          <div class="param-box">
+            <div class="param-name-row"><span class="param-key">TARGET</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#888" id="st-p-target">5ms</div>
+            <div class="param-track2"><div class="param-fill2" id="st-f-target" style="width:50%;background:#555"></div></div>
+          </div>
+          <div class="param-box">
+            <div class="param-name-row"><span class="param-key">INTERVAL</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#888" id="st-p-interval">100ms</div>
+            <div class="param-track2"><div class="param-fill2" id="st-f-interval" style="width:50%;background:#555"></div></div>
+          </div>
+          <div class="param-box">
+            <div class="param-name-row"><span class="param-key">LIMIT</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#888" id="st-p-limit">1000</div>
+            <div class="param-track2"><div class="param-fill2" id="st-f-limit" style="width:50%;background:#555"></div></div>
+          </div>
+          <div class="param-box">
+            <div class="param-name-row"><span class="param-key">QUANTUM</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#888" id="st-p-quantum">1514B</div>
+            <div class="param-track2"><div class="param-fill2" id="st-f-quantum" style="width:50%;background:#555"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ARED -->
+  <div class="algo-col">
+    <div class="algo-header">
+      <div>
+        <div class="algo-tag ared">ARED</div>
+        <div class="algo-desc">Single-parameter adaptive RED</div>
+      </div>
+      <div class="regime-pill" id="ared-regime-pill" style="color:var(--warn);border-color:rgba(255,176,32,0.4)">—</div>
+    </div>
+    <div class="pipeline">
+
+      <!-- L1 -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">1</div>SIGNAL COLLECTION</div>
+        <div class="signals-grid">
+          <div class="signal-box" id="ar-backlog-box">
+            <div class="sig-label">AVG QUEUE</div>
+            <div class="sig-value" id="ar-backlog-val" style="color:var(--warn)">—</div>
+            <div class="sig-trend"><span id="ar-backlog-trend" class="trend-flat">→</span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="ar-backlog-bar" style="width:0%;background:var(--warn)"></div></div>
+          </div>
+          <div class="signal-box" id="ar-drop-box">
+            <div class="sig-label">DROP PROB</div>
+            <div class="sig-value" id="ar-drop-val" style="color:var(--warn)">—</div>
+            <div class="sig-trend"><span id="ar-drop-trend" class="trend-flat">→</span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="ar-drop-bar" style="width:0%;background:var(--warn)"></div></div>
+          </div>
+          <div class="signal-box" id="ar-rtt-box" style="opacity:0.4">
+            <div class="sig-label">RTT</div>
+            <div class="sig-value" style="color:#555">N/A</div>
+            <div class="sig-trend"><span style="color:#444">×</span> not used</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L2 — ARED partial -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">2</div>DECISION ENGINE</div>
+        <div class="ared-path">
+          <div class="ared-box" id="ar-avg-box">
+            <div class="ared-label">OBSERVED AVG QUEUE</div>
+            <div class="ared-value" id="ar-avg-val">0 pkts</div>
+          </div>
+          <div class="ared-arrow-down">↓</div>
+          <div class="ared-box" id="ar-thresh-box">
+            <div class="ared-label">THRESHOLD CHECK</div>
+            <div class="ared-value" id="ar-thresh-val" style="font-size:11px">min_th=50 · max_th=200</div>
+            <div class="ared-note" id="ar-thresh-result">Comparing avg queue to thresholds...</div>
+          </div>
+          <div class="ared-arrow-down">↓</div>
+          <div class="ared-box" id="ar-maxp-box">
+            <div class="ared-label">max_p ADJUSTMENT</div>
+            <div class="ared-value" id="ar-maxp-val">0.10</div>
+            <div class="ared-note" id="ar-maxp-note">→ random drop probability</div>
+          </div>
+        </div>
+        <div class="no-activity" style="margin-top:6px">NO GRADIENT · NO REGIME · NO MULTI-PARAM</div>
+      </div>
+
+      <!-- L3 -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">3</div>fq_codel PARAMS</div>
+        <div class="param-grid">
+          <div class="param-box" style="opacity:0.4">
+            <div class="param-name-row"><span class="param-key">TARGET</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#555">5ms</div>
+            <div class="param-track2"><div class="param-fill2" style="width:50%;background:#444"></div></div>
+          </div>
+          <div class="param-box" style="border-color:rgba(255,176,32,0.3)">
+            <div class="param-name-row"><span class="param-key">max_p</span><span class="param-delta" id="ar-delta-maxp">↑</span></div>
+            <div class="param-val" style="color:var(--warn)" id="ar-p-maxp">0.10</div>
+            <div class="param-track2"><div class="param-fill2" id="ar-f-maxp" style="width:10%;background:var(--warn)"></div></div>
+          </div>
+          <div class="param-box" style="opacity:0.4">
+            <div class="param-name-row"><span class="param-key">LIMIT</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#555">1000</div>
+            <div class="param-track2"><div class="param-fill2" style="width:50%;background:#444"></div></div>
+          </div>
+          <div class="param-box" style="opacity:0.4">
+            <div class="param-name-row"><span class="param-key">QUANTUM</span><span style="font-size:8px;color:#555">FIXED</span></div>
+            <div class="param-val" style="color:#555">1514B</div>
+            <div class="param-track2"><div class="param-fill2" style="width:50%;background:#444"></div></div>
+          </div>
+        </div>
+        <div style="font-size:9px;color:var(--dim);margin-top:6px;padding:4px;border:1px dashed var(--border);border-radius:2px;">
+          Only max_p adapts. All other params remain fixed.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ACAPE -->
+  <div class="algo-col">
+    <div class="algo-header">
+      <div>
+        <div class="algo-tag acape">ACAPE</div>
+        <div class="algo-desc">Adaptive Recursive Attestation · Full pipeline</div>
+      </div>
+      <div class="regime-pill" id="ac-regime-pill" style="color:var(--accent2);border-color:rgba(0,229,160,0.4)">—</div>
+    </div>
+    <div class="pipeline">
+
+      <!-- L1 -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">1</div>SIGNAL COLLECTION (LIVE)</div>
+        <div class="signals-grid">
+          <div class="signal-box" id="ac-backlog-box">
+            <div class="sig-label">BACKLOG</div>
+            <div class="sig-value" id="ac-backlog-val" style="color:var(--accent2)">—</div>
+            <div class="sig-trend"><span id="ac-backlog-trend" class="trend-flat">→</span> <span id="ac-backlog-delta" style="color:var(--dim);font-size:9px"></span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="ac-backlog-bar" style="width:0%;background:var(--accent2)"></div></div>
+          </div>
+          <div class="signal-box" id="ac-drop-box">
+            <div class="sig-label">DROP RATE</div>
+            <div class="sig-value" id="ac-drop-val" style="color:var(--accent)">—</div>
+            <div class="sig-trend"><span id="ac-drop-trend" class="trend-flat">→</span> <span id="ac-drop-delta" style="color:var(--dim);font-size:9px"></span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="ac-drop-bar" style="width:0%;background:var(--accent)"></div></div>
+          </div>
+          <div class="signal-box" id="ac-rtt-box">
+            <div class="sig-label">RTT (ms)</div>
+            <div class="sig-value" id="ac-rtt-val" style="color:var(--purple)">—</div>
+            <div class="sig-trend"><span id="ac-rtt-trend" class="trend-flat">→</span> <span id="ac-rtt-delta" style="color:var(--dim);font-size:9px"></span></div>
+            <div class="sig-bar"><div class="sig-bar-fill" id="ac-rtt-bar" style="width:0%;background:var(--purple)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L2 ACAPE Decision Engine -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">2</div>DECISION ENGINE</div>
+
+        <!-- 2a: Gradient -->
+        <div class="decision-section">
+          <div class="ds-title">▸ GRADIENT COMPUTATION ∇</div>
+          <div class="grad-row">
+            <div class="grad-name">∇backlog</div>
+            <div class="grad-arrow" id="ac-grad-backlog-arrow">→</div>
+            <div class="grad-bar-wrap"><div class="grad-bar" id="ac-grad-backlog-bar" style="width:0%;background:var(--accent2)"></div></div>
+            <div class="grad-value" id="ac-grad-backlog-val">0.0</div>
+          </div>
+          <div class="grad-row">
+            <div class="grad-name">∇drop_rate</div>
+            <div class="grad-arrow" id="ac-grad-drop-arrow">→</div>
+            <div class="grad-bar-wrap"><div class="grad-bar" id="ac-grad-drop-bar" style="width:0%;background:var(--accent)"></div></div>
+            <div class="grad-value" id="ac-grad-drop-val">0.0</div>
+          </div>
+          <div class="grad-row">
+            <div class="grad-name">∇RTT</div>
+            <div class="grad-arrow" id="ac-grad-rtt-arrow">→</div>
+            <div class="grad-bar-wrap"><div class="grad-bar" id="ac-grad-rtt-bar" style="width:0%;background:var(--purple)"></div></div>
+            <div class="grad-value" id="ac-grad-rtt-val">0.0</div>
+          </div>
+          <div class="grad-combined">
+            <div class="gc-label">COMBINED ∇</div>
+            <div id="ac-grad-combined-bar" style="flex:1;height:3px;background:var(--border);border-radius:1px;margin:0 8px;overflow:hidden;">
+              <div id="ac-grad-combined-fill" style="height:100%;width:0%;border-radius:1px;transition:width 0.4s,background 0.4s;"></div>
+            </div>
+            <div class="gc-value" id="ac-grad-combined-val">0.0</div>
+          </div>
+        </div>
+
+        <!-- 2b: Regime -->
+        <div class="decision-section">
+          <div class="ds-title">▸ REGIME DETECTION</div>
+          <div class="regime-display" id="ac-regime-display">
+            <div class="regime-icon" id="ac-regime-icon">🔵</div>
+            <div>
+              <div class="regime-label" id="ac-regime-label">STABLE</div>
+              <div class="regime-desc" id="ac-regime-desc">Balanced gradient, normal operation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2c: Decision rules -->
+        <div class="decision-section">
+          <div class="ds-title">▸ DECISION LOGIC</div>
+          <div class="rule-row" id="rule-0">
+            <div class="rule-cond">backlog↑ AND RTT↑</div>
+            <div class="rule-arrow">→</div>
+            <div class="rule-action">CONGESTION → ↓ target</div>
+          </div>
+          <div class="rule-row" id="rule-1">
+            <div class="rule-cond">backlog↓ AND RTT↓</div>
+            <div class="rule-arrow">→</div>
+            <div class="rule-action">RECOVERY → ↑ target + ↑ quantum</div>
+          </div>
+          <div class="rule-row" id="rule-2">
+            <div class="rule-cond">drop_rate↑ high</div>
+            <div class="rule-arrow">→</div>
+            <div class="rule-action">AGGRESSIVENESS ↓ → ↓ interval</div>
+          </div>
+          <div class="rule-row" id="rule-3">
+            <div class="rule-cond">backlog STABLE</div>
+            <div class="rule-arrow">→</div>
+            <div class="rule-action">MAINTAIN → nudge limit ↑</div>
+          </div>
+          <div style="margin-top:4px;padding:3px 6px;font-size:9px;background:rgba(56,191,255,0.05);border-left:2px solid var(--accent);border-radius:0 2px 2px 0;" id="ac-active-decision">
+            Waiting for signal...
+          </div>
+        </div>
+      </div>
+
+      <!-- L3 ACAPE params -->
+      <div class="layer">
+        <div class="layer-title"><div class="layer-num">3</div>fq_codel PARAMETER ACTUATION</div>
+        <div class="param-grid">
+          <div class="param-box" id="ac-box-target" style="border-color:rgba(56,191,255,0.3)">
+            <div class="param-name-row"><span class="param-key">TARGET</span><span class="param-delta" id="ac-delta-target">↑</span></div>
+            <div class="param-val" style="color:var(--accent)" id="ac-p-target">5.00ms</div>
+            <div class="param-track2"><div class="param-fill2" id="ac-f-target" style="width:50%;background:var(--accent)"></div></div>
+          </div>
+          <div class="param-box" id="ac-box-interval" style="border-color:rgba(192,132,252,0.3)">
+            <div class="param-name-row"><span class="param-key">INTERVAL</span><span class="param-delta" id="ac-delta-interval">↑</span></div>
+            <div class="param-val" style="color:var(--purple)" id="ac-p-interval">100ms</div>
+            <div class="param-track2"><div class="param-fill2" id="ac-f-interval" style="width:50%;background:var(--purple)"></div></div>
+          </div>
+          <div class="param-box" id="ac-box-limit" style="border-color:rgba(0,229,160,0.3)">
+            <div class="param-name-row"><span class="param-key">LIMIT</span><span class="param-delta" id="ac-delta-limit">↑</span></div>
+            <div class="param-val" style="color:var(--accent2)" id="ac-p-limit">1000</div>
+            <div class="param-track2"><div class="param-fill2" id="ac-f-limit" style="width:50%;background:var(--accent2)"></div></div>
+          </div>
+          <div class="param-box" id="ac-box-quantum" style="border-color:rgba(255,176,32,0.3)">
+            <div class="param-name-row"><span class="param-key">QUANTUM</span><span class="param-delta" id="ac-delta-quantum">↑</span></div>
+            <div class="param-val" style="color:var(--warn)" id="ac-p-quantum">1514B</div>
+            <div class="param-track2"><div class="param-fill2" id="ac-f-quantum" style="width:50%;background:var(--warn)"></div></div>
+          </div>
+        </div>
+        <div style="margin-top:4px;font-size:9px;color:var(--dim);padding:3px 6px;border-left:2px solid var(--accent2);background:rgba(0,229,160,0.04);border-radius:0 2px 2px 0;" id="ac-actuation-log">
+          Awaiting decision...
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- QUEUE ROW -->
+<div id="queue-row">
+  <div class="queue-cell">
+    <div class="qc-title">STATIC — QUEUE BEHAVIOR</div>
+    <div class="queue-canvas" id="qc-static"></div>
+  </div>
+  <div class="queue-cell">
+    <div class="qc-title">ARED — QUEUE BEHAVIOR (random drops)</div>
+    <div class="queue-canvas" id="qc-ared"></div>
+  </div>
+  <div class="queue-cell">
+    <div class="qc-title">ACAPE — QUEUE BEHAVIOR (controlled)</div>
+    <div class="queue-canvas" id="qc-acape"></div>
+  </div>
+</div>
+
+<div id="log-area"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const STATE = {
+  running: true,
+  speed: 1,
+  scenario: 'stable',
+  tick: 0,
+  controlTimer: 0,
+  CTRL_PERIOD: 1500, // ms
+
+  // Signals (common base)
+  backlog: 150, drop: 0.05, rtt: 12,
+  prevBacklog: 150, prevDrop: 0.05, prevRtt: 12,
+
+  // ARED
+  aredAvgQ: 150, aredMaxP: 0.10,
+
+  // ACAPE params
+  target: 5.0, interval: 100, limit: 1000, quantum: 1514,
+  acapeBacklog: 100, acapeRtt: 8,
+
+  // Gradients
+  gradBacklog: 0, gradDrop: 0, gradRtt: 0, gradCombined: 0,
+  regime: 'STABLE',
+  activeRule: -1,
+  decisionText: '',
+  actuationText: '',
+};
+
+const SCENARIOS = {
+  light:  { backlogBase: 40,  backlogNoise: 15, dropBase: 0.01, rttBase: 5,  drift: 0 },
+  stable: { backlogBase: 150, backlogNoise: 30, dropBase: 0.05, rttBase: 12, drift: 0.2 },
+  heavy:  { backlogBase: 350, backlogNoise: 40, dropBase: 0.18, rttBase: 35, drift: 0.8 },
+  burst:  { backlogBase: 200, backlogNoise: 120,dropBase: 0.12, rttBase: 20, drift: 1.2 },
+};
+
+function setScenario(s) {
+  STATE.scenario = s;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  addLog(`[SCENARIO] Switched to ${s.toUpperCase()}`, 'a');
+}
+
+function cycleSpeed() {
+  const speeds = [1, 2, 4];
+  STATE.speed = speeds[(speeds.indexOf(STATE.speed) + 1) % speeds.length];
+  document.getElementById('speed-val').textContent = STATE.speed + '×';
+  STATE.CTRL_PERIOD = 1500 / STATE.speed;
+}
+
+function togglePlay() {
+  STATE.running = !STATE.running;
+  const btn = document.getElementById('play-btn');
+  btn.textContent = STATE.running ? '⏸ PAUSE' : '▶ PLAY';
+  btn.classList.toggle('active', STATE.running);
+}
+
+// ══════════════════════════════════════════════════════
+// SIMULATION MATH
+// ══════════════════════════════════════════════════════
+function simStep(dt) {
+  const sc = SCENARIOS[STATE.scenario];
+  const t = STATE.tick * 0.001;
+
+  // Raw signals drift over time
+  const targetQ = sc.backlogBase + Math.sin(t * 0.8 + 1) * sc.backlogNoise * sc.drift
+                + Math.sin(t * 2.1) * sc.backlogNoise * 0.4;
+
+  STATE.prevBacklog = STATE.backlog;
+  STATE.prevDrop    = STATE.drop;
+  STATE.prevRtt     = STATE.rtt;
+
+  STATE.backlog += (targetQ - STATE.backlog) * 0.04 + (Math.random()-0.48) * sc.backlogNoise * 0.3;
+  STATE.backlog  = Math.max(0, Math.min(500, STATE.backlog));
+  STATE.drop     = sc.dropBase + (STATE.backlog / 500) * 0.25 + (Math.random()-0.5)*0.02;
+  STATE.drop     = Math.max(0, Math.min(1, STATE.drop));
+  STATE.rtt      = sc.rttBase + (STATE.backlog / 500) * 80 + (Math.random()-0.5)*3;
+
+  // ARED: ewma avg queue
+  STATE.aredAvgQ = 0.9 * STATE.aredAvgQ + 0.1 * STATE.backlog;
+  // max_p: linear in [min_th=50, max_th=200]
+  const MIN_TH=50, MAX_TH=200, MAX_P_MAX=0.5;
+  if (STATE.aredAvgQ < MIN_TH) STATE.aredMaxP = Math.max(0.01, STATE.aredMaxP * 0.95);
+  else if (STATE.aredAvgQ > MAX_TH) STATE.aredMaxP = Math.min(MAX_P_MAX, STATE.aredMaxP + 0.02);
+  else {
+    const frac = (STATE.aredAvgQ - MIN_TH)/(MAX_TH - MIN_TH);
+    STATE.aredMaxP = 0.9*STATE.aredMaxP + 0.1*(frac * MAX_P_MAX);
+  }
+
+  // ACAPE controlled backlog
+  const controlFactor = STATE.target / 5.0; // lower target = more aggressive
+  const acapeTarget = sc.backlogBase * 0.5 * controlFactor;
+  STATE.acapeBacklog += (acapeTarget - STATE.acapeBacklog) * 0.06 + (Math.random()-0.5)*8;
+  STATE.acapeBacklog  = Math.max(0, Math.min(500, STATE.acapeBacklog));
+  STATE.acapeRtt      = 2 + STATE.target * 0.7 + (STATE.acapeBacklog/500)*15;
+}
+
+// ══════════════════════════════════════════════════════
+// CONTROLLER (every CTRL_PERIOD)
+// ══════════════════════════════════════════════════════
+function runController() {
+  // Compute gradients
+  STATE.gradBacklog  = STATE.backlog  - STATE.prevBacklog;
+  STATE.gradDrop     = STATE.drop     - STATE.prevDrop;
+  STATE.gradRtt      = STATE.rtt      - STATE.prevRtt;
+  STATE.gradCombined = (STATE.gradBacklog/50 + STATE.gradDrop*10 + STATE.gradRtt/20) / 3;
+
+  // Regime
+  const heavy = STATE.backlog > 250 && STATE.gradCombined > 0.2;
+  const light  = STATE.backlog < 100 && STATE.gradCombined < -0.1;
+  if (heavy) STATE.regime = 'HEAVY';
+  else if (light) STATE.regime = 'LIGHT';
+  else STATE.regime = 'STABLE';
+
+  // Decision
+  let rule = -1;
+  if (STATE.gradBacklog > 5 && STATE.gradRtt > 1) {
+    rule = 0;
+    // Congestion: decrease target, tighten interval
+    const prevTarget = STATE.target;
+    STATE.target   = Math.max(1.5, STATE.target * 0.85);
+    STATE.interval = Math.max(40,  STATE.interval * 0.90);
+    STATE.limit    = Math.max(200, STATE.limit - 50);
+    animateParam('ac-box-target',  'ac-delta-target',  '↓', 'var(--danger)');
+    animateParam('ac-box-interval','ac-delta-interval', '↓', 'var(--danger)');
+    animateParam('ac-box-limit',   'ac-delta-limit',    '↓', 'var(--danger)');
+    STATE.decisionText  = `backlog↑(+${STATE.gradBacklog.toFixed(1)}) ∧ RTT↑(+${STATE.gradRtt.toFixed(1)}ms) → CONGESTION`;
+    STATE.actuationText = `target: ${prevTarget.toFixed(2)}ms → ${STATE.target.toFixed(2)}ms  |  interval↓  |  limit↓`;
+    addLog(`[ACAPE] CONGESTION: target→${STATE.target.toFixed(2)}ms`, 'd');
+  } else if (STATE.gradBacklog < -3 && STATE.gradRtt < -0.5) {
+    rule = 1;
+    // Recovery
+    const prevTarget = STATE.target;
+    STATE.target   = Math.min(8.0, STATE.target * 1.1);
+    STATE.quantum  = Math.min(9000, STATE.quantum + 200);
+    STATE.limit    = Math.min(2000, STATE.limit + 100);
+    animateParam('ac-box-target', 'ac-delta-target',  '↑', 'var(--accent2)');
+    animateParam('ac-box-quantum','ac-delta-quantum',  '↑', 'var(--accent2)');
+    animateParam('ac-box-limit',  'ac-delta-limit',    '↑', 'var(--accent2)');
+    STATE.decisionText  = `backlog↓(${STATE.gradBacklog.toFixed(1)}) ∧ RTT↓(${STATE.gradRtt.toFixed(1)}ms) → RECOVERY`;
+    STATE.actuationText = `target: ${prevTarget.toFixed(2)}ms → ${STATE.target.toFixed(2)}ms  |  quantum↑  |  limit↑`;
+    addLog(`[ACAPE] RECOVERY: target→${STATE.target.toFixed(2)}ms`, 'a');
+  } else if (STATE.gradDrop > 0.03) {
+    rule = 2;
+    // Reduce aggressiveness
+    const prevInterval = STATE.interval;
+    STATE.interval = Math.max(40, STATE.interval * 0.88);
+    animateParam('ac-box-interval','ac-delta-interval','↓','var(--warn)');
+    STATE.decisionText  = `drop_rate↑(+${(STATE.gradDrop*100).toFixed(1)}%) → REDUCE AGGRESSIVENESS`;
+    STATE.actuationText = `interval: ${prevInterval.toFixed(0)}ms → ${STATE.interval.toFixed(0)}ms`;
+    addLog(`[ACAPE] DROP SPIKE: interval→${STATE.interval.toFixed(0)}ms`, 'w');
+  } else {
+    rule = 3;
+    STATE.limit = Math.min(2000, STATE.limit + 20);
+    animateParam('ac-box-limit','ac-delta-limit','↑','var(--accent)');
+    STATE.decisionText  = `backlog STABLE (∇=${STATE.gradCombined.toFixed(2)}) → MAINTAIN`;
+    STATE.actuationText = `limit nudged ↑ to ${STATE.limit}`;
+  }
+  STATE.activeRule = rule;
+}
+
+function animateParam(boxId, deltaId, symbol, color) {
+  const box   = document.getElementById(boxId);
+  const delta = document.getElementById(deltaId);
+  if (!box || !delta) return;
+  box.classList.remove('updated');
+  void box.offsetWidth;
+  box.classList.add('updated');
+  delta.textContent = symbol;
+  delta.style.color = color;
+  delta.classList.add('show');
+  setTimeout(() => delta.classList.remove('show'), 1800);
+}
+
+// ══════════════════════════════════════════════════════
+// UI UPDATE
+// ══════════════════════════════════════════════════════
+let prevSignals = { backlog: 150, drop: 0.05, rtt: 12 };
+
+function updateUI() {
+  const B = STATE.backlog, D = STATE.drop, R = STATE.rtt;
+  const pB = prevSignals.backlog, pD = prevSignals.drop, pR = prevSignals.rtt;
+
+  // Helpers
+  const trend = (v, p) => v > p + 0.5 ? '↑' : v < p - 0.5 ? '↓' : '→';
+  const tClass = (v, p) => v > p + 0.5 ? 'trend-up' : v < p - 0.5 ? 'trend-dn' : 'trend-flat';
+  const pct = (v, max) => Math.min(100, Math.max(0, (v/max)*100));
+  const flashBox = (id, cls) => {
+    const el = document.getElementById(id);
+    el.classList.remove('flash','flash-warn','flash-danger');
+    void el.offsetWidth;
+    el.classList.add(cls);
+  };
+
+  // ── STATIC signals ──
+  set('st-backlog-val', Math.floor(B) + ' pkts');
+  set('st-drop-val', (D*100).toFixed(1) + '%');
+  set('st-rtt-val', R.toFixed(1) + 'ms');
+  setTrend('st-backlog-trend', trend(B,pB), tClass(B,pB));
+  setTrend('st-drop-trend', trend(D,pD), tClass(D,pD));
+  setTrend('st-rtt-trend', trend(R,pR), tClass(R,pR));
+  style('st-backlog-bar', 'width', pct(B,500)+'%');
+  style('st-drop-bar', 'width', pct(D,1)+'%');
+  style('st-rtt-bar', 'width', pct(R,100)+'%');
+  // Color bars by severity
+  const bColor = B > 300 ? 'var(--danger)' : B > 150 ? 'var(--warn)' : '#888';
+  style('st-backlog-bar', 'background', bColor);
+  // Signal boxes flash when rising
+  if (B > pB + 10) flashBox('st-backlog-box', 'flash-warn');
+  if (D > pD + 0.04) flashBox('st-drop-box', 'flash-danger');
+
+  // ── ARED signals ──
+  set('ar-backlog-val', Math.floor(STATE.aredAvgQ) + ' pkts');
+  set('ar-drop-val', (STATE.aredMaxP*100).toFixed(1) + '%');
+  style('ar-backlog-bar', 'width', pct(STATE.aredAvgQ,500)+'%');
+  style('ar-drop-bar', 'width', pct(STATE.aredMaxP,0.5)+'%');
+  setTrend('ar-backlog-trend', trend(STATE.aredAvgQ, pB), tClass(STATE.aredAvgQ,pB));
+  setTrend('ar-drop-trend', trend(STATE.aredMaxP, pD), tClass(STATE.aredMaxP,pD));
+
+  // ARED decision path
+  set('ar-avg-val', Math.floor(STATE.aredAvgQ) + ' pkts');
+  const q = STATE.aredAvgQ;
+  let thResult, thClass;
+  if (q < 50)  { thResult = 'avg < min_th → no action'; thClass=''; }
+  else if (q > 200) { thResult = 'avg > max_th → max drop'; thClass='warn'; }
+  else { thResult = `avg in [min,max] → linear prob: ${(STATE.aredMaxP*100).toFixed(0)}%`; thClass=''; }
+  set('ar-thresh-result', thResult);
+  set('ar-maxp-val', STATE.aredMaxP.toFixed(3));
+  set('ar-maxp-note', `→ random early drop p=${STATE.aredMaxP.toFixed(3)}`);
+  set('ar-p-maxp', STATE.aredMaxP.toFixed(3));
+  style('ar-f-maxp', 'width', pct(STATE.aredMaxP,0.5)+'%');
+
+  if (q > 200) {
+    flashBox('ar-avg-box','flash-warn');
+    flashBox('ar-maxp-box','flash-warn');
+  }
+
+  // ARED regime pill
+  const aredRegime = q > 300 ? 'CONGESTED' : q > 150 ? 'MODERATE' : 'LIGHT';
+  set('ared-regime-pill', aredRegime);
+
+  // ── ACAPE signals ──
+  const AB = STATE.acapeBacklog, AR = STATE.acapeRtt, AD = STATE.drop * (AB/Math.max(1,B));
+  set('ac-backlog-val', Math.floor(AB) + ' pkts');
+  set('ac-drop-val', (AD*100).toFixed(1) + '%');
+  set('ac-rtt-val', AR.toFixed(1) + 'ms');
+  style('ac-backlog-bar', 'width', pct(AB,500)+'%');
+  style('ac-drop-bar', 'width', pct(AD,0.5)+'%');
+  style('ac-rtt-bar', 'width', pct(AR,100)+'%');
+
+  // Trends with deltas
+  const backlogDelta = STATE.backlog - STATE.prevBacklog;
+  setTrend('ac-backlog-trend', trend(AB, prevSignals.backlog*0.5), tClass(AB, prevSignals.backlog*0.5));
+  setTrend('ac-drop-trend', trend(AD, pD*0.5), tClass(AD, pD*0.5));
+  setTrend('ac-rtt-trend', trend(AR, prevSignals.rtt*0.5), tClass(AR, prevSignals.rtt*0.5));
+  set('ac-backlog-delta', backlogDelta > 0 ? `+${backlogDelta.toFixed(0)}` : backlogDelta.toFixed(0));
+  set('ac-rtt-delta', (AR - prevSignals.rtt*0.5 > 0 ? '+' : '') + (AR-prevSignals.rtt*0.5).toFixed(1)+'ms');
+
+  if (AB > prevSignals.backlog*0.5 + 10) flashBox('ac-backlog-box','flash-warn');
+  if (AR > prevSignals.rtt*0.5 + 2)      flashBox('ac-rtt-box','flash-warn');
+
+  // Gradients display
+  const showGrad = (id_arrow, id_bar, id_val, val, color) => {
+    const abs = Math.min(100, Math.abs(val) * 5);
+    const arrow = val > 0.5 ? '↑' : val < -0.5 ? '↓' : '→';
+    const aClass = val > 0.5 ? 'trend-up' : val < -0.5 ? 'trend-dn' : 'trend-flat';
+    const el_a = document.getElementById(id_arrow);
+    el_a.textContent = arrow;
+    el_a.className = 'grad-arrow ' + aClass;
+    style(id_bar, 'width', abs+'%');
+    style(id_bar, 'background', val > 1 ? 'var(--danger)' : val < -1 ? 'var(--accent2)' : color);
+    set(id_val, val.toFixed(2));
+  };
+  showGrad('ac-grad-backlog-arrow','ac-grad-backlog-bar','ac-grad-backlog-val', STATE.gradBacklog/10, 'var(--accent2)');
+  showGrad('ac-grad-drop-arrow',   'ac-grad-drop-bar',   'ac-grad-drop-val',   STATE.gradDrop*50, 'var(--accent)');
+  showGrad('ac-grad-rtt-arrow',    'ac-grad-rtt-bar',    'ac-grad-rtt-val',    STATE.gradRtt/2, 'var(--purple)');
+
+  const gc = STATE.gradCombined;
+  const gcAbs = Math.min(100, Math.abs(gc) * 100);
+  const gcColor = gc > 0.3 ? 'var(--danger)' : gc < -0.3 ? 'var(--accent2)' : 'var(--accent)';
+  style('ac-grad-combined-fill', 'width', gcAbs+'%');
+  style('ac-grad-combined-fill', 'background', gcColor);
+  set('ac-grad-combined-val', gc.toFixed(3));
+
+  // Regime
+  const regimes = {
+    HEAVY: { icon:'🔴', color:'var(--danger)', bg:'rgba(255,68,102,0.08)', border:'rgba(255,68,102,0.4)', desc:'High backlog + rising gradients. Aggressive AQM needed.' },
+    STABLE:{ icon:'🔵', color:'var(--accent)',  bg:'rgba(56,191,255,0.06)',  border:'rgba(56,191,255,0.3)',  desc:'Balanced gradient, normal operation.' },
+    LIGHT: { icon:'🟢', color:'var(--accent2)', bg:'rgba(0,229,160,0.06)',  border:'rgba(0,229,160,0.3)',  desc:'Low backlog, gradients declining. Ease up on AQM.' },
+  };
+  const rInfo = regimes[STATE.regime] || regimes.STABLE;
+  const rd = document.getElementById('ac-regime-display');
+  rd.style.background = rInfo.bg;
+  rd.style.borderColor = rInfo.border;
+  set('ac-regime-icon', rInfo.icon);
+  set('ac-regime-label', STATE.regime);
+  const rl = document.getElementById('ac-regime-label');
+  rl.style.color = rInfo.color;
+  set('ac-regime-desc', rInfo.desc);
+  set('ac-regime-pill', STATE.regime);
+  const pill = document.getElementById('ac-regime-pill');
+  pill.style.color = rInfo.color;
+  pill.style.borderColor = rInfo.border;
+
+  // Rules highlight
+  for (let i=0;i<4;i++) {
+    const r = document.getElementById('rule-'+i);
+    r.classList.toggle('active', i === STATE.activeRule);
+  }
+  if (STATE.decisionText) set('ac-active-decision', '▶ ' + STATE.decisionText);
+  if (STATE.actuationText) set('ac-actuation-log', '▸ ' + STATE.actuationText);
+
+  // ACAPE params
+  set('ac-p-target',   STATE.target.toFixed(2)+'ms');
+  set('ac-p-interval', STATE.interval.toFixed(0)+'ms');
+  set('ac-p-limit',    Math.floor(STATE.limit)+'');
+  set('ac-p-quantum',  Math.floor(STATE.quantum)+'B');
+  style('ac-f-target',   'width', pct(STATE.target,10)+'%');
+  style('ac-f-interval', 'width', pct(STATE.interval,200)+'%');
+  style('ac-f-limit',    'width', pct(STATE.limit,2000)+'%');
+  style('ac-f-quantum',  'width', pct(STATE.quantum,9000)+'%');
+
+  // target color by value
+  const tc = STATE.target < 3 ? 'var(--danger)' : STATE.target > 6 ? 'var(--accent2)' : 'var(--accent)';
+  document.getElementById('ac-p-target').style.color = tc;
+
+  // Static regime pill
+  const stRegime = B > 300 ? 'HEAVY LOAD' : B > 150 ? 'MODERATE' : 'LIGHT';
+  set('static-regime-pill', stRegime);
+
+  prevSignals = { backlog: B, drop: D, rtt: R };
+}
+
+// ══════════════════════════════════════════════════════
+// PACKET / QUEUE ANIMATION
+// ══════════════════════════════════════════════════════
+const canvases = {
+  static: { id:'qc-static', pkts:[], backlog: () => STATE.backlog },
+  ared:   { id:'qc-ared',   pkts:[], backlog: () => STATE.aredAvgQ },
+  acape:  { id:'qc-acape',  pkts:[], backlog: () => STATE.acapeBacklog },
+};
+
+function spawnPkt(arr, el, color, isDrop) {
+  const d = document.createElement('div');
+  d.className = 'pkt';
+  d.style.background = color;
+  if (isDrop) d.style.border = '1px solid var(--danger)';
+  d.style.left = '5px';
+  d.style.top = (Math.random()*60+5)+'px';
+  d.style.opacity = '0.9';
+  d.style.boxShadow = `0 0 4px ${color}`;
+  el.appendChild(d);
+  const w = el.offsetWidth;
+  const speed = 0.5 + Math.random()*0.5;
+  let x = 5;
+  const queueX = w * 0.6;
+  const doDrop = isDrop;
+  let phase = 'travel';
+
+  const move = () => {
+    if (!STATE.running) { requestAnimationFrame(move); return; }
+    if (phase === 'travel') {
+      x += 2.5 * speed * STATE.speed;
+      d.style.left = x+'px';
+      if (x >= queueX) {
+        phase = 'queue'; x = queueX + Math.random()*20;
+        d.style.left = x+'px';
+        if (doDrop) {
+          d.style.background = 'var(--danger)';
+          d.style.transform = 'scale(0)';
+          d.style.transition = 'transform 0.3s, opacity 0.3s';
+          d.style.opacity = '0';
+          setTimeout(()=>{ try { el.removeChild(d); } catch{} }, 400);
+          arr.splice(arr.indexOf(d),1);
+          return;
+        }
+        setTimeout(() => {
+          phase='exit';
+          requestAnimationFrame(move);
+        }, 200 + Math.random()*300);
+        return;
+      }
+    } else if (phase === 'exit') {
+      x += 2 * speed * STATE.speed;
+      d.style.left = x+'px';
+      if (x > w+10) {
+        try { el.removeChild(d); } catch{}
+        arr.splice(arr.indexOf(d),1);
+        return;
+      }
+    }
+    requestAnimationFrame(move);
+  };
+  arr.push(d);
+  requestAnimationFrame(move);
+}
+
+let pktTimer = 0;
+function updatePackets(dt) {
+  pktTimer += dt * STATE.speed;
+  if (pktTimer < 400) return;
+  pktTimer = 0;
+
+  Object.entries(canvases).forEach(([key, c]) => {
+    const el = document.getElementById(c.id);
+    if (!el) return;
+    const bl = c.backlog();
+    // Throttle max dots
+    if (c.pkts.length > 18) return;
+    const dropRate = key === 'static' ? STATE.drop : key === 'ared' ? STATE.aredMaxP : STATE.drop * (STATE.acapeBacklog/Math.max(1,STATE.backlog)) * 0.3;
+    const isDrop = bl > 80 && Math.random() < dropRate;
+    const color = key === 'acape' ? 'var(--accent2)' : key === 'ared' ? 'var(--warn)' : '#888';
+    spawnPkt(c.pkts, el, color, isDrop);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// QUEUE FILL BARS (css pseudo-queue)
+// ══════════════════════════════════════════════════════
+function updateQueueFills() {
+  ['static','ared','acape'].forEach(key => {
+    const el = document.getElementById('qc-'+key);
+    if (!el) return;
+    const bl = key==='static' ? STATE.backlog : key==='ared' ? STATE.aredAvgQ : STATE.acapeBacklog;
+    const pct = Math.min(100, (bl/500)*100);
+    // queue fill bar at bottom
+    let fill = el.querySelector('.qfill');
+    if (!fill) {
+      fill = document.createElement('div');
+      fill.className = 'qfill';
+      fill.style.cssText = 'position:absolute;bottom:0;left:40%;width:20%;border-radius:2px 2px 0 0;transition:height 0.5s,background 0.5s;';
+      el.appendChild(fill);
+    }
+    fill.style.height = pct+'%';
+    fill.style.background = pct > 70 ? 'rgba(255,68,102,0.35)' : pct > 40 ? 'rgba(255,176,32,0.3)' : 'rgba(56,191,255,0.2)';
+    // label
+    let lbl = el.querySelector('.qlbl');
+    if (!lbl) {
+      lbl = document.createElement('div');
+      lbl.className = 'qlbl';
+      lbl.style.cssText = 'position:absolute;bottom:4px;left:4px;font-size:8px;color:rgba(180,220,255,0.4);letter-spacing:1px;';
+      el.appendChild(lbl);
+    }
+    lbl.textContent = Math.floor(bl) + ' pkts';
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// LOG
+// ══════════════════════════════════════════════════════
+const logLines = [];
+function addLog(msg, cls='') {
+  const el = document.getElementById('log-area');
+  const d = document.createElement('div');
+  d.className = 'log-line ' + cls;
+  d.textContent = '[' + new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'}) + '] ' + msg;
+  el.appendChild(d);
+  while (el.children.length > 7) el.removeChild(el.firstChild);
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function set(id, v) { const e=document.getElementById(id); if(e) e.textContent=v; }
+function style(id, prop, v) { const e=document.getElementById(id); if(e) e.style[prop]=v; }
+function setTrend(id, arrow, cls) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.textContent = arrow;
+  e.className = cls;
+}
+
+// ══════════════════════════════════════════════════════
+// MAIN LOOP
+// ══════════════════════════════════════════════════════
+let lastTime = performance.now();
+
+function loop() {
+  requestAnimationFrame(loop);
+  const now = performance.now();
+  const rawDt = Math.min(now - lastTime, 80);
+  lastTime = now;
+
+  if (!STATE.running) return;
+
+  const dt = rawDt * STATE.speed;
+  STATE.tick += dt;
+  STATE.controlTimer += dt;
+
+  simStep(dt);
+
+  if (STATE.controlTimer >= STATE.CTRL_PERIOD) {
+    STATE.controlTimer = 0;
+    runController();
+  }
+
+  updateUI();
+  updateQueueFills();
+  updatePackets(rawDt);
+}
+
+// ── Init ──
+addLog('[SYSTEM] Pipeline simulation loaded', 'a');
+addLog('[ACAPE] eBPF prog_id=527 JIT-compiled', 'a');
+addLog('[ARED] min_th=50 max_th=200 max_p=0.5', '');
+addLog('[STATIC] Fixed params: target=5ms interval=100ms', '');
+loop();
+</script>
+</body>
+</html>

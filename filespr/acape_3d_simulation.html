@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACAPE — Interactive 3D Control System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne+Mono&family=Syne:wght@400;600;800&display=swap');
+
+:root {
+  --bg: #050810;
+  --card: rgba(8,14,28,0.92);
+  --border: rgba(60,140,255,0.18);
+  --accent: #3d9bff;
+  --green: #00e5a0;
+  --red: #ff3d6b;
+  --gold: #ffc940;
+  --purple: #b06aff;
+  --dim: rgba(160,200,255,0.4);
+  --text: rgba(210,230,255,0.92);
+  --mono: 'Syne Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* FIXED HUD */
+#hud {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(5,8,16,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+#hud-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+#hud-sub { font-size: 9px; color: var(--dim); letter-spacing: 1px; }
+.hud-sep { width: 1px; height: 28px; background: var(--border); }
+.hud-btn {
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  background: rgba(61,155,255,0.07);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.hud-btn:hover { background: rgba(61,155,255,0.18); border-color: var(--accent); }
+.hud-btn.active { background: rgba(0,229,160,0.12); border-color: var(--green); color: var(--green); }
+.hud-btn.danger { border-color: rgba(255,61,107,0.4); color: var(--red); }
+.hud-btn.danger.active { background: rgba(255,61,107,0.12); }
+#hud-clock {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+#hud-timer-wrap { display: flex; flex-direction: column; align-items: flex-end; }
+#hud-timer-bar { width: 80px; height: 3px; background: rgba(255,201,64,0.15); border-radius: 2px; overflow: hidden; margin-top: 3px; }
+#hud-timer-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.05s linear; width: 0%; }
+
+/* SECTIONS */
+.section {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  padding-top: 56px;
+  position: relative;
+}
+
+.section-left {
+  flex: 1;
+  position: relative;
+  min-height: calc(100vh - 56px);
+}
+
+.section-right {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 28px;
+  border-left: 1px solid var(--border);
+  background: rgba(5,8,16,0.7);
+  backdrop-filter: blur(6px);
+}
+
+.section-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.section-label {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+.sec-num { font-size: 9px; color: var(--dim); letter-spacing: 2px; }
+.sec-title { font-family: var(--sans); font-weight: 800; font-size: 22px; color: var(--text); line-height: 1.1; }
+.sec-title span { color: var(--accent); }
+
+.info-tag {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.info-h { font-family: var(--sans); font-weight: 600; font-size: 18px; color: var(--text); margin-bottom: 10px; line-height: 1.2; }
+.info-p { font-size: 11px; color: var(--dim); line-height: 1.7; margin-bottom: 14px; }
+
+.metric-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.met-k { font-size: 9px; color: var(--dim); letter-spacing: 1px; }
+.met-v { font-size: 11px; font-weight: 600; }
+.met-v.good { color: var(--green); }
+.met-v.bad { color: var(--red); }
+.met-v.warn { color: var(--gold); }
+.met-v.blue { color: var(--accent); }
+
+.param-bar-wrap { margin-bottom: 8px; }
+.pb-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--dim); margin-bottom: 3px; }
+.pb-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.pb-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+.rule-list { margin-top: 8px; }
+.rule { display: flex; gap: 8px; align-items: flex-start; font-size: 10px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.rule-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+
+/* COMPARISON SECTION */
+#sec-compare {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  padding-top: 56px;
+}
+.cmp-half {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+.cmp-half:last-child { border-right: none; }
+.cmp-canvas { position: absolute; inset: 0; }
+.cmp-label {
+  position: absolute;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+.cmp-tag { font-size: 8px; letter-spacing: 3px; padding: 3px 12px; border-radius: 20px; display: inline-block; margin-bottom: 6px; }
+.cmp-tag.no-ctrl { background: rgba(255,61,107,0.15); border: 1px solid rgba(255,61,107,0.4); color: var(--red); }
+.cmp-tag.acape { background: rgba(0,229,160,0.12); border: 1px solid rgba(0,229,160,0.4); color: var(--green); }
+.cmp-stats { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10; width: 240px; pointer-events: none; }
+.cmp-stat { display: flex; justify-content: space-between; font-size: 9px; padding: 3px 8px; background: rgba(5,8,16,0.8); border: 1px solid var(--border); border-bottom: none; }
+.cmp-stat:last-child { border-bottom: 1px solid var(--border); }
+
+/* TIMELINE */
+#timeline-bar {
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.tl-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--dim);
+  background: transparent;
+  transition: all 0.3s;
+}
+.tl-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+/* TOOLTIP */
+#tooltip {
+  position: fixed;
+  z-index: 200;
+  background: rgba(5,8,16,0.95);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  font-size: 10px;
+  color: var(--text);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  max-width: 200px;
+  line-height: 1.5;
+  border-radius: 2px;
+}
+
+/* SCROLL INDICATOR */
+.scroll-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  animation: bounce 2s infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+/* GLOW dividers */
+.section::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* pulse keyframe for JS use */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="hud">
+  <div>
+    <div id="hud-title">ACAPE</div>
+    <div id="hud-sub">Adaptive Condition-Aware Packet Engine · 23BEC1368 · VIT Chennai</div>
+  </div>
+  <div class="hud-sep"></div>
+  <button class="hud-btn active" id="btn-play" onclick="togglePlay()">⏸ PAUSE</button>
+  <button class="hud-btn" id="btn-step" onclick="stepOnce()">⏭ STEP 500ms</button>
+  <button class="hud-btn danger" id="btn-mode" onclick="toggleMode()">⚡ ACAPE: ON</button>
+  <div class="hud-sep"></div>
+  <div id="hud-timer-wrap">
+    <div id="hud-clock">CTRL: <span id="hud-ms">0</span>ms / 500ms</div>
+    <div id="hud-timer-bar"><div id="hud-timer-fill"></div></div>
+  </div>
+</div>
+
+<!-- TIMELINE DOTS -->
+<div id="timeline-bar">
+  <div class="tl-dot active" id="tl-0"></div>
+  <div class="tl-dot" id="tl-1"></div>
+  <div class="tl-dot" id="tl-2"></div>
+  <div class="tl-dot" id="tl-3"></div>
+  <div class="tl-dot" id="tl-4"></div>
+  <div class="tl-dot" id="tl-5"></div>
+  <div class="tl-dot" id="tl-6"></div>
+  <div class="tl-dot" id="tl-7"></div>
+</div>
+
+<!-- TOOLTIP -->
+<div id="tooltip"></div>
+
+<!-- ═══════════ SECTION 1: TRAFFIC FLOW ═══════════ -->
+<div class="section" id="sec-1">
+  <div class="section-left">
+    <canvas class="section-canvas" id="cv-1"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 01 / 07</div>
+      <div class="sec-title">Traffic <span>Flow</span></div>
+    </div>
+    <div class="scroll-hint">▼ SCROLL</div>
+  </div>
+  <div class="section-right">
+    <div class="info-tag">CONTINUOUS · 16ms</div>
+    <div class="info-h">Packets enter the network at line rate</div>
+    <div class="info-p">TCP flows generate bursts of packets continuously. Each glowing sphere represents a packet moving at ~62.5 Mbit/s. The system must handle this without dropping or delaying packets excessively.</div>
+    <div class="metric-row"><span class="met-k">ARRIVAL RATE</span><span class="met-v blue" id="s1-rate">62.5 Mbit/s</span></div>
+    <div class="metric-row"><span class="met-k">FLOWS ACTIVE</span><span class="met-v blue">8 TCP</span></div>
+    <div class="metric-row"><span class="met-k">PACKET SIZE</span><span class="met-v blue">1514 B</span></div>
+    <div class="metric-row"><span class="met-k">LINK SPEED</span><span class="met-v blue">10 Mbit/s</span></div>
+    <div class="metric-row"><span class="met-k">TIMESCALE</span><span class="met-v warn">16ms (continuous)</span></div>
+    <div class="info-p" style="margin-top:14px">The bottleneck link is 10 Mbit/s. Packets arrive 6× faster than the link can serve — <strong style="color:var(--red)">queue buildup is inevitable without AQM.</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 2: QUEUE BEHAVIOR ═══════════ -->
+<div class="section" id="sec-2">
+  <div class="section-left">
+    <canvas class="section-canvas" id="cv-2"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 02 / 07</div>
+      <div class="sec-title">Queue <span>Buildup</span></div>
+    </div>
+  </div>
+  <div class="section-right">
+    <div class="info-tag">QUEUE DEPTH · LIVE</div>
+    <div class="info-h">The queue is a buffer between arrival and departure</div>
+    <div class="info-p">Packets accumulate in the fq_codel queue. As the queue grows, delay increases linearly. Beyond the limit, packets are dropped — causing TCP retransmissions and severe latency.</div>
+    <div class="metric-row"><span class="met-k">BACKLOG</span><span class="met-v" id="s2-backlog" style="color:var(--gold)">0 pkts</span></div>
+    <div class="metric-row"><span class="met-k">SOJOURN DELAY</span><span class="met-v" id="s2-delay" style="color:var(--gold)">0 ms</span></div>
+    <div class="metric-row"><span class="met-k">LIMIT</span><span class="met-v blue" id="s2-limit">1000 pkts</span></div>
+    <div class="metric-row"><span class="met-k">TARGET DELAY</span><span class="met-v blue" id="s2-target">5.0 ms</span></div>
+    <div class="metric-row"><span class="met-k">STATUS</span><span class="met-v" id="s2-status" style="color:var(--gold)">FILLING</span></div>
+    <div class="param-bar-wrap" style="margin-top:14px">
+      <div class="pb-row"><span>Queue fill</span><span id="s2-fill-pct">0%</span></div>
+      <div class="pb-track"><div class="pb-fill" id="s2-fill-bar" style="width:0%;background:var(--gold)"></div></div>
+    </div>
+    <div class="info-p">fq_codel measures <em>sojourn time</em> — how long a packet spends in the queue. If this exceeds <code style="color:var(--accent)">target</code> for longer than <code style="color:var(--accent)">interval</code>, it starts dropping the front-of-queue packet.</div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 3: eBPF MONITORING ═══════════ -->
+<div class="section" id="sec-3">
+  <div class="section-left">
+    <canvas class="section-canvas" id="cv-3"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 03 / 07</div>
+      <div class="sec-title">eBPF <span>Monitor</span></div>
+    </div>
+  </div>
+  <div class="section-right">
+    <div class="info-tag">LAYER 1 · SIGNAL COLLECTION · 50ms</div>
+    <div class="info-h">Kernel-space telemetry via eBPF hooks</div>
+    <div class="info-p">An eBPF program attached to the tc qdisc collects metrics at ~50ms intervals. It reads kernel data structures directly — zero overhead, sub-microsecond hook latency.</div>
+    <div class="metric-row"><span class="met-k">BACKLOG</span><span class="met-v blue" id="s3-backlog">—</span></div>
+    <div class="metric-row"><span class="met-k">DROP RATE</span><span class="met-v" id="s3-drops">—</span></div>
+    <div class="metric-row"><span class="met-k">RTT PROXY</span><span class="met-v" id="s3-rtt">—</span></div>
+    <div class="metric-row"><span class="met-k">SAMPLE FREQ</span><span class="met-v warn">50ms</span></div>
+    <div class="metric-row"><span class="met-k">HOOK TYPE</span><span class="met-v blue">BPF_PROG_TYPE_SCHED_CLS</span></div>
+    <div class="metric-row"><span class="met-k">MAP TYPE</span><span class="met-v blue">BPF_MAP_TYPE_RINGBUF</span></div>
+    <div class="rule-list">
+      <div class="rule"><div class="rule-dot" style="background:var(--green)"></div><span>Backlog read from qdisc stats every 50ms</span></div>
+      <div class="rule"><div class="rule-dot" style="background:var(--accent)"></div><span>RTT estimated from TCP sojourn time</span></div>
+      <div class="rule"><div class="rule-dot" style="background:var(--gold)"></div><span>Drop rate computed as Δdrops/Δtime</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 4: GRADIENT ANALYSIS ═══════════ -->
+<div class="section" id="sec-4">
+  <div class="section-left">
+    <canvas class="section-canvas" id="cv-4"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 04 / 07</div>
+      <div class="sec-title">Gradient <span>Analysis</span></div>
+    </div>
+  </div>
+  <div class="section-right">
+    <div class="info-tag">LAYER 2 · DECISION ENGINE · C1</div>
+    <div class="info-h">Computing ∇(backlog, RTT, drops) to detect regime</div>
+    <div class="info-p">ACAPE computes finite-difference gradients across the last 10 samples. The combined gradient vector determines the current <strong>regime</strong> — how the system is evolving, not just where it is now.</div>
+    <div class="metric-row"><span class="met-k">∇ BACKLOG</span><span class="met-v" id="s4-gb">—</span></div>
+    <div class="metric-row"><span class="met-k">∇ RTT</span><span class="met-v" id="s4-gr">—</span></div>
+    <div class="metric-row"><span class="met-k">∇ DROPS</span><span class="met-v" id="s4-gd">—</span></div>
+    <div class="metric-row"><span class="met-k">COMBINED ∇</span><span class="met-v" id="s4-gc">—</span></div>
+    <div class="metric-row"><span class="met-k">REGIME</span><span class="met-v" id="s4-regime" style="color:var(--gold)">—</span></div>
+    <div class="rule-list" style="margin-top:12px">
+      <div class="rule"><div class="rule-dot" style="background:var(--red)"></div><span style="color:var(--red)">WORSENING</span> — gradient rising, congestion building</div>
+      <div class="rule"><div class="rule-dot" style="background:var(--green)"></div><span style="color:var(--green)">STABLE</span> — gradient near zero, system balanced</div>
+      <div class="rule"><div class="rule-dot" style="background:var(--accent)"></div><span style="color:var(--accent)">RECOVERING</span> — gradient falling, queue draining</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 5: CONTROLLER ═══════════ -->
+<div class="section" id="sec-5">
+  <div class="section-left">
+    <canvas class="section-canvas" id="cv-5"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 05 / 07</div>
+      <div class="sec-title">Controller <span>Pulse</span></div>
+    </div>
+  </div>
+  <div class="section-right">
+    <div class="info-tag">LAYER 2 · DISCRETE · 500ms</div>
+    <div class="info-h">The ACAPE controller fires every 500ms</div>
+    <div class="info-p">Unlike continuous AQM, ACAPE uses a <strong>discrete control loop</strong>. Every 500ms it reads the accumulated telemetry, runs the gradient + regime analysis, and emits parameter updates.</div>
+    <div class="metric-row"><span class="met-k">CONTROLLER PERIOD</span><span class="met-v warn">500ms</span></div>
+    <div class="metric-row"><span class="met-k">LAST PULSE</span><span class="met-v blue" id="s5-last">—</span></div>
+    <div class="metric-row"><span class="met-k">UPDATES ISSUED</span><span class="met-v blue" id="s5-updates">0</span></div>
+    <div class="metric-row"><span class="met-k">CURRENT ACTION</span><span class="met-v" id="s5-action" style="color:var(--gold)">waiting...</span></div>
+    <div class="rule-list" style="margin-top:12px">
+      <div class="rule"><div class="rule-dot" style="background:var(--gold)"></div>On each pulse: reads ∇ + regime</div>
+      <div class="rule"><div class="rule-dot" style="background:var(--accent)"></div>Computes new target, interval, limit, quantum</div>
+      <div class="rule"><div class="rule-dot" style="background:var(--green)"></div>Writes to kernel via netlink/sysfs</div>
+      <div class="rule"><div class="rule-dot" style="background:var(--purple)"></div>fq_codel immediately uses new params</div>
+    </div>
+    <div class="info-p" style="margin-top:12px">The pulse is <strong>visible</strong> — watch the central sphere expand and the rings propagate outward every 500ms. Each pulse emits a decision.</div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 6: PARAMETER ADAPTATION ═══════════ -->
+<div class="section" id="sec-6">
+  <div class="section-left">
+    <canvas class="section-canvas" id="cv-6"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 06 / 07</div>
+      <div class="sec-title">Parameter <span>Adaptation</span></div>
+    </div>
+  </div>
+  <div class="section-right">
+    <div class="info-tag">LAYER 3 · ACTUATION</div>
+    <div class="info-h">fq_codel parameters update in real-time</div>
+    <div class="info-p">Every controller pulse writes new values into the fq_codel qdisc via <code style="color:var(--accent)">tc qdisc change</code>. The kernel applies them immediately on the next packet scheduling decision.</div>
+    <div class="param-bar-wrap">
+      <div class="pb-row"><span>target</span><span id="p-target">5.0ms</span></div>
+      <div class="pb-track"><div class="pb-fill" id="pb-target" style="width:50%;background:var(--accent)"></div></div>
+    </div>
+    <div class="param-bar-wrap">
+      <div class="pb-row"><span>interval</span><span id="p-interval">100ms</span></div>
+      <div class="pb-track"><div class="pb-fill" id="pb-interval" style="width:50%;background:var(--purple)"></div></div>
+    </div>
+    <div class="param-bar-wrap">
+      <div class="pb-row"><span>limit</span><span id="p-limit">1000</span></div>
+      <div class="pb-track"><div class="pb-fill" id="pb-limit" style="width:50%;background:var(--green)"></div></div>
+    </div>
+    <div class="param-bar-wrap">
+      <div class="pb-row"><span>quantum</span><span id="p-quantum">1514B</span></div>
+      <div class="pb-track"><div class="pb-fill" id="pb-quantum" style="width:17%;background:var(--gold)"></div></div>
+    </div>
+    <div class="info-p" style="margin-top:6px">Watch the 3D bars update in <strong style="color:var(--gold)">staircase steps</strong> every 500ms. HEAVY regime → target drops sharply. RECOVERY → target rises, quantum grows.</div>
+    <div class="metric-row"><span class="met-k">LAST UPDATE</span><span class="met-v blue" id="p-last-update">—</span></div>
+    <div class="metric-row"><span class="met-k">DECISION</span><span class="met-v" id="p-decision" style="color:var(--gold)">—</span></div>
+  </div>
+</div>
+
+<!-- ═══════════ SECTION 7: COMPARISON ═══════════ -->
+<div id="sec-compare">
+  <div class="cmp-half" id="cmp-left">
+    <canvas class="cmp-canvas" id="cv-cmp-left"></canvas>
+    <div class="cmp-label">
+      <div class="cmp-tag no-ctrl">× NO CONTROL</div>
+      <div style="font-family:var(--sans);font-weight:800;font-size:18px;color:var(--red)">Static fq_codel</div>
+    </div>
+    <div class="cmp-stats">
+      <div class="cmp-stat"><span class="met-k">BACKLOG</span><span class="met-v bad" id="nc-backlog">—</span></div>
+      <div class="cmp-stat"><span class="met-k">DROP RATE</span><span class="met-v bad" id="nc-drops">—</span></div>
+      <div class="cmp-stat"><span class="met-k">RTT PROXY</span><span class="met-v bad" id="nc-rtt">—</span></div>
+    </div>
+  </div>
+  <div class="cmp-half" id="cmp-right">
+    <canvas class="cmp-canvas" id="cv-cmp-right"></canvas>
+    <div class="cmp-label">
+      <div class="cmp-tag acape">✓ ACAPE ACTIVE</div>
+      <div style="font-family:var(--sans);font-weight:800;font-size:18px;color:var(--green)">Controlled Queue</div>
+    </div>
+    <div class="cmp-stats">
+      <div class="cmp-stat"><span class="met-k">BACKLOG</span><span class="met-v good" id="ac-backlog">—</span></div>
+      <div class="cmp-stat"><span class="met-k">DROP RATE</span><span class="met-v good" id="ac-drops">—</span></div>
+      <div class="cmp-stat"><span class="met-k">RTT PROXY</span><span class="met-v good" id="ac-rtt">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL OUTPUT SECTION -->
+<div class="section" id="sec-final" style="min-height:50vh">
+  <div class="section-left" style="min-height:50vh">
+    <canvas class="section-canvas" id="cv-final"></canvas>
+    <div class="section-label">
+      <div class="sec-num">SECTION 07 / 07</div>
+      <div class="sec-title">Stable <span>Output</span></div>
+    </div>
+  </div>
+  <div class="section-right" style="justify-content:flex-start;padding-top:60px">
+    <div class="info-tag">OUTCOME · ACAPE CONTROLLED</div>
+    <div class="info-h">Queue stabilized, latency controlled</div>
+    <div class="info-p">After 3–5 controller cycles, ACAPE brings the queue to a stable operating point. Packets flow smoothly with bounded sojourn time and minimal drops.</div>
+    <div class="metric-row"><span class="met-k">SOJOURN TARGET</span><span class="met-v good" id="fin-target">—</span></div>
+    <div class="metric-row"><span class="met-k">ACTUAL DELAY</span><span class="met-v good" id="fin-delay">—</span></div>
+    <div class="metric-row"><span class="met-k">DROP RATE</span><span class="met-v good" id="fin-drops">—</span></div>
+    <div class="metric-row"><span class="met-k">REGIME</span><span class="met-v good" id="fin-regime">—</span></div>
+    <div class="info-p" style="margin-top:16px">The green flow above represents the stabilized output — packets exit the queue within the target sojourn time, ensuring low-latency transmission.</div>
+  </div>
+</div>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════
+// GLOBAL STATE
+// ═══════════════════════════════════════════════════
+const G = {
+  running: true,
+  acapeOn: true,
+  time: 0,
+  ctrlTimer: 0,
+  CTRL_PERIOD: 500,
+  pulse: false,
+  pulseAge: 0,
+  updates: 0,
+
+  // Signals
+  backlog: 100, prevBacklog: 100,
+  drops: 0.04, prevDrops: 0.04,
+  rtt: 10, prevRtt: 10,
+
+  // ACAPE params
+  target: 5.0, interval: 100, limit: 1000, quantum: 1514,
+
+  // Derived
+  gradBacklog: 0, gradDrop: 0, gradRtt: 0, gradCombined: 0,
+  regime: 'STABLE',
+  decision: 'MAINTAIN',
+
+  // NoCtrl
+  ncBacklog: 80, ncDrops: 0.02, ncRtt: 8,
+};
+
+let lastTime = performance.now();
+
+// ═══════════════════════════════════════════════════
+// THREE.JS SCENE FACTORY
+// ═══════════════════════════════════════════════════
+function makeScene(canvasId, cameraZ=18) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x050810, 0.04);
+
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
+  camera.position.set(0, 3, cameraZ);
+  camera.lookAt(0, 0, 0);
+
+  // Ambient + point lights
+  scene.add(new THREE.AmbientLight(0x111830, 2));
+  const pl1 = new THREE.PointLight(0x3d9bff, 3, 30);
+  pl1.position.set(5, 8, 5);
+  scene.add(pl1);
+  const pl2 = new THREE.PointLight(0x00e5a0, 2, 25);
+  pl2.position.set(-5, -4, 3);
+  scene.add(pl2);
+
+  // Grid floor
+  const grid = new THREE.GridHelper(40, 20, 0x112244, 0x0a1428);
+  grid.position.y = -5;
+  scene.add(grid);
+
+  // Resize
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // OrbitControls (manual lightweight)
+  let isDrag=false, prevMX=0, prevMY=0, rotX=0, rotY=0, zoom=1;
+  canvas.addEventListener('mousedown', e=>{ isDrag=true; prevMX=e.clientX; prevMY=e.clientY; });
+  canvas.addEventListener('mousemove', e=>{
+    if(!isDrag)return;
+    rotY += (e.clientX-prevMX)*0.008;
+    rotX += (e.clientY-prevMY)*0.006;
+    rotX = Math.max(-1.2, Math.min(1.2, rotX));
+    prevMX=e.clientX; prevMY=e.clientY;
+  });
+  canvas.addEventListener('mouseup', ()=>isDrag=false);
+  canvas.addEventListener('wheel', e=>{ zoom=Math.max(0.3,Math.min(3,zoom+e.deltaY*0.002)); });
+  canvas.addEventListener('mouseleave', ()=>isDrag=false);
+
+  return { renderer, scene, camera, pl1, pl2, resize, getOrbit: ()=>({rotX,rotY,zoom}) };
+}
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+function glowSphere(r, color, emissive, intensity=2) {
+  const geo = new THREE.SphereGeometry(r, 32, 32);
+  const mat = new THREE.MeshStandardMaterial({ color, emissive: emissive||color, emissiveIntensity: intensity, roughness:0.2, metalness:0.3 });
+  return new THREE.Mesh(geo, mat);
+}
+function glowBox(w,h,d, color, opacity=0.25) {
+  const geo = new THREE.BoxGeometry(w,h,d);
+  const mat = new THREE.MeshStandardMaterial({ color, transparent:true, opacity, roughness:0.3, metalness:0.5, side: THREE.DoubleSide });
+  return new THREE.Mesh(geo, mat);
+}
+function wirebox(w,h,d, color) {
+  const geo = new THREE.BoxGeometry(w,h,d);
+  const edges = new THREE.EdgesGeometry(geo);
+  return new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.6 }));
+}
+function ring(r, tube, color) {
+  const geo = new THREE.TorusGeometry(r, tube, 8, 64);
+  const mat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.5, transparent:true, opacity:0.7 });
+  return new THREE.Mesh(geo, mat);
+}
+function bar3D(w,h,d,color,x,z) {
+  const geo = new THREE.BoxGeometry(w,h,d);
+  const mat = new THREE.MeshStandardMaterial({ color, emissive:color, emissiveIntensity:0.4, roughness:0.3 });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, h/2-4, z);
+  return m;
+}
+function textSprite(text, color='#ffffff', size=48) {
+  const c = document.createElement('canvas'); c.width=512; c.height=64;
+  const ctx = c.getContext('2d');
+  ctx.font = `${size}px 'Courier New'`;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.fillText(text, 256, 48);
+  const tex = new THREE.CanvasTexture(c);
+  const mat = new THREE.SpriteMaterial({ map:tex, transparent:true });
+  const s = new THREE.Sprite(mat);
+  s.scale.set(4,0.5,1);
+  return s;
+}
+
+function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function style(id,p,v){const e=document.getElementById(id);if(e)e.style[p]=v;}
+
+// ═══════════════════════════════════════════════════
+// SECTION 1: TRAFFIC FLOW
+// ═══════════════════════════════════════════════════
+const S1 = makeScene('cv-1', 16);
+let s1Packets = [];
+
+// Pipe geometry
+function makePipe(scene) {
+  const mat = new THREE.MeshStandardMaterial({ color:0x112244, transparent:true, opacity:0.3, roughness:0.5 });
+  const geo = new THREE.CylinderGeometry(0.4,0.4,28,16,1,true);
+  const m = new THREE.Mesh(geo, mat);
+  m.rotation.z = Math.PI/2;
+  scene.add(m);
+  // Edge glow rings along pipe
+  for(let x=-12;x<=12;x+=4) {
+    const r = ring(0.5,0.04,0x1a3a6a);
+    r.rotation.y = Math.PI/2;
+    r.position.x = x;
+    scene.add(r);
+  }
+}
+
+if(S1) {
+  makePipe(S1.scene);
+  const srcLight = new THREE.PointLight(0x3d9bff,4,8);
+  srcLight.position.set(-14,0,0);
+  S1.scene.add(srcLight);
+  const dstLight = new THREE.PointLight(0x00e5a0,4,8);
+  dstLight.position.set(14,0,0);
+  S1.scene.add(dstLight);
+  // Source and destination nodes
+  const src = glowSphere(1.2, 0x1a4a8a, 0x3d9bff, 3);
+  src.position.set(-14,0,0);
+  S1.scene.add(src);
+  const dst = glowSphere(1.2, 0x0a4a3a, 0x00e5a0, 3);
+  dst.position.set(14,0,0);
+  S1.scene.add(dst);
+
+  S1._src = src; S1._dst = dst; S1._srcLight = srcLight;
+}
+
+function spawnS1Packet() {
+  if(!S1) return;
+  const colors = [0x3d9bff, 0x00e5a0, 0xffc940, 0xb06aff, 0xff6b9d];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  const m = glowSphere(0.22, color, color, 4);
+  m.position.set(-14, (Math.random()-0.5)*0.4, (Math.random()-0.5)*0.4);
+  S1.scene.add(m);
+  s1Packets.push({ mesh:m, x:-14, speed: 0.18+Math.random()*0.06 });
+}
+
+function updateS1(dt) {
+  if(!S1) return;
+  const t = G.time * 0.001;
+  // Pulse source
+  S1._src.material.emissiveIntensity = 2+Math.sin(t*15)*1;
+  // Update packets
+  for(let i=s1Packets.length-1;i>=0;i--) {
+    const p = s1Packets[i];
+    p.x += p.speed * dt * G.speed();
+    p.mesh.position.x = p.x;
+    p.mesh.position.y += Math.sin(t*5+i)*0.002;
+    if(p.x > 14.5) { S1.scene.remove(p.mesh); s1Packets.splice(i,1); }
+  }
+  // Spawn
+  if(s1Packets.length < 20 && Math.random() < 0.25 * G.speed()) spawnS1Packet();
+
+  applyOrbit(S1);
+  S1.renderer.render(S1.scene, S1.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 2: QUEUE
+// ═══════════════════════════════════════════════════
+const S2 = makeScene('cv-2', 14);
+let s2Packets = [], s2QueueFill;
+
+if(S2) {
+  // Queue box wireframe
+  const wb = wirebox(6,8,4, 0x1a4a8a);
+  wb.position.set(0,0,0);
+  S2.scene.add(wb);
+
+  // Fill block
+  s2QueueFill = glowBox(5.6,0.1,3.6, 0x3d9bff, 0.35);
+  s2QueueFill.position.set(0,-4,0);
+  S2.scene.add(s2QueueFill);
+
+  // Target line
+  const tGeo = new THREE.PlaneGeometry(5.8,0.06);
+  const tMat = new THREE.MeshBasicMaterial({ color:0x00e5a0, transparent:true, opacity:0.9 });
+  S2._targetLine = new THREE.Mesh(tGeo, tMat);
+  S2._targetLine.rotation.x = -Math.PI/2;
+  S2._targetLine.position.set(0,-3,0);
+  S2.scene.add(S2._targetLine);
+
+  // "QUEUE" label ring
+  const qring = ring(4.5,0.05,0x1a3a6a);
+  qring.position.y = -4.2;
+  S2.scene.add(qring);
+}
+
+function updateS2(dt) {
+  if(!S2) return;
+  const fillPct = Math.min(1, G.backlog/1000);
+  const fillH = fillPct * 8;
+  s2QueueFill.scale.y = Math.max(0.01, fillH/0.1);
+  s2QueueFill.position.y = -4 + fillH/2;
+  const color = fillPct > 0.7 ? 0xff3d6b : fillPct > 0.4 ? 0xffc940 : 0x3d9bff;
+  s2QueueFill.material.color.setHex(color);
+  s2QueueFill.material.emissive.setHex(color);
+
+  // Target line position
+  const tFrac = G.acapeOn ? (G.target/10.0) : 0.5;
+  S2._targetLine.position.y = -4 + tFrac * 8;
+
+  // Queue packets
+  for(let i=s2Packets.length-1;i>=0;i--) {
+    const p = s2Packets[i];
+    p.life -= dt * 0.0008 * G.speed();
+    p.mesh.position.x += (Math.random()-0.5)*0.01;
+    p.mesh.position.y += 0.002;
+    p.mesh.material.opacity = p.life;
+    if(p.life<=0) { S2.scene.remove(p.mesh); s2Packets.splice(i,1); }
+  }
+  if(s2Packets.length < 30 && G.backlog > 50 && Math.random() < 0.4 * G.speed()) {
+    const pkt = glowSphere(0.18, color, color, 3);
+    pkt.position.set((Math.random()-0.5)*4, -4+(Math.random())*fillH, (Math.random()-0.5)*3);
+    pkt.material.transparent = true; pkt.material.opacity = 0.9;
+    S2.scene.add(pkt);
+    s2Packets.push({ mesh:pkt, life:1 });
+  }
+
+  // Update right panel
+  const delay = (G.backlog / 1000 * 80).toFixed(1);
+  set('s2-backlog', Math.floor(G.backlog)+' pkts');
+  set('s2-delay', delay+'ms');
+  set('s2-limit', Math.floor(G.limit)+'');
+  set('s2-target', G.target.toFixed(1)+'ms');
+  set('s2-fill-pct', Math.floor(fillPct*100)+'%');
+  style('s2-fill-bar','width',(fillPct*100)+'%');
+  style('s2-fill-bar','background', fillPct>0.7?'var(--red)':fillPct>0.4?'var(--gold)':'var(--accent)');
+  set('s2-status', fillPct>0.7?'OVERFLOWING':fillPct>0.4?'FILLING':'NORMAL');
+  style('s2-status','color', fillPct>0.7?'var(--red)':fillPct>0.4?'var(--gold)':'var(--green)');
+
+  applyOrbit(S2);
+  S2.renderer.render(S2.scene, S2.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 3: eBPF MONITORING
+// ═══════════════════════════════════════════════════
+const S3 = makeScene('cv-3', 14);
+let s3Rings = [], s3LastSample = 0;
+
+if(S3) {
+  // Central eBPF node
+  const node = glowSphere(1.5, 0x0a2040, 0x3d9bff, 3);
+  S3._node = node;
+  S3.scene.add(node);
+
+  // Floating data rings
+  for(let i=0;i<3;i++) {
+    const r = ring(2+i*1.2, 0.04+i*0.01, [0x3d9bff,0x00e5a0,0xffc940][i]);
+    r.rotation.x = Math.PI/2 + i*0.3;
+    S3.scene.add(r);
+    s3Rings.push(r);
+  }
+
+  // Data beam lines
+  for(let i=0;i<6;i++) {
+    const pts = [];
+    const angle = (i/6)*Math.PI*2;
+    pts.push(new THREE.Vector3(Math.cos(angle)*1.5, Math.sin(angle)*1.5, 0));
+    pts.push(new THREE.Vector3(Math.cos(angle)*6, Math.sin(angle)*6, 0));
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({color:0x1a3a6a,transparent:true,opacity:0.5}));
+    S3.scene.add(line);
+    S3['_line'+i] = line;
+  }
+
+  // Metric panels (boxes above)
+  for(let i=0;i<3;i++) {
+    const b = glowBox(2.2,1,0.2, [0x0a2040,0x0a3020,0x302010][i], 0.5);
+    const angle = (i/3)*Math.PI*2;
+    b.position.set(Math.cos(angle)*5.5, Math.sin(angle)*5.5, 0);
+    S3.scene.add(b);
+    S3['_panel'+i] = b;
+  }
+}
+
+let s3SampleTimer = 0;
+function updateS3(dt) {
+  if(!S3) return;
+  const t = G.time*0.001;
+  s3SampleTimer += dt;
+  const sampled = s3SampleTimer > 50;
+  if(sampled) s3SampleTimer = 0;
+
+  s3Rings.forEach((r,i) => {
+    r.rotation.y += [0.008,0.005,0.003][i] * G.speed();
+    r.rotation.x += [0.003,0.006,0.004][i] * G.speed();
+    r.material.emissiveIntensity = 1+Math.sin(t*4+i)*0.5;
+  });
+
+  S3._node.material.emissiveIntensity = 2+Math.sin(t*20)*1.5;
+  if(sampled) S3._node.material.emissiveIntensity = 5;
+
+  // Update panels flash on sample
+  if(sampled) {
+    [0x3d9bff,0x00e5a0,0xffc940].forEach((c,i) => {
+      if(S3['_panel'+i]) S3['_panel'+i].material.emissiveIntensity = 1.5;
+    });
+  } else {
+    for(let i=0;i<3;i++) { if(S3['_panel'+i]) S3['_panel'+i].material.emissiveIntensity *= 0.9; }
+  }
+
+  // Right panel updates
+  const bColor = G.backlog>300?'var(--red)':G.backlog>150?'var(--gold)':'var(--green)';
+  const el_b = document.getElementById('s3-backlog');
+  if(el_b) { el_b.textContent = Math.floor(G.backlog)+' pkts'; el_b.style.color=bColor; }
+  const el_d = document.getElementById('s3-drops');
+  if(el_d) { el_d.textContent=(G.drops*100).toFixed(1)+'%'; el_d.style.color=G.drops>0.1?'var(--red)':'var(--green)'; }
+  const el_r = document.getElementById('s3-rtt');
+  if(el_r) { el_r.textContent=G.rtt.toFixed(1)+'ms'; el_r.style.color=G.rtt>20?'var(--red)':G.rtt>10?'var(--gold)':'var(--green)'; }
+
+  applyOrbit(S3);
+  S3.renderer.render(S3.scene, S3.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 4: GRADIENT ANALYSIS
+// ═══════════════════════════════════════════════════
+const S4 = makeScene('cv-4', 12);
+let s4Node, s4OrbitRings = [];
+
+if(S4) {
+  s4Node = glowSphere(2, 0x1a1a2a, 0xffc940, 4);
+  S4.scene.add(s4Node);
+  S4._node = s4Node;
+
+  // 3 gradient rings
+  const gColors = [0x3d9bff, 0x00e5a0, 0xffc940];
+  for(let i=0;i<3;i++) {
+    const r = ring(3.5+i, 0.05, gColors[i]);
+    r.rotation.x = i * 0.4;
+    S4.scene.add(r);
+    s4OrbitRings.push(r);
+  }
+
+  // Gradient arrows (lines)
+  for(let i=0;i<3;i++) {
+    const angle = (i/3)*Math.PI*2;
+    const pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(Math.cos(angle)*5, Math.sin(angle)*5, 0)];
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({color:gColors[i],transparent:true,opacity:0.7}));
+    S4.scene.add(line);
+    S4['_arr'+i] = line;
+  }
+}
+
+function updateS4(dt) {
+  if(!S4) return;
+  const t = G.time*0.001;
+
+  const regimeColor = { WORSENING: 0xff3d6b, STABLE: 0xffc940, RECOVERING: 0x00e5a0 }[G.regime] || 0xffc940;
+  S4._node.material.emissive.setHex(regimeColor);
+  S4._node.material.color.setHex(regimeColor);
+  S4._node.material.emissiveIntensity = 2+Math.sin(t*3)*0.8;
+  S4._node.scale.setScalar(1+Math.sin(t*2)*0.05);
+
+  s4OrbitRings.forEach((r,i) => {
+    r.rotation.y += 0.006*(i+1) * G.speed();
+    r.material.emissive.setHex(regimeColor);
+    r.material.emissiveIntensity = 1+Math.sin(t*4+i)*0.4;
+  });
+
+  // Right panel
+  const gc = G.gradCombined;
+  const gColor = gc>0.3?'var(--red)':gc<-0.3?'var(--green)':'var(--gold)';
+  set('s4-gb', (G.gradBacklog>0?'+':'')+G.gradBacklog.toFixed(1));
+  set('s4-gr', (G.gradRtt>0?'+':'')+G.gradRtt.toFixed(1)+'ms');
+  set('s4-gd', (G.gradDrop>0?'+':'')+G.gradDrop.toFixed(3));
+  set('s4-gc', gc.toFixed(3));
+  style('s4-gc','color',gColor);
+  set('s4-regime', G.regime);
+  const rc = {WORSENING:'var(--red)',STABLE:'var(--gold)',RECOVERING:'var(--green)'}[G.regime]||'var(--gold)';
+  style('s4-regime','color',rc);
+
+  applyOrbit(S4);
+  S4.renderer.render(S4.scene, S4.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 5: CONTROLLER
+// ═══════════════════════════════════════════════════
+const S5 = makeScene('cv-5', 16);
+let s5Core, s5PulseRings = [], s5PulseTimer=0;
+
+if(S5) {
+  // Core
+  s5Core = glowSphere(2.2, 0x0a1830, 0x3d9bff, 4);
+  S5.scene.add(s5Core);
+  S5._core = s5Core;
+
+  // Inner core
+  const inner = glowSphere(1.2, 0x1a3060, 0x00e5a0, 3);
+  S5.scene.add(inner);
+  S5._inner = inner;
+
+  // Orbit rings
+  for(let i=0;i<4;i++) {
+    const r = ring(4+i*1.5, 0.04, [0x3d9bff,0x00e5a0,0xffc940,0xb06aff][i]);
+    r.rotation.x = (i*0.5);
+    S5.scene.add(r);
+    S5['_orb'+i] = r;
+  }
+
+  // Satellite nodes
+  const satColors = [0x3d9bff,0x00e5a0,0xffc940,0xb06aff];
+  const satLabels = ['TARGET','INTERVAL','LIMIT','QUANTUM'];
+  S5._sats = [];
+  for(let i=0;i<4;i++) {
+    const sat = glowSphere(0.5, satColors[i], satColors[i], 2);
+    const angle = (i/4)*Math.PI*2;
+    sat.position.set(Math.cos(angle)*6, Math.sin(angle)*6, 0);
+    S5.scene.add(sat);
+    S5._sats.push({ mesh:sat, angle: (i/4)*Math.PI*2, radius:6, speed:0.003+i*0.001, color:satColors[i] });
+  }
+
+  // Pulse rings (expandable)
+  for(let i=0;i<3;i++) {
+    const pr = ring(0.1,0.08,0x3d9bff);
+    pr.visible=false;
+    S5.scene.add(pr);
+    s5PulseRings.push({ mesh:pr, age:0, active:false });
+  }
+}
+
+let s5PulseRingIdx = 0;
+function triggerS5Pulse() {
+  const pr = s5PulseRings[s5PulseRingIdx % s5PulseRings.length];
+  pr.age = 0; pr.active = true; pr.mesh.visible = true;
+  pr.mesh.scale.setScalar(1);
+  s5PulseRingIdx++;
+}
+
+function updateS5(dt) {
+  if(!S5) return;
+  const t = G.time*0.001;
+
+  // Core pulse
+  const pulseScale = 1 + Math.sin(t * Math.PI * 2) * 0.15;
+  S5._core.scale.setScalar(pulseScale);
+  S5._core.material.emissiveIntensity = 2 + Math.sin(t * Math.PI * 2) * 2;
+
+  const ctrl_t = (G.ctrlTimer / G.CTRL_PERIOD);
+  S5._inner.material.emissiveIntensity = 1 + ctrl_t * 3;
+
+  // Orbit rings
+  for(let i=0;i<4;i++) {
+    if(S5['_orb'+i]) {
+      S5['_orb'+i].rotation.y += 0.005*(i+1) * G.speed();
+      S5['_orb'+i].rotation.x += 0.002*(i+1) * G.speed();
+    }
+  }
+
+  // Satellite orbits
+  S5._sats.forEach((sat,i) => {
+    sat.angle += sat.speed * G.speed();
+    sat.mesh.position.x = Math.cos(sat.angle)*sat.radius;
+    sat.mesh.position.y = Math.sin(sat.angle)*sat.radius;
+    sat.mesh.material.emissiveIntensity = 1+Math.sin(t*4+i)*0.8;
+  });
+
+  // Pulse ring expand
+  s5PulseRings.forEach(pr => {
+    if(!pr.active) return;
+    pr.age += dt * 0.002 * G.speed();
+    const s = 1 + pr.age * 8;
+    pr.mesh.scale.setScalar(s);
+    pr.mesh.material.opacity = Math.max(0, 0.8 - pr.age*0.8);
+    if(pr.age > 1) { pr.active=false; pr.mesh.visible=false; }
+  });
+
+  // Flash on controller fire
+  if(G.pulse) {
+    S5._core.material.emissiveIntensity = 8;
+    S5._inner.material.emissiveIntensity = 6;
+    triggerS5Pulse();
+  }
+
+  // Right panel
+  set('s5-last', G.time > 100 ? ((G.time/1000).toFixed(1)+'s') : '—');
+  set('s5-updates', G.updates);
+  set('s5-action', G.decision);
+  style('s5-action','color',{CONGESTION_RESPONSE:'var(--red)',RECOVERY:'var(--green)',MAINTAIN:'var(--gold)',REDUCE_AGGRESSION:'var(--gold)'}[G.decision]||'var(--gold)');
+
+  applyOrbit(S5);
+  S5.renderer.render(S5.scene, S5.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 6: PARAMETER BARS
+// ═══════════════════════════════════════════════════
+const S6 = makeScene('cv-6', 18);
+let s6Bars = {}, s6BarsScene = {};
+
+if(S6) {
+  const params = [
+    { key:'target',   color:0x3d9bff, x:-6 },
+    { key:'interval', color:0xb06aff, x:-2 },
+    { key:'limit',    color:0x00e5a0, x:2  },
+    { key:'quantum',  color:0xffc940, x:6  },
+  ];
+  params.forEach(p => {
+    const b = glowBox(2.5,0.1,2.5, p.color, 0.7);
+    b.position.set(p.x,-4,0);
+    S6.scene.add(b);
+    s6Bars[p.key] = b;
+
+    // Base platform
+    const base = glowBox(2.6,0.15,2.6,p.color,0.25);
+    base.position.set(p.x,-4.07,0);
+    S6.scene.add(base);
+
+    // Glow light under bar
+    const pl = new THREE.PointLight(p.color, 2, 4);
+    pl.position.set(p.x,-3.5,0);
+    S6.scene.add(pl);
+    s6Bars[p.key+'_light'] = pl;
+  });
+
+  // Floor grid
+  const g2 = new THREE.GridHelper(20,10,0x0d2044,0x0a1428);
+  g2.position.y = -4.2;
+  S6.scene.add(g2);
+}
+
+function updateS6(dt) {
+  if(!S6) return;
+  const t = G.time*0.001;
+
+  const vals = {
+    target: { v: G.target, max: 10, label: G.target.toFixed(1)+'ms', bar:'pb-target', lbl:'p-target', fill:'var(--accent)' },
+    interval: { v: G.interval, max: 200, label: G.interval.toFixed(0)+'ms', bar:'pb-interval', lbl:'p-interval', fill:'var(--purple)' },
+    limit: { v: G.limit, max: 2000, label: Math.floor(G.limit)+'', bar:'pb-limit', lbl:'p-limit', fill:'var(--green)' },
+    quantum: { v: G.quantum, max: 9000, label: Math.floor(G.quantum)+'B', bar:'pb-quantum', lbl:'p-quantum', fill:'var(--gold)' },
+  };
+
+  Object.entries(vals).forEach(([key,val]) => {
+    const b = s6Bars[key];
+    if(!b) return;
+    const frac = Math.min(1, val.v / val.max);
+    const h = Math.max(0.1, frac * 7);
+    b.scale.y = h / 0.1;
+    b.position.y = -4 + h/2;
+    b.material.emissiveIntensity = 0.4 + Math.sin(t*3)*0.2;
+    if(s6Bars[key+'_light']) s6Bars[key+'_light'].intensity = 1.5+Math.sin(t*3)*0.5;
+
+    // Right panel
+    set(val.lbl, val.label);
+    style(val.bar,'width',(frac*100)+'%');
+  });
+
+  if(G.pulse) {
+    Object.values(s6Bars).forEach(b => {
+      if(b.material) b.material.emissiveIntensity = 2;
+    });
+  }
+
+  set('p-last-update', G.pulse ? 'now' : ((G.ctrlTimer/1000).toFixed(2)+'s ago'));
+  set('p-decision', G.decision);
+  style('p-decision','color',{CONGESTION_RESPONSE:'var(--red)',RECOVERY:'var(--green)',MAINTAIN:'var(--gold)'}[G.decision]||'var(--gold)');
+
+  applyOrbit(S6);
+  S6.renderer.render(S6.scene, S6.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// COMPARISON SECTION
+// ═══════════════════════════════════════════════════
+const CL = makeScene('cv-cmp-left', 14);
+const CR = makeScene('cv-cmp-right', 14);
+let cl_fill, cr_fill, cl_pkts=[], cr_pkts=[];
+
+if(CL) {
+  // NO CONTROL queue
+  const wb = wirebox(5,8,3,0xff3d6b);
+  CL.scene.add(wb);
+  cl_fill = glowBox(4.6,0.1,2.6,0xff3d6b,0.5);
+  cl_fill.position.y=-4;
+  CL.scene.add(cl_fill);
+  const pl = new THREE.PointLight(0xff3d6b,3,10);
+  pl.position.set(0,2,5);
+  CL.scene.add(pl);
+  CL._pl = pl;
+}
+if(CR) {
+  // ACAPE queue
+  const wb = wirebox(5,8,3,0x00e5a0);
+  CR.scene.add(wb);
+  cr_fill = glowBox(4.6,0.1,2.6,0x00e5a0,0.4);
+  cr_fill.position.y=-4;
+  CR.scene.add(cr_fill);
+  const pl = new THREE.PointLight(0x00e5a0,3,10);
+  pl.position.set(0,2,5);
+  CR.scene.add(pl);
+  CR._pl = pl;
+}
+
+function updateCmp(dt) {
+  if(!CL||!CR) return;
+  const t = G.time*0.001;
+
+  // No-control always grows
+  G.ncBacklog = Math.min(980, G.ncBacklog + 0.15 * G.speed());
+  G.ncDrops = G.ncBacklog > 800 ? 0.3 : G.ncBacklog/3000;
+  G.ncRtt = 5 + G.ncBacklog * 0.08;
+
+  const ncFrac = Math.min(1, G.ncBacklog/1000);
+  const ncH = ncFrac * 7.8;
+  cl_fill.scale.y = Math.max(0.01, ncH/0.1);
+  cl_fill.position.y = -4 + ncH/2;
+  cl_fill.material.emissiveIntensity = 0.5+Math.sin(t*10)*0.3;
+  CL._pl.intensity = 2+ncFrac*3;
+
+  const acFrac = Math.min(1, G.backlog/1000);
+  const acH = acFrac * 7.8;
+  cr_fill.scale.y = Math.max(0.01, acH/0.1);
+  cr_fill.position.y = -4 + acH/2;
+  cr_fill.material.emissiveIntensity = 0.3+Math.sin(t*5)*0.2;
+
+  // Stats
+  set('nc-backlog', Math.floor(G.ncBacklog)+'pkts');
+  set('nc-drops', (G.ncDrops*100).toFixed(0)+'%');
+  set('nc-rtt', G.ncRtt.toFixed(0)+'ms');
+  set('ac-backlog', Math.floor(G.backlog)+'pkts');
+  set('ac-drops', (G.drops*100).toFixed(1)+'%');
+  set('ac-rtt', G.rtt.toFixed(0)+'ms');
+
+  applyOrbit(CL);
+  CL.renderer.render(CL.scene, CL.camera);
+  applyOrbit(CR);
+  CR.renderer.render(CR.scene, CR.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// FINAL SECTION
+// ═══════════════════════════════════════════════════
+const SF = makeScene('cv-final', 14);
+let sf_pkts = [];
+
+if(SF) {
+  // Stable pipe
+  const mat = new THREE.MeshStandardMaterial({ color:0x0a3020, transparent:true, opacity:0.3 });
+  const geo = new THREE.CylinderGeometry(0.5,0.5,24,16,1,true);
+  const pipe = new THREE.Mesh(geo, mat);
+  pipe.rotation.z = Math.PI/2;
+  SF.scene.add(pipe);
+
+  const srcL = new THREE.PointLight(0x00e5a0,5,10);
+  srcL.position.set(-12,0,0);
+  SF.scene.add(srcL);
+  const dstL = new THREE.PointLight(0x00e5a0,5,10);
+  dstL.position.set(12,0,0);
+  SF.scene.add(dstL);
+  SF._srcL=srcL; SF._dstL=dstL;
+
+  // Stable flow rings
+  for(let x=-10;x<=10;x+=3) {
+    const r = ring(0.6,0.05,0x00e5a0);
+    r.rotation.y = Math.PI/2;
+    r.position.x = x;
+    SF.scene.add(r);
+  }
+}
+
+function updateFinal(dt) {
+  if(!SF) return;
+  const t = G.time*0.001;
+
+  SF._srcL.intensity = 3+Math.sin(t*10)*1;
+
+  // Smooth green packets
+  for(let i=sf_pkts.length-1;i>=0;i--) {
+    const p = sf_pkts[i];
+    p.x += 0.14 * G.speed();
+    p.mesh.position.x = p.x;
+    p.mesh.position.y = Math.sin(t*3+i*0.5)*0.2;
+    if(p.x>13) { SF.scene.remove(p.mesh); sf_pkts.splice(i,1); }
+  }
+  if(sf_pkts.length<12 && Math.random()<0.3*G.speed()) {
+    const m = glowSphere(0.2, 0x00e5a0, 0x00e5a0, 5);
+    m.position.set(-13,0,0);
+    SF.scene.add(m);
+    sf_pkts.push({mesh:m, x:-13});
+  }
+
+  // Right panel
+  set('fin-target', G.target.toFixed(1)+'ms');
+  set('fin-delay', (G.backlog/1000*20).toFixed(1)+'ms');
+  set('fin-drops', (G.drops*100).toFixed(1)+'%');
+  set('fin-regime', G.regime);
+  style('fin-regime','color',{WORSENING:'var(--red)',STABLE:'var(--green)',RECOVERING:'var(--green)'}[G.regime]||'var(--green)');
+
+  applyOrbit(SF);
+  SF.renderer.render(SF.scene, SF.camera);
+}
+
+// ═══════════════════════════════════════════════════
+// ORBIT HELPER
+// ═══════════════════════════════════════════════════
+function applyOrbit(S) {
+  const { rotX, rotY, zoom } = S.getOrbit();
+  S.camera.position.x = Math.sin(rotY) * S.camera.position.z * zoom;
+  S.camera.position.y = 3 + rotX * 8;
+  S.camera.position.z = Math.cos(rotY) * S.camera.position.z * zoom;
+  S.camera.lookAt(0,0,0);
+}
+
+// ═══════════════════════════════════════════════════
+// SIMULATION MATH
+// ═══════════════════════════════════════════════════
+G.speed = () => G.running ? 1 : 0;
+
+let prevB=100, prevD=0.04, prevR=10;
+
+function simStep(dt) {
+  if(!G.running) return;
+  const t = G.time*0.001;
+  prevB=G.backlog; prevD=G.drops; prevR=G.rtt;
+
+  // Base traffic pattern
+  const arrivalBurst = 3 + Math.sin(t*0.7)*2 + Math.sin(t*2.1)*1.5;
+  const departure = G.acapeOn ? (1 + (G.target/5.0)*2) : 1.5;
+  const netChange = (arrivalBurst - departure) * 0.3;
+
+  G.backlog += netChange + (Math.random()-0.48)*4;
+  G.backlog = Math.max(5, Math.min(G.limit, G.backlog));
+
+  G.drops = Math.max(0, Math.min(1, G.backlog/G.limit * 0.4 + (Math.random()-0.5)*0.01));
+  G.rtt = 1.5 + G.target*0.5 + G.backlog*0.06 + (Math.random()-0.5)*1.5;
+
+  // Gradients
+  G.gradBacklog = G.backlog - prevB;
+  G.gradDrop    = G.drops - prevD;
+  G.gradRtt     = G.rtt - prevR;
+  G.gradCombined = (G.gradBacklog/20 + G.gradDrop*10 + G.gradRtt/10) / 3;
+
+  // Regime
+  if(G.gradCombined > 0.2 && G.backlog > 200) G.regime='WORSENING';
+  else if(G.gradCombined < -0.15) G.regime='RECOVERING';
+  else G.regime='STABLE';
+}
+
+function runController() {
+  if(!G.acapeOn) { G.decision='DISABLED'; return; }
+  G.updates++;
+  G.pulse = true;
+
+  if(G.gradBacklog > 6 && G.gradRtt > 0.8) {
+    G.target   = Math.max(1.5, G.target * 0.82);
+    G.interval = Math.max(40,  G.interval * 0.88);
+    G.limit    = Math.max(200, G.limit - 80);
+    G.decision = 'CONGESTION_RESPONSE';
+  } else if(G.gradBacklog < -4 && G.gradRtt < -0.5) {
+    G.target   = Math.min(8,   G.target * 1.12);
+    G.quantum  = Math.min(9000,G.quantum + 300);
+    G.limit    = Math.min(2000,G.limit + 100);
+    G.decision = 'RECOVERY';
+  } else if(G.gradDrop > 0.025) {
+    G.interval = Math.max(40, G.interval * 0.85);
+    G.decision = 'REDUCE_AGGRESSION';
+  } else {
+    G.limit    = Math.min(2000, G.limit + 30);
+    G.decision = 'MAINTAIN';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SCROLL / SECTION TRACKING
+// ═══════════════════════════════════════════════════
+const sections = ['sec-1','sec-2','sec-3','sec-4','sec-5','sec-6','sec-compare','sec-final'];
+let currentSection = 0;
+
+function updateScrollDots() {
+  const scrollY = window.scrollY;
+  const winH = window.innerHeight;
+  let active = 0;
+  sections.forEach((id,i) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(scrollY + winH*0.4 > el.offsetTop) active = i;
+  });
+  currentSection = active;
+  document.querySelectorAll('.tl-dot').forEach((d,i) => d.classList.toggle('active', i===active));
+}
+window.addEventListener('scroll', updateScrollDots);
+
+// ═══════════════════════════════════════════════════
+// HUD CONTROLS
+// ═══════════════════════════════════════════════════
+function togglePlay() {
+  G.running = !G.running;
+  const btn = document.getElementById('btn-play');
+  btn.textContent = G.running ? '⏸ PAUSE' : '▶ PLAY';
+  btn.classList.toggle('active', G.running);
+}
+function stepOnce() {
+  G.ctrlTimer = G.CTRL_PERIOD;
+  G.running = true;
+  const btn = document.getElementById('btn-play');
+  btn.textContent = '⏸ PAUSE'; btn.classList.add('active');
+}
+function toggleMode() {
+  G.acapeOn = !G.acapeOn;
+  const btn = document.getElementById('btn-mode');
+  btn.textContent = G.acapeOn ? '⚡ ACAPE: ON' : '⚡ ACAPE: OFF';
+  btn.classList.toggle('active', G.acapeOn);
+}
+
+// ═══════════════════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════════════════
+function loop() {
+  requestAnimationFrame(loop);
+  const now = performance.now();
+  const dt = Math.min(now - lastTime, 60);
+  lastTime = now;
+
+  if(G.running) {
+    G.time += dt;
+    G.ctrlTimer += dt;
+    simStep(dt);
+
+    if(G.ctrlTimer >= G.CTRL_PERIOD) {
+      G.ctrlTimer -= G.CTRL_PERIOD;
+      runController();
+    } else {
+      G.pulse = false;
+    }
+
+    // HUD
+    const pct = (G.ctrlTimer / G.CTRL_PERIOD)*100;
+    set('hud-ms', Math.floor(G.ctrlTimer));
+    style('hud-timer-fill','width',pct+'%');
+  }
+
+  // Render all scenes
+  updateS1(dt);
+  updateS2(dt);
+  updateS3(dt);
+  updateS4(dt);
+  updateS5(dt);
+  updateS6(dt);
+  updateCmp(dt);
+  updateFinal(dt);
+
+  // Reset pulse
+  G.pulse = false;
+}
+
+loop();
+</script>
+</body>
+</html>

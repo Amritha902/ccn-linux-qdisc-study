@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACAPE — Live 3D Network Simulation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #020608;
+    color: #e0ffe8;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+  }
+
+  #canvas-container { position: absolute; inset: 0; }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px;
+    background: linear-gradient(180deg, rgba(0,20,10,0.92) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(0,255,100,0.15);
+    z-index: 10; pointer-events: none;
+  }
+  #topbar .title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700; font-size: 22px;
+    color: #00ff66; letter-spacing: 3px;
+    text-shadow: 0 0 20px #00ff6688;
+  }
+  #topbar .subtitle { font-size: 10px; color: #44aa66; letter-spacing: 2px; margin-top: 2px; }
+
+  /* ── CONTROLS ── */
+  #controls {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; align-items: center; z-index: 10;
+  }
+  .btn {
+    background: rgba(0,255,100,0.08);
+    border: 1px solid rgba(0,255,100,0.4);
+    color: #00ff66; padding: 8px 18px;
+    font-family: 'Share Tech Mono', monospace; font-size: 13px;
+    cursor: pointer; letter-spacing: 1px;
+    transition: all 0.2s; border-radius: 3px;
+    pointer-events: all;
+  }
+  .btn:hover { background: rgba(0,255,100,0.18); box-shadow: 0 0 14px #00ff6644; }
+  .btn.active { background: rgba(0,255,100,0.25); border-color: #00ff66; box-shadow: 0 0 18px #00ff6666; }
+  #toggle-btn { border-color: rgba(255,140,0,0.5); color: #ff8c00; background: rgba(255,140,0,0.08); }
+  #toggle-btn:hover { background: rgba(255,140,0,0.18); }
+  #toggle-btn.active { background: rgba(0,255,100,0.15); border-color: #00ff66; color: #00ff66; }
+
+  /* ── SIDE STATS PANELS ── */
+  .stats-panel {
+    position: absolute; top: 90px; width: 200px;
+    background: rgba(0,10,5,0.85);
+    border: 1px solid rgba(0,255,100,0.2);
+    padding: 14px; z-index: 10;
+    font-size: 11px; line-height: 1.7;
+  }
+  #panel-left { left: 16px; border-color: rgba(255,80,80,0.3); }
+  #panel-right { right: 16px; border-color: rgba(0,255,100,0.3); }
+  .panel-title {
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 2px; margin-bottom: 10px; padding-bottom: 6px;
+    border-bottom: 1px solid currentColor; opacity: 0.8;
+  }
+  #panel-left .panel-title { color: #ff5555; }
+  #panel-right .panel-title { color: #00ff88; }
+  .stat-row { display: flex; justify-content: space-between; padding: 2px 0; }
+  .stat-label { color: #447755; }
+  .stat-value { font-weight: bold; }
+  .val-bad { color: #ff4444; }
+  .val-good { color: #00ff66; }
+  .val-warn { color: #ffaa00; }
+
+  /* ── REGIME BADGE ── */
+  #regime-badge {
+    position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
+    z-index: 10; text-align: center;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+  }
+  #regime-text {
+    font-size: 14px; letter-spacing: 3px;
+    padding: 6px 20px; border: 1px solid;
+    transition: all 0.4s;
+  }
+  #regime-sub { font-size: 9px; color: #336644; margin-top: 4px; letter-spacing: 2px; }
+
+  /* ── TIMER ── */
+  #timer-bar {
+    position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+    width: 300px; z-index: 10;
+  }
+  #timer-label { text-align: center; font-size: 10px; color: #336644; letter-spacing: 2px; margin-bottom: 3px; }
+  #timer-track {
+    height: 3px; background: rgba(0,255,100,0.1);
+    border: 1px solid rgba(0,255,100,0.2); border-radius: 2px; overflow: hidden;
+  }
+  #timer-fill {
+    height: 100%; width: 0%; background: #00ff66;
+    box-shadow: 0 0 8px #00ff66;
+    transition: width 0.05s linear;
+  }
+
+  /* ── LOG FEED ── */
+  #log-feed {
+    position: absolute; bottom: 70px; right: 16px;
+    width: 260px; max-height: 180px; overflow: hidden;
+    z-index: 10; font-size: 10px; line-height: 1.6;
+  }
+  .log-entry { padding: 2px 0; border-bottom: 1px solid rgba(0,255,100,0.05); }
+  .log-entry.predictive { color: #cc88ff; }
+  .log-entry.reactive { color: #4488ff; }
+  .log-entry.warn { color: #ffaa00; }
+
+  /* ── PARAM BARS ── */
+  #param-bars {
+    position: absolute; bottom: 70px; left: 16px;
+    width: 180px; z-index: 10;
+  }
+  .param-row { margin-bottom: 8px; }
+  .param-name { font-size: 10px; color: #447755; display: flex; justify-content: space-between; }
+  .param-track {
+    height: 5px; background: rgba(0,255,100,0.07);
+    border: 1px solid rgba(0,255,100,0.15); margin-top: 3px; border-radius: 2px; overflow: hidden;
+  }
+  .param-fill { height: 100%; transition: width 0.4s ease; border-radius: 2px; }
+  #fill-target { background: linear-gradient(90deg, #00aaff, #0066ff); box-shadow: 0 0 6px #0066ff; }
+  #fill-interval { background: linear-gradient(90deg, #aa00ff, #6600cc); box-shadow: 0 0 6px #aa00ff; }
+  #fill-limit { background: linear-gradient(90deg, #ff8800, #cc5500); box-shadow: 0 0 6px #ff8800; }
+  #fill-quantum { background: linear-gradient(90deg, #00ff88, #00cc66); box-shadow: 0 0 6px #00ff88; }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div>
+    <div class="title">ACAPE</div>
+    <div class="subtitle">Adaptive Condition-Aware Packet Engine · eBPF + fq_codel · VIT Chennai 2026</div>
+  </div>
+  <div style="text-align:right; font-size:10px; color:#336644; letter-spacing:1px;">
+    <div>Ubuntu 24.04 LTS · Linux 6.8.x</div>
+    <div>ns1 ↔ veth ↔ ns2 · TBF 10Mbit</div>
+  </div>
+</div>
+
+<!-- TIMER -->
+<div id="timer-bar">
+  <div id="timer-label">CONTROLLER LOOP: <span id="timer-ms">0</span> / 500ms</div>
+  <div id="timer-track"><div id="timer-fill"></div></div>
+</div>
+
+<!-- REGIME BADGE -->
+<div id="regime-badge">
+  <div id="regime-text">HEAVY</div>
+  <div id="regime-sub">GRADIENT STATE</div>
+</div>
+
+<!-- LEFT PANEL — No Control -->
+<div class="stats-panel" id="panel-left">
+  <div class="panel-title">× NO CONTROL</div>
+  <div class="stat-row"><span class="stat-label">backlog</span><span class="stat-value val-bad" id="nc-backlog">0 pkts</span></div>
+  <div class="stat-row"><span class="stat-label">drop rate</span><span class="stat-value val-bad" id="nc-drops">0/s</span></div>
+  <div class="stat-row"><span class="stat-label">RTT proxy</span><span class="stat-value val-bad" id="nc-rtt">5ms</span></div>
+  <div class="stat-row"><span class="stat-label">target</span><span class="stat-value" style="color:#888">5ms (fixed)</span></div>
+  <div class="stat-row"><span class="stat-label">stabilised</span><span class="stat-value val-bad">NEVER</span></div>
+</div>
+
+<!-- RIGHT PANEL — ACAPE -->
+<div class="stats-panel" id="panel-right">
+  <div class="panel-title">✓ ACAPE ACTIVE</div>
+  <div class="stat-row"><span class="stat-label">backlog</span><span class="stat-value val-good" id="ac-backlog">0 pkts</span></div>
+  <div class="stat-row"><span class="stat-label">drop rate</span><span class="stat-value val-warn" id="ac-drops">0/s</span></div>
+  <div class="stat-row"><span class="stat-label">RTT proxy</span><span class="stat-value val-good" id="ac-rtt">2ms</span></div>
+  <div class="stat-row"><span class="stat-label">target</span><span class="stat-value val-good" id="ac-target">5ms</span></div>
+  <div class="stat-row"><span class="stat-label">mode</span><span class="stat-value" id="ac-mode" style="color:#cc88ff">[REACTIVE]</span></div>
+</div>
+
+<!-- PARAM BARS -->
+<div id="param-bars">
+  <div style="font-size:10px; color:#336644; letter-spacing:2px; margin-bottom:8px;">fq_codel PARAMS</div>
+  <div class="param-row">
+    <div class="param-name"><span>target</span><span id="lbl-target">5.00ms</span></div>
+    <div class="param-track"><div class="param-fill" id="fill-target" style="width:100%"></div></div>
+  </div>
+  <div class="param-row">
+    <div class="param-name"><span>interval</span><span id="lbl-interval">100ms</span></div>
+    <div class="param-track"><div class="param-fill" id="fill-interval" style="width:100%"></div></div>
+  </div>
+  <div class="param-row">
+    <div class="param-name"><span>limit</span><span id="lbl-limit">256</span></div>
+    <div class="param-track"><div class="param-fill" id="fill-limit" style="width:100%"></div></div>
+  </div>
+  <div class="param-row">
+    <div class="param-name"><span>quantum</span><span id="lbl-quantum">1514B</span></div>
+    <div class="param-track"><div class="param-fill" id="fill-quantum" style="width:50%"></div></div>
+  </div>
+</div>
+
+<!-- LOG FEED -->
+<div id="log-feed"></div>
+
+<!-- CONTROLS -->
+<div id="controls">
+  <button class="btn active" id="play-btn" onclick="togglePlay()">⏸ PAUSE</button>
+  <button class="btn" id="step-btn" onclick="stepSim()">⏭ STEP +500ms</button>
+  <button class="btn" id="toggle-btn" onclick="toggleAcape()">✦ ACAPE: ON</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// SIMULATION STATE
+// ═══════════════════════════════════════════════════════
+const SIM = {
+  running: true,
+  acapeOn: true,
+  time: 0,
+  controllerTimer: 0,
+  CONTROLLER_PERIOD: 500,
+
+  // ACAPE params
+  target: 5.0, targetMin: 1.0, targetMax: 5.0,
+  interval: 100, intervalMin: 50, intervalMax: 100,
+  limit: 256, limitMin: 128, limitMax: 512,
+  quantum: 1514,
+
+  // Queue state
+  backlogACAPE: 0, backlogNC: 0,
+  dropsACAPE: 0, dropsNC: 0,
+  rttACAPE: 2, rttNC: 5,
+
+  // Gradient
+  regime: 'HEAVY',
+  trajectory: 'STABLE',
+  gradientHistory: [],
+  G: 0,
+
+  // Log
+  logEntries: [],
+  adjCount: 0,
+};
+
+// ═══════════════════════════════════════════════════════
+// THREE.JS SETUP
+// ═══════════════════════════════════════════════════════
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x020608);
+scene.fog = new THREE.FogExp2(0x020608, 0.045);
+
+const W = window.innerWidth, H = window.innerHeight;
+const camera = new THREE.PerspectiveCamera(60, W/H, 0.1, 200);
+camera.position.set(0, 8, 22);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+// ── Orbit Controls (manual) ──
+let isDown = false, lastX = 0, lastY = 0;
+let theta = 0, phi = 0.3, radius = 22;
+renderer.domElement.addEventListener('mousedown', e => { isDown = true; lastX = e.clientX; lastY = e.clientY; });
+renderer.domElement.addEventListener('mouseup', () => isDown = false);
+renderer.domElement.addEventListener('mousemove', e => {
+  if (!isDown) return;
+  theta -= (e.clientX - lastX) * 0.008;
+  phi = Math.max(0.05, Math.min(1.4, phi + (e.clientY - lastY) * 0.006));
+  lastX = e.clientX; lastY = e.clientY;
+  updateCamera();
+});
+renderer.domElement.addEventListener('wheel', e => {
+  radius = Math.max(8, Math.min(40, radius + e.deltaY * 0.03));
+  updateCamera();
+});
+function updateCamera() {
+  camera.position.set(
+    radius * Math.sin(theta) * Math.cos(phi),
+    radius * Math.sin(phi),
+    radius * Math.cos(theta) * Math.cos(phi)
+  );
+  camera.lookAt(0, 1, 0);
+}
+
+// ── Lights ──
+const ambient = new THREE.AmbientLight(0x112211, 0.8);
+scene.add(ambient);
+const dirLight = new THREE.DirectionalLight(0x00ff88, 1.2);
+dirLight.position.set(5, 12, 8);
+dirLight.castShadow = true;
+scene.add(dirLight);
+const pointL1 = new THREE.PointLight(0x0044ff, 2, 20);
+pointL1.position.set(-8, 4, 0);
+scene.add(pointL1);
+const pointL2 = new THREE.PointLight(0xff6600, 1.5, 18);
+pointL2.position.set(8, 4, 0);
+scene.add(pointL2);
+
+// ── Grid floor ──
+const gridHelper = new THREE.GridHelper(40, 40, 0x001a0a, 0x001a0a);
+scene.add(gridHelper);
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function makeLabel(text, color='#00ff88', size=0.35) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = color;
+  ctx.font = `bold ${Math.floor(size*100)}px Share Tech Mono, monospace`;
+  ctx.fillText(text, 10, 48);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(4, 0.5, 1);
+  return sprite;
+}
+
+function makeGlowSphere(r, color, emissive, intensity=1) {
+  const geo = new THREE.SphereGeometry(r, 16, 16);
+  const mat = new THREE.MeshStandardMaterial({
+    color, emissive, emissiveIntensity: intensity,
+    roughness: 0.1, metalness: 0.3, transparent: true, opacity: 0.9
+  });
+  return new THREE.Mesh(geo, mat);
+}
+
+function makeWireBox(w, h, d, color) {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const edges = new THREE.EdgesGeometry(geo);
+  const mat = new THREE.LineBasicMaterial({ color });
+  return new THREE.LineSegments(edges, mat);
+}
+
+// ═══════════════════════════════════════════════════════
+// SCENE OBJECTS
+// ═══════════════════════════════════════════════════════
+
+// ── Split line ──
+{
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,-1,-8,0,-1,8,0,6,-8,0,6,8]),3));
+  const mat = new THREE.LineBasicMaterial({ color: 0x223322, transparent: true, opacity: 0.5 });
+  const lines = [new THREE.Line(geo, mat)];
+  const geo2 = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,-1,-8), new THREE.Vector3(0,8,-8), new THREE.Vector3(0,8,8), new THREE.Vector3(0,-1,8), new THREE.Vector3(0,-1,-8)]);
+  scene.add(new THREE.Line(geo2, mat));
+  const lbl = makeLabel('← NO CONTROL          ACAPE ACTIVE →', '#334433', 0.22);
+  lbl.position.set(0, 6.5, 0); scene.add(lbl);
+}
+
+// ═══ LEFT SIDE (No Control) — x < 0 ═══
+const NC = {}; // no-control objects
+
+// Source emitter L
+NC.source = makeGlowSphere(0.4, 0x4455ff, 0x2233ff, 2);
+NC.source.position.set(-14, 1.5, 0); scene.add(NC.source);
+const lbl_nc_src = makeLabel('Traffic (iperf)', '#4488ff', 0.22);
+lbl_nc_src.position.set(-14, 3, 0); scene.add(lbl_nc_src);
+
+// Queue box L
+NC.queueBox = makeWireBox(2.5, 6, 2.5, 0xff4444);
+NC.queueBox.position.set(-8, 2, 0); scene.add(NC.queueBox);
+NC.queueFill = (() => {
+  const geo = new THREE.BoxGeometry(2.2, 1, 2.2);
+  const mat = new THREE.MeshStandardMaterial({ color: 0xff2200, emissive: 0x550000, emissiveIntensity: 0.5, transparent: true, opacity: 0.6 });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(-8, -1.5, 0); scene.add(m); return m;
+})();
+const lbl_nc_q = makeLabel('QUEUE (static)', '#ff4444', 0.22);
+lbl_nc_q.position.set(-8, 5.5, 0); scene.add(lbl_nc_q);
+
+// No-control label
+const lbl_nc_noctrl = makeLabel('NO ADAPTIVE CONTROL', '#882222', 0.22);
+lbl_nc_noctrl.position.set(-4, 0, 0); scene.add(lbl_nc_noctrl);
+
+// Output L
+NC.output = makeGlowSphere(0.3, 0xff4444, 0xaa0000, 1);
+NC.output.position.set(-2, 1.5, 0); scene.add(NC.output);
+
+// ═══ RIGHT SIDE (ACAPE) — x > 0 ═══
+const AC = {};
+
+// Source emitter R
+AC.source = makeGlowSphere(0.4, 0x4455ff, 0x2233ff, 2);
+AC.source.position.set(2, 1.5, 0); scene.add(AC.source);
+const lbl_ac_src = makeLabel('Traffic (iperf)', '#4488ff', 0.22);
+lbl_ac_src.position.set(2, 3, 0); scene.add(lbl_ac_src);
+
+// Queue box R
+AC.queueBox = makeWireBox(2.5, 6, 2.5, 0x00ff66);
+AC.queueBox.position.set(8, 2, 0); scene.add(AC.queueBox);
+AC.queueFill = (() => {
+  const geo = new THREE.BoxGeometry(2.2, 1, 2.2);
+  const mat = new THREE.MeshStandardMaterial({ color: 0x00cc44, emissive: 0x003311, emissiveIntensity: 0.5, transparent: true, opacity: 0.6 });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(8, -1.5, 0); scene.add(m); return m;
+})();
+const lbl_ac_q = makeLabel('QUEUE (adaptive)', '#00ff66', 0.22);
+lbl_ac_q.position.set(8, 5.5, 0); scene.add(lbl_ac_q);
+
+// eBPF monitor (floating above ACAPE queue)
+AC.ebpfNode = makeGlowSphere(0.35, 0x0088ff, 0x0044ff, 2);
+AC.ebpfNode.position.set(8, 7, 0); scene.add(AC.ebpfNode);
+const lbl_ebpf = makeLabel('eBPF MONITOR', '#4488ff', 0.22);
+lbl_ebpf.position.set(8, 8.2, 0); scene.add(lbl_ebpf);
+// connecting wire
+{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(8,5.2,0), new THREE.Vector3(8,6.7,0)]);
+  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x004488 })));
+}
+
+// Gradient node
+AC.gradNode = makeGlowSphere(0.4, 0xaa44ff, 0x6600cc, 2);
+AC.gradNode.position.set(12, 5, 0); scene.add(AC.gradNode);
+const lbl_grad = makeLabel('GRADIENT ANALYSIS', '#aa44ff', 0.22);
+lbl_grad.position.set(12, 6.5, 0); scene.add(lbl_grad);
+// wire ebpf → grad
+{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(8.4,7,0), new THREE.Vector3(11.6,5,0)]);
+  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x5500aa })));
+}
+
+// Controller node (central, orange)
+AC.controller = makeGlowSphere(0.6, 0xff8800, 0xcc4400, 3);
+AC.controller.position.set(11, 1.5, 0); scene.add(AC.controller);
+const lbl_ctrl = makeLabel('CONTROLLER', '#ff8800', 0.25);
+lbl_ctrl.position.set(11, 3.2, 0); scene.add(lbl_ctrl);
+// wire grad → controller
+{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(11.8,4.6,0), new THREE.Vector3(11.2,2.1,0)]);
+  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x884400 })));
+}
+// wire controller → queue
+{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(10.4,1.5,0), new THREE.Vector3(9.3,1.5,0)]);
+  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xff6600 })));
+}
+
+// Output R
+AC.output = makeGlowSphere(0.3, 0x00ff88, 0x00aa44, 1);
+AC.output.position.set(14, 1.5, 0); scene.add(AC.output);
+// wire queue → output
+{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(9.3,1.5,0), new THREE.Vector3(13.7,1.5,0)]);
+  scene.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x004422 })));
+}
+
+// Decision text sprite
+AC.decisionSprite = makeLabel('target ↓  interval ↓', '#ffaa44', 0.22);
+AC.decisionSprite.position.set(11, 0.3, 0);
+AC.decisionSprite.material.opacity = 0;
+scene.add(AC.decisionSprite);
+
+// Param bars 3D (visual sliders right side)
+AC.paramBars = [];
+const paramColors = [0x0066ff, 0xaa00ff, 0xff6600, 0x00cc66];
+const paramNames = ['target','interval','limit','quantum'];
+for (let i = 0; i < 4; i++) {
+  const geo = new THREE.BoxGeometry(0.15, 1, 0.15);
+  const mat = new THREE.MeshStandardMaterial({ color: paramColors[i], emissive: paramColors[i], emissiveIntensity: 0.8 });
+  const bar = new THREE.Mesh(geo, mat);
+  bar.position.set(13.5 + i*0.4, 1.5, 2); scene.add(bar);
+  AC.paramBars.push(bar);
+  const lbl = makeLabel(paramNames[i][0].toUpperCase(), '#'+paramColors[i].toString(16).padStart(6,'0'), 0.15);
+  lbl.position.set(13.5 + i*0.4, 2.4, 2); scene.add(lbl);
+}
+
+// ═══════════════════════════════════════════════════════
+// PARTICLE SYSTEM — Packets
+// ═══════════════════════════════════════════════════════
+const MAX_PACKETS = 200;
+const packetGeoNC = new THREE.SphereGeometry(0.12, 6, 6);
+const packetMatNC = new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0xaa1100, emissiveIntensity: 1.2 });
+const packetGeoAC = new THREE.SphereGeometry(0.12, 6, 6);
+const packetMatAC = new THREE.MeshStandardMaterial({ color: 0x00ffaa, emissive: 0x00aa44, emissiveIntensity: 1.2 });
+
+const packetsNC = [], packetsAC = [];
+
+function spawnPacket(side) {
+  const arr = side === 'nc' ? packetsNC : packetsAC;
+  if (arr.length >= MAX_PACKETS/2) {
+    const old = arr.shift(); scene.remove(old.mesh);
+  }
+  const mesh = new THREE.Mesh(
+    side === 'nc' ? packetGeoNC : packetGeoAC,
+    side === 'nc' ? packetMatNC : packetMatAC
+  );
+  const startX = side === 'nc' ? -13.6 : 2.4;
+  mesh.position.set(startX, 1.5 + (Math.random()-0.5)*0.4, (Math.random()-0.5)*0.3);
+  scene.add(mesh);
+  arr.push({ mesh, phase: 'travel', progress: 0, inQueue: false, speed: 0.8 + Math.random()*0.4 });
+}
+
+// ═══════════════════════════════════════════════════════
+// DROP PARTICLE
+// ═══════════════════════════════════════════════════════
+const dropParticles = [];
+function spawnDrop(pos) {
+  for (let i = 0; i < 5; i++) {
+    const g = new THREE.SphereGeometry(0.06, 4, 4);
+    const m = new THREE.MeshStandardMaterial({ color: 0xff2200, emissive: 0xff0000, emissiveIntensity: 2, transparent: true });
+    const mesh = new THREE.Mesh(g, m);
+    mesh.position.copy(pos);
+    scene.add(mesh);
+    dropParticles.push({
+      mesh, life: 1.0,
+      vel: new THREE.Vector3((Math.random()-0.5)*2, Math.random()*3, (Math.random()-0.5)*2)
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// LOG SYSTEM
+// ═══════════════════════════════════════════════════════
+function addLog(text, type='') {
+  const el = document.createElement('div');
+  el.className = 'log-entry ' + type;
+  const t = Math.floor(SIM.time);
+  el.textContent = `[${t}ms] ${text}`;
+  const feed = document.getElementById('log-feed');
+  feed.insertBefore(el, feed.firstChild);
+  while (feed.children.length > 12) feed.removeChild(feed.lastChild);
+}
+
+// ═══════════════════════════════════════════════════════
+// CONTROLLER LOGIC (ACAPE)
+// ═══════════════════════════════════════════════════════
+function runController() {
+  if (!SIM.acapeOn) return;
+  SIM.adjCount++;
+
+  // Compute gradient from backlog history
+  const hist = SIM.gradientHistory;
+  let G = 0;
+  if (hist.length >= 3) {
+    const n = hist.length;
+    let slope = 0;
+    for (let i = 1; i < n; i++) slope += hist[i] - hist[i-1];
+    slope /= (n-1);
+    G = slope / 30; // normalize
+    SIM.G = G;
+  }
+
+  // Determine trajectory
+  if (G > 0.15) SIM.trajectory = 'WORSENING';
+  else if (G < -0.1) SIM.trajectory = 'RECOVERING';
+  else SIM.trajectory = 'STABLE';
+
+  // Regime
+  const bl = SIM.backlogACAPE;
+  if (bl > 180) SIM.regime = 'HEAVY';
+  else if (bl > 90) SIM.regime = 'MODERATE';
+  else if (bl > 30) SIM.regime = 'LIGHT';
+  else SIM.regime = 'NORMAL';
+
+  // Predictive vs Reactive
+  let mode = '[REACTIVE]';
+  let effectiveRegime = SIM.regime;
+  if (SIM.trajectory === 'RECOVERING' && SIM.regime === 'HEAVY') {
+    mode = '[PREDICTIVE]';
+    effectiveRegime = 'MODERATE'; // act on predicted next
+  }
+
+  // AIMD adjustment
+  const β = 0.9, α = 0.05;
+  let adjusted = false;
+  if (effectiveRegime === 'HEAVY' || effectiveRegime === 'MODERATE') {
+    SIM.target = Math.max(SIM.targetMin, SIM.target * β);
+    SIM.interval = Math.max(SIM.intervalMin, SIM.interval * β);
+    SIM.limit = Math.max(SIM.limitMin, SIM.limit * 0.95);
+    adjusted = true;
+  } else if (effectiveRegime === 'NORMAL' || effectiveRegime === 'LIGHT') {
+    SIM.target = Math.min(SIM.targetMax, SIM.target + α);
+    SIM.interval = Math.min(SIM.intervalMax, SIM.interval + 2);
+    SIM.limit = Math.min(SIM.limitMax, SIM.limit + 5);
+  }
+
+  // Workload-aware quantum
+  const elephantRatio = 0.15 + Math.random()*0.1; // simulated
+  if (elephantRatio < 0.2) SIM.quantum = 300;
+  else if (elephantRatio > 0.6) SIM.quantum = 3000;
+  else SIM.quantum = 1514;
+
+  // Log
+  const logText = `${mode} target→${SIM.target.toFixed(2)}ms regime:${effectiveRegime}`;
+  addLog(logText, mode === '[PREDICTIVE]' ? 'predictive' : 'reactive');
+
+  // Decision text 3D
+  AC.decisionSprite.material.opacity = 1;
+  setTimeout(() => { AC.decisionSprite.material.opacity = 0; }, 800);
+
+  // Controller pulse
+  AC.controller.material.emissiveIntensity = 6;
+  setTimeout(() => { AC.controller.material.emissiveIntensity = 3; }, 200);
+
+  updateParamUI();
+  updateRegimeBadge();
+}
+
+// ═══════════════════════════════════════════════════════
+// UI UPDATES
+// ═══════════════════════════════════════════════════════
+function updateParamUI() {
+  const tPct = (1 - (SIM.target - SIM.targetMin)/(SIM.targetMax - SIM.targetMin)) * 100;
+  const iPct = (1 - (SIM.interval - SIM.intervalMin)/(SIM.intervalMax - SIM.intervalMin)) * 100;
+  const lPct = (SIM.limit - SIM.limitMin)/(SIM.limitMax - SIM.limitMin) * 100;
+  const qPct = SIM.quantum === 300 ? 20 : SIM.quantum === 3000 ? 100 : 50;
+
+  document.getElementById('fill-target').style.width = tPct + '%';
+  document.getElementById('fill-interval').style.width = iPct + '%';
+  document.getElementById('fill-limit').style.width = lPct + '%';
+  document.getElementById('fill-quantum').style.width = qPct + '%';
+
+  document.getElementById('lbl-target').textContent = SIM.target.toFixed(2) + 'ms';
+  document.getElementById('lbl-interval').textContent = SIM.interval.toFixed(0) + 'ms';
+  document.getElementById('lbl-limit').textContent = SIM.limit.toFixed(0);
+  document.getElementById('lbl-quantum').textContent = SIM.quantum + 'B';
+
+  // 3D param bars
+  const heights = [tPct/50, iPct/50, lPct/50, qPct/50];
+  AC.paramBars.forEach((bar, i) => {
+    bar.scale.y = Math.max(0.05, heights[i]);
+    bar.position.y = 1.5 + (bar.scale.y - 1) * 0.5;
+  });
+}
+
+function updateRegimeBadge() {
+  const el = document.getElementById('regime-text');
+  const colors = { HEAVY:'#ff4444', MODERATE:'#ffaa00', LIGHT:'#44aaff', NORMAL:'#00ff66' };
+  el.textContent = SIM.regime + ' · ' + SIM.trajectory;
+  el.style.color = colors[SIM.regime] || '#00ff66';
+  el.style.borderColor = colors[SIM.regime] || '#00ff66';
+  el.style.boxShadow = '0 0 18px ' + (colors[SIM.regime]||'#00ff66') + '44';
+}
+
+let lastStatUpdate = 0;
+function updateStats(dt) {
+  lastStatUpdate += dt;
+  if (lastStatUpdate < 100) return;
+  lastStatUpdate = 0;
+
+  // Simulate NC backlog growing
+  SIM.backlogNC = Math.min(450, SIM.backlogNC + 3 + Math.random()*2);
+  SIM.dropsNC = Math.floor(SIM.backlogNC * 200 + Math.random()*5000);
+  SIM.rttNC = 5 + SIM.backlogNC * 0.05;
+
+  // Simulate ACAPE backlog controlled
+  const targetBacklog = SIM.acapeOn ? (20 + (SIM.target/5.0)*200) : Math.min(450, SIM.backlogACAPE + 3);
+  SIM.backlogACAPE += (targetBacklog - SIM.backlogACAPE) * 0.05 + (Math.random()-0.4)*3;
+  SIM.backlogACAPE = Math.max(0, Math.min(450, SIM.backlogACAPE));
+  SIM.dropsACAPE = Math.floor(SIM.backlogACAPE * 60 + Math.random()*2000);
+  SIM.rttACAPE = SIM.acapeOn ? (1.5 + SIM.target * 0.4) : 5 + SIM.backlogACAPE * 0.05;
+
+  // Store gradient history
+  SIM.gradientHistory.push(SIM.backlogACAPE);
+  if (SIM.gradientHistory.length > 10) SIM.gradientHistory.shift();
+
+  // Update HTML
+  document.getElementById('nc-backlog').textContent = Math.floor(SIM.backlogNC) + ' pkts';
+  document.getElementById('nc-drops').textContent = (SIM.dropsNC/1000).toFixed(0) + 'k/s';
+  document.getElementById('nc-rtt').textContent = SIM.rttNC.toFixed(1) + 'ms';
+  document.getElementById('ac-backlog').textContent = Math.floor(SIM.backlogACAPE) + ' pkts';
+  document.getElementById('ac-drops').textContent = (SIM.dropsACAPE/1000).toFixed(1) + 'k/s';
+  document.getElementById('ac-rtt').textContent = SIM.rttACAPE.toFixed(1) + 'ms';
+  document.getElementById('ac-target').textContent = SIM.target.toFixed(2) + 'ms';
+  document.getElementById('ac-mode').textContent = SIM.trajectory === 'RECOVERING' && SIM.regime === 'HEAVY' ? '[PREDICTIVE]' : '[REACTIVE]';
+
+  // Update 3D queue fill heights
+  const ncH = Math.max(0.05, (SIM.backlogNC / 450) * 5.5);
+  NC.queueFill.scale.y = ncH;
+  NC.queueFill.position.y = -3 + ncH * 0.5;
+
+  const acH = Math.max(0.05, (SIM.backlogACAPE / 450) * 5.5);
+  AC.queueFill.scale.y = acH;
+  AC.queueFill.position.y = -3 + acH * 0.5;
+
+  // Drop particles if NC queue very full
+  if (SIM.backlogNC > 350 && Math.random() < 0.3) {
+    spawnDrop(new THREE.Vector3(-8 + (Math.random()-0.5)*1.5, 2 + acH, (Math.random()-0.5)*1.5));
+  }
+
+  // eBPF pulse
+  AC.ebpfNode.material.emissiveIntensity = 1.5 + Math.sin(SIM.time * 0.01) * 1;
+}
+
+// ═══════════════════════════════════════════════════════
+// PACKET ANIMATION
+// ═══════════════════════════════════════════════════════
+let packetSpawnTimer = 0;
+function updatePackets(dt) {
+  packetSpawnTimer += dt;
+  if (packetSpawnTimer > 80) {
+    packetSpawnTimer = 0;
+    spawnPacket('nc');
+    spawnPacket('ac');
+  }
+
+  const ncSpeed = 0.006; // constant slow for no-control
+  const acSpeed = SIM.acapeOn ? Math.max(0.003, 0.009 * (1 - SIM.backlogACAPE/500)) : 0.006;
+
+  const updateSide = (arr, queueX, speed, maxBacklog) => {
+    arr.forEach(p => {
+      if (p.phase === 'travel') {
+        p.progress += speed * dt;
+        const startX = arr === packetsNC ? -13.6 : 2.4;
+        const qX = arr === packetsNC ? -8 : 8;
+        p.mesh.position.x = startX + (qX - startX) * Math.min(p.progress, 1);
+        if (p.progress >= 1) {
+          p.phase = 'queue';
+          p.progress = 0;
+          p.queueTimer = 200 + Math.random() * 600;
+        }
+      } else if (p.phase === 'queue') {
+        p.queueTimer -= dt;
+        p.mesh.position.x = queueX + (Math.random()-0.5)*0.2;
+        p.mesh.position.y = 1 + (Math.random()-0.5)*0.3;
+        if (p.queueTimer <= 0) {
+          p.phase = 'exit';
+          p.progress = 0;
+        }
+      } else if (p.phase === 'exit') {
+        p.progress += speed * dt;
+        const qX = arr === packetsNC ? -8 : 8;
+        const endX = arr === packetsNC ? -2 : 14;
+        p.mesh.position.x = qX + (endX - qX) * Math.min(p.progress, 1);
+        if (p.progress >= 1) {
+          scene.remove(p.mesh);
+          arr.splice(arr.indexOf(p), 1);
+        }
+      }
+    });
+  };
+
+  updateSide(packetsNC, -8, ncSpeed);
+  updateSide(packetsAC, 8, acSpeed);
+
+  // Drop particles
+  for (let i = dropParticles.length-1; i >= 0; i--) {
+    const d = dropParticles[i];
+    d.life -= dt * 0.001;
+    d.mesh.position.addScaledVector(d.vel, dt * 0.001);
+    d.vel.y -= dt * 0.003;
+    d.mesh.material.opacity = d.life;
+    if (d.life <= 0) { scene.remove(d.mesh); dropParticles.splice(i,1); }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════════════════════
+let lastTime = performance.now();
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (!SIM.running) { renderer.render(scene, camera); return; }
+
+  const now = performance.now();
+  const dt = Math.min(now - lastTime, 50);
+  lastTime = now;
+
+  SIM.time += dt;
+  SIM.controllerTimer += dt;
+
+  // Controller tick
+  if (SIM.controllerTimer >= SIM.CONTROLLER_PERIOD) {
+    SIM.controllerTimer -= SIM.CONTROLLER_PERIOD;
+    runController();
+  }
+
+  // Timer bar
+  const pct = (SIM.controllerTimer / SIM.CONTROLLER_PERIOD) * 100;
+  document.getElementById('timer-fill').style.width = pct + '%';
+  document.getElementById('timer-ms').textContent = Math.floor(SIM.controllerTimer);
+
+  // Update systems
+  updateStats(dt);
+  updatePackets(dt);
+
+  // Animate source spheres
+  const t = SIM.time * 0.001;
+  NC.source.material.emissiveIntensity = 1.5 + Math.sin(t * 8) * 1;
+  AC.source.material.emissiveIntensity = 1.5 + Math.sin(t * 8 + 0.5) * 1;
+  AC.gradNode.material.emissiveIntensity = 1.5 + Math.sin(t * 3) * 0.8;
+
+  // Gradient node color
+  const regColors = { WORSENING:0xff2200, STABLE:0x00ff66, RECOVERING:0x4488ff };
+  AC.gradNode.material.emissive.setHex(regColors[SIM.trajectory] || 0x6600cc);
+  AC.gradNode.material.color.setHex(regColors[SIM.trajectory] || 0xaa44ff);
+
+  // Gentle scene rotation (very slow)
+  // scene.rotation.y = Math.sin(t * 0.05) * 0.05;
+
+  // Pulse controller
+  const pulse = 1 + Math.sin(t * (2 * Math.PI)) * 0.3;
+  AC.controller.scale.setScalar(pulse);
+  pointL2.intensity = 1.5 + Math.sin(t * 2 * Math.PI) * 0.5;
+
+  renderer.render(scene, camera);
+}
+
+// ═══════════════════════════════════════════════════════
+// BUTTON HANDLERS
+// ═══════════════════════════════════════════════════════
+function togglePlay() {
+  SIM.running = !SIM.running;
+  const btn = document.getElementById('play-btn');
+  btn.textContent = SIM.running ? '⏸ PAUSE' : '▶ PLAY';
+  btn.classList.toggle('active', SIM.running);
+}
+
+function stepSim() {
+  SIM.controllerTimer = SIM.CONTROLLER_PERIOD;
+  SIM.running = true;
+  const btn = document.getElementById('play-btn');
+  btn.textContent = '⏸ PAUSE'; btn.classList.add('active');
+}
+
+function toggleAcape() {
+  SIM.acapeOn = !SIM.acapeOn;
+  const btn = document.getElementById('toggle-btn');
+  btn.textContent = SIM.acapeOn ? '✦ ACAPE: ON' : '✦ ACAPE: OFF';
+  btn.classList.toggle('active', SIM.acapeOn);
+  if (!SIM.acapeOn) {
+    addLog('[ACAPE DISABLED] No control active', 'warn');
+    document.getElementById('ac-mode').textContent = '[DISABLED]';
+  } else {
+    addLog('[ACAPE ENABLED] Controller resumed', 'predictive');
+  }
+}
+
+// ── Init ──
+updateParamUI();
+updateRegimeBadge();
+addLog('[SYSTEM] eBPF prog_id=527 JIT-compiled', 'predictive');
+addLog('[SYSTEM] Grafana+Prometheus attached', '');
+addLog('[SYSTEM] 8 TCP flows · TBF 10Mbit', '');
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

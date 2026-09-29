@@ -15,6 +15,8 @@ adjustments -- log(1/5)/log(0.9) = 15.3 steps from 5 ms to the 1 ms floor.
 """
 import argparse, glob, json, os, re, shutil, signal, statistics, subprocess, sys, time
 
+from latency import parse_ping, summarise, iperf_inband_rtt, iperf_cwnd
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
@@ -61,17 +63,6 @@ def build_testbed(aqm, rate, rtt_ms):
     return kind, aqm_args, r.stdout
 
 
-def parse_ping(out):
-    rtts = [float(m) for m in re.findall(r"time=([\d.]+) ms", out)]
-    if not rtts:
-        return {}
-    rtts.sort()
-    q = lambda p: rtts[min(len(rtts) - 1, int(len(rtts) * p))]
-    return {"rtt_n": len(rtts), "rtt_mean_ms": round(statistics.fmean(rtts), 3),
-            "rtt_min_ms": rtts[0], "rtt_p50_ms": q(0.50), "rtt_p95_ms": q(0.95),
-            "rtt_p99_ms": q(0.99), "rtt_max_ms": rtts[-1]}
-
-
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--aqm", required=True, choices=sorted(AQM_SPECS))
@@ -82,11 +73,15 @@ def main():
     p.add_argument("--flows", type=int, default=8)
     p.add_argument("--workload", default="steady", choices=["steady", "staged"])
     p.add_argument("--adapt", action="store_true", help="run the ACAPE controller")
+    p.add_argument("--sham", action="store_true",
+                   help="run the controller but never apply changes "
+                        "(isolates its CPU cost from its control decisions)")
     p.add_argument("--ebpf", action="store_true")
     p.add_argument("--outdir", default=os.path.join(ROOT, "results"))
     a = p.parse_args()
 
-    label = f"{a.aqm}{'_acape' if a.adapt else ''}_{a.workload}_s{a.seed}"
+    suffix = "_acape" if a.adapt else ("_sham" if a.sham else "")
+    label = f"{a.aqm}{suffix}_{a.workload}_s{a.seed}"
     outdir = os.path.join(a.outdir, label)
     os.makedirs(outdir, exist_ok=True)
 
@@ -110,13 +105,34 @@ def main():
             stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         procs.append(rec)
 
+        # 20 Hz sparse-flow probe: ~1200 samples over 60 s, enough for a
+        # stable p99. 0.2 s gave ~300, too few for tail statistics.
         ping = subprocess.Popen(
-            nsx("ns_client", "ping", "-i", "0.2", "-w", str(a.duration + 5), SERVER_IP),
+            nsx("ns_client", "ping", "-i", "0.05", "-w", str(a.duration + 5),
+                SERVER_IP),
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         procs.append(ping)
 
+
         ctl = None
-        if a.adapt:
+        if a.sham:
+            # Control condition: the controller runs and polls at the same
+            # cadence but never applies a parameter change. Any latency
+            # difference between sham and static is the controller's own CPU
+            # cost, not its control decisions -- without this, the two are
+            # confounded.
+            ctl = subprocess.Popen(
+                [sys.executable, os.path.join(HERE, "acape.py"),
+                 "--ns", "ns_router", "--iface", "veth_rs", "--handle", "10:",
+                 "--kind", kind, "--parent", "1:1",
+                 "--rate-mbit", str(a.rate_mbit),
+                 "--logdir", outdir, "--tag", "sham",
+                 "--duration", str(a.duration)]
+                + (["--ebpf"] if a.ebpf else []),
+                stdout=open(os.path.join(outdir, "controller.log"), "w"),
+                stderr=subprocess.STDOUT)
+            procs.append(ctl)
+        elif a.adapt:
             ctl = subprocess.Popen(
                 [sys.executable, os.path.join(HERE, "acape.py"),
                  "--ns", "ns_router", "--iface", "veth_rs", "--handle", "10:",
@@ -158,12 +174,14 @@ def main():
         with open(os.path.join(outdir, "ping.log"), "w") as fh:
             fh.write(ping_out)
 
+
         # ── summarise ────────────────────────────────────────────────────
         summary = {"aqm": a.aqm, "qdisc_kind": kind, "qdisc_args": aqm_args,
                    "adaptive": a.adapt, "ebpf": a.ebpf, "seed": a.seed,
                    "rate_mbit": a.rate_mbit, "base_rtt_ms": a.rtt_ms,
                    "duration_s": a.duration, "flows": a.flows,
-                   "workload": a.workload, "label": label}
+                   "workload": a.workload, "label": label,
+                   "sham": a.sham}
         # Goodput must come from sum_RECEIVED, not sum_sent. With a large
         # unmanaged buffer (pfifo) the sender dumps into the queue faster than
         # the link drains, so sum_sent reports more than the link can carry --
@@ -204,7 +222,28 @@ def main():
             summary["jain_per_stage"] = [st["jain"] for st in stages]
             summary["n_flows_measured"] = stages[0]["flows"]
             summary["sent_mbps"] = stages[0]["sent_mbps"]
-        summary.update(parse_ping(ping_out))
+        # (1) sparse-flow probe
+        sparse = parse_ping(ping_out)
+        summary.update(summarise(sparse, "rtt"))          # canonical names
+        summary.update(summarise(sparse, "sparse_rtt"))
+        # (2) in-band bulk-flow RTT, from iperf3's TCP_INFO samples
+        bulk_samples = []
+        for sf in stage_files:
+            bulk_samples.extend(iperf_inband_rtt(sf))
+        summary.update(summarise(bulk_samples, "bulk_rtt"))
+        cwnds = []
+        for sf in stage_files:
+            cwnds.extend(iperf_cwnd(sf))
+        if cwnds:
+            summary["cwnd_mean_bytes"] = round(statistics.fmean(cwnds), 1)
+        with open(os.path.join(outdir, "bulk_rtt.json"), "w") as fh:
+            json.dump({"samples": bulk_samples}, fh)
+        # (3) queueing delay above the configured base RTT
+        if sparse:
+            summary["queue_delay_mean_ms"] = round(
+                statistics.fmean(sparse) - a.rtt_ms, 4)
+            summary["queue_delay_p95_ms"] = round(
+                sorted(sparse)[int(len(sparse) * .95)] - a.rtt_ms, 4)
 
         import csv as _csv
         try:

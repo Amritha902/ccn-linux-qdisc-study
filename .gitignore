@@ -3,3 +3,4 @@ results_smoke/
 paper/*.aux
 paper/*.log
 paper/*.out
+results_dbg/

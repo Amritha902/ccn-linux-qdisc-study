@@ -46,6 +46,14 @@ for wl in $WORKLOADS; do
     run "[$total] fq_codel+ACAPE  $wl  seed=$seed" \
         --aqm fq_codel --seed "$seed" --duration "$DUR" --flows "$FLOWS" \
         --rate-mbit "$RATE" --rtt-ms "$RTT" --workload "$wl" --adapt --outdir "$OUT"
+
+    # Sham control: the controller runs and polls but applies nothing.
+    # Without this, "controller CPU cost" and "controller decisions" are
+    # confounded in any latency difference against static fq_codel.
+    total=$((total+1))
+    run "[$total] fq_codel+SHAM  $wl  seed=$seed" \
+        --aqm fq_codel --seed "$seed" --duration "$DUR" --flows "$FLOWS" \
+        --rate-mbit "$RATE" --rtt-ms "$RTT" --workload "$wl" --sham --outdir "$OUT"
   done
 done
 

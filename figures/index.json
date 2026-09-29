@@ -1,0 +1,48 @@
+{
+  "steps": [
+    {
+      "id": "STEP 01",
+      "title": "Session kernel cannot run the AQMs under study",
+      "caption": "The cloud container runs a Firecracker kernel with every AQM compiled out and no loadable-module support, so fq_codel cannot be instantiated here at all. This is why the experiments run inside a purpose-built VM rather than directly.",
+      "where": "host",
+      "path": "steps/step01_session_kernel_cannot_run_the_aqms_under_study.png"
+    },
+    {
+      "id": "STEP 02",
+      "title": "Kernel built with every AQM compiled in",
+      "caption": "A 6.12.48 kernel was configured and built with fq_codel, CoDel, CAKE, PIE, FQ-PIE, RED, netem, TBF and HTB all built in (=y), plus BTF for eBPF. This kernel is what the experiments run on.",
+      "where": "host",
+      "path": "steps/step02_kernel_built_with_every_aqm_compiled_in.png"
+    },
+    {
+      "id": "STEP 08",
+      "title": "Regression tests pin all four defects",
+      "caption": "Seventeen tests, each of which fails against the original implementation's behaviour and passes against the corrected one. They cover the qdisc-selection bug, the three eBPF decode bugs, the integer-millisecond rounding, and the inert prediction.",
+      "where": "host",
+      "path": "steps/step08_regression_tests_pin_all_four_defects.png"
+    },
+    {
+      "id": "STEP 09",
+      "title": "Why the eBPF telemetry read zero in every historical run",
+      "caption": "Three independent defects in read_flows(), each fatal on its own. The immediate cause was a TypeError swallowed by a bare except; behind it sat wrong struct offsets and a comparison of CLOCK_REALTIME against CLOCK_MONOTONIC giving ages of decades.",
+      "where": "host",
+      "path": "steps/step09_why_the_ebpf_telemetry_read_zero_in_every_histor.png"
+    },
+    {
+      "id": "STEP 10",
+      "title": "Throughput overshoot: sum_sent exceeds the link rate",
+      "caption": "iperf3's sum_sent counts bytes handed to the socket, not bytes delivered. Under pfifo's 1000-packet buffer the sender fills the queue and reports 12.16 Mbps on a 10 Mbit link - physically impossible as a throughput. The excess appears as an 827-packet backlog and 2381 ms p95 RTT, not as delivered data. Every flow-queueing AQM shows no overshoot. This is why goodput is taken from sum_received.",
+      "where": "host",
+      "path": "steps/step10_throughput_overshoot__sum_sent_exceeds_the_link_.png"
+    },
+    {
+      "id": "STEP 11",
+      "title": "Drop rates in the original logs exceed the link's packet rate",
+      "caption": "A 10 Mbit link carrying 1514-byte packets passes at most 826 packets/s, and iperf3 reported ~179 retransmits/s. The original logs record 100,000-138,000 drops/s - up to 155x the physical packet rate. This is the arithmetic that first showed the measurements could not describe the data path.",
+      "where": "host",
+      "path": "steps/step11_drop_rates_in_the_original_logs_exceed_the_link_.png"
+    }
+  ],
+  "runs": [],
+  "figures": []
+}

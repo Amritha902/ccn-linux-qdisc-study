@@ -1,0 +1,98 @@
+
+==============================================================================
+WORKLOAD: steady
+==============================================================================
+
+  unmanaged FIFO -> fq_codel   [pfifo vs fq_codel]
+    p95 RTT (probe)           2344.0 ->      24.6  ( -99.0%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean RTT (probe)         1711.04 ->     22.40  ( -98.7%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean RTT (bulk)          1752.66 ->     36.39  ( -97.9%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean backlog               789.2 ->       6.8  ( -99.1%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    goodput                     9.45 ->      9.41  (  -0.4%)  p=0.204  dof=  3.1  not distinguishable
+    Jain                      0.9957 ->    0.9999  (  +0.4%)  p=0.239  dof=  2.0  not distinguishable
+
+  static -> sham controller (CPU cost only)   [fq_codel vs fq_codel_sham]
+    p95 RTT (probe)             24.6 ->      24.6  (  +0.0%)  p=1.000  dof=  4.0  not distinguishable
+    mean RTT (probe)           22.40 ->     22.36  (  -0.2%)  p=0.508  dof=  2.4  not distinguishable
+    mean RTT (bulk)            36.39 ->     36.88  (  +1.3%)  p=0.204  dof=  2.1  not distinguishable
+    mean backlog                 6.8 ->       6.8  (  -0.1%)  p=0.960  dof=  2.1  not distinguishable
+    goodput                     9.41 ->      9.40  (  -0.2%)  p=0.317  dof=  3.0  not distinguishable
+    Jain                      0.9999 ->    1.0000  (  +0.0%)  p=0.397  dof=  3.8  not distinguishable
+
+  sham -> ACAPE (control decisions only)   [fq_codel_sham vs fq_codel_acape]
+    p95 RTT (probe)             24.6 ->      24.4  (  -0.5%)  p=0.047  dof=  4.0  DISTINGUISHABLE
+    mean RTT (probe)           22.36 ->     22.50  (  +0.6%)  p=0.306  dof=  2.1  not distinguishable
+    mean RTT (bulk)            36.88 ->     35.87  (  -2.7%)  p=0.151  dof=  3.2  not distinguishable
+    mean backlog                 6.8 ->       6.1  (  -9.4%)  p=0.049  dof=  2.1  DISTINGUISHABLE
+    goodput                     9.40 ->      9.40  (  +0.0%)  p=0.639  dof=  4.0  not distinguishable
+    Jain                      1.0000 ->    1.0000  (  -0.0%)  p=0.519  dof=  4.0  not distinguishable
+
+  static -> ACAPE (combined)   [fq_codel vs fq_codel_acape]
+    p95 RTT (probe)             24.6 ->      24.4  (  -0.5%)  p=0.047  dof=  4.0  DISTINGUISHABLE
+    mean RTT (probe)           22.40 ->     22.50  (  +0.4%)  p=0.480  dof=  3.1  not distinguishable
+    mean RTT (bulk)            36.39 ->     35.87  (  -1.4%)  p=0.382  dof=  2.0  not distinguishable
+    mean backlog                 6.8 ->       6.1  (  -9.6%)  p=0.050  dof=  3.9  DISTINGUISHABLE
+    goodput                     9.41 ->      9.40  (  -0.1%)  p=0.460  dof=  3.1  not distinguishable
+    Jain                      0.9999 ->    1.0000  (  +0.0%)  p=0.754  dof=  3.8  not distinguishable
+
+  fq_codel -> CAKE   [fq_codel vs cake]
+    p95 RTT (probe)             24.6 ->      22.9  (  -6.8%)  p=0.000  dof=  3.2  DISTINGUISHABLE
+    mean RTT (probe)           22.40 ->     21.76  (  -2.9%)  p=0.002  dof=  3.9  DISTINGUISHABLE
+    mean RTT (bulk)            36.39 ->     33.65  (  -7.5%)  p=0.000  dof=  3.8  DISTINGUISHABLE
+    mean backlog                 6.8 ->       6.7  (  -1.7%)  p=0.606  dof=  3.4  not distinguishable
+    goodput                     9.41 ->      9.41  (  +0.0%)  p=0.989  dof=  2.7  not distinguishable
+    Jain                      0.9999 ->    0.9999  (  -0.0%)  p=0.361  dof=  2.3  not distinguishable
+
+  fq_codel -> PIE (single queue)   [fq_codel vs pie]
+    p95 RTT (probe)             24.6 ->      46.9  ( +91.0%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean RTT (probe)           22.40 ->     39.14  ( +74.7%)  p=0.000  dof=  3.6  DISTINGUISHABLE
+    mean RTT (bulk)            36.39 ->     47.29  ( +30.0%)  p=0.001  dof=  2.1  DISTINGUISHABLE
+    mean backlog                 6.8 ->       8.8  ( +30.2%)  p=0.001  dof=  3.3  DISTINGUISHABLE
+    goodput                     9.41 ->      9.41  (  -0.0%)  p=0.950  dof=  3.1  not distinguishable
+    Jain                      0.9999 ->    0.9959  (  -0.4%)  p=0.048  dof=  2.0  DISTINGUISHABLE
+
+==============================================================================
+WORKLOAD: staged
+==============================================================================
+
+  unmanaged FIFO -> fq_codel   [pfifo vs fq_codel]
+    p95 RTT (probe)           2318.0 ->      23.4  ( -99.0%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean RTT (probe)         1152.89 ->     21.90  ( -98.1%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean RTT (bulk)          1585.62 ->     51.99  ( -96.7%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    mean backlog               570.2 ->      11.3  ( -98.0%)  p=0.000  dof=  2.0  DISTINGUISHABLE
+    goodput                     8.38 ->      9.24  ( +10.2%)  p=0.015  dof=  2.0  DISTINGUISHABLE
+    Jain                      0.9862 ->    1.0000  (  +1.4%)  p=0.014  dof=  2.0  DISTINGUISHABLE
+
+  static -> sham controller (CPU cost only)   [fq_codel vs fq_codel_sham]
+    p95 RTT (probe)             23.4 ->      23.5  (  +0.4%)  p=0.288  dof=  4.0  not distinguishable
+    mean RTT (probe)           21.90 ->     22.13  (  +1.1%)  p=0.235  dof=  2.1  not distinguishable
+    mean RTT (bulk)            51.99 ->     51.68  (  -0.6%)  p=0.464  dof=  2.9  not distinguishable
+    mean backlog                11.3 ->      11.5  (  +2.0%)  p=0.764  dof=  2.8  not distinguishable
+    goodput                     9.24 ->      9.19  (  -0.4%)  p=0.173  dof=  2.0  not distinguishable
+    Jain                      1.0000 ->    1.0000  (  +0.0%)  p= n/a  dof=  n/a  n/a
+
+  sham -> ACAPE (control decisions only)   [fq_codel_sham vs fq_codel_acape]
+    p95 RTT (probe)             23.5 ->      24.8  (  +5.7%)  p=0.026  dof=  2.2  DISTINGUISHABLE
+    mean RTT (probe)           22.13 ->     22.38  (  +1.1%)  p=0.250  dof=  3.9  not distinguishable
+    mean backlog                11.5 ->      12.0  (  +4.6%)  p=0.542  dof=  3.9  not distinguishable
+
+  static -> ACAPE (combined)   [fq_codel vs fq_codel_acape]
+    p95 RTT (probe)             23.4 ->      24.8  (  +6.1%)  p=0.022  dof=  2.2  DISTINGUISHABLE
+    mean RTT (probe)           21.90 ->     22.38  (  +2.2%)  p=0.056  dof=  2.1  not distinguishable
+    mean backlog                11.3 ->      12.0  (  +6.7%)  p=0.286  dof=  3.0  not distinguishable
+
+  fq_codel -> CAKE   [fq_codel vs cake]
+    p95 RTT (probe)             23.4 ->      22.3  (  -4.8%)  p=0.000  dof=  3.2  DISTINGUISHABLE
+    mean RTT (probe)           21.90 ->     21.48  (  -1.9%)  p=0.019  dof=  2.3  DISTINGUISHABLE
+    mean RTT (bulk)            51.99 ->     30.13  ( -42.0%)  p=0.000  dof=  2.6  DISTINGUISHABLE
+    mean backlog                11.3 ->      10.5  (  -7.2%)  p=0.409  dof=  2.5  not distinguishable
+    goodput                     9.24 ->      9.24  (  +0.1%)  p=0.842  dof=  2.0  not distinguishable
+    Jain                      1.0000 ->    1.0000  (  +0.0%)  p=0.038  dof=  2.0  DISTINGUISHABLE
+
+  fq_codel -> PIE (single queue)   [fq_codel vs pie]
+    p95 RTT (probe)             23.4 ->      48.6  (+107.5%)  p=0.002  dof=  2.0  DISTINGUISHABLE
+    mean RTT (probe)           21.90 ->     40.40  ( +84.5%)  p=0.001  dof=  2.0  DISTINGUISHABLE
+    mean RTT (bulk)            51.99 ->    119.24  (+129.3%)  p=0.032  dof=  2.0  DISTINGUISHABLE
+    mean backlog                11.3 ->      10.3  (  -8.4%)  p=0.057  dof=  3.8  not distinguishable
+    goodput                     9.24 ->      9.22  (  -0.1%)  p=0.476  dof=  2.1  not distinguishable
+    Jain                      1.0000 ->    0.9614  (  -3.9%)  p=0.029  dof=  2.0  DISTINGUISHABLE

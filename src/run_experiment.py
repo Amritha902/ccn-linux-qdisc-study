@@ -81,7 +81,14 @@ def main():
     p.add_argument("--outdir", default=os.path.join(ROOT, "results"))
     a = p.parse_args()
 
+    # --ebpf MUST appear in the label. Without it an eBPF run and a plain
+    # adaptive run with the same aqm/workload/seed resolve to the same output
+    # directory, and the second silently overwrites the first -- which is what
+    # happened on the first full suite, losing the plain staged ACAPE runs and
+    # leaving the staged comparison confounded by eBPF polling load.
     suffix = "_acape" if a.adapt else ("_sham" if a.sham else "")
+    if a.ebpf:
+        suffix += "_ebpf"
     label = f"{a.aqm}{suffix}_{a.workload}_s{a.seed}"
     outdir = os.path.join(a.outdir, label)
     os.makedirs(outdir, exist_ok=True)

@@ -21,8 +21,10 @@
 # the 9p filesystem share.
 set -euo pipefail
 
+# Prefer the preserved image; fall back to the build tree if present.
 KDIR="${KDIR:-/root/linux-6.12.48}"
-KERNEL="$KDIR/arch/x86/boot/bzImage"
+KERNEL="${KERNEL:-/root/bzImage-6.12.48}"
+[ -f "$KERNEL" ] || KERNEL="$KDIR/arch/x86/boot/bzImage"
 MEM="${MEM:-4096}"
 CPUS="${CPUS:-2}"
 SHARE="${SHARE:-/}"

@@ -15,6 +15,41 @@
       "path": "steps/step02_kernel_built_with_every_aqm_compiled_in.png"
     },
     {
+      "id": "STEP 03",
+      "title": "AQM availability confirmed inside the VM",
+      "caption": "Each queue discipline is instantiated on a real veth device in the guest. Availability is demonstrated, not assumed.",
+      "where": "vm",
+      "path": "steps/step03_aqm_availability_confirmed_inside_the_vm.png"
+    },
+    {
+      "id": "STEP 04",
+      "title": "Corrected three-node router topology",
+      "caption": "The bottleneck now sits on the router's egress toward the server, so it is on the data path. TBF is the shaper and the AQM under study is its child.",
+      "where": "vm",
+      "path": "steps/step04_corrected_three_node_router_topology.png"
+    },
+    {
+      "id": "STEP 05",
+      "title": "The original two-node testbed shaped ACKs, not data",
+      "caption": "README Parts 2-4 put the bottleneck on veth1 inside ns1 but ran iperf3 FROM ns2, so data flowed ns2 -> ns1 while the egress qdisc on veth1 shaped only ns1 -> ns2: the acknowledgement path. Left panel: data passes unshaped at multi-Gbit and the queue carries 66-byte ACKs. Right panel: the corrected topology shapes the data path, and the queue carries full-size packets. Every backlog and drop figure in the original Parts 2-4 was a measurement of ACK queueing.",
+      "where": "comparison",
+      "path": "steps/step05_the_original_two_node_testbed_shaped_acks__not_d.png"
+    },
+    {
+      "id": "STEP 06",
+      "title": "eBPF telemetry program compiles, attaches and JITs",
+      "caption": "tc_monitor.c is compiled with BTF, attached at the clsact egress hook on the router, and verified JIT-compiled. Its maps are then located through the bpf(2) syscall.",
+      "where": "vm",
+      "path": "steps/step06_ebpf_telemetry_program_compiles__attaches_and_ji.png"
+    },
+    {
+      "id": "STEP 07",
+      "title": "eBPF flow telemetry is live under traffic",
+      "caption": "With traffic running, the flow_map is read through bpf(2) and reports real per-flow state. In all 21,128 samples of the original study this read returned zero.",
+      "where": "vm",
+      "path": "steps/step07_ebpf_flow_telemetry_is_live_under_traffic.png"
+    },
+    {
       "id": "STEP 08",
       "title": "Regression tests pin all four defects",
       "caption": "Seventeen tests, each of which fails against the original implementation's behaviour and passes against the corrected one. They cover the qdisc-selection bug, the three eBPF decode bugs, the integer-millisecond rounding, and the inert prediction.",
@@ -136,273 +171,291 @@
     },
     {
       "id": "RUN 16",
-      "title": "fq_codel_acape_steady_s1",
-      "caption": "fq_codel + ACAPE, steady workload, seed 1 \u2014 goodput 9.3894 Mbps, p95 RTT 24.5 ms, backlog 6.34 pkt",
-      "path": "runs/run16_fq_codel_acape_steady_s1.png"
+      "title": "fq_codel_acape_staged_s1",
+      "caption": "fq_codel + ACAPE, staged workload, seed 1 \u2014 goodput 9.1339 Mbps, p95 RTT 23.5 ms, backlog 12.5 pkt",
+      "path": "runs/run16_fq_codel_acape_staged_s1.png"
     },
     {
       "id": "RUN 17",
-      "title": "fq_codel_acape_steady_s2",
-      "caption": "fq_codel + ACAPE, steady workload, seed 2 \u2014 goodput 9.4088 Mbps, p95 RTT 24.4 ms, backlog 5.84 pkt",
-      "path": "runs/run17_fq_codel_acape_steady_s2.png"
+      "title": "fq_codel_acape_staged_s2",
+      "caption": "fq_codel + ACAPE, staged workload, seed 2 \u2014 goodput 9.1986 Mbps, p95 RTT 23.3 ms, backlog 10.4 pkt",
+      "path": "runs/run17_fq_codel_acape_staged_s2.png"
     },
     {
       "id": "RUN 18",
-      "title": "fq_codel_acape_steady_s3",
-      "caption": "fq_codel + ACAPE, steady workload, seed 3 \u2014 goodput 9.4093 Mbps, p95 RTT 24.4 ms, backlog 6.24 pkt",
-      "path": "runs/run18_fq_codel_acape_steady_s3.png"
+      "title": "fq_codel_acape_staged_s3",
+      "caption": "fq_codel + ACAPE, staged workload, seed 3 \u2014 goodput 9.2051 Mbps, p95 RTT 23.6 ms, backlog 10.16 pkt",
+      "path": "runs/run18_fq_codel_acape_staged_s3.png"
     },
     {
       "id": "RUN 19",
-      "title": "fq_codel_sham_staged_s1",
-      "caption": "fq_codel, staged workload, seed 1 \u2014 goodput 9.1858 Mbps, p95 RTT 23.6 ms, backlog 11.93 pkt",
-      "path": "runs/run19_fq_codel_sham_staged_s1.png"
+      "title": "fq_codel_acape_steady_s1",
+      "caption": "fq_codel + ACAPE, steady workload, seed 1 \u2014 goodput 9.3894 Mbps, p95 RTT 24.5 ms, backlog 6.34 pkt",
+      "path": "runs/run19_fq_codel_acape_steady_s1.png"
     },
     {
       "id": "RUN 20",
-      "title": "fq_codel_sham_staged_s2",
-      "caption": "fq_codel, staged workload, seed 2 \u2014 goodput 9.2323 Mbps, p95 RTT 23.5 ms, backlog 10.3 pkt",
-      "path": "runs/run20_fq_codel_sham_staged_s2.png"
+      "title": "fq_codel_acape_steady_s2",
+      "caption": "fq_codel + ACAPE, steady workload, seed 2 \u2014 goodput 9.4088 Mbps, p95 RTT 24.4 ms, backlog 5.84 pkt",
+      "path": "runs/run20_fq_codel_acape_steady_s2.png"
     },
     {
       "id": "RUN 21",
-      "title": "fq_codel_sham_staged_s3",
-      "caption": "fq_codel, staged workload, seed 3 \u2014 goodput 9.1657 Mbps, p95 RTT 23.4 ms, backlog 12.26 pkt",
-      "path": "runs/run21_fq_codel_sham_staged_s3.png"
+      "title": "fq_codel_acape_steady_s3",
+      "caption": "fq_codel + ACAPE, steady workload, seed 3 \u2014 goodput 9.4093 Mbps, p95 RTT 24.4 ms, backlog 6.24 pkt",
+      "path": "runs/run21_fq_codel_acape_steady_s3.png"
     },
     {
       "id": "RUN 22",
-      "title": "fq_codel_sham_steady_s1",
-      "caption": "fq_codel, steady workload, seed 1 \u2014 goodput 9.4098 Mbps, p95 RTT 24.6 ms, backlog 6.82 pkt",
-      "path": "runs/run22_fq_codel_sham_steady_s1.png"
+      "title": "fq_codel_sham_staged_s1",
+      "caption": "fq_codel, staged workload, seed 1 \u2014 goodput 9.1858 Mbps, p95 RTT 23.6 ms, backlog 11.93 pkt",
+      "path": "runs/run22_fq_codel_sham_staged_s1.png"
     },
     {
       "id": "RUN 23",
-      "title": "fq_codel_sham_steady_s2",
-      "caption": "fq_codel, steady workload, seed 2 \u2014 goodput 9.3923 Mbps, p95 RTT 24.6 ms, backlog 6.73 pkt",
-      "path": "runs/run23_fq_codel_sham_steady_s2.png"
+      "title": "fq_codel_sham_staged_s2",
+      "caption": "fq_codel, staged workload, seed 2 \u2014 goodput 9.2323 Mbps, p95 RTT 23.5 ms, backlog 10.3 pkt",
+      "path": "runs/run23_fq_codel_sham_staged_s2.png"
     },
     {
       "id": "RUN 24",
-      "title": "fq_codel_sham_steady_s3",
-      "caption": "fq_codel, steady workload, seed 3 \u2014 goodput 9.392 Mbps, p95 RTT 24.5 ms, backlog 6.79 pkt",
-      "path": "runs/run24_fq_codel_sham_steady_s3.png"
+      "title": "fq_codel_sham_staged_s3",
+      "caption": "fq_codel, staged workload, seed 3 \u2014 goodput 9.1657 Mbps, p95 RTT 23.4 ms, backlog 12.26 pkt",
+      "path": "runs/run24_fq_codel_sham_staged_s3.png"
     },
     {
       "id": "RUN 25",
-      "title": "fq_codel_staged_s1",
-      "caption": "fq_codel, staged workload, seed 1 \u2014 goodput 9.232 Mbps, p95 RTT 23.3 ms, backlog 11.15 pkt",
-      "path": "runs/run25_fq_codel_staged_s1.png"
+      "title": "fq_codel_sham_steady_s1",
+      "caption": "fq_codel, steady workload, seed 1 \u2014 goodput 9.4098 Mbps, p95 RTT 24.6 ms, backlog 6.82 pkt",
+      "path": "runs/run25_fq_codel_sham_steady_s1.png"
     },
     {
       "id": "RUN 26",
-      "title": "fq_codel_staged_s2",
-      "caption": "fq_codel, staged workload, seed 2 \u2014 goodput 9.2362 Mbps, p95 RTT 23.4 ms, backlog 11.8 pkt",
-      "path": "runs/run26_fq_codel_staged_s2.png"
+      "title": "fq_codel_sham_steady_s2",
+      "caption": "fq_codel, steady workload, seed 2 \u2014 goodput 9.3923 Mbps, p95 RTT 24.6 ms, backlog 6.73 pkt",
+      "path": "runs/run26_fq_codel_sham_steady_s2.png"
     },
     {
       "id": "RUN 27",
-      "title": "fq_codel_staged_s3",
-      "caption": "fq_codel, staged workload, seed 3 \u2014 goodput 9.2382 Mbps, p95 RTT 23.5 ms, backlog 10.88 pkt",
-      "path": "runs/run27_fq_codel_staged_s3.png"
+      "title": "fq_codel_sham_steady_s3",
+      "caption": "fq_codel, steady workload, seed 3 \u2014 goodput 9.392 Mbps, p95 RTT 24.5 ms, backlog 6.79 pkt",
+      "path": "runs/run27_fq_codel_sham_steady_s3.png"
     },
     {
       "id": "RUN 28",
-      "title": "fq_codel_steady_s1",
-      "caption": "fq_codel, steady workload, seed 1 \u2014 goodput 9.3904 Mbps, p95 RTT 24.6 ms, backlog 6.47 pkt",
-      "path": "runs/run28_fq_codel_steady_s1.png"
+      "title": "fq_codel_staged_s1",
+      "caption": "fq_codel, staged workload, seed 1 \u2014 goodput 9.232 Mbps, p95 RTT 23.3 ms, backlog 11.15 pkt",
+      "path": "runs/run28_fq_codel_staged_s1.png"
     },
     {
       "id": "RUN 29",
-      "title": "fq_codel_steady_s2",
-      "caption": "fq_codel, steady workload, seed 2 \u2014 goodput 9.4243 Mbps, p95 RTT 24.6 ms, backlog 6.83 pkt",
-      "path": "runs/run29_fq_codel_steady_s2.png"
+      "title": "fq_codel_staged_s2",
+      "caption": "fq_codel, staged workload, seed 2 \u2014 goodput 9.2362 Mbps, p95 RTT 23.4 ms, backlog 11.8 pkt",
+      "path": "runs/run29_fq_codel_staged_s2.png"
     },
     {
       "id": "RUN 30",
-      "title": "fq_codel_steady_s3",
-      "caption": "fq_codel, steady workload, seed 3 \u2014 goodput 9.4266 Mbps, p95 RTT 24.5 ms, backlog 7.07 pkt",
-      "path": "runs/run30_fq_codel_steady_s3.png"
+      "title": "fq_codel_staged_s3",
+      "caption": "fq_codel, staged workload, seed 3 \u2014 goodput 9.2382 Mbps, p95 RTT 23.5 ms, backlog 10.88 pkt",
+      "path": "runs/run30_fq_codel_staged_s3.png"
     },
     {
       "id": "RUN 31",
-      "title": "fq_pie_staged_s1",
-      "caption": "fq_pie, staged workload, seed 1 \u2014 goodput 9.2375 Mbps, p95 RTT 23.3 ms, backlog 18.24 pkt",
-      "path": "runs/run31_fq_pie_staged_s1.png"
+      "title": "fq_codel_steady_s1",
+      "caption": "fq_codel, steady workload, seed 1 \u2014 goodput 9.3904 Mbps, p95 RTT 24.6 ms, backlog 6.47 pkt",
+      "path": "runs/run31_fq_codel_steady_s1.png"
     },
     {
       "id": "RUN 32",
-      "title": "fq_pie_staged_s2",
-      "caption": "fq_pie, staged workload, seed 2 \u2014 goodput 9.1944 Mbps, p95 RTT 23.2 ms, backlog 18.87 pkt",
-      "path": "runs/run32_fq_pie_staged_s2.png"
+      "title": "fq_codel_steady_s2",
+      "caption": "fq_codel, steady workload, seed 2 \u2014 goodput 9.4243 Mbps, p95 RTT 24.6 ms, backlog 6.83 pkt",
+      "path": "runs/run32_fq_codel_steady_s2.png"
     },
     {
       "id": "RUN 33",
-      "title": "fq_pie_staged_s3",
-      "caption": "fq_pie, staged workload, seed 3 \u2014 goodput 9.2358 Mbps, p95 RTT 23.2 ms, backlog 18.71 pkt",
-      "path": "runs/run33_fq_pie_staged_s3.png"
+      "title": "fq_codel_steady_s3",
+      "caption": "fq_codel, steady workload, seed 3 \u2014 goodput 9.4266 Mbps, p95 RTT 24.5 ms, backlog 7.07 pkt",
+      "path": "runs/run33_fq_codel_steady_s3.png"
     },
     {
       "id": "RUN 34",
-      "title": "fq_pie_steady_s1",
-      "caption": "fq_pie, steady workload, seed 1 \u2014 goodput 9.4285 Mbps, p95 RTT 23.3 ms, backlog 11.62 pkt",
-      "path": "runs/run34_fq_pie_steady_s1.png"
+      "title": "fq_pie_staged_s1",
+      "caption": "fq_pie, staged workload, seed 1 \u2014 goodput 9.2375 Mbps, p95 RTT 23.3 ms, backlog 18.24 pkt",
+      "path": "runs/run34_fq_pie_staged_s1.png"
     },
     {
       "id": "RUN 35",
-      "title": "fq_pie_steady_s2",
-      "caption": "fq_pie, steady workload, seed 2 \u2014 goodput 9.4996 Mbps, p95 RTT 23.2 ms, backlog 12.73 pkt",
-      "path": "runs/run35_fq_pie_steady_s2.png"
+      "title": "fq_pie_staged_s2",
+      "caption": "fq_pie, staged workload, seed 2 \u2014 goodput 9.1944 Mbps, p95 RTT 23.2 ms, backlog 18.87 pkt",
+      "path": "runs/run35_fq_pie_staged_s2.png"
     },
     {
       "id": "RUN 36",
-      "title": "fq_pie_steady_s3",
-      "caption": "fq_pie, steady workload, seed 3 \u2014 goodput 9.4297 Mbps, p95 RTT 23.3 ms, backlog 11.47 pkt",
-      "path": "runs/run36_fq_pie_steady_s3.png"
+      "title": "fq_pie_staged_s3",
+      "caption": "fq_pie, staged workload, seed 3 \u2014 goodput 9.2358 Mbps, p95 RTT 23.2 ms, backlog 18.71 pkt",
+      "path": "runs/run36_fq_pie_staged_s3.png"
     },
     {
       "id": "RUN 37",
-      "title": "pfifo_staged_s1",
-      "caption": "pfifo, staged workload, seed 1 \u2014 goodput 8.5918 Mbps, p95 RTT 2339.0 ms, backlog 564.36 pkt",
-      "path": "runs/run37_pfifo_staged_s1.png"
+      "title": "fq_pie_steady_s1",
+      "caption": "fq_pie, steady workload, seed 1 \u2014 goodput 9.4285 Mbps, p95 RTT 23.3 ms, backlog 11.62 pkt",
+      "path": "runs/run37_fq_pie_steady_s1.png"
     },
     {
       "id": "RUN 38",
-      "title": "pfifo_staged_s2",
-      "caption": "pfifo, staged workload, seed 2 \u2014 goodput 8.303 Mbps, p95 RTT 2300.0 ms, backlog 558.08 pkt",
-      "path": "runs/run38_pfifo_staged_s2.png"
+      "title": "fq_pie_steady_s2",
+      "caption": "fq_pie, steady workload, seed 2 \u2014 goodput 9.4996 Mbps, p95 RTT 23.2 ms, backlog 12.73 pkt",
+      "path": "runs/run38_fq_pie_steady_s2.png"
     },
     {
       "id": "RUN 39",
-      "title": "pfifo_staged_s3",
-      "caption": "pfifo, staged workload, seed 3 \u2014 goodput 8.2458 Mbps, p95 RTT 2315.0 ms, backlog 588.19 pkt",
-      "path": "runs/run39_pfifo_staged_s3.png"
+      "title": "fq_pie_steady_s3",
+      "caption": "fq_pie, steady workload, seed 3 \u2014 goodput 9.4297 Mbps, p95 RTT 23.3 ms, backlog 11.47 pkt",
+      "path": "runs/run39_fq_pie_steady_s3.png"
     },
     {
       "id": "RUN 40",
-      "title": "pfifo_steady_s1",
-      "caption": "pfifo, steady workload, seed 1 \u2014 goodput 9.4101 Mbps, p95 RTT 2359.0 ms, backlog 778.62 pkt",
-      "path": "runs/run40_pfifo_steady_s1.png"
+      "title": "pfifo_staged_s1",
+      "caption": "pfifo, staged workload, seed 1 \u2014 goodput 8.5918 Mbps, p95 RTT 2339.0 ms, backlog 564.36 pkt",
+      "path": "runs/run40_pfifo_staged_s1.png"
     },
     {
       "id": "RUN 41",
-      "title": "pfifo_steady_s2",
-      "caption": "pfifo, steady workload, seed 2 \u2014 goodput 9.4736 Mbps, p95 RTT 2339.0 ms, backlog 793.82 pkt",
-      "path": "runs/run41_pfifo_steady_s2.png"
+      "title": "pfifo_staged_s2",
+      "caption": "pfifo, staged workload, seed 2 \u2014 goodput 8.303 Mbps, p95 RTT 2300.0 ms, backlog 558.08 pkt",
+      "path": "runs/run41_pfifo_staged_s2.png"
     },
     {
       "id": "RUN 42",
-      "title": "pfifo_steady_s3",
-      "caption": "pfifo, steady workload, seed 3 \u2014 goodput 9.4757 Mbps, p95 RTT 2334.0 ms, backlog 795.29 pkt",
-      "path": "runs/run42_pfifo_steady_s3.png"
+      "title": "pfifo_staged_s3",
+      "caption": "pfifo, staged workload, seed 3 \u2014 goodput 8.2458 Mbps, p95 RTT 2315.0 ms, backlog 588.19 pkt",
+      "path": "runs/run42_pfifo_staged_s3.png"
     },
     {
       "id": "RUN 43",
-      "title": "pie_staged_s1",
-      "caption": "pie, staged workload, seed 1 \u2014 goodput 9.1959 Mbps, p95 RTT 51.0 ms, backlog 10.75 pkt",
-      "path": "runs/run43_pie_staged_s1.png"
+      "title": "pfifo_steady_s1",
+      "caption": "pfifo, steady workload, seed 1 \u2014 goodput 9.4101 Mbps, p95 RTT 2359.0 ms, backlog 778.62 pkt",
+      "path": "runs/run43_pfifo_steady_s1.png"
     },
     {
       "id": "RUN 44",
-      "title": "pie_staged_s2",
-      "caption": "pie, staged workload, seed 2 \u2014 goodput 9.2418 Mbps, p95 RTT 47.8 ms, backlog 10.0 pkt",
-      "path": "runs/run44_pie_staged_s2.png"
+      "title": "pfifo_steady_s2",
+      "caption": "pfifo, steady workload, seed 2 \u2014 goodput 9.4736 Mbps, p95 RTT 2339.0 ms, backlog 793.82 pkt",
+      "path": "runs/run44_pfifo_steady_s2.png"
     },
     {
       "id": "RUN 45",
-      "title": "pie_staged_s3",
-      "caption": "pie, staged workload, seed 3 \u2014 goodput 9.2322 Mbps, p95 RTT 46.9 ms, backlog 10.24 pkt",
-      "path": "runs/run45_pie_staged_s3.png"
+      "title": "pfifo_steady_s3",
+      "caption": "pfifo, steady workload, seed 3 \u2014 goodput 9.4757 Mbps, p95 RTT 2334.0 ms, backlog 795.29 pkt",
+      "path": "runs/run45_pfifo_steady_s3.png"
     },
     {
       "id": "RUN 46",
-      "title": "pie_steady_s1",
-      "caption": "pie, steady workload, seed 1 \u2014 goodput 9.406 Mbps, p95 RTT 47.4 ms, backlog 8.7 pkt",
-      "path": "runs/run46_pie_steady_s1.png"
+      "title": "pie_staged_s1",
+      "caption": "pie, staged workload, seed 1 \u2014 goodput 9.1959 Mbps, p95 RTT 51.0 ms, backlog 10.75 pkt",
+      "path": "runs/run46_pie_staged_s1.png"
     },
     {
       "id": "RUN 47",
-      "title": "pie_steady_s2",
-      "caption": "pie, steady workload, seed 2 \u2014 goodput 9.4254 Mbps, p95 RTT 47.2 ms, backlog 8.77 pkt",
-      "path": "runs/run47_pie_steady_s2.png"
+      "title": "pie_staged_s2",
+      "caption": "pie, staged workload, seed 2 \u2014 goodput 9.2418 Mbps, p95 RTT 47.8 ms, backlog 10.0 pkt",
+      "path": "runs/run47_pie_staged_s2.png"
     },
     {
       "id": "RUN 48",
-      "title": "pie_steady_s3",
-      "caption": "pie, steady workload, seed 3 \u2014 goodput 9.4072 Mbps, p95 RTT 46.2 ms, backlog 9.05 pkt",
-      "path": "runs/run48_pie_steady_s3.png"
+      "title": "pie_staged_s3",
+      "caption": "pie, staged workload, seed 3 \u2014 goodput 9.2322 Mbps, p95 RTT 46.9 ms, backlog 10.24 pkt",
+      "path": "runs/run48_pie_staged_s3.png"
     },
     {
       "id": "RUN 49",
-      "title": "red_staged_s1",
-      "caption": "red, staged workload, seed 1 \u2014 goodput 9.2535 Mbps, p95 RTT 94.2 ms, backlog 21.39 pkt",
-      "path": "runs/run49_red_staged_s1.png"
+      "title": "pie_steady_s1",
+      "caption": "pie, steady workload, seed 1 \u2014 goodput 9.406 Mbps, p95 RTT 47.4 ms, backlog 8.7 pkt",
+      "path": "runs/run49_pie_steady_s1.png"
     },
     {
       "id": "RUN 50",
-      "title": "red_staged_s2",
-      "caption": "red, staged workload, seed 2 \u2014 goodput 9.1977 Mbps, p95 RTT 94.0 ms, backlog 22.31 pkt",
-      "path": "runs/run50_red_staged_s2.png"
+      "title": "pie_steady_s2",
+      "caption": "pie, steady workload, seed 2 \u2014 goodput 9.4254 Mbps, p95 RTT 47.2 ms, backlog 8.77 pkt",
+      "path": "runs/run50_pie_steady_s2.png"
     },
     {
       "id": "RUN 51",
-      "title": "red_staged_s3",
-      "caption": "red, staged workload, seed 3 \u2014 goodput 9.2849 Mbps, p95 RTT 94.3 ms, backlog 21.73 pkt",
-      "path": "runs/run51_red_staged_s3.png"
+      "title": "pie_steady_s3",
+      "caption": "pie, steady workload, seed 3 \u2014 goodput 9.4072 Mbps, p95 RTT 46.2 ms, backlog 9.05 pkt",
+      "path": "runs/run51_pie_steady_s3.png"
     },
     {
       "id": "RUN 52",
-      "title": "red_steady_s1",
-      "caption": "red, steady workload, seed 1 \u2014 goodput 9.4726 Mbps, p95 RTT 87.3 ms, backlog 26.57 pkt",
-      "path": "runs/run52_red_steady_s1.png"
+      "title": "red_staged_s1",
+      "caption": "red, staged workload, seed 1 \u2014 goodput 9.2535 Mbps, p95 RTT 94.2 ms, backlog 21.39 pkt",
+      "path": "runs/run52_red_staged_s1.png"
     },
     {
       "id": "RUN 53",
-      "title": "red_steady_s2",
-      "caption": "red, steady workload, seed 2 \u2014 goodput 9.3863 Mbps, p95 RTT 88.3 ms, backlog 26.63 pkt",
-      "path": "runs/run53_red_steady_s2.png"
+      "title": "red_staged_s2",
+      "caption": "red, staged workload, seed 2 \u2014 goodput 9.1977 Mbps, p95 RTT 94.0 ms, backlog 22.31 pkt",
+      "path": "runs/run53_red_staged_s2.png"
     },
     {
       "id": "RUN 54",
-      "title": "red_steady_s3",
-      "caption": "red, steady workload, seed 3 \u2014 goodput 9.4894 Mbps, p95 RTT 86.5 ms, backlog 26.85 pkt",
-      "path": "runs/run54_red_steady_s3.png"
+      "title": "red_staged_s3",
+      "caption": "red, staged workload, seed 3 \u2014 goodput 9.2849 Mbps, p95 RTT 94.3 ms, backlog 21.73 pkt",
+      "path": "runs/run54_red_staged_s3.png"
     },
     {
       "id": "RUN 55",
-      "title": "sfq_staged_s1",
-      "caption": "sfq, staged workload, seed 1 \u2014 goodput 9.1821 Mbps, p95 RTT 57.4 ms, backlog 96.93 pkt",
-      "path": "runs/run55_sfq_staged_s1.png"
+      "title": "red_steady_s1",
+      "caption": "red, steady workload, seed 1 \u2014 goodput 9.4726 Mbps, p95 RTT 87.3 ms, backlog 26.57 pkt",
+      "path": "runs/run55_red_steady_s1.png"
     },
     {
       "id": "RUN 56",
-      "title": "sfq_staged_s2",
-      "caption": "sfq, staged workload, seed 2 \u2014 goodput 9.4066 Mbps, p95 RTT 55.0 ms, backlog 92.86 pkt",
-      "path": "runs/run56_sfq_staged_s2.png"
+      "title": "red_steady_s2",
+      "caption": "red, steady workload, seed 2 \u2014 goodput 9.3863 Mbps, p95 RTT 88.3 ms, backlog 26.63 pkt",
+      "path": "runs/run56_red_steady_s2.png"
     },
     {
       "id": "RUN 57",
-      "title": "sfq_staged_s3",
-      "caption": "sfq, staged workload, seed 3 \u2014 goodput 9.1979 Mbps, p95 RTT 57.4 ms, backlog 99.79 pkt",
-      "path": "runs/run57_sfq_staged_s3.png"
+      "title": "red_steady_s3",
+      "caption": "red, steady workload, seed 3 \u2014 goodput 9.4894 Mbps, p95 RTT 86.5 ms, backlog 26.85 pkt",
+      "path": "runs/run57_red_steady_s3.png"
     },
     {
       "id": "RUN 58",
-      "title": "sfq_steady_s1",
-      "caption": "sfq, steady workload, seed 1 \u2014 goodput 9.3558 Mbps, p95 RTT 36.2 ms, backlog 117.58 pkt",
-      "path": "runs/run58_sfq_steady_s1.png"
+      "title": "sfq_staged_s1",
+      "caption": "sfq, staged workload, seed 1 \u2014 goodput 9.1821 Mbps, p95 RTT 57.4 ms, backlog 96.93 pkt",
+      "path": "runs/run58_sfq_staged_s1.png"
     },
     {
       "id": "RUN 59",
-      "title": "sfq_steady_s2",
-      "caption": "sfq, steady workload, seed 2 \u2014 goodput 9.3542 Mbps, p95 RTT 36.1 ms, backlog 115.49 pkt",
-      "path": "runs/run59_sfq_steady_s2.png"
+      "title": "sfq_staged_s2",
+      "caption": "sfq, staged workload, seed 2 \u2014 goodput 9.4066 Mbps, p95 RTT 55.0 ms, backlog 92.86 pkt",
+      "path": "runs/run59_sfq_staged_s2.png"
     },
     {
       "id": "RUN 60",
+      "title": "sfq_staged_s3",
+      "caption": "sfq, staged workload, seed 3 \u2014 goodput 9.1979 Mbps, p95 RTT 57.4 ms, backlog 99.79 pkt",
+      "path": "runs/run60_sfq_staged_s3.png"
+    },
+    {
+      "id": "RUN 61",
+      "title": "sfq_steady_s1",
+      "caption": "sfq, steady workload, seed 1 \u2014 goodput 9.3558 Mbps, p95 RTT 36.2 ms, backlog 117.58 pkt",
+      "path": "runs/run61_sfq_steady_s1.png"
+    },
+    {
+      "id": "RUN 62",
+      "title": "sfq_steady_s2",
+      "caption": "sfq, steady workload, seed 2 \u2014 goodput 9.3542 Mbps, p95 RTT 36.1 ms, backlog 115.49 pkt",
+      "path": "runs/run62_sfq_steady_s2.png"
+    },
+    {
+      "id": "RUN 63",
       "title": "sfq_steady_s3",
       "caption": "sfq, steady workload, seed 3 \u2014 goodput 9.4238 Mbps, p95 RTT 36.0 ms, backlog 116.42 pkt",
-      "path": "runs/run60_sfq_steady_s3.png"
+      "path": "runs/run63_sfq_steady_s3.png"
     }
   ],
   "figures": [

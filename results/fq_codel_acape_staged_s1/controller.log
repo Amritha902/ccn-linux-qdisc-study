@@ -1,0 +1,95 @@
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=fq_codel handle=10:
+  metrics -> results/fq_codel_acape_staged_s1/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    0.9     LIGHT      STABLE     LIGHT      7.5     3   10.13     0     0   5.000  1024    0
+    1.5     LIGHT      STABLE     LIGHT      3.1     4    9.92     0     0   5.000  1024    0
+    2.2     LIGHT      STABLE     LIGHT      6.2     5    9.81     0     0   5.000  1024    0
+    2.8     LIGHT      STABLE     LIGHT      6.2     4   10.10     0     0   5.000  1024    0
+    3.5     LIGHT      STABLE     LIGHT      6.1     5    9.90     0     0   5.000  1024    0
+    4.1     LIGHT      STABLE     LIGHT      6.2     3    9.98     0     0   5.000  1024    0
+    4.8     LIGHT      STABLE     LIGHT      6.0     4    9.77     0     0   5.000  1024    0
+    5.4     LIGHT      STABLE     LIGHT      6.0     3    9.68     0     0   5.000  1024    0
+    6.1     LIGHT      STABLE     LIGHT      6.2     4   10.09     0     0   5.000  1024    0
+    6.7     LIGHT      STABLE     LIGHT      6.4     2   10.09     0     0   5.500  1088    1
+    7.7     LIGHT      STABLE     LIGHT      4.9     6    9.64     0     0   5.500  1088    1
+    8.4     LIGHT      STABLE     LIGHT      5.8     4    9.99     0     0   5.500  1088    1
+    9.1     LIGHT      STABLE     LIGHT      4.4     4    9.90     0     0   5.500  1088    1
+    9.8     LIGHT      STABLE     LIGHT      6.0     2    9.73     0     0   5.500  1088    1
+   10.4     LIGHT      STABLE     LIGHT      5.9     3    9.98     0     0   5.500  1088    1
+   11.1     LIGHT      STABLE     LIGHT      6.3     3    9.83     0     0   5.500  1088    1
+   11.7     LIGHT      STABLE     LIGHT      4.6     5    9.89     0     0   5.500  1088    1
+   12.4     LIGHT      STABLE     LIGHT      7.8     1    9.94     0     0   5.500  1088    1
+   13.0     LIGHT      STABLE     LIGHT      3.2     5   10.04     0     0   5.500  1088    1
+   13.7     LIGHT      STABLE     LIGHT      5.9     3    9.67     0     0   6.000  1152    2
+   14.7     LIGHT      STABLE     LIGHT      5.9     4    9.70     0     0   6.000  1152    2
+   15.4     LIGHT      STABLE     LIGHT      6.0     2    9.89     0     0   6.000  1152    2
+   16.0     LIGHT      STABLE     LIGHT      4.7     3   10.09     0     0   6.000  1152    2
+   16.7     LIGHT      STABLE     LIGHT      4.3     7    9.76     0     0   6.000  1152    2
+   17.4     LIGHT      STABLE     LIGHT      5.8     4    9.82     0     0   6.000  1152    2
+   18.1     LIGHT      STABLE     LIGHT      5.9     4    9.82     0     0   6.000  1152    2
+   18.8     LIGHT      STABLE     LIGHT      5.8     0    9.32     0     0   6.000  1152    2
+   19.4    NORMAL      STABLE    NORMAL      0.0     0    0.07     0     0   6.000  1152    2
+   20.0     HEAVY      STABLE     HEAVY    117.6   129    6.29     0     0   6.000  1152    2
+   20.7     HEAVY   WORSENING     HEAVY    340.2    23    9.74     0     0   6.000  1152    2
+   21.4     HEAVY   WORSENING     HEAVY    150.4    25   10.00     0     0   6.000  1152    2
+   22.1     HEAVY   WORSENING     HEAVY    162.5    28    9.94     0     0   6.000  1152    2
+   22.8     HEAVY   WORSENING     HEAVY    160.3    27    9.92     0     0   6.000  1152    2
+   23.4     HEAVY   WORSENING     HEAVY    158.1    31    9.94     0     0   6.000  1152    2
+   24.1     HEAVY   WORSENING     HEAVY    161.0    27   10.14     0     0   6.000  1152    2
+   24.7     HEAVY      STABLE     HEAVY    167.4    27   10.00     0     0   6.000  1152    2
+   25.4     HEAVY      STABLE     HEAVY    138.3    31    9.90     0     0   6.000  1152    2
+   26.0     HEAVY      STABLE     HEAVY    157.9    29    9.96     0     0   6.000  1152    2
+   26.7     HEAVY      STABLE     HEAVY    128.7    29   10.06     0     0   6.000  1152    2
+   27.4     HEAVY      STABLE     HEAVY    158.6    25    9.87     0     0   5.400  1036    3
+   28.5     HEAVY      STABLE     HEAVY    158.9    32    9.86     0     0   5.400  1036    3
+   29.3     HEAVY      STABLE     HEAVY    156.3    23    9.91     0     0   5.400  1036    3
+   30.0     HEAVY      STABLE     HEAVY    149.7    25   10.00     0     0   5.400  1036    3
+   30.7     HEAVY      STABLE     HEAVY    151.1    25    9.84     0     0   5.400  1036    3
+   31.4     HEAVY      STABLE     HEAVY    161.1    28    9.93     0     0   5.400  1036    3
+   32.1     HEAVY      STABLE     HEAVY    163.8    30    9.80     0     0   5.400  1036    3
+   32.8     HEAVY      STABLE     HEAVY    160.0    19    9.74     0     0   5.400  1036    3
+   33.6     HEAVY      STABLE     HEAVY    159.4    24   10.01     0     0   5.400  1036    3
+   34.2     HEAVY      STABLE     HEAVY    153.7    24    9.72     0     0   5.400  1036    3
+   34.9     HEAVY      STABLE     HEAVY    163.4    20   10.16     0     0   4.860   932    4
+   35.9     HEAVY      STABLE     HEAVY    153.9    27    9.91     0     0   4.860   932    4
+   36.5     HEAVY      STABLE     HEAVY    159.9    21    9.73     0     0   4.860   932    4
+   37.2     HEAVY      STABLE     HEAVY    163.6    26   10.14     0     0   4.860   932    4
+   37.9     HEAVY      STABLE     HEAVY    152.1    21    9.73     0     0   4.860   932    4
+   38.5     HEAVY      STABLE     HEAVY    172.8    25   10.10     0     0   4.860   932    4
+   39.2     HEAVY      STABLE     HEAVY    159.9    23    9.84     0     0   4.860   932    4
+   39.9     HEAVY      STABLE     HEAVY    143.9     0    8.53     0     0   4.860   932    4
+   40.5  MODERATE      STABLE  MODERATE     13.7     3    6.02     0     0   4.860   932    4
+   41.2  MODERATE      STABLE  MODERATE     14.3     7    9.76     0     0   4.860   932    4
+   41.9     LIGHT  RECOVERING    NORMAL      9.1     5    9.89     0     0   4.860   932    4
+   42.6     LIGHT  RECOVERING    NORMAL      6.0     3    9.97     0     0   4.860   932    4
+   43.2     LIGHT  RECOVERING    NORMAL      4.5     4    9.87     0     0   4.860   932    4
+   43.9     LIGHT  RECOVERING    NORMAL      6.0     3    9.93     0     0   4.860   932    4
+   44.6     LIGHT  RECOVERING    NORMAL      6.1     2    9.94     0     0   4.860   932    4
+   45.2     LIGHT      STABLE     LIGHT      6.3     1    9.97     0     0   4.860   932    4
+   45.9     LIGHT      STABLE     LIGHT      4.5     3    9.87     0     0   4.860   932    4
+   46.5     LIGHT      STABLE     LIGHT      7.5     2   10.06     0     0   4.860   932    4
+   47.2     LIGHT      STABLE     LIGHT      6.3     1    9.99     0     0   4.860   932    4
+   47.8     LIGHT      STABLE     LIGHT      4.5     3    9.60     0     0   4.860   932    4
+   48.5     LIGHT      STABLE     LIGHT      7.7     1   10.05     0     0   5.360   996    5
+   49.4     LIGHT      STABLE     LIGHT      4.4     5    9.84     0     0   5.360   996    5
+   50.1     LIGHT      STABLE     LIGHT      5.9     6    9.81     0     0   5.360   996    5
+   50.7     LIGHT      STABLE     LIGHT      6.2     3    9.96     0     0   5.360   996    5
+   51.4     LIGHT      STABLE     LIGHT      6.2     3    9.91     0     0   5.360   996    5
+   52.0     LIGHT      STABLE     LIGHT      4.6     4    9.95     0     0   5.360   996    5
+   52.7     LIGHT      STABLE     LIGHT      7.7     1    9.92     0     0   5.360   996    5
+   53.3     LIGHT      STABLE     LIGHT      4.6     3    9.93     0     0   5.360   996    5
+   54.0     LIGHT      STABLE     LIGHT      4.4     5    9.68     0     0   5.360   996    5
+   54.6     LIGHT      STABLE     LIGHT      7.8     3   10.09     0     0   5.360   996    5
+   55.3     LIGHT      STABLE     LIGHT      4.6     3    9.97     0     0   5.860  1060    6
+   56.3     LIGHT      STABLE     LIGHT      5.1     4    9.91     0     0   5.860  1060    6
+   57.0     LIGHT      STABLE     LIGHT      5.5     4    9.80     0     0   5.860  1060    6
+   57.7     LIGHT      STABLE     LIGHT      5.8     3   10.04     0     0   5.860  1060    6
+   58.4     LIGHT      STABLE     LIGHT      5.4     6    9.87     0     0   5.860  1060    6
+   59.1     LIGHT      STABLE     LIGHT      6.0     3    9.90     0     0   5.860  1060    6
+   59.7     LIGHT      STABLE     LIGHT      6.0     3    9.80     0     0   5.860  1060    6
+
+Done — 87 ticks, 6 adjustments (0 predictive), mode=tc-only

@@ -1,0 +1,98 @@
+Every figure quoted below is generated from the run logs by
+\texttt{src/analyse.py}; none is typed by hand.
+
+\subsection{Flow queueing dominates}
+
+Table~\ref{tab:steady} gives all ten conditions. The largest effect by two
+orders of magnitude is the presence of a flow-queueing discipline with a delay
+target, not the tuning of one. Under the steady workload an unmanaged FIFO
+reaches \PfifoProbeRttPninetyfiveSteady\,ms p95 RTT against
+\FqCodelProbeRttPninetyfiveSteady\,ms for \texttt{fq\_codel} --- a 99.0\%
+reduction ($p<0.001$) --- at goodput that is statistically indistinguishable
+(\PfifoGoodputSteady\ vs \FqCodelGoodputSteady\,Mbps, $p=0.20$). The staged
+workload gives the same picture, and there \texttt{pfifo} additionally
+\emph{loses} 10.2\% goodput and 1.4\% fairness ($p=0.015$, $p=0.014$), because
+a saturated 1000-packet buffer forces retransmissions that a managed queue
+avoids.
+
+Fair queueing without a delay target is not sufficient. SFQ isolates flows but
+applies no AQM, and its bulk queues sit at its 127-packet limit throughout:
+its sparse probe reads \SfqProbeRttMeanSteady\,ms while the bulk flows sharing
+the link read \SfqBulkRttMeanSteady\,ms. The AQM and the scheduler do distinct
+jobs and both are necessary.
+
+\subsection{Sparse and bulk latency are not interchangeable}
+
+Figure~\ref{fig:fig02_latency_sparse_vs_bulk_steady} plots the two
+measurements side by side. The ratio between them ranges from 1.1$\times$
+(CoDel, a single queue) to 9.6$\times$ (SFQ), because \texttt{fq\_codel}'s
+new-flow heuristic gives a sparse probe preferential service by design.
+
+The consequence is that a single-probe measurement can invert a ranking. By
+sparse probe alone SFQ (\SfqProbeRttMeanSteady\,ms) appears to beat CoDel
+(\CodelProbeRttMeanSteady\,ms); by the latency the bulk flows actually
+experience, SFQ is \SfqBulkRttMeanSteady\,ms against CoDel's
+\CodelBulkRttMeanSteady\,ms. We report both throughout, and we suggest any AQM
+evaluation should.
+
+\subsection{The controller's computational cost is negligible}
+
+The sham condition runs the controller at its full polling cadence and applies
+no parameter change. Against static \texttt{fq\_codel} it is indistinguishable
+on every metric in both workloads --- p95 probe RTT $p=0.29$ (steady) and
+$p=0.24$ (staged), backlog $p=0.94$ and $p=0.76$.
+
+This matters for interpreting the next subsection. Without it, any difference
+between static and adapted \texttt{fq\_codel} would confound the controller's
+CPU cost with its control decisions, and we could not attribute an effect to
+either. Having established the cost is nil, differences that remain are
+attributable to the decisions.
+
+\subsection{Adaptation: a small effect under steady load, none under change}
+
+Under the \textbf{steady} workload the adaptation produces a real but small
+improvement: mean backlog falls \FqCodelBacklogSteady\ from
+\FqCodelAcapeBacklogSteady\ packets, a 9.6\% reduction ($p=0.050$), and p95
+probe RTT falls 0.5\% ($p=0.047$). Goodput and fairness are unchanged. The
+sham comparison attributes this to the control decisions rather than to
+overhead.
+
+Under the \textbf{staged} workload, where the flow count changes twice during
+the run, the adaptation produces \emph{no} improvement on any metric. Mean
+probe RTT is 1.6\% \emph{worse} ($p=0.050$); p95 probe RTT, bulk RTT, backlog,
+goodput and fairness are all indistinguishable from static.
+
+The direction of that result is worth stating plainly. The workload designed to
+give the controller something to respond to is the one in which it helps least.
+Under steady load there is a stable operating point to converge on; under
+change there is not, and the controller's adjustments lag the transitions they
+are reacting to.
+
+\subsection{An off-the-shelf alternative outperforms the adapted system}
+
+CAKE, configured with no controller and a single \texttt{besteffort} argument,
+achieves \CakeProbeRttPninetyfiveSteady\,ms p95 probe RTT under the steady
+workload against \FqCodelAcapeProbeRttPninetyfiveSteady\,ms for adapted
+\texttt{fq\_codel} ($p<0.001$), and \CakeBulkRttMeanSteady\,ms bulk RTT against
+\FqCodelAcapeBulkRttMeanSteady\,ms.
+
+The margin by which CAKE beats the adapted system is larger than the margin by
+which the adaptation beats the static defaults. For a practitioner seeking
+lower latency on this class of link, changing queue discipline is a larger and
+far simpler win than tuning \texttt{fq\_codel}'s parameters.
+
+\subsection{Predictive control never engaged}
+
+No adjustment in any run was tagged predictive. The cause is structural rather
+than a coding fault, and it survives the correction described in
+Section~\ref{sec:pitfalls}: an adjustment fires only once the regime has been
+unchanged for five consecutive samples, and the trajectory estimate is derived
+from the gradient over that same window, which by then is below the threshold
+that would classify it as WORSENING or RECOVERING. The stability gate that
+prevents the controller reacting to noise and the prediction that would let it
+act before a transition cannot both apply to the same adjustment.
+
+We therefore withdraw the predictive-control contribution rather than claim it.
+Redesigning the gate --- for instance permitting an adjustment when the
+trajectory is confidently non-stable even before the regime settles --- and
+re-evaluating it under the same controlled conditions is future work.

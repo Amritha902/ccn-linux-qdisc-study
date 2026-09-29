@@ -72,14 +72,20 @@ WORKLOAD: staged
     Jain                      1.0000 ->    1.0000  (  +0.0%)  p= n/a  dof=  n/a  n/a
 
   sham -> ACAPE (control decisions only)   [fq_codel_sham vs fq_codel_acape]
-    p95 RTT (probe)             23.5 ->      24.8  (  +5.7%)  p=0.026  dof=  2.2  DISTINGUISHABLE
-    mean RTT (probe)           22.13 ->     22.38  (  +1.1%)  p=0.250  dof=  3.9  not distinguishable
-    mean backlog                11.5 ->      12.0  (  +4.6%)  p=0.542  dof=  3.9  not distinguishable
+    p95 RTT (probe)             23.5 ->      24.2  (  +2.8%)  p=0.104  dof=  5.3  not distinguishable
+    mean RTT (probe)           22.13 ->     22.25  (  +0.5%)  p=0.559  dof=  5.7  not distinguishable
+    mean RTT (bulk)            51.68 ->     51.74  (  +0.1%)  p=0.784  dof=  3.0  not distinguishable
+    mean backlog                11.5 ->      11.5  (  +0.2%)  p=0.974  dof=  4.4  not distinguishable
+    goodput                     9.19 ->      9.18  (  -0.2%)  p=0.636  dof=  3.9  not distinguishable
+    Jain                      1.0000 ->    0.9999  (  -0.0%)  p=0.407  dof=  2.0  not distinguishable
 
   static -> ACAPE (combined)   [fq_codel vs fq_codel_acape]
-    p95 RTT (probe)             23.4 ->      24.8  (  +6.1%)  p=0.022  dof=  2.2  DISTINGUISHABLE
-    mean RTT (probe)           21.90 ->     22.38  (  +2.2%)  p=0.056  dof=  2.1  not distinguishable
-    mean backlog                11.3 ->      12.0  (  +6.7%)  p=0.286  dof=  3.0  not distinguishable
+    p95 RTT (probe)             23.4 ->      24.2  (  +3.2%)  p=0.070  dof=  5.3  not distinguishable
+    mean RTT (probe)           21.90 ->     22.25  (  +1.6%)  p=0.050  dof=  5.2  DISTINGUISHABLE
+    mean RTT (bulk)            51.99 ->     51.74  (  -0.5%)  p=0.524  dof=  2.2  not distinguishable
+    mean backlog                11.3 ->      11.5  (  +2.2%)  p=0.660  dof=  7.0  not distinguishable
+    goodput                     9.24 ->      9.18  (  -0.6%)  p=0.131  dof=  2.0  not distinguishable
+    Jain                      1.0000 ->    0.9999  (  -0.0%)  p=0.474  dof=  2.0  not distinguishable
 
   fq_codel -> CAKE   [fq_codel vs cake]
     p95 RTT (probe)             23.4 ->      22.3  (  -4.8%)  p=0.000  dof=  3.2  DISTINGUISHABLE

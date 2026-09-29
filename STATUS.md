@@ -4,34 +4,15 @@
 
 ## Data
 
-60 of 63 planned runs completed on the corrected testbed
+All 63 planned runs completed on the corrected testbed
 (`results/`, each with `summary.json`).
 
 | Condition | Repetitions |
 |---|---|
 | pfifo, SFQ, RED, CoDel, PIE, FQ-PIE, CAKE, fq_codel | 3 each × 2 workloads |
-| fq_codel + ACAPE | 3 (steady), **0 (staged)** — see gap below |
+| fq_codel + ACAPE | 3 each × 2 workloads |
 | fq_codel + sham controller | 3 each × 2 workloads |
 | fq_codel + ACAPE + eBPF | 3 (staged) |
-
-### Known gap
-
-A harness bug omitted `--ebpf` from the run label, so the three
-`fq_codel_acape_staged_*` runs were overwritten by the eBPF runs of the same
-seed. The bug is fixed (`src/run_experiment.py`) and the surviving runs were
-relabelled `fq_codel_acape_ebpf_staged_s*`, which is what they are.
-
-**Consequence:** the staged workload has no plain (non-eBPF) ACAPE condition,
-so the staged static → sham → ACAPE decomposition is incomplete. The steady
-workload decomposition is complete and is the basis for the reported result.
-Re-running three runs (~5 minutes) would close this:
-
-```bash
-for s in 1 2 3; do
-  bash src/invm.sh "python3 src/run_experiment.py --aqm fq_codel --seed $s \
-    --duration 60 --flows 8 --workload staged --adapt --outdir results"
-done
-```
 
 ## Results (steady workload, 3 repetitions, exact t-tests)
 
@@ -43,10 +24,19 @@ done
 | static → ACAPE (combined) | backlog −9.6%, p95 RTT −0.5% | significant, p≈0.05 |
 | fq_codel → CAKE, p95 RTT | 24.6 → 22.9 ms (−6.8%) | significant, p<0.001 |
 
+Under the **staged** workload (flow count changing twice during the run) the
+adaptation produces no improvement on any metric, and mean probe RTT is 1.6%
+worse (p=0.050). The workload designed to give the controller something to
+respond to is the one in which it helps least.
+
 The sham condition establishes that the controller's computational cost is
-negligible, so the ~10% backlog reduction is attributable to its decisions.
+negligible in both workloads, so these are its decisions rather than overhead.
 CAKE nonetheless outperforms adapted fq_codel by a larger margin than the
 adaptation gains.
+
+Predictive control (C2) never engaged in any run; the stability gate and the
+prediction are mutually exclusive by construction. Withdrawn rather than
+claimed — see `verification/C2_FINDING.md`.
 
 ## Deliverables
 
@@ -64,9 +54,14 @@ adaptation gains.
 
 ## Remaining work
 
-1. Re-run the three staged ACAPE runs (command above) and regenerate analysis.
-2. Capture the five VM-dependent evidence figures:
-   `python3 src/make_evidence.py --outdir figures/steps`
-3. Write the paper's results prose around `paper/generated/findings_digest.txt`
-   and finalise the abstract (currently marked PROVISIONAL in `acape.tex`).
-4. Regenerate the deck's results slides from the final numbers.
+None outstanding. To rebuild everything from the raw data:
+
+```bash
+python3 src/analyse.py      --results results --outdir paper/generated
+python3 src/plots.py        --results results --outdir figures/comparison
+python3 src/make_gallery.py --results results --outdir figures/runs
+python3 src/gen_results.py  --results results --outdir paper/generated
+python3 src/make_index.py   --figures figures
+cd paper && make            # builds acape.pdf
+node deck/build.js          # builds deck/ACAPE_2026.pptx
+```

@@ -16,6 +16,46 @@
     "command": "grep -E '^CONFIG_NET_SCH_(FQ_CODEL|CODEL|CAKE|PIE|FQ_PIE|RED|NETEM|TBF|HTB)=|^CONFIG_DEBUG_INFO_BTF=|^CONFIG_NET_CLS_BPF=|^CONFIG_VETH=|^CONFIG_NET_NS=' /root/linux-6.12.48/.config | sort; echo; ls -lh /root/linux-6.12.48/arch/x86/boot/bzImage"
   },
   {
+    "step": "03",
+    "title": "AQM availability confirmed inside the VM",
+    "explain": "Each queue discipline is instantiated on a real veth device in the guest. Availability is demonstrated, not assumed.",
+    "image": "step03_aqm_availability_confirmed_inside_the_vm.png",
+    "where": "vm",
+    "command": "uname -r; ip link add vt type veth peer name vt2 >/dev/null 2>&1; ip link set vt up; for q in fq_codel codel cake pie fq_pie netem sfq htb pfifo; do if tc qdisc replace dev vt root $q 2>/dev/null; then echo \"  $q: AVAILABLE\"; else echo \"  $q: missing\"; fi; done; tc qdisc replace dev vt root red limit 100000 avpkt 1000 bandwidth 10mbit min 30000 max 90000 burst 55 2>/dev/null && echo '  red: AVAILABLE'; tc qdisc replace dev vt root tbf rate 10mbit burst 32kbit latency 400ms 2>/dev/null && echo '  tbf: AVAILABLE'; ip link del vt"
+  },
+  {
+    "step": "04",
+    "title": "Corrected three-node router topology",
+    "explain": "The bottleneck now sits on the router's egress toward the server, so it is on the data path. TBF is the shaper and the AQM under study is its child.",
+    "image": "step04_corrected_three_node_router_topology.png",
+    "where": "vm",
+    "command": "bash src/testbed.sh setup"
+  },
+  {
+    "step": "05",
+    "title": "The original two-node testbed shaped ACKs, not data",
+    "explain": "README Parts 2-4 put the bottleneck on veth1 inside ns1 but ran iperf3 FROM ns2, so data flowed ns2 -> ns1 while the egress qdisc on veth1 shaped only ns1 -> ns2: the acknowledgement path. Left panel: data passes unshaped at multi-Gbit and the queue carries 66-byte ACKs. Right panel: the corrected topology shapes the data path, and the queue carries full-size packets. Every backlog and drop figure in the original Parts 2-4 was a measurement of ACK queueing.",
+    "image": "step05_the_original_two_node_testbed_shaped_acks__not_d.png",
+    "where": "comparison",
+    "command": "iperf3 -c 10.0.0.1 through TBF on veth1 egress  ||  iperf3 -c 192.168.2.2 through TBF on router egress"
+  },
+  {
+    "step": "06",
+    "title": "eBPF telemetry program compiles, attaches and JITs",
+    "explain": "tc_monitor.c is compiled with BTF, attached at the clsact egress hook on the router, and verified JIT-compiled. Its maps are then located through the bpf(2) syscall.",
+    "image": "step06_ebpf_telemetry_program_compiles__attaches_and_ji.png",
+    "where": "vm",
+    "command": "clang -O2 -g -target bpf -I/usr/include/x86_64-linux-gnu -c ebpf/tc_monitor.c -o ebpf/tc_monitor.o && echo 'compiled OK'; bash src/testbed.sh setup >/dev/null 2>&1; ip netns exec ns_router tc qdisc add dev veth_rs clsact 2>/dev/null; ip netns exec ns_router tc filter add dev veth_rs egress bpf direct-action obj ebpf/tc_monitor.o sec tc_egress && echo 'attached OK'; echo; ip netns exec ns_router tc filter show dev veth_rs egress; echo; cd src && python3 bpfmap.py"
+  },
+  {
+    "step": "07",
+    "title": "eBPF flow telemetry is live under traffic",
+    "explain": "With traffic running, the flow_map is read through bpf(2) and reports real per-flow state. In all 21,128 samples of the original study this read returned zero.",
+    "image": "step07_ebpf_flow_telemetry_is_live_under_traffic.png",
+    "where": "vm",
+    "command": "bash src/testbed.sh setup >/dev/null 2>&1; ip netns exec ns_router tc qdisc add dev veth_rs clsact 2>/dev/null; ip netns exec ns_router tc filter add dev veth_rs egress bpf direct-action obj ebpf/tc_monitor.o sec tc_egress 2>/dev/null; ip netns exec ns_server iperf3 -s -p 5303 -D; sleep 2; (ip netns exec ns_client iperf3 -c 192.168.2.2 -p 5303 -P 6 -t 14 >/dev/null 2>&1 &); sleep 7; python3 src/dump_flows.py"
+  },
+  {
     "step": "08",
     "title": "Regression tests pin all four defects",
     "explain": "Seventeen tests, each of which fails against the original implementation's behaviour and passes against the corrected one. They cover the qdisc-selection bug, the three eBPF decode bugs, the integer-millisecond rounding, and the inert prediction.",

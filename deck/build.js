@@ -340,31 +340,72 @@ dark('What the measurements show', 'RESULTS')
 /* ------------------------------------------ 12 does adaptation help? */
 {
   const s = light('Does adapting the parameters help?');
-  card(s, M, 1.25, W - 2*M, 1.05, 'E8F1F6');
-  s.addText('On the evidence so far: it shrinks the queue slightly, and does not reduce the latency users see.',
-    { x: M + 0.35, y: 1.45, w: W - 2*M - 0.7, h: 0.65, fontSize: 18, bold: true,
+  card(s, M, 1.2, W - 2*M, 0.95, 'E8F1F6');
+  s.addText('A small gain under steady load. Nothing under a load that changes.',
+    { x: M + 0.35, y: 1.4, w: W - 2*M - 0.7, h: 0.55, fontSize: 18, bold: true,
       color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
 
-  const rows = [['Mean backlog', '−15%', 'not distinguishable  (p = 0.066)', MUTE],
-                ['p95 queue delay', '−16%', 'marginal  (p = 0.047)', TEAL],
-                ['p95 RTT', '+1%', 'not distinguishable  (p = 0.449)', MUTE],
-                ['Mean RTT', '+2.7%', 'significant — and in the wrong direction', WARN],
-                ['Goodput / fairness', '0%', 'no cost', GOOD]];
+  const hdr = ['Metric', 'Steady workload', 'Staged workload'];
+  const cx = [M + 0.3, M + 5.0, M + 8.9];
+  hdr.forEach((h, j) => s.addText(h, { x: cx[j], y: 2.3, w: 3.6, h: 0.3, fontSize: 11.5,
+    bold: true, color: MUTE, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 }));
+
+  const rows = [
+    ['Mean backlog',      '-9.6%   p=0.050', GOOD, '+2.2%   p=0.66', MUTE],
+    ['p95 RTT (probe)',   '-0.5%   p=0.047', GOOD, '+3.2%   p=0.07', MUTE],
+    ['Mean RTT (probe)',  '+0.4%   p=0.48',  MUTE, '+1.6%   p=0.050', WARN],
+    ['Mean RTT (bulk)',   '-1.4%   p=0.38',  MUTE, '-0.5%   p=0.52', MUTE],
+    ['Goodput / fairness','unchanged',       MUTE, 'unchanged',      MUTE],
+  ];
   rows.forEach((r, i) => {
-    const y = 2.5 + i * 0.72;
-    s.addShape(P.ShapeType.roundRect, { x: M, y, w: W - 2*M, h: 0.62, rectRadius: 0.06,
+    const y = 2.65 + i * 0.62;
+    s.addShape(P.ShapeType.roundRect, { x: M, y, w: W - 2*M, h: 0.54, rectRadius: 0.05,
       fill: { color: i % 2 ? 'F6FAFC' : TINT }, line: { color: 'E2ECF2', width: 0.5 } });
-    s.addText(r[0], { x: M + 0.3, y: y + 0.13, w: 3.3, h: 0.36, fontSize: 14, bold: true,
+    s.addText(r[0], { x: cx[0], y: y + 0.13, w: 4.4, h: 0.32, fontSize: 13.5, bold: true,
       color: INK, fontFace: BF, isTextBox: true, margin: 0 });
-    s.addText(r[1], { x: M + 3.7, y: y + 0.1, w: 1.5, h: 0.42, fontSize: 17, bold: true,
-      color: r[3], fontFace: HF, isTextBox: true, margin: 0 });
-    s.addText(r[2], { x: M + 5.4, y: y + 0.15, w: 6.2, h: 0.36, fontSize: 13, color: BODY,
-      fontFace: BF, isTextBox: true, margin: 0 });
+    s.addText(r[1], { x: cx[1], y: y + 0.13, w: 3.6, h: 0.32, fontSize: 13, bold: true,
+      color: r[2], fontFace: BF, isTextBox: true, margin: 0 });
+    s.addText(r[3], { x: cx[2], y: y + 0.13, w: 3.6, h: 0.32, fontSize: 13, bold: true,
+      color: r[4], fontFace: BF, isTextBox: true, margin: 0 });
   });
-  s.addText('The queue under static fq_codel was already only ~7 packets. There was very little delay left to remove, and tightening target costs more drop-and-retransmit than it saves.',
-    { x: M, y: 6.2, w: W - 2*M, h: 0.6, fontSize: 13, italic: true, color: MUTE,
+
+  s.addText('The workload designed to give the controller something to respond to is the one where it helps least. The sham condition rules out overhead, so these are its decisions.',
+    { x: M, y: 5.85, w: W - 2*M, h: 0.6, fontSize: 13, italic: true, color: INK,
       fontFace: BF, isTextBox: true });
-  s.addNotes('Figures from the pilot; the full three-repetition suite refines them. The direction is not expected to change.');
+  s.addNotes('Steady load has a stable operating point to converge on; staged load does not, and the adjustments lag the transitions.');
+}
+
+/* -------------------------------------- 12b an off-the-shelf alternative wins */
+{
+  const s = light('CAKE beats the adapted system');
+  s.addText('No controller. One configuration argument. Lower latency than tuned fq_codel.',
+    { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 15, color: BODY, fontFace: BF, isTextBox: true });
+
+  const cmp = [['fq_codel (static)', '24.6 ms', '36.4 ms', MUTE],
+               ['fq_codel + ACAPE', '24.4 ms', '35.9 ms', TEAL],
+               ['CAKE', '22.9 ms', '33.6 ms', GOOD]];
+  s.addText('p95 probe RTT', { x: M + 5.3, y: 1.75, w: 3.0, h: 0.3, fontSize: 11.5, bold: true,
+    color: MUTE, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 });
+  s.addText('mean bulk RTT', { x: M + 8.5, y: 1.75, w: 3.0, h: 0.3, fontSize: 11.5, bold: true,
+    color: MUTE, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 });
+  cmp.forEach((c, i) => {
+    const y = 2.1 + i * 0.85;
+    card(s, M, y, W - 2*M, 0.72, i === 2 ? 'EAF4EE' : TINT);
+    s.addText(c[0], { x: M + 0.35, y: y + 0.2, w: 4.7, h: 0.35, fontSize: 15,
+      bold: i === 2, color: INK, fontFace: BF, isTextBox: true, margin: 0 });
+    s.addText(c[1], { x: M + 5.3, y: y + 0.15, w: 3.0, h: 0.42, fontSize: 19, bold: true,
+      color: c[3], fontFace: HF, isTextBox: true, margin: 0 });
+    s.addText(c[2], { x: M + 8.5, y: y + 0.15, w: 3.0, h: 0.42, fontSize: 19, bold: true,
+      color: c[3], fontFace: HF, isTextBox: true, margin: 0 });
+  });
+
+  card(s, M, 4.75, W - 2*M, 1.35, 'E8F1F6');
+  s.addText('CAKE beats the adapted system by more than the adaptation beats the defaults  (p < 0.001).',
+    { x: M + 0.35, y: 4.95, w: W - 2*M - 0.7, h: 0.4, fontSize: 16, bold: true,
+      color: DEEP, fontFace: BF, isTextBox: true, margin: 0 });
+  s.addText('For a practitioner wanting lower latency on this class of link, changing queue discipline is a larger and far simpler win than tuning fq_codel\'s parameters. We report this because it is the most useful thing a reader can take away.',
+    { x: M + 0.35, y: 5.35, w: W - 2*M - 0.7, h: 0.65, fontSize: 13, color: BODY,
+      fontFace: BF, isTextBox: true, margin: 0 });
 }
 
 /* --------------------------------------------------- 13 verification opener */
@@ -476,7 +517,7 @@ dark('What did not survive verification', 'INTEGRITY')
   const s = dark('What we are left with', 'CONCLUSION');
   const pts = [
     ['Flow queueing with a delay target is what matters', '~100× tail-latency reduction at zero goodput cost'],
-    ['Tuning its parameters is not', 'No distinguishable improvement over the defaults in the regimes tested'],
+    ['Tuning its parameters is not', 'Backlog -9.6% under steady load, nothing under a changing one; CAKE beats it outright'],
     ['The methodology is the contribution', 'Seven silent failure classes, the invariants that catch them, and a released artefact'],
   ];
   pts.forEach((p, i) => {

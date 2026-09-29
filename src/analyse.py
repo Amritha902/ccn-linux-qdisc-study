@@ -126,19 +126,29 @@ def write_tables(runs, outdir):
                            [r.get(m[0] + "_ci") for m in METRICS])
         # human-readable
         txt = os.path.join(outdir, f"table_{wl}.txt")
+        SHOW = ["throughput_mbps", "rtt_mean_ms", "rtt_p95_ms",
+                "backlog_mean_pkts", "jain", "drop_rate_mean_per_s"]
+        SHORT = {"throughput_mbps": "goodput Mbps", "rtt_mean_ms": "mean RTT ms",
+                 "rtt_p95_ms": "p95 RTT ms", "backlog_mean_pkts": "backlog pkt",
+                 "jain": "Jain", "drop_rate_mean_per_s": "drops/s"}
+        FMT = dict((m[0], m[2]) for m in METRICS)
+        W = 20
+        width = 24 + 4 + W * len(SHOW)
         with open(txt, "w") as fh:
             fh.write(f"Workload: {wl}   (mean +/- 95% CI across seeds)\n")
-            fh.write("=" * 118 + "\n")
-            fh.write(f"{'system':22s}{'n':>3s}")
-            for _, lbl, _ in METRICS[:6]:
-                fh.write(f"{lbl:>19s}")
-            fh.write("\n" + "-" * 118 + "\n")
+            fh.write("=" * width + "\n")
+            fh.write(f"{'system':24s}{'n':>4s}")
+            for mk in SHOW:
+                fh.write(f"{SHORT[mk]:>{W}s}")
+            fh.write("\n" + "-" * width + "\n")
             for r in rows:
-                fh.write(f"{r['system']:22s}{r['n']:>3d}")
-                for mk, _, fmt in METRICS[:6]:
+                fh.write(f"{r['system']:24s}{r['n']:>4d}")
+                for mk in SHOW:
                     v, h = r.get(mk), r.get(mk + "_ci")
-                    fh.write(f"{(fmt % v) if v is not None else '-':>12s}"
-                             f"{('+-' + (fmt % h)) if h else '':>7s}")
+                    cell = "-" if v is None else (FMT[mk] % v)
+                    if h:
+                        cell += " \u00b1" + (FMT[mk] % h)
+                    fh.write(f"{cell:>{W}s}")
                 fh.write("\n")
         print(open(txt).read())
     with open(os.path.join(outdir, "tables.json"), "w") as fh:

@@ -4,3 +4,5 @@ paper/*.aux
 paper/*.log
 paper/*.out
 results_dbg/
+node_modules/
+package-lock.json

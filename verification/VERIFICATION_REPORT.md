@@ -30,6 +30,7 @@ recomputation over the committed logs or by a live experiment run in this contai
 | 14 | eBPF elephant/mice classification is exercised | **REFUTED** — threshold is unreachable at this link rate |
 | 15 | "Adaptive RED" is the Floyd et al. baseline | **REFUTED** — it never instantiates the `red` qdisc; it is a second fq_codel controller |
 | 16 | The F1 qdisc-selection bug is confined to `acape_v5.py` | **REFUTED** — present in every measurement path, including the Grafana exporter |
+| 17 | The headline figures were plotted from the logs | **REFUTED** — the stabilisation chart, the C2 figure and the summary table are hardcoded literals |
 
 ---
 
@@ -249,6 +250,59 @@ actually applied  : 5    4    4    4    3    3    3    2    2    2    2    2    
 ```
 The paper's "each step ×0.9" staircase is a software variable, not a qdisc parameter.
 (fq_codel accepts sub-ms values as `us`; the integer-ms rounding discards them.)
+
+### 2.5b The headline figures are hardcoded, not plotted from data
+
+`scripts/plot_comparison.py` — which produced `comparison_bars.png`,
+`comparison_predictive.png` and `comparison_table.png`, all reproduced in the
+paper — contains literal values in place of measurements in three places.
+
+**(a) The stabilisation-time chart (lines 433–444).** The entire bar chart, its
+labels and its annotation are constants. Nothing is read from any log:
+
+```python
+stab = [120, 70, 60, 5]
+stab_labels = ["never\n(>120s)", "~70 s", "~60 s", "<5 s  \u2605"]
+...
+ax.text(2.85, 14, "12\u00d7 faster\nthan A.RED", ...)
+```
+
+This is the sole origin of the paper's "12× faster stabilisation" claim and of
+the "<5 s vs ~60 s" comparison. No stabilisation time was ever measured.
+
+**(b) The C2 predictive-control figure (lines 307–310).** When the adjustment
+logs yield no PREDICTIVE or REACTIVE entries, the script substitutes two
+hardcoded timestamp arrays under a comment asserting they are measured:
+
+```python
+if not pred_t and not react_t:
+    # From actual measured run
+    react_t = [5.1, 10.2, 25.7, 30.8, 41.1, 56.5]
+    pred_t  = [15.4, 20.5, 35.9, 46.2, 51.3, 61.6, 66.7, 71.9, 77.0]
+```
+
+As established in §2.3, 31 of 32 adjustment logs contain zero PREDICTIVE
+entries, so this fallback fires and the figure plots invented timestamps.
+
+**(c) The summary table (lines 486–492).** Every cell is a string literal:
+
+```python
+["Avg queue backlog", "~450 pkts", "~320 pkts", "~270 pkts", "~240 pkts  " + T],
+["Stabilises in",     "never",     "~70 s",     "~60 s",     "<5 s  " + T],
+```
+
+**(d) A silent data substitution (lines 259, 398).**
+`np.mean(valid(P["bl"])) if valid(P["bl"]) else 270` quietly yields 270
+whenever the backlog series is empty.
+
+Note that the two fabricated sets do not even agree with each other: the plot
+script uses 450/320/270/240 while the paper's table uses 434/412/357/314, and
+the measured data gives 21.7/16.4/–/15.6.
+
+These may well be development placeholders that were never removed. Whatever
+the intent, the consequence is the same: **the figures presenting this
+project's headline results are not derived from its measurements**, and any
+table or claim traceable to them has no evidential basis.
 
 ### 2.6 The headline comparison table is not supported by the logs
 

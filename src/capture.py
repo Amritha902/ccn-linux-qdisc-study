@@ -139,3 +139,69 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def side_by_side(step, title, explain, left, right, outdir):
+    """Render two labelled panels next to each other (e.g. before vs after).
+
+    `left` and `right` are dicts: {label, command, output, verdict}
+    where verdict is one of 'bad', 'good', or None.
+    """
+    os.makedirs(outdir, exist_ok=True)
+    f, fb = _font(MONO, FS - 1), _font(MONO_B, FS - 1)
+    ft, fe = _font(MONO_B, FS + 5), _font(MONO, FS - 1)
+    fl = _font(MONO_B, FS + 1)
+
+    pw = 72                                    # chars per panel
+    def prep(p):
+        lines = [f"$ {p['command']}"]
+        for raw in p["output"].rstrip("\n").split("\n"):
+            lines.extend(textwrap.wrap(raw.replace("\t", "    "), pw) or [""])
+        return lines
+
+    L, R = prep(left), prep(right)
+    nrows = max(len(L), len(R))
+    exp_lines = textwrap.wrap(explain, 150)
+
+    panel_w = PAD * 2 + pw * 9
+    W = panel_w * 2 + PAD * 3
+    head_h = PAD + (FS + 5) + 10 + len(exp_lines) * (LH - 2) + PAD
+    body_h = PAD + 30 + nrows * (LH - 2) + PAD
+    H = head_h + body_h + 34
+
+    img = Image.new("RGB", (W, H), BG)
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, W, head_h], fill=HEADER)
+    d.line([(0, head_h), (W, head_h)], fill=BORDER, width=2)
+
+    y = PAD
+    d.text((PAD, y), f"STEP {step}", font=ft, fill=ACCENT)
+    tw = d.textlength(f"STEP {step}", font=ft)
+    d.text((PAD + tw + 14, y), title, font=ft, fill=FG)
+    y += FS + 5 + 10
+    for ln in exp_lines:
+        d.text((PAD, y), ln, font=fe, fill=MUTED)
+        y += LH - 2
+
+    for i, (panel, lines) in enumerate(((left, L), (right, R))):
+        x0 = PAD + i * (panel_w + PAD)
+        d.rectangle([x0, head_h + PAD, x0 + panel_w, H - 34],
+                    outline=BORDER, width=1)
+        hue = RED if panel.get("verdict") == "bad" else (
+              GREEN if panel.get("verdict") == "good" else ACCENT)
+        d.rectangle([x0, head_h + PAD, x0 + panel_w, head_h + PAD + 26], fill=hue)
+        d.text((x0 + 10, head_h + PAD + 5), panel["label"], font=fl, fill=(13, 17, 23))
+        yy = head_h + PAD + 34
+        for j, ln in enumerate(lines):
+            col = ACCENT if j == 0 else colour_for(ln)
+            d.text((x0 + 10, yy), ln, font=fb if j == 0 else f, fill=col)
+            yy += LH - 2
+
+    d.line([(0, H - 30), (W, H - 30)], fill=BORDER, width=1)
+    d.text((PAD, H - 24),
+           f"captured {time.strftime('%Y-%m-%d %H:%M:%S')} UTC   kernel {os.uname().release}",
+           font=fe, fill=MUTED)
+    path = os.path.join(outdir, f"step{step}_{_slug(title)}.png")
+    img.save(path)
+    print(f"  STEP {step}  {title}  -> {os.path.basename(path)}")
+    return path

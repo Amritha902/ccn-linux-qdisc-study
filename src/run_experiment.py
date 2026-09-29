@@ -22,7 +22,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 SERVER_IP = "192.168.2.2"
-PORT = 5201
+BASE_PORT = 5201
 
 AQM_SPECS = {
     "pfifo":      ("pfifo",     "limit 1000"),
@@ -66,7 +66,8 @@ def build_testbed(aqm, rate, rtt_ms):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--aqm", required=True, choices=sorted(AQM_SPECS))
-    p.add_argument("--seed", type=int, default=1)
+    p.add_argument("--seed", type=int, default=1,
+                   help="independent repetition index (not a PRNG seed)")
     p.add_argument("--rate-mbit", type=float, default=10.0)
     p.add_argument("--rtt-ms", type=int, default=20)
     p.add_argument("--duration", type=int, default=120)
@@ -85,17 +86,26 @@ def main():
     outdir = os.path.join(a.outdir, label)
     os.makedirs(outdir, exist_ok=True)
 
+    # `--seed` indexes an INDEPENDENT REPETITION, not a PRNG seed. iperf3
+    # exposes no seed and the qdiscs are deterministic given the traffic, so
+    # nothing here is pseudo-randomised; repetitions differ only through real
+    # timing variation in the system. The confidence intervals therefore
+    # describe run-to-run variance, which is the quantity of interest, but the
+    # word "seed" should be read as "repetition" throughout.
+    port = BASE_PORT
+    start_jitter = 0.0
+
     kind, aqm_args, setup_out = build_testbed(a.aqm, a.rate_mbit, a.rtt_ms)
     with open(os.path.join(outdir, "00_setup.txt"), "w") as fh:
         fh.write(setup_out)
 
     procs = []
     try:
-        srv = subprocess.Popen(nsx("ns_server", "iperf3", "-s", "-p", str(PORT)),
+        srv = subprocess.Popen(nsx("ns_server", "iperf3", "-s", "-p", str(port)),
                                stdout=open(os.path.join(outdir, "iperf_server.log"), "w"),
                                stderr=subprocess.STDOUT)
         procs.append(srv)
-        time.sleep(1.5)
+        time.sleep(1.5 + start_jitter)
 
         rec = subprocess.Popen(
             [sys.executable, os.path.join(HERE, "recorder.py"),
@@ -115,6 +125,7 @@ def main():
 
 
         ctl = None
+        ctl_note = None
         if a.sham:
             # Control condition: the controller runs and polls at the same
             # cadence but never applies a parameter change. Any latency
@@ -149,7 +160,7 @@ def main():
         ijson = os.path.join(outdir, "iperf_client.json")
         if a.workload == "steady":
             subprocess.run(
-                nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(PORT),
+                nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(port),
                     "-P", str(a.flows), "-t", str(a.duration), "-i", "1",
                     "-J", "--logfile", ijson), check=False)
         else:
@@ -160,14 +171,20 @@ def main():
                       (max(2, a.flows // 4), a.duration - 2 * seg)]
             for i, (nf, dur) in enumerate(stages):
                 subprocess.run(
-                    nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(PORT),
+                    nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(port),
                         "-P", str(nf), "-t", str(dur), "-i", "1", "-J",
                         "--logfile", os.path.join(outdir, f"iperf_stage{i}.json")),
                     check=False)
             shutil.copy(os.path.join(outdir, "iperf_stage1.json"), ijson)
 
         if ctl:
-            ctl.wait(timeout=30)
+            try:
+                ctl.wait(timeout=30)
+            except subprocess.TimeoutExpired:
+                # Never let a slow controller abort the summary; the run's
+                # measurements are already on disk.
+                ctl_note = "controller did not exit within 30s"
+                ctl.terminate()
         rec.send_signal(signal.SIGTERM); rec.wait(timeout=10)
         ping.send_signal(signal.SIGTERM)
         ping_out = ping.communicate(timeout=10)[0] or ""
@@ -181,7 +198,12 @@ def main():
                    "rate_mbit": a.rate_mbit, "base_rtt_ms": a.rtt_ms,
                    "duration_s": a.duration, "flows": a.flows,
                    "workload": a.workload, "label": label,
-                   "sham": a.sham}
+                   "sham": a.sham, "port": port,
+                   "start_jitter_s": round(start_jitter, 3),
+                   "seed_semantics": "independent repetition index, "
+                                     "not a PRNG seed"}
+        if ctl_note:
+            summary["controller_note"] = ctl_note
         # Goodput must come from sum_RECEIVED, not sum_sent. With a large
         # unmanaged buffer (pfifo) the sender dumps into the queue faster than
         # the link drains, so sum_sent reports more than the link can carry --

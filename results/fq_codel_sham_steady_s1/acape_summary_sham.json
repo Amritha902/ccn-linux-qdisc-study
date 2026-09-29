@@ -1,0 +1,10 @@
+{
+  "ticks": 89,
+  "adjustments": 0,
+  "predictive": 0,
+  "mode": "tc-only",
+  "prog_id": null,
+  "metrics": "results/fq_codel_sham_steady_s1/acape_metrics_sham.csv",
+  "adj": "results/fq_codel_sham_steady_s1/acape_adj_sham.csv",
+  "state": "results/fq_codel_sham_steady_s1/acape_state_sham.csv"
+}

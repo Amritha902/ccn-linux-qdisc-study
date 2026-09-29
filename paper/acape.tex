@@ -49,10 +49,15 @@ trajectory estimate. We evaluate it against eight queue disciplines --
 \texttt{fq\_codel} -- under two workloads and three seeds, reporting means with
 95\% confidence intervals.
 
-The headline finding is negative and we report it as such: under the conditions
-we tested, static \texttt{fq\_codel} is already close to the achievable latency
-floor, and runtime adaptation of its parameters does not produce a
-statistically meaningful improvement. The measured gap between \texttt{pfifo}
+Runtime adaptation of an AQM's delay target is not itself new --- DESiRED
+\cite{desired2024} does it in P4 with reinforcement learning --- so our claim is
+the evaluation rather than the mechanism: to our knowledge this is the first
+\emph{controlled} evaluation of parameter adaptation for a flow-queueing AQM,
+using a sham-controller condition that separates the controller's computational
+cost from its control decisions. The headline finding is negative and we report
+it as such: under the conditions we tested, static \texttt{fq\_codel} is already
+close to the achievable latency floor, and runtime adaptation of its parameters
+does not produce a statistically meaningful improvement. The measured gap between \texttt{pfifo}
 and every flow-queueing discipline is two orders of magnitude in tail latency,
 while the gap between static and adapted \texttt{fq\_codel} is within
 confidence intervals. We also report the methodological findings that produced
@@ -150,22 +155,49 @@ AQM retuning.
 
 QueuePilot \cite{queuepilot2023} trains a reinforcement-learning agent offline
 and distils it into a lightweight online policy adapting ECN marking
-probability. Toopchinezhad and Ahmadi \cite{mlaqm2025} survey the field and
-note that most proposals are evaluated only in simulation. L4S
+probability. AQM-LLM \cite{aqmllm2026} distils a large language model into an
+L4S controller on FreeBSD. Toopchinezhad and Ahmadi \cite{mlaqm2025} survey the
+field and note that most proposals are evaluated only in simulation. L4S
 \cite{rfc9330,rfc9332} reaches a far lower latency floor than any parameter
 tuning, but by changing the signalling contract between network and transport
 rather than by tuning a queue.
+
+\subsection{Runtime adaptation of a delay target}
+
+DESiRED \cite{desired2024} is the closest prior work and predates this study.
+It adapts the \emph{target delay} of a P4 AQM at runtime using a deep
+reinforcement learning agent fed by In-band Network Telemetry, reporting large
+improvements in video quality of experience. The concept pursued here --
+runtime adaptation of an AQM's delay target driven by live telemetry -- is
+therefore \textbf{not novel}, and we do not claim it.
+
+What differs is the deployment surface. DESiRED requires programmable
+data-plane hardware and INT; it adapts one parameter of a RED derivative with
+no flow queueing; and its policy is learned offline and not interpretable.
+This work adapts four parameters of \texttt{fq\_codel} on an unmodified Linux
+host with a transparent AIMD rule. That is an engineering distinction, not a
+conceptual one.
 
 \subsection{Position of this work}
 
 AIMD adaptation of a drop probability is established \cite{ared2001};
 analytical adaptation of CoDel's \texttt{interval} is established
 \cite{yeleung2020}; learned adaptation of marking probability is established
-\cite{queuepilot2023}. AIMD adaptation of \texttt{fq\_codel}'s four parameters
-driven by eBPF flow telemetry has not been published. That is a gap in what has
-been \emph{measured}, not a demonstrated deficiency in \texttt{fq\_codel}, and
-we treat it accordingly: the research question is whether the adaptation helps,
-with a genuine possibility that it does not.
+\cite{queuepilot2023,aqmllm2026}; and runtime adaptation of an AQM's delay
+target is established \cite{desired2024}. The particular combination used here
+-- AIMD over \texttt{fq\_codel}'s four parameters, driven by eBPF flow
+telemetry, on stock Linux -- appears unpublished, but a combination is a weak
+novelty claim and we do not rest the paper on it.
+
+The contribution we do claim is the evaluation. Every system above reports that
+its adaptation improved something. None runs a control condition separating the
+controller's computational cost from its control decisions; none reports
+sparse-probe and bulk-flow latency separately, despite flow-queueing AQMs
+privileging sparse flows by design; none compares against eight alternative
+queue disciplines under an identical bottleneck; and none reports a null result
+for the adaptation itself. This paper does all four. The research question is
+whether adapting these parameters helps, with a genuine possibility that it does
+not -- and the apparatus is built so that answer would be visible.
 
 %% ============================================================
 \section{Testbed}
@@ -501,6 +533,15 @@ Comprehensive Queue Management Solution for Home Gateways,'' in
 E.~Sharafzadeh, R.~Matson, J.~Tourrilhes, P.~Sharma, and S.~Ghorbani,
 ``Self-Clocked Round-Robin Packet Scheduling,'' in \textit{Proc. USENIX NSDI},
 Apr. 2025.
+
+\bibitem{desired2024}
+F.~Rodriguez et al., ``DESiRED --- Dynamic, Enhanced, and Smart iRED: A P4-AQM
+with Deep Reinforcement Learning and In-band Network Telemetry,''
+\textit{Computer Networks}, vol.~244, 2024.
+
+\bibitem{aqmllm2026}
+D.~Satish et al., ``Distilling Large Language Models for Network Active Queue
+Management,'' \textit{IEEE Trans. Netw.}, 2026.
 
 \bibitem{queuepilot2023}
 M.~Dery, O.~Krupnik, and I.~Keslassy, ``QueuePilot: Reviving Small Buffers With

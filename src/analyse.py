@@ -206,7 +206,8 @@ def write_facts(runs, outdir):
 
     for wl in ("steady", "staged"):
         for key in ORDER:
-            for metric, short in (("rtt_p95_ms", "RttP95"),
+            # LaTeX macro names may contain only letters, so no digits here.
+            for metric, short in (("rtt_p95_ms", "RttPninetyfive"),
                                   ("rtt_mean_ms", "RttMean"),
                                   ("throughput_mbps", "Goodput"),
                                   ("backlog_mean_pkts", "Backlog"),

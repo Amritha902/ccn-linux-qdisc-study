@@ -31,6 +31,8 @@ recomputation over the committed logs or by a live experiment run in this contai
 | 15 | "Adaptive RED" is the Floyd et al. baseline | **REFUTED** — it never instantiates the `red` qdisc; it is a second fq_codel controller |
 | 16 | The F1 qdisc-selection bug is confined to `acape_v5.py` | **REFUTED** — present in every measurement path, including the Grafana exporter |
 | 17 | The headline figures were plotted from the logs | **REFUTED** — the stabilisation chart, the C2 figure and the summary table are hardcoded literals |
+| 18 | Part 1 characterised qdiscs on the WiFi interface `wlp4s0` | **REFUTED** — all traffic ran over loopback at 93–219 Gbit/s |
+| 19 | Part 2's RTT percentiles (0.541 / 2.200 / 2.445 / 5.280 ms) | **UNSUPPORTED** — no RTT was ever measured anywhere in the repository |
 
 ---
 
@@ -161,6 +163,66 @@ A second, smaller defect in the same file: `parse_key()` located the transport
 header at `(ip + 1)`, assuming a 20-byte IP header, so source and destination
 ports are misread whenever IP options are present. Not triggered by this
 testbed's traffic, but incorrect in general.
+
+### 2.1b Parts 1–3 ran over loopback, not through any qdisc
+
+The README states Part 1 characterised `pfifo_fast` and `fq_codel` on the real
+WiFi interface `wlp4s0`. The log shows otherwise:
+
+```
+$ head -2 logs/phase1_iperf.log
+Connecting to host 127.0.0.1, port 5201
+...
+[SUM]   0.00-1.00   sec  22.9 GBytes   197 Gbits/sec    0
+```
+
+Traffic went to **127.0.0.1**. Loopback does not traverse `wlp4s0`, so
+`tc qdisc add dev wlp4s0 root pfifo_fast` had no effect on it whatsoever. The
+README's own command listing shows this (`iperf3 -c 127.0.0.1 -P 8 -t 30`)
+while the surrounding text describes characterising `wlp4s0`.
+
+Peak aggregate rates per phase confirm no shaper was ever in the path:
+
+| Log | Peak aggregate | Nominal bottleneck |
+|---|---|---|
+| `phase1_iperf.log` | **219 Gbit/s** | pfifo_fast on wlp4s0 |
+| `phase2A_iperf.log` | **95.0 Gbit/s** | TBF 5 Mbit |
+| `phase2B_iperf.log` | **93.2 Gbit/s** | TBF 5 Mbit |
+| `phase3A_iperf.log` | **112 Gbit/s** | TBF + fq_codel |
+| `phase3B_iperf.log` | **110 Gbit/s** | TBF + fq_codel |
+
+No file in the repository mentions `wlp4s0` at all:
+
+```
+$ grep -rl "wlp4s0" logs/
+(no matches)
+```
+
+Every Part 1 finding — "bursty drop clusters under pfifo_fast", "fq_codel
+distributed drops more evenly", "Jain ~0.89 vs 0.9997", "P95 latency > 15 ms"
+— describes behaviour that was never observed, because no queue discipline was
+ever in the traffic path.
+
+### 2.1c No RTT was ever measured
+
+The README's Part 2 table reports Avg RTT 0.541 ms, P95 2.200 ms, P99 2.445 ms
+and Max 5.280 ms, and the paper repeats P95 = 2.2 ms. There is no RTT
+measurement anywhere in the repository:
+
+```
+$ grep -rlE "icmp_seq|min/avg/max|rtt min/avg/max" logs/
+(no matches)
+```
+
+No `ping` output, no `iperf3` latency mode, no timestamp-based estimate. These
+four numbers have no source. (The `rtt_proxy` column in the ACAPE metrics is
+the eBPF inter-packet gap, which is 0.000 in every sample per §2.2.)
+
+The claimed aggregate throughput of 10.1 Mbps also exceeds both the 10 Mbit
+link and every value observed in any log (maximum 9.59 Mbps).
+
+The corrected suite measures RTT directly with a concurrent `ping` stream
+through the bottleneck for every run.
 
 ### 2.2c The "Adaptive RED" baseline is not Adaptive RED
 

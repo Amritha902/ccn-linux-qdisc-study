@@ -39,7 +39,7 @@ evaluation should.
 
 The sham condition runs the controller at its full polling cadence and applies
 no parameter change. Against static \texttt{fq\_codel} it is indistinguishable
-on every metric in both workloads --- p95 probe RTT $p=0.29$ (steady) and
+on every metric in both workloads, p95 probe RTT $p=0.29$ (steady) and
 $p=0.24$ (staged), backlog $p=0.94$ and $p=0.76$.
 
 This matters for interpreting the next subsection. Without it, any difference
@@ -93,6 +93,6 @@ prevents the controller reacting to noise and the prediction that would let it
 act before a transition cannot both apply to the same adjustment.
 
 We therefore withdraw the predictive-control contribution rather than claim it.
-Redesigning the gate --- for instance permitting an adjustment when the
-trajectory is confidently non-stable even before the regime settles --- and
+Redesigning the gate, for instance permitting an adjustment when the
+trajectory is confidently non-stable even before the regime settles, and
 re-evaluating it under the same controlled conditions is future work.

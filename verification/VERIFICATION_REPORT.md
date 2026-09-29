@@ -17,8 +17,8 @@ evidence is quoted.
 
 | Claim | Evidence |
 |---|---|
-| Jain's fairness ≈ 0.9997 | Recomputed from per-stream iperf3 data: 0.9996–0.99999 across 25 runs |
-| Aggregate throughput ≈ link capacity | 9.47–9.59 Mbps at 10 Mbit; 4.78–4.79 at 5 Mbit, across 25 runs |
+| Jain's fairness ≈ 0.9997 | Recomputed from per-stream iperf3 data: 0.9996, 0.99999 across 25 runs |
+| Aggregate throughput ≈ link capacity | 9.47, 9.59 Mbps at 10 Mbit; 4.78, 4.79 at 5 Mbit, across 25 runs |
 | eBPF program compiles, attaches, JITs | Live: `id 7 name tc_egress_monit ... jited` |
 | BPF maps readable across namespaces | Live: `map_ids 3,4,5` visible from host; 10 live flow entries |
 
@@ -26,19 +26,19 @@ evidence is quoted.
 
 | # | Claim | Finding |
 |---|---|---|
-| 1 | Part 1 characterised qdiscs on `wlp4s0` | All traffic ran over **loopback at 93–219 Gbit/s**; no log mentions `wlp4s0` |
+| 1 | Part 1 characterised qdiscs on `wlp4s0` | All traffic ran over **loopback at 93-219 Gbit/s**; no log mentions `wlp4s0` |
 | 2 | Part 2 RTT: 0.541 / 2.200 / 2.445 / 5.280 ms | **No RTT was ever measured** anywhere in the repository |
 | 3 | Part 2 aggregate throughput 10.1 Mbps | Exceeds the 10 Mbit link and every logged value (max 9.59) |
-| 4 | Parts 2–4 created a data-path bottleneck | The two-node topology shaped the **ACK path**; data ran unshaped at 9,777 Mbps |
+| 4 | Parts 2, 4 created a data-path bottleneck | The two-node topology shaped the **ACK path**; data ran unshaped at 9,777 Mbps |
 | 5 | Drop rates ~120,000/s are "correct AQM behaviour" | A 10 Mbit link passes at most **826 pkt/s**; artefact of finding 4 |
-| 6 | C3 — eBPF workload profiling worked | `active_flows` = 0 in **21,128 / 21,128** samples (three decode bugs) |
+| 6 | C3, eBPF workload profiling worked | `active_flows` = 0 in **21,128 / 21,128** samples (three decode bugs) |
 | 7 | eBPF elephant classification is exercised | Threshold (10 MB) **exceeds a flow's maximum possible share** (9.38 MB) |
-| 8 | C2 — predictive control acts before transitions | All **375** logged adjustments applied the identical action |
-| 9 | "15 AIMD adjustments" is a result | It is `⌈log(1/5)/log(0.9)⌉` — structural, not measured |
-| 10 | `target` followed a 5.00→1.03 ms staircase | The kernel received `5,4,4,4,3,3,3,2,2,2,2,2,1,1,1,1` |
-| 11 | Backlog table 434 / 412 / 357 / 314 pkts | Appears in no log. Measured: 21.7 / 16.4 / – / 15.6 |
+| 8 | C2, predictive control acts before transitions | All **375** logged adjustments applied the identical action |
+| 9 | "15 AIMD adjustments" is a result | It is `⌈log(1/5)/log(0.9)⌉`, structural, not measured |
+| 10 | `target` followed a 5.00to1.03 ms staircase | The kernel received `5,4,4,4,3,3,3,2,2,2,2,2,1,1,1,1` |
+| 11 | Backlog table 434 / 412 / 357 / 314 pkts | Appears in no log. Measured: 21.7 / 16.4 /, / 15.6 |
 | 12 | "12× faster stabilisation" | The chart is the **hardcoded array** `[120, 70, 60, 5]` |
-| 13 | The C2 predictive figure shows measured data | Falls back to **hardcoded timestamp arrays** when logs are empty — which they are |
+| 13 | The C2 predictive figure shows measured data | Falls back to **hardcoded timestamp arrays** when logs are empty, which they are |
 | 14 | "Adaptive RED" baseline (Floyd et al.) | `adaptive_red.py` contains **zero** references to the `red` qdisc |
 | 15 | `prog_id = 49152` | 49152 is the **tc filter priority**, not a program id |
 | 16 | rtt_proxy flat due to "namespace fd isolation" | Maps were populated throughout; the fault was a userspace decode bug |
@@ -51,7 +51,7 @@ evidence is quoted.
 ### 1.1 Fairness
 
 Recomputing `J = (Σxᵢ)² / (n·Σxᵢ²)` directly from per-stream
-`bits_per_second` in every iperf3 JSON gives 0.9996–0.99999 across 25 runs. The
+`bits_per_second` in every iperf3 JSON gives 0.9996, 0.99999 across 25 runs. The
 claim is real and reproducible.
 
 It is, however, a property of **fq_codel's DRR scheduler**, not of any
@@ -60,8 +60,8 @@ equally. A high Jain index is weak evidence for an AQM contribution.
 
 ### 1.2 Throughput
 
-8-flow runs deliver 9.47–9.59 Mbps against a 10 Mbit TBF; 20-flow runs deliver
-4.78–4.79 against 5 Mbit. Consistent and plausible.
+8-flow runs deliver 9.47, 9.59 Mbps against a 10 Mbit TBF; 20-flow runs deliver
+4.78, 4.79 against 5 Mbit. Consistent and plausible.
 
 ### 1.3 The eBPF program itself
 
@@ -82,7 +82,7 @@ The kernel side is correct. Every failure below is in userspace.
 
 ## 2. Traffic never reached the system under study
 
-### 2.1 Parts 1–3 ran over loopback
+### 2.1 Parts 1, 3 ran over loopback
 
 The README states Part 1 characterised `pfifo_fast` and `fq_codel` on the WiFi
 interface `wlp4s0`. The log:
@@ -115,15 +115,15 @@ $ grep -rl "wlp4s0" logs/
 (no matches)
 ```
 
-Every Part 1 finding — "bursty drop clusters", "fq_codel distributed drops more
-evenly", "Jain ~0.89 vs 0.9997", "P95 latency > 15 ms" — describes behaviour
-that could not have been observed.
+Every Part 1 finding describes behaviour that could not have been observed:
+"bursty drop clusters", "fq_codel distributed drops more evenly",
+"Jain ~0.89 vs 0.9997", "P95 latency > 15 ms".
 
-### 2.2 Parts 2–4 shaped the acknowledgement path
+### 2.2 Parts 2, 4 shaped the acknowledgement path
 
 README §5 attaches the bottleneck to `veth1 root` inside `ns1`, then runs
-`iperf3 -c 10.0.0.1` from `ns2`. Data flows ns2 → ns1, but an egress qdisc on
-`veth1` shapes only ns1 → ns2 — the **acknowledgement** direction.
+`iperf3 -c 10.0.0.1` from `ns2`. Data flows ns2 to ns1, but an egress qdisc on
+`veth1` shapes only ns1 to ns2, the **acknowledgement** direction.
 
 Reproduced live with the README's exact configuration:
 
@@ -140,16 +140,16 @@ acknowledgements.
 
 **This explains the impossible drop rates.** A 10 Mbit shaper passes
 10e6/(66·8) ≈ 18,900 ACK/s; the unshaped multi-Gbit data stream generates far
-more, and the excess is dropped. Logged rates of 100,000–138,000 drops/s are
+more, and the excess is dropped. Logged rates of 100,000-138,000 drops/s are
 consistent with ACK overflow and inconsistent with the data path: at 10 Mbit
 with 1514-byte packets the link carries at most **826 pkt/s**, and iperf3
 reports only ~179 retransmits/s.
 
 Measured: 100% of samples in 19 of 32 ACAPE runs exceed the physical packet
-rate; median logged drop rate up to 128,208/s — **155× the link's packet rate**.
+rate; median logged drop rate up to 128,208/s, **155× the link's packet rate**.
 
 > The later three-node topology in `run_one_system.sh` (ns2 ↔ ns_router ↔ ns1,
-> AQM on `veth_rs`) **is correct**. Only the README's Parts 2–4 and the paper's
+> AQM on `veth_rs`) **is correct**. Only the README's Parts 2, 4 and the paper's
 > main ACAPE results use the broken one.
 
 ### 2.3 No RTT was ever measured
@@ -165,7 +165,7 @@ $ grep -rlE "icmp_seq|min/avg/max|rtt min/avg/max" logs/
 
 No `ping` output, no iperf3 latency mode, no timestamp-based estimate. These
 numbers have no source. (The `rtt_proxy` column is the eBPF inter-packet gap,
-which is 0.000 in every sample — see §3.)
+which is 0.000 in every sample, see §3.)
 
 The claimed 10.1 Mbps aggregate also exceeds both the 10 Mbit link and every
 logged value (maximum 9.59 Mbps).
@@ -182,7 +182,7 @@ Four independent defects, each sufficient on its own.
 ### 3.1 A `TypeError` swallowed by a bare `except`
 
 `bpftool map dump --json` renders byte arrays as hex **strings**
-(`['0xa0','0xb8', ...]`). `bytes(raw[16:24])` raises
+(`['0xa0','0xb8'...]`). `bytes(raw[16:24])` raises
 `TypeError: 'str' object cannot be interpreted as an integer`; the surrounding
 `except: pass` discarded it and returned zeros.
 
@@ -213,7 +213,7 @@ Independently of the above, `tc_monitor.c` defined:
 ```
 
 A 60-second run at 10 Mbit carries 75 MB in total, so with 8 concurrent flows a
-single flow's maximum possible share is **9.38 MB** — below the threshold. Even
+single flow's maximum possible share is **9.38 MB**, below the threshold. Even
 with the decode path fixed, `elephant_flows` remained 0 in all 85 corrected
 samples.
 
@@ -235,7 +235,7 @@ are present.
 
 ## 4. The predictive controller never changed the control action
 
-Across all 32 runs: **375 adjustments — 367 `[REACTIVE]`, 8 `[PREDICTIVE]`**,
+Across all 32 runs: **375 adjustments, 367 `[REACTIVE]`, 8 `[PREDICTIVE]`**,
 and the 8 are confined to one early run. The distinct actions ever applied:
 
 ```
@@ -254,11 +254,11 @@ eff = pred if traj=="WORSENING" else regime
 `predict()` returns `REGIMES[idx+1]` only `if idx<3`; with regime = HEAVY
 (idx 3) that branch cannot fire, so a worsening HEAVY is reported STABLE.
 Regime is HEAVY in 80.9% of samples and NORMAL in 19.0% (MODERATE 0.04%, LIGHT
-0%) — a four-state classifier occupying two states.
+0%), a four-state classifier occupying two states.
 
 The README's example adjustment log is also inconsistent with every real log:
-it shows `RECOVERING → [PREDICTIVE]`, while the code and all logged data
-produce `RECOVERING → [REACTIVE]`.
+it shows `RECOVERING to [PREDICTIVE]`, while the code and all logged data
+produce `RECOVERING to [REACTIVE]`.
 
 ---
 
@@ -281,7 +281,7 @@ targets as `us`; integer-millisecond rounding discards them.
 ### 5.2 "15 adjustments"
 
 24 of 32 runs log exactly 15 adjustments. This is
-`⌈log(1/5)/log(0.9)⌉` — the number of ×0.9 steps from 5 ms to the 1 ms floor.
+`⌈log(1/5)/log(0.9)⌉`, the number of ×0.9 steps from 5 ms to the 1 ms floor.
 The controller drove to the floor and stopped in every run because the regime
 was saturated HEAVY from t=0. The testbed never exercised the adaptive logic.
 
@@ -293,7 +293,7 @@ was saturated HEAVY from t=0. The testbed never exercised the adaptive logic.
 `comparison_predictive.png` and `comparison_table.png`, all reproduced in the
 paper. It contains literal values in place of measurements.
 
-**(a) The stabilisation chart (lines 433–444)** is entirely constant:
+**(a) The stabilisation chart (lines 433, 444)** is entirely constant:
 
 ```python
 stab = [120, 70, 60, 5]
@@ -304,7 +304,7 @@ ax.text(2.85, 14, "12× faster\nthan A.RED", ...)
 This is the sole origin of the "12× faster stabilisation" claim. No
 stabilisation time was ever measured.
 
-**(b) The C2 figure (lines 307–310)** substitutes hardcoded timestamps under a
+**(b) The C2 figure (lines 307, 310)** substitutes hardcoded timestamps under a
 comment asserting they are measured:
 
 ```python
@@ -317,7 +317,7 @@ if not pred_t and not react_t:
 31 of 32 adjustment logs contain zero PREDICTIVE entries, so this fallback
 fires.
 
-**(c) The summary table (lines 486–492)** is string literals:
+**(c) The summary table (lines 486, 492)** is string literals:
 
 ```python
 ["Avg queue backlog", "~450 pkts", "~320 pkts", "~270 pkts", "~240 pkts  " + T],
@@ -327,8 +327,8 @@ fires.
 **(d) A silent substitution (lines 259, 398):**
 `np.mean(valid(P["bl"])) if valid(P["bl"]) else 270`.
 
-The two fabricated sets disagree with each other — 450/320/270/240 in the plot
-script versus 434/412/357/314 in the paper — and both disagree with the
+The two fabricated sets disagree with each other, 450/320/270/240 in the plot
+script versus 434/412/357/314 in the paper, and both disagree with the
 measured data (21.7/16.4/–/15.6).
 
 These may be development placeholders never removed. Either way, **the figures
@@ -376,7 +376,7 @@ the shaper's. Present in:
 | `scripts/record_metrics.py` | 33, 37, 38 |
 | `scripts/acape_exporter.py` | 91, 93, 95 |
 | `scripts/adaptive_red.py` | 60, 62, 64 |
-| `scripts/acape_v5.py` | 238–240 |
+| `scripts/acape_v5.py` | 238, 240 |
 
 Because the Prometheus exporter is affected, the Grafana panels reproduced in
 the paper (backlog = 355 p, drop rate = 22,201/s) were displaying the TBF
@@ -394,7 +394,7 @@ preference (`pref 49152`, tc's default), not a BPF program id.
 
 | Finding | Method |
 |---|---|
-| Loopback in Parts 1–3 | Direct inspection of committed logs |
+| Loopback in Parts 1, 3 | Direct inspection of committed logs |
 | ACK-path topology | Rebuilt the README's exact topology and measured |
 | Drop rate impossibility | Arithmetic against link rate; cross-checked with iperf3 retransmits |
 | eBPF decode bugs | Reproduced against a live `flow_map` entry |
@@ -427,5 +427,5 @@ rebuilds on that foundation.
 The recurring pattern is worth stating on its own: every one of these failures
 produced output that was confident, internally consistent, and wrong. None was
 visible from a summary statistic. Each was caught only by checking a physical
-invariant — bytes per packet, the link's maximum packet rate, whether a control
+invariant, bytes per packet, the link's maximum packet rate, whether a control
 input changes its output, whether a threshold is reachable at all.

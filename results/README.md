@@ -10,7 +10,7 @@ Each run directory contains:
 |---|---|
 | `summary.json` | every computed metric for the run, plus its configuration |
 | `qdisc_timeseries.csv` | 500 ms samples of the AQM's own queue statistics |
-| `iperf_client.json` | iperf3 JSON — per-flow goodput, retransmits, in-band RTT |
+| `iperf_client.json` | iperf3 JSON, per-flow goodput, retransmits, in-band RTT |
 | `iperf_stage*.json` | per-stage JSON for the staged workload |
 | `ping.log` | 20 Hz sparse-flow RTT probe |
 | `bulk_rtt.json` | in-band bulk-flow RTT samples (from iperf3 TCP_INFO) |
@@ -24,7 +24,7 @@ Run labels are `<aqm>[_acape|_sham]_<workload>_s<repetition>`.
 change, so the controller's CPU cost can be separated from its control
 decisions.
 
-`s<N>` indexes an independent repetition, not a PRNG seed — iperf3 exposes no
+`s<N>` indexes an independent repetition, not a PRNG seed, iperf3 exposes no
 seed, so repetitions differ only through real timing variation. Confidence
 intervals describe run-to-run variance.
 

@@ -46,7 +46,7 @@ steady for five consecutive samples**.
 
 But the trajectory is derived from the gradient of drop rate and backlog over
 the same window. When the regime has been unchanged for five ticks, that
-gradient is almost always below the ±0.5 threshold — so the trajectory reads
+gradient is almost always below the ±0.5 threshold, so the trajectory reads
 STABLE, and `pred == regime`, and the adjustment is tagged REACTIVE.
 
 All six adjustments in this run have `trajectory = STABLE`. The ten ticks that
@@ -61,7 +61,7 @@ bug, and it survives the fix to `predict()`.
 ## Consequence for the paper
 
 C2 (predictive regime detection) has never produced a control action that
-differed from the reactive one — not in the original implementation, where an
+differed from the reactive one, not in the original implementation, where an
 index guard made it impossible, and not in the corrected one, where the
 stability gate makes it unreachable. The contribution should be withdrawn, or
 the gate redesigned (for example, allowing an adjustment when the trajectory is

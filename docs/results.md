@@ -1,5 +1,5 @@
 # Part 3: Experimental Results & Analysis
-**Amritha S — VIT Chennai 2026**  
+**Amritha S, VIT Chennai 2026**  
 **Experiment date:** 26 March 2026, 05:28 IST  
 **Duration:** 90.3 s | **Ticks:** 179 | **Adjustments:** 7
 
@@ -7,31 +7,31 @@
 
 ## What the Plots Show
 
-### (a) Throughput — CORRECT and expected
+### (a) Throughput, CORRECT and expected
 - Flat at **9.71 Mbps** throughout (97.1% of 10 Mbit TBF bottleneck)
 - Drops to 0 at t≈88s → iperf3 finished, not a failure
 - **Key finding:** Controller maintained near-line-rate throughput
   while simultaneously reducing queue depth. No throughput collapse.
 
-### (b) Drop Rate (instantaneous Δdrops/Δt) — CORRECT
-- Range: 5,000–23,000 drops/sec
+### (b) Drop Rate (instantaneous Δdrops/Δt), CORRECT
+- Range: 5,000-23,000 drops/sec
 - This is real: 50 Mbps+ TCP load injected into a 10 Mbit bottleneck
   produces genuinely extreme drop rates
 - Chaotic spikes = TCP AIMD sawtooth interacting with fq_codel CoDel drops
-- **This is NOT a bug** — it demonstrates why adaptive control is needed
+- **This is NOT a bug**, it demonstrates why adaptive control is needed
 
-### (c) Queue Backlog — THE KEY RESULT
+### (c) Queue Backlog, THE KEY RESULT
 - Starts at ~450 packets at t=0
 - Controller drives it DOWN to ~240 packets by t=40s
 - **Holds stable at ~240 packets for remaining 50 seconds**
-- This is a **46% reduction in queue depth** — the core contribution
+- This is a **46% reduction in queue depth**, the core contribution
 - Dashed lines = each AIMD adjustment, clearly correlating with backlog decrease
 
-### (d) Adaptive Parameter Evolution — AIMD WORKING
+### (d) Adaptive Parameter Evolution, AIMD WORKING
 - target: 2.0 ms → 1.0 ms (7 multiplicative-decrease steps, β=0.9)
 - limit:  487 pkts → 256 pkts (floor reached)
-- interval: hit 50ms floor immediately (correct — CoDel minimum)
-- **Clean staircase descent** — exactly what Adaptive RED predicts
+- interval: hit 50ms floor immediately (correct, CoDel minimum)
+- **Clean staircase descent**, exactly what Adaptive RED predicts
 
 ---
 
@@ -39,11 +39,11 @@
 
 | State    | % time | Interpretation |
 |----------|--------|----------------|
-| HEAVY    | 97.2%  | Expected — 50 Mbps load into 10 Mbit bottleneck is genuinely extreme congestion |
-| NORMAL   | 2.8%   | Final seconds after iperf finished — controller correctly detected recovery |
+| HEAVY    | 97.2%  | Expected, 50 Mbps load into 10 Mbit bottleneck is genuinely extreme congestion |
+| NORMAL   | 2.8%   | Final seconds after iperf finished, controller correctly detected recovery |
 | LIGHT/MOD| 0%     | Traffic was too aggressive to pass through intermediate states |
 
-The 97.2% HEAVY is **not a failure** — it confirms:
+The 97.2% HEAVY is **not a failure**, it confirms:
 1. The traffic load genuinely represents heavy congestion
 2. The classifier correctly identified the congestion level throughout
 3. The controller responded with 7 AIMD adjustments despite sustained HEAVY state
@@ -77,7 +77,7 @@ The 97.2% HEAVY is **not a failure** — it confirms:
 | Adaptation timescale  | ~0.5s intervals            | ~5s intervals               |
 | Kernel modification   | Not required               | Not required ✓              |
 | Queue stabilisation   | Yes (within target range)  | Yes (backlog halved) ✓      |
-| Throughput maintained | 98–100%                    | 97.1% ✓                     |
+| Throughput maintained | 98, 100%                    | 97.1% ✓                     |
 
 ---
 

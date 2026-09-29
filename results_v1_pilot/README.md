@@ -8,7 +8,7 @@ improvements and differ in methodology:
 
 - Latency came from a single 5 Hz `ping` probe (~300 samples). The definitive
   suite uses a 20 Hz probe (~1200 samples) *and* in-band bulk-flow RTT from
-  iperf3's TCP_INFO, because the two differ substantially — the probe is
+  iperf3's TCP_INFO, because the two differ substantially, the probe is
   privileged by `fq_codel`'s new-flow heuristic.
 - There is no sham-controller condition, so any latency difference between
   static and adaptive `fq_codel` confounds the controller's CPU cost with its

@@ -1,6 +1,6 @@
 # Project status
 
-**Branch:** `claude/loving-ptolemy-nc6z3n` — all work committed and pushed.
+**Branch:** `claude/loving-ptolemy-nc6z3n`, all work committed and pushed.
 
 ## Data
 
@@ -36,7 +36,7 @@ adaptation gains.
 
 Predictive control (C2) never engaged in any run; the stability gate and the
 prediction are mutually exclusive by construction. Withdrawn rather than
-claimed — see `verification/C2_FINDING.md`.
+claimed, see `verification/C2_FINDING.md`.
 
 ## Deliverables
 

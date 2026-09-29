@@ -27,8 +27,8 @@ about changing them while the system runs?**
 
 Gettys and Nichols named and characterised bufferbloat: memory became cheap
 faster than queue management improved, so network devices acquired buffers far
-larger than any control loop needed, and TCP — which infers congestion from
-loss — dutifully filled them [1]. The result is queueing delay of hundreds of
+larger than any control loop needed, and TCP, which infers congestion from
+loss, dutifully filled them [1]. The result is queueing delay of hundreds of
 milliseconds to seconds on an otherwise healthy link, with throughput
 essentially unaffected. Latency degrades while every utilisation metric looks
 fine, which is why the problem persisted for years.
@@ -41,8 +41,8 @@ that a qdisc can influence at all.
 
 The IETF's position is RFC 7567, which supersedes RFC 2309 and recommends that
 network devices deploy AQM by default, explicitly preferring schemes that
-require no per-flow configuration [3]. That recommendation — *no manual tuning*
-— is the standard against which any adaptive scheme should be judged, and is
+require no per-flow configuration [3]. That recommendation, *no manual tuning*
+is the standard against which any adaptive scheme should be judged, and is
 worth keeping in view: a controller that adds tuning burden is moving away from
 the IETF's stated goal, not towards it.
 
@@ -66,7 +66,7 @@ would otherwise back off in lockstep.
 
 RED's weakness is well documented and was conceded by its authors: its
 behaviour depends sharply on `min_th`, `max_th`, `max_p` and `w_q`, and the
-correct values depend on link rate, RTT and flow count — none of which the
+correct values depend on link rate, RTT and flow count, none of which the
 algorithm observes. A RED configuration tuned for one operating point misbehaves
 at another.
 
@@ -83,13 +83,13 @@ queue length near a configured target regardless of load, so the operator sets a
 Two points matter for positioning:
 
 - Adaptive RED adapts exactly **one** parameter, and that parameter is a drop
-  probability, not a delay target.
+ probability, not a delay target.
 - The AIMD constants (β = 0.9, and the additive step) are themselves fixed. The
-  scheme removes one layer of manual tuning and introduces a smaller one.
+ scheme removes one layer of manual tuning and introduces a smaller one.
 
 This project applies the same AIMD policy to `fq_codel`'s `target`, `interval`
 and `limit`. That is an extension of Adaptive RED's mechanism to a different
-qdisc, not a new control law — and this survey's position is that the extension
+qdisc, not a new control law, and this survey's position is that the extension
 should be argued and measured on those terms rather than claimed as novel
 control theory.
 
@@ -101,7 +101,7 @@ control theory.
 
 Nichols and Jacobson's Controlled Delay algorithm [6], standardised as RFC 8289
 [7], changed the controlled variable from queue *length* to queue *sojourn
-time* — how long a packet actually waited. CoDel tracks the minimum sojourn time
+time*, how long a packet actually waited. CoDel tracks the minimum sojourn time
 over a sliding `interval` (default 100 ms) and begins dropping when that minimum
 stays above `target` (default 5 ms) for a full interval, with the drop rate
 increasing as the inverse square root of the number of drops in the current
@@ -175,8 +175,8 @@ decision internally.
 
 ### 5.4 Scheduling advances
 
-Sharafzadeh et al.'s Self-Clocked Round-Robin [13] shows that DRR — the
-scheduler inside `fq_codel` — performs poorly under certain packet size
+Sharafzadeh et al.'s Self-Clocked Round-Robin [13] shows that DRR, the
+scheduler inside `fq_codel`, performs poorly under certain packet size
 distributions and bursty arrivals, and proposes a zero-configuration replacement
 with substantially better latency. SCRR is a scheduler, not an AQM, so it is
 orthogonal to parameter adaptation; but it is directly relevant because it
@@ -205,7 +205,7 @@ floor by a different mechanism and is now an IETF standard.
 
 CUBIC [17] is the Linux default and the transport used throughout this study.
 Its window growth is a cubic function of time since the last congestion event,
-which makes it aggressive at filling large buffers — precisely the behaviour
+which makes it aggressive at filling large buffers, precisely the behaviour
 that makes bufferbloat visible.
 
 BBR [18] models the bottleneck bandwidth and round-trip propagation time
@@ -235,20 +235,20 @@ poorly covered in the literature and each silently invalidated an earlier result
 here:
 
 1. **BPF maps are kernel-global.** A program loaded from inside a network
-   namespace has maps visible from the host by id, so no namespace-crossing
-   machinery is required to read them. An earlier draft of this work attributed
-   empty telemetry to "namespace file-descriptor isolation"; that diagnosis was
-   wrong — the maps were populated the whole time and the fault was in userspace
-   decoding.
+ namespace has maps visible from the host by id, so no namespace-crossing
+ machinery is required to read them. An earlier draft of this work attributed
+ empty telemetry to "namespace file-descriptor isolation"; that diagnosis was
+ wrong, the maps were populated the whole time and the fault was in userspace
+ decoding.
 
 2. **`bpf_ktime_get_ns()` is CLOCK_MONOTONIC.** Comparing it against a userspace
-   CLOCK_REALTIME timestamp yields ages of decades and silently disables any
-   age-based filter. This single line zeroed the flow telemetry across 21,128
-   recorded samples.
+ CLOCK_REALTIME timestamp yields ages of decades and silently disables any
+ age-based filter. This single line zeroed the flow telemetry across 21,128
+ recorded samples.
 
 Reading maps via `bpf(2)` directly rather than by spawning `bpftool` per sample
-is also materially faster — in this study, 0.709 s versus 3.17 s per control
-tick — which matters whenever the control interval is short.
+is also materially faster, in this study, 0.709 s versus 3.17 s per control
+tick, which matters whenever the control interval is short.
 
 ---
 
@@ -264,8 +264,8 @@ and Keslassy train a reinforcement-learning agent offline across many settings
 and distil it into a single lightweight policy that tunes ECN marking
 probability online with no further learning, enabling small buffers in backbone
 routers. QueuePilot is important context because it demonstrates that a learned
-policy can be made cheap enough to run inline — the usual objection to RL-based
-AQM — and because it adapts a *marking probability*, the same quantity Adaptive
+policy can be made cheap enough to run inline, the usual objection to RL-based
+AQM, and because it adapts a *marking probability*, the same quantity Adaptive
 RED adapts.
 
 ---
@@ -276,15 +276,15 @@ This is the line the present work sits in.
 
 - **Adaptive RED** [5] adapts `max_p` by AIMD against a queue-length target.
 - **Ye and Leung** [23] analyse CoDel's stability and show that a fixed
-  `interval` can produce unstable queueing delay in some regimes. They derive
-  necessary and sufficient stability conditions for the CoDel control loop and
-  propose ACoDel-IT and ACoDel-TIT, which adjust `interval` adaptively. This is
-  the closest published work to adapting CoDel's own parameters, and it is an
-  analytical result with stability guarantees — a stronger foundation than an
-  empirical AIMD heuristic.
+ `interval` can produce unstable queueing delay in some regimes. They derive
+ necessary and sufficient stability conditions for the CoDel control loop and
+ propose ACoDel-IT and ACoDel-TIT, which adjust `interval` adaptively. This is
+ the closest published work to adapting CoDel's own parameters, and it is an
+ analytical result with stability guarantees, a stronger foundation than an
+ empirical AIMD heuristic.
 - **Borkar** [24] provides the two-timescale stochastic approximation framework
-  that justifies separating a fast measurement loop from a slow parameter-update
-  loop, provided the timescales are adequately separated.
+ that justifies separating a fast measurement loop from a slow parameter-update
+ loop, provided the timescales are adequately separated.
 
 ### The gap, stated honestly
 
@@ -299,15 +299,15 @@ That is a genuine gap, but it is a narrow one, and it should be described as
 such. Specifically, it is a gap in *what has been tried and measured*, not a
 demonstrated deficiency in `fq_codel`. The honest research question is not "no
 one has done this, therefore it is valuable" but "does adapting these parameters
-actually beat the defaults, and in which regimes?" — a question that can only be
+actually beat the defaults, and in which regimes?", a question that can only be
 answered by measurement including the cases where the answer is no.
 
 Two caveats that the earlier drafts of this project understated:
 
 - CoDel's authors argue its defaults are RTT-relative and need no tuning [6].
-  Any gain from adaptation must be demonstrated against that claim, not assumed.
+ Any gain from adaptation must be demonstrated against that claim, not assumed.
 - On the primary latency metric, the relevant baselines are not only static
-  `fq_codel` but also PIE, FQ-PIE and CAKE — and L4S where ECN is available.
+ `fq_codel` but also PIE, FQ-PIE and CAKE, and L4S where ECN is available.
 
 ---
 
@@ -315,31 +315,31 @@ Two caveats that the earlier drafts of this project understated:
 
 | Work | Year | Adapts | Mechanism | Kernel change | Relation to this study |
 |---|---|---|---|---|---|
-| RED [4] | 1993 | — | queue-length EWMA → drop prob. | — | ancestor |
+| RED [4] | 1993 | n/a | queue-length EWMA to drop prob. | n/a | ancestor |
 | Adaptive RED [5] | 2001 | `max_p` | AIMD to queue target | no | **control law borrowed** |
-| CoDel [6,7] | 2012/18 | — | sojourn-time target | — | AQM inside the system under study |
-| PIE [8] | 2017 | — | PI controller on delay | — | baseline, measured here |
-| fq_codel [10] | 2018 | — | DRR + per-queue CoDel | — | **system under study** |
-| FQ-PIE [11] | 2019 | — | DRR + per-queue PIE | — | baseline, measured here |
-| CAKE [12] | 2018 | — | integrated shaper + AQM | — | baseline, measured here |
+| CoDel [6,7] | 2012/18 | n/a | sojourn-time target | n/a | AQM inside the system under study |
+| PIE [8] | 2017 | n/a | PI controller on delay | n/a | baseline, measured here |
+| fq_codel [10] | 2018 | n/a | DRR + per-queue CoDel | n/a | **system under study** |
+| FQ-PIE [11] | 2019 | n/a | DRR + per-queue PIE | n/a | baseline, measured here |
+| CAKE [12] | 2018 | n/a | integrated shaper + AQM | n/a | baseline, measured here |
 | BBR [18] | 2016 | cwnd/pacing | bottleneck model | no (sender) | complementary |
 | ACoDel [23] | 2020 | `interval` | stability analysis | yes | **closest prior work** |
-| QueuePilot [22] | 2023 | marking prob. | offline RL → fixed policy | no | learned alternative |
-| L4S [14-16] | 2023 | — | dual-queue + scalable ECN | yes (+transport) | stronger latency floor, different mechanism |
-| SCRR [13] | 2025 | — | self-clocked round robin | yes | scheduler-side alternative |
-| ML-AQM survey [21] | 2025 | — | taxonomy | — | positions learned AQM |
-| **This work** | 2026 | `target`, `interval`, `limit`, `quantum` | AIMD + gradient trajectory + eBPF flow telemetry | **no** | — |
+| QueuePilot [22] | 2023 | marking prob. | offline RL to fixed policy | no | learned alternative |
+| L4S [14-16] | 2023 | n/a | dual-queue + scalable ECN | yes (+transport) | stronger latency floor, different mechanism |
+| SCRR [13] | 2025 | n/a | self-clocked round robin | yes | scheduler-side alternative |
+| ML-AQM survey [21] | 2025 | n/a | taxonomy | n/a | positions learned AQM |
+| **This work** | 2026 | `target`, `interval`, `limit`, `quantum` | AIMD + gradient trajectory + eBPF flow telemetry | **no** | n/a |
 
 ---
 
 ## References
 
-1. J. Gettys and K. Nichols, "Bufferbloat: Dark Buffers in the Internet," *Communications of the ACM*, vol. 55, no. 1, pp. 57–65, Jan. 2012.
-2. B. Briscoe et al., "Reducing Internet Latency: A Survey of Techniques and Their Merits," *IEEE Communications Surveys & Tutorials*, vol. 18, no. 3, pp. 2149–2196, 2016.
+1. J. Gettys and K. Nichols, "Bufferbloat: Dark Buffers in the Internet," *Communications of the ACM*, vol. 55, no. 1, pp. 57-65, Jan. 2012.
+2. B. Briscoe et al., "Reducing Internet Latency: A Survey of Techniques and Their Merits," *IEEE Communications Surveys & Tutorials*, vol. 18, no. 3, pp. 2149-2196, 2016.
 3. F. Baker and G. Fairhurst, "IETF Recommendations Regarding Active Queue Management," IETF RFC 7567, Jul. 2015.
-4. S. Floyd and V. Jacobson, "Random Early Detection Gateways for Congestion Avoidance," *IEEE/ACM Transactions on Networking*, vol. 1, no. 4, pp. 397–413, Aug. 1993.
+4. S. Floyd and V. Jacobson, "Random Early Detection Gateways for Congestion Avoidance," *IEEE/ACM Transactions on Networking*, vol. 1, no. 4, pp. 397-413, Aug. 1993.
 5. S. Floyd, R. Gummadi, and S. Shenker, "Adaptive RED: An Algorithm for Increasing the Robustness of RED's Active Queue Management," ICSI Technical Report, Aug. 2001.
-6. K. Nichols and V. Jacobson, "Controlling Queue Delay," *ACM Queue*, vol. 10, no. 5, pp. 20–34, May 2012.
+6. K. Nichols and V. Jacobson, "Controlling Queue Delay," *ACM Queue*, vol. 10, no. 5, pp. 20-34, May 2012.
 7. K. Nichols, V. Jacobson, A. McGregor, and J. Iyengar, "Controlled Delay Active Queue Management," IETF RFC 8289, Jan. 2018.
 8. R. Pan, P. Natarajan, F. Baker, and G. White, "Proportional Integral Controller Enhanced (PIE): A Lightweight Control Scheme to Address the Bufferbloat Problem," IETF RFC 8033, Feb. 2017.
 9. R. Jain, D.-M. Chiu, and W. Hawe, "A Quantitative Measure of Fairness and Discrimination for Resource Allocation in Shared Computer Systems," DEC Research Report TR-301, Sep. 1984.
@@ -350,24 +350,24 @@ Two caveats that the earlier drafts of this project understated:
 14. B. Briscoe, K. De Schepper, M. Bagnulo, and G. White, "Low Latency, Low Loss, and Scalable Throughput (L4S) Internet Service: Architecture," IETF RFC 9330, Jan. 2023.
 15. K. De Schepper and B. Briscoe, "The Explicit Congestion Notification (ECN) Protocol for Low Latency, Low Loss, and Scalable Throughput (L4S)," IETF RFC 9331, Jan. 2023.
 16. K. De Schepper, B. Briscoe, and G. White, "Dual-Queue Coupled Active Queue Management (AQM) for Low Latency, Low Loss, and Scalable Throughput (L4S)," IETF RFC 9332, Jan. 2023.
-17. S. Ha, I. Rhee, and L. Xu, "CUBIC: A New TCP-Friendly High-Speed TCP Variant," *ACM SIGOPS Operating Systems Review*, vol. 42, no. 5, pp. 64–74, Jul. 2008.
+17. S. Ha, I. Rhee, and L. Xu, "CUBIC: A New TCP-Friendly High-Speed TCP Variant," *ACM SIGOPS Operating Systems Review*, vol. 42, no. 5, pp. 64-74, Jul. 2008.
 18. N. Cardwell, Y. Cheng, C. S. Gunn, S. H. Yeganeh, and V. Jacobson, "BBR: Congestion-Based Congestion Control," *ACM Queue*, vol. 14, no. 5, 2016.
 19. M. Allman, V. Paxson, and E. Blanton, "TCP Congestion Control," IETF RFC 5681, Sep. 2009.
 20. M. A. M. Vieira et al., "Fast Packet Processing with eBPF and XDP: Concepts, Code, Challenges, and Applications," *ACM Computing Surveys*, vol. 53, no. 1, Article 16, 2020.
 21. M. P. Toopchinezhad and M. Ahmadi, "Machine Learning Approaches for Active Queue Management: A Survey, Taxonomy, and Future Directions," *Computer Networks*, vol. 262, May 2025. arXiv:2410.02563.
 22. M. Dery, O. Krupnik, and I. Keslassy, "QueuePilot: Reviving Small Buffers With a Learned AQM Policy," in *Proc. IEEE INFOCOM*, 2023.
-23. J. Ye and K.-C. Leung, "Adaptive and Stable Delay Control for Combating Bufferbloat: Theory and Algorithms," *IEEE Systems Journal*, vol. 14, no. 1, pp. 1285–1296, Mar. 2020.
-24. V. S. Borkar, "Stochastic Approximation with Two Time Scales," *Systems & Control Letters*, vol. 29, no. 5, pp. 291–294, 1997.
+23. J. Ye and K.-C. Leung, "Adaptive and Stable Delay Control for Combating Bufferbloat: Theory and Algorithms," *IEEE Systems Journal*, vol. 14, no. 1, pp. 1285-1296, Mar. 2020.
+24. V. S. Borkar, "Stochastic Approximation with Two Time Scales," *Systems & Control Letters*, vol. 29, no. 5, pp. 291-294, 1997.
 
 ---
 
-## 12. Recent work (2024–2026)
+## 12. Recent work (2024, 2026)
 
 The field moved substantially while this project was in progress, and in a
 direction that narrows the gap this work claims. The additions below were
 checked against the published record in November 2026.
 
-### 12.1 Adaptive target tuning already exists — in programmable data planes
+### 12.1 Adaptive target tuning already exists, in programmable data planes
 
 **DESiRED** [25] is the closest published work to this project's core idea, and
 it predates it. Fabricio Rodriguez et al. build a P4 AQM (iRED) and then use a
@@ -375,8 +375,8 @@ deep reinforcement learning agent fed by In-band Network Telemetry to **tune
 the AQM's target delay parameter at runtime**, reporting a 42× improvement in
 high-resolution video playback and a 90× reduction in stalling.
 
-This is the same idea — runtime adaptation of an AQM's delay target driven by
-live telemetry — realised in P4 rather than Linux `tc`, and with DRL rather
+This is the same idea, runtime adaptation of an AQM's delay target driven by
+live telemetry, realised in P4 rather than Linux `tc`, and with DRL rather
 than AIMD. Any claim that "no prior work adapts an AQM's target at runtime" is
 therefore wrong. What remains distinct about the present work is narrower and
 should be stated as such: **stock Linux, no kernel or data-plane
@@ -395,8 +395,8 @@ step, and LoRA to keep the trainable parameter count small. It was published in
 *IEEE Transactions on Networking* in 2026, with an open platform on FreeBSD 14.
 
 Its relevance here is as a marker of where the learned-AQM frontier now sits:
-the question is no longer whether a learned policy can run inline — QueuePilot
-[22] settled that — but how much context a controller can usefully consume.
+the question is no longer whether a learned policy can run inline, QueuePilot
+[22] settled that, but how much context a controller can usefully consume.
 Against that, an AIMD rule over four parameters is a deliberately conservative
 design, and its merit has to be interpretability and deployability rather than
 performance.
@@ -412,7 +412,7 @@ resulting number describes the instrument rather than the network.
 
 **BBR over Wi-Fi 6** [29] examines AQM interaction with BBR on modern wireless,
 relevant to the original Part 1 ambition of characterising qdiscs on an 802.11
-interface — an experiment this project attempted but did not in fact perform.
+interface, an experiment this project attempted but did not in fact perform.
 
 ### 12.4 Programmable qdiscs in Linux
 
@@ -434,21 +434,21 @@ Linux queue disciplines under an identical bottleneck with directly measured
 latency, multiple seeds and confidence intervals, on stock kernels with a
 fully released artefact. Comparative AQM measurements at this level of
 methodological care are less common than they should be, and the verification
-methodology — checking physical invariants rather than trusting summary
-statistics — is transferable.
+methodology, checking physical invariants rather than trusting summary
+statistics, is transferable.
 
 **What is not novel.** Runtime adaptation of an AQM's delay target is
 established (DESiRED, 2024). AIMD adaptation of an AQM parameter is
 established (Adaptive RED, 2001). Analytical adaptation of CoDel's interval is
 established (Ye and Leung, 2020). Learned AQM policies are established
 (QueuePilot 2023, AQM-LLM 2026). eBPF telemetry at the `tc` hook is routine.
-The combination — AIMD over four `fq_codel` parameters on stock Linux with eBPF
-flow telemetry — appears not to have been published, but a combination is a
+The combination, AIMD over four `fq_codel` parameters on stock Linux with eBPF
+flow telemetry, appears not to have been published, but a combination is a
 weak novelty claim, and it should be framed as an engineering data point rather
 than a conceptual contribution.
 
 **Where the field has moved.** Toward programmable data planes (P4, eBPF
-qdisc), learned policies (RL, LLM), and changed network–transport contracts
+qdisc), learned policies (RL, LLM), and changed network-transport contracts
 (L4S). All three reach further than parameter tuning on a fixed qdisc. L4S in
 particular achieves sub-millisecond queueing delay by changing what the network
 signals, which no amount of `target` tuning can match.
@@ -463,7 +463,7 @@ answer, and a modest answer honestly reported is a legitimate contribution.
 
 ## References (continued)
 
-25. F. Rodriguez et al., "DESiRED — Dynamic, Enhanced, and Smart iRED: A P4-AQM with Deep Reinforcement Learning and In-band Network Telemetry," *Computer Networks*, vol. 244, 2024. arXiv:2310.18159.
+25. F. Rodriguez et al., "DESiRED, Dynamic, Enhanced, and Smart iRED: A P4-AQM with Deep Reinforcement Learning and In-band Network Telemetry," *Computer Networks*, vol. 244, 2024. arXiv:2310.18159.
 26. R. Kundel et al., "P4-CoDel: Active Queue Management in Programmable Data Planes," in *Proc. IEEE NFV-SDN*, 2018.
 27. D. Satish et al., "Distilling Large Language Models for Network Active Queue Management," *IEEE Transactions on Networking*, 2026. arXiv:2501.16734.
 28. S. Ray, T. Sharma, J. Marques, P. Schmitt, F. Bronzino, and N. Feamster, "Characterizing the Impact of Active Queue Management on Speed Test Measurements," arXiv:2511.19213, Nov. 2025.

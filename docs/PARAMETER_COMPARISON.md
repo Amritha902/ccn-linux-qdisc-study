@@ -2,16 +2,16 @@
 
 Three tables:
 
-1. **Table A** — the queue disciplines measured in this study, with the
+1. **Table A**, the queue disciplines measured in this study, with the
    parameters each exposes and what each controls.
-2. **Table B** — this work against the base paper (Adaptive RED) and the
+2. **Table B**, this work against the base paper (Adaptive RED) and the
    related models, on what each adapts and how.
-3. **Table C** — measured results across all systems. Generated from the logs;
+3. **Table C**, measured results across all systems. Generated from the logs;
    see `figures/comparison/table_*.csv` for the machine-readable form.
 
 ---
 
-## Table A — Queue disciplines under test, and their parameters
+## Table A, Queue disciplines under test, and their parameters
 
 | Discipline | Class | Flow queueing | Delay target | Tunable parameters | Default values used |
 |---|---|---|---|---|---|
@@ -33,13 +33,13 @@ only shaper and every discipline sees the same bottleneck.
 
 ---
 
-## Table B — This work vs. the base paper and the related models
+## Table B, This work vs. the base paper and the related models
 
 | | **Adaptive RED**<br>(base paper) | **ACoDel**<br>Ye & Leung | **QueuePilot** | **DESiRED** | **AQM-LLM** | **L4S / DualPI2** | **This work (ACAPE)** |
 |---|---|---|---|---|---|---|---|
 | Year | 2001 | 2020 | 2023 | 2024 | 2026 | 2023 | 2026 |
-| Venue | ICSI TR | IEEE Syst. J. | INFOCOM | Comput. Netw. | IEEE ToN | IETF RFC | — |
-| **What it adapts** | `max_p` (drop probability) | CoDel `interval` | ECN marking probability | AQM **target delay** | congestion action (ECN/drop) | — (dual queue + coupling) | `target`, `interval`, `limit`, `quantum` |
+| Venue | ICSI TR | IEEE Syst. J. | INFOCOM | Comput. Netw. | IEEE ToN | IETF RFC | n/a |
+| **What it adapts** | `max_p` (drop probability) | CoDel `interval` | ECN marking probability | AQM **target delay** | congestion action (ECN/drop) |, (dual queue + coupling) | `target`, `interval`, `limit`, `quantum` |
 | **Parameters adapted** | 1 | 1 | 1 | 1 | policy | 0 | 4 |
 | **Adaptation method** | AIMD (β = 0.9) | analytical, stability-derived | offline RL → fixed policy | deep RL | distilled LLM + LoRA | n/a | AIMD (β = 0.9) + gradient trajectory |
 | **Input signal** | averaged queue length | queue delay model | queue state | In-band Network Telemetry | network telemetry tokens | ECN | tc stats + eBPF flow telemetry |
@@ -68,24 +68,24 @@ only shaper and every discipline sees the same bottleneck.
 - **L4S reaches a lower latency floor than any parameter tuning can**, by
   changing what the network signals to the transport. It is the relevant
   upper bound for the problem, not a peer.
-- **The honest claim** is a combination — four `fq_codel` parameters, AIMD,
+- **The honest claim** is a combination, four `fq_codel` parameters, AIMD,
   eBPF telemetry, stock Linux, measured against eight alternatives. A
   combination is a weak novelty claim, and the value of this work rests mainly
   on the measurement and verification methodology.
 
 ---
 
-## Table C — Measured results
+## Table C, Measured results
 
 Generated from the experiment logs. The authoritative machine-readable forms
 are:
 
-- `figures/comparison/table_steady.csv` / `table_staged.csv` — every metric,
+- `figures/comparison/table_steady.csv` / `table_staged.csv`, every metric,
   mean and 95% CI
-- `figures/comparison/tables.json` — the same, structured
-- `figures/comparison/fig08_allparams_<workload>.png` — all metrics × all
+- `figures/comparison/tables.json`, the same, structured
+- `figures/comparison/fig08_allparams_<workload>.png`, all metrics × all
   systems as a normalised heatmap with measured values printed
-- `figures/comparison/fig09_seeds_<metric>_<workload>.png` — each individual
+- `figures/comparison/fig09_seeds_<metric>_<workload>.png`, each individual
   seed
 
 Metrics recorded for every run:
@@ -105,7 +105,7 @@ Metrics recorded for every run:
 
 **Why both sparse and bulk RTT are reported.** `fq_codel`'s new-flow heuristic
 gives a sparse ICMP probe preferential service, so the probe and the bulk flows
-it shares the link with report substantially different latency — in pilot
+it shares the link with report substantially different latency, in pilot
 measurements 22.4 ms versus 36.3 ms mean. Quoting only the probe overstates
 the benefit to bulk traffic; quoting only the bulk figure understates the
 benefit to interactive traffic. Both belong in a latency claim.

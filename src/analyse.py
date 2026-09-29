@@ -1,45 +1,25 @@
 #!/usr/bin/env python3
-"""Aggregate the experiment suite into tables and figures.
+"""Aggregate the experiment suite into tables, LaTeX and fact macros.
 
-Every number this emits is computed from a summary.json or time series written
-by src/run_experiment.py. Nothing is hand-entered. Results are reported as
+Figures are produced by src/plots.py; this module owns only the numbers, so
+the two cannot emit conflicting versions of the same output.
+
+Every value here is computed from a summary.json or time series written by
+src/run_experiment.py. Nothing is hand-entered. Results are reported as
 mean +/- 95% CI across seeds; a single run is reported as a single run.
 """
 import argparse, csv, glob, json, math, os, statistics as st
 from collections import defaultdict
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Brand-neutral, colour-blind-safe categorical palette.
-PALETTE = ["#4C78A8", "#F58518", "#54A24B", "#E45756", "#72B7B2",
-           "#B279A2", "#EECA3B", "#9D755D", "#BAB0AC"]
-GRID = "#D9D9D9"
-TEXT = "#2B2B2B"
-
 DISPLAY = {
     "pfifo": "pfifo (no AQM)", "fq_codel": "fq_codel (static)",
     "codel": "CoDel", "pie": "PIE", "fq_pie": "FQ-PIE",
     "cake": "CAKE", "red": "RED (adaptive)", "sfq": "SFQ",
+    "fq_codel_sham": "fq_codel + sham ctl",
     "fq_codel_acape": "fq_codel + ACAPE",
 }
 ORDER = ["pfifo", "sfq", "red", "codel", "pie", "fq_pie", "cake",
-         "fq_codel", "fq_codel_acape"]
-
-
-def style(ax, title="", xlabel="", ylabel=""):
-    ax.set_title(title, fontsize=11, color=TEXT, pad=10)
-    ax.set_xlabel(xlabel, fontsize=9.5, color=TEXT)
-    ax.set_ylabel(ylabel, fontsize=9.5, color=TEXT)
-    ax.grid(True, color=GRID, linewidth=0.6, alpha=0.8)
-    ax.set_axisbelow(True)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
-    for s in ("left", "bottom"):
-        ax.spines[s].set_color(GRID)
-    ax.tick_params(colors=TEXT, labelsize=9)
+         "fq_codel", "fq_codel_sham", "fq_codel_acape"]
 
 
 def ci95(xs):
@@ -70,20 +50,27 @@ def load(resdir):
 
 
 def system_key(r):
-    return f"{r['aqm']}_acape" if r.get("adaptive") else r["aqm"]
+    if r.get("adaptive"):
+        return f"{r['aqm']}_acape"
+    if r.get("sham"):
+        return f"{r['aqm']}_sham"
+    return r["aqm"]
 
 
 METRICS = [
-    ("throughput_mbps",      "Goodput (Mbps)",              "%.2f"),
-    ("jain",                 "Jain's fairness",             "%.4f"),
-    ("backlog_mean_pkts",    "Mean backlog (pkts)",         "%.1f"),
-    ("backlog_p95_pkts",     "p95 backlog (pkts)",          "%.1f"),
-    ("rtt_mean_ms",          "Mean RTT (ms)",               "%.2f"),
-    ("rtt_p95_ms",           "p95 RTT (ms)",                "%.2f"),
-    ("rtt_p99_ms",           "p99 RTT (ms)",                "%.2f"),
-    ("sojourn_p95_ms",       "p95 queue delay (ms)",        "%.2f"),
-    ("drop_rate_mean_per_s", "Mean drop rate (/s)",         "%.1f"),
-    ("retransmits",          "Retransmits",                 "%.0f"),
+    ("throughput_mbps",       "Goodput (Mbps)",             "%.2f"),
+    ("jain",                  "Jain's fairness",            "%.4f"),
+    ("sparse_rtt_mean_ms",    "Probe RTT mean (ms)",        "%.2f"),
+    ("sparse_rtt_p95_ms",     "Probe RTT p95 (ms)",         "%.2f"),
+    ("sparse_rtt_p99_ms",     "Probe RTT p99 (ms)",         "%.2f"),
+    ("sparse_rtt_jitter_ms",  "Probe jitter (ms)",          "%.2f"),
+    ("bulk_rtt_mean_ms",      "Bulk RTT mean (ms)",         "%.2f"),
+    ("bulk_rtt_p95_ms",       "Bulk RTT p95 (ms)",          "%.2f"),
+    ("queue_delay_mean_ms",   "Queue delay mean (ms)",      "%.2f"),
+    ("backlog_mean_pkts",     "Mean backlog (pkts)",        "%.1f"),
+    ("backlog_p95_pkts",      "p95 backlog (pkts)",         "%.1f"),
+    ("drop_rate_mean_per_s",  "Mean drop rate (/s)",        "%.1f"),
+    ("retransmits",           "Retransmits",                "%.0f"),
 ]
 
 
@@ -126,11 +113,13 @@ def write_tables(runs, outdir):
                            [r.get(m[0] + "_ci") for m in METRICS])
         # human-readable
         txt = os.path.join(outdir, f"table_{wl}.txt")
-        SHOW = ["throughput_mbps", "rtt_mean_ms", "rtt_p95_ms",
-                "backlog_mean_pkts", "jain", "drop_rate_mean_per_s"]
-        SHORT = {"throughput_mbps": "goodput Mbps", "rtt_mean_ms": "mean RTT ms",
-                 "rtt_p95_ms": "p95 RTT ms", "backlog_mean_pkts": "backlog pkt",
-                 "jain": "Jain", "drop_rate_mean_per_s": "drops/s"}
+        SHOW = ["throughput_mbps", "sparse_rtt_mean_ms", "sparse_rtt_p95_ms",
+                "bulk_rtt_mean_ms", "backlog_mean_pkts", "jain"]
+        SHORT = {"throughput_mbps": "goodput Mbps",
+                 "sparse_rtt_mean_ms": "probe RTT mean",
+                 "sparse_rtt_p95_ms": "probe RTT p95",
+                 "bulk_rtt_mean_ms": "bulk RTT mean",
+                 "backlog_mean_pkts": "backlog pkt", "jain": "Jain"}
         FMT = dict((m[0], m[2]) for m in METRICS)
         W = 20
         width = 24 + 4 + W * len(SHOW)
@@ -160,8 +149,9 @@ def write_tables(runs, outdir):
 def write_latex(tables, outdir):
     """Emit \\input-able LaTeX so the paper never contains a hand-typed number."""
     SHOW = [("throughput_mbps", "Goodput", "Mbps", "%.2f"),
-            ("rtt_mean_ms", "Mean RTT", "ms", "%.1f"),
-            ("rtt_p95_ms", "p95 RTT", "ms", "%.1f"),
+            ("sparse_rtt_mean_ms", "Probe RTT", "ms", "%.1f"),
+            ("sparse_rtt_p95_ms", "Probe p95", "ms", "%.1f"),
+            ("bulk_rtt_mean_ms", "Bulk RTT", "ms", "%.1f"),
             ("backlog_mean_pkts", "Backlog", "pkt", "%.1f"),
             ("jain", "Jain", "", "%.4f")]
     for wl, rows in tables.items():
@@ -207,8 +197,10 @@ def write_facts(runs, outdir):
     for wl in ("steady", "staged"):
         for key in ORDER:
             # LaTeX macro names may contain only letters, so no digits here.
-            for metric, short in (("rtt_p95_ms", "RttPninetyfive"),
-                                  ("rtt_mean_ms", "RttMean"),
+            for metric, short in (("sparse_rtt_p95_ms", "ProbeRttPninetyfive"),
+                                  ("sparse_rtt_mean_ms", "ProbeRttMean"),
+                                  ("bulk_rtt_mean_ms", "BulkRttMean"),
+                                  ("bulk_rtt_p95_ms", "BulkRttPninetyfive"),
                                   ("throughput_mbps", "Goodput"),
                                   ("backlog_mean_pkts", "Backlog"),
                                   ("jain", "Jain")):
@@ -228,219 +220,10 @@ def write_facts(runs, outdir):
     return facts
 
 
-def bar_with_ci(ax, rows, metric, ylabel, logy=False):
-    ks = [r for r in rows if r.get(metric) is not None]
-    labels = [r["system"] for r in ks]
-    vals = [r[metric] for r in ks]
-    errs = [r.get(metric + "_ci") or 0 for r in ks]
-    colours = [PALETTE[ORDER.index(r["key"]) % len(PALETTE)] for r in ks]
-    x = np.arange(len(ks))
-    ax.bar(x, vals, yerr=errs, capsize=3, color=colours,
-           edgecolor="white", linewidth=0.8)
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=8.5)
-    if logy:
-        ax.set_yscale("log")
-    style(ax, ylabel=ylabel)
-
-
-def fig_comparison(rows, wl, outdir):
-    """Four panels chosen so each one carries information.
-
-    Goodput and Jain are near-identical across every system -- that is the
-    result (no throughput or fairness cost), but plotted on a full axis they
-    read as four flat bars. They are therefore drawn zoomed, with the spread
-    annotated, so the reader can see the values really are equal rather than
-    guessing that the chart is broken.
-    """
-    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.5))
-    fig.patch.set_facecolor("white")
-
-    # (a) tail latency -- the dominant effect, spans two orders of magnitude
-    ax = axes[0][0]
-    bar_with_ci(ax, rows, "rtt_p95_ms", "p95 RTT (ms, log scale)", logy=True)
-    ax.set_title("(a) Tail latency — the dominant effect", fontsize=11, color=TEXT)
-    vals = [r["rtt_p95_ms"] for r in rows if r.get("rtt_p95_ms")]
-    if vals:
-        ax.annotate(f"{max(vals)/min(vals):.0f}× spread",
-                    xy=(0.97, 0.93), xycoords="axes fraction", ha="right",
-                    fontsize=10, color=TEXT, fontweight="bold")
-    for i, r in enumerate(rows):
-        v = r.get("rtt_p95_ms")
-        if v:
-            ax.text(i, v * 1.15, f"{v:.0f}", ha="center", fontsize=8, color=TEXT)
-
-    # (b) queue occupancy
-    ax = axes[0][1]
-    bar_with_ci(ax, rows, "backlog_mean_pkts", "Mean backlog (pkts, log scale)", logy=True)
-    ax.set_title("(b) Queue occupancy", fontsize=11, color=TEXT)
-    for i, r in enumerate(rows):
-        v = r.get("backlog_mean_pkts")
-        if v:
-            ax.text(i, v * 1.15, f"{v:.0f}", ha="center", fontsize=8, color=TEXT)
-
-    # (c) goodput -- zoomed, because the point is that it does NOT vary
-    ax = axes[1][0]
-    bar_with_ci(ax, rows, "throughput_mbps", "Goodput (Mbps)")
-    g = [r["throughput_mbps"] for r in rows if r.get("throughput_mbps")]
-    if g:
-        lo, hi = min(g), max(g)
-        pad = max((hi - lo) * 1.8, 0.05)
-        ax.set_ylim(lo - pad, hi + pad)
-        ax.axhline(st.fmean(g), color=TEXT, ls=":", lw=1, alpha=0.6)
-        ax.annotate(f"all within {100*(hi-lo)/st.fmean(g):.1f}% — no throughput cost\n"
-                    f"(axis zoomed to {lo-pad:.2f}–{hi+pad:.2f})",
-                    xy=(0.5, 0.06), xycoords="axes fraction", ha="center",
-                    fontsize=9, color=TEXT)
-    ax.set_title("(c) Goodput — zoomed; the point is that it is flat",
-                 fontsize=11, color=TEXT)
-
-    # (d) fairness -- zoomed for the same reason
-    ax = axes[1][1]
-    bar_with_ci(ax, rows, "jain", "Jain's fairness index")
-    j = [r["jain"] for r in rows if r.get("jain")]
-    if j:
-        lo, hi = min(j), max(j)
-        pad = max((hi - lo) * 1.8, 0.0008)
-        ax.set_ylim(max(0, lo - pad), min(1.0005, hi + pad))
-        ax.annotate(f"all ≥ {lo:.4f} — no fairness cost\n(axis zoomed)",
-                    xy=(0.5, 0.06), xycoords="axes fraction", ha="center",
-                    fontsize=9, color=TEXT)
-    ax.set_title("(d) Flow fairness — zoomed; also flat",
-                 fontsize=11, color=TEXT)
-
-    fig.suptitle(f"AQM comparison — {wl} workload, 10 Mbit bottleneck, "
-                 f"8 TCP CUBIC flows, 20 ms base RTT\n"
-                 f"mean ± 95% CI across seeds; (a) and (b) are log scale",
-                 fontsize=12.5, color=TEXT)
-    fig.tight_layout(rect=[0, 0, 1, 0.93])
-    p = os.path.join(outdir, f"fig_comparison_{wl}.png")
-    fig.savefig(p, dpi=150, facecolor="white")
-    plt.close(fig)
-    return p
-
-
-def fig_latency_throughput(rows, wl, outdir):
-    fig, ax = plt.subplots(figsize=(8, 5.5))
-    fig.patch.set_facecolor("white")
-    for r in rows:
-        if r.get("rtt_p95_ms") is None:
-            continue
-        c = PALETTE[ORDER.index(r["key"]) % len(PALETTE)]
-        ax.errorbar(r["throughput_mbps"], r["rtt_p95_ms"],
-                    xerr=r.get("throughput_mbps_ci") or 0,
-                    yerr=r.get("rtt_p95_ms_ci") or 0,
-                    fmt="o", color=c, markersize=9, capsize=3,
-                    markeredgecolor="white", markeredgewidth=1.2)
-        ax.annotate(r["system"], (r["throughput_mbps"], r["rtt_p95_ms"]),
-                    textcoords="offset points", xytext=(8, 5),
-                    fontsize=8.5, color=TEXT)
-    ax.set_yscale("log")
-    style(ax, title=f"Latency–throughput trade-off ({wl} workload)\n"
-                    "lower and further right is better",
-          xlabel="Goodput (Mbps)", ylabel="p95 RTT (ms, log scale)")
-    fig.tight_layout()
-    p = os.path.join(outdir, f"fig_tradeoff_{wl}.png")
-    fig.savefig(p, dpi=150, facecolor="white")
-    plt.close(fig)
-    return p
-
-
-def fig_timeseries(runs, outdir):
-    """Backlog over time for one seed of each system: shows the bloat directly."""
-    sel = {}
-    for r in runs:
-        if r.get("workload") != "steady" or r.get("seed") != 1:
-            continue
-        sel[system_key(r)] = r
-    if not sel:
-        return None
-    fig, ax = plt.subplots(figsize=(10, 5.5))
-    fig.patch.set_facecolor("white")
-    for k in ORDER:
-        if k not in sel:
-            continue
-        f = os.path.join(sel[k]["_dir"], "qdisc_timeseries.csv")
-        if not os.path.exists(f):
-            continue
-        rows = list(csv.DictReader(open(f)))[1:]
-        t = [float(x["t_s"]) for x in rows]
-        b = [float(x["backlog_pkts"]) for x in rows]
-        ax.plot(t, b, label=DISPLAY.get(k, k), linewidth=1.6,
-                color=PALETTE[ORDER.index(k) % len(PALETTE)])
-    ax.set_yscale("symlog", linthresh=10)
-    ax.legend(frameon=False, fontsize=8.5, ncol=3)
-    style(ax, title="Queue occupancy over time (steady workload, seed 1)",
-          xlabel="Time (s)", ylabel="Backlog (packets, symlog)")
-    fig.tight_layout()
-    p = os.path.join(outdir, "fig_backlog_timeseries.png")
-    fig.savefig(p, dpi=150, facecolor="white")
-    plt.close(fig)
-    return p
-
-
-def fig_acape_behaviour(runs, outdir):
-    """What the controller actually did: parameters, regimes, eBPF telemetry."""
-    cand = [r for r in runs if r.get("adaptive") and r.get("ebpf")]
-    if not cand:
-        cand = [r for r in runs if r.get("adaptive")]
-    if not cand:
-        return None
-    r = cand[0]
-    mf = os.path.join(r["_dir"], "acape_metrics_ctl.csv")
-    if not os.path.exists(mf):
-        return None
-    rows = list(csv.DictReader(open(mf)))
-    t = [float(x["t_s"]) for x in rows]
-
-    fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
-    fig.patch.set_facecolor("white")
-
-    ax = axes[0][0]
-    ax.plot(t, [float(x["target_ms"]) for x in rows], color=PALETTE[0],
-            linewidth=1.8, label="target (ms)")
-    ax.axhline(5.0, color=PALETTE[3], linestyle="--", linewidth=1.2,
-               label="static default 5 ms")
-    ax.legend(frameon=False, fontsize=8.5)
-    style(ax, title="(a) fq_codel target under control",
-          xlabel="Time (s)", ylabel="target (ms)")
-
-    ax = axes[0][1]
-    ax.plot(t, [float(x["backlog_pkts"]) for x in rows], color=PALETTE[2],
-            linewidth=1.5)
-    style(ax, title="(b) Queue backlog", xlabel="Time (s)",
-          ylabel="Backlog (pkts)")
-
-    ax = axes[1][0]
-    ax.plot(t, [int(x["active_flows"]) for x in rows], color=PALETTE[1],
-            linewidth=1.5, label="active flows (eBPF)")
-    ax.plot(t, [int(x["elephant_flows"]) for x in rows], color=PALETTE[5],
-            linewidth=1.5, label="elephant flows")
-    ax.legend(frameon=False, fontsize=8.5)
-    style(ax, title="(c) eBPF flow telemetry",
-          xlabel="Time (s)", ylabel="Flows")
-
-    ax = axes[1][1]
-    regs = ["NORMAL", "LIGHT", "MODERATE", "HEAVY"]
-    ax.step(t, [regs.index(x["regime"]) for x in rows], where="post",
-            color=PALETTE[4], linewidth=1.6)
-    ax.set_yticks(range(4))
-    ax.set_yticklabels(regs, fontsize=8.5)
-    style(ax, title="(d) Congestion regime", xlabel="Time (s)")
-
-    fig.suptitle(f"ACAPE controller behaviour — {r['label']}",
-                 fontsize=12.5, color=TEXT)
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
-    p = os.path.join(outdir, "fig_acape_behaviour.png")
-    fig.savefig(p, dpi=150, facecolor="white")
-    plt.close(fig)
-    return p
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
-    ap.add_argument("--outdir", default="figures")
+    ap.add_argument("--outdir", default="paper/generated")
     a = ap.parse_args()
     runs = load(a.results)
     print(f"loaded {len(runs)} runs from {a.results}\n")
@@ -449,15 +232,8 @@ def main():
     os.makedirs(a.outdir, exist_ok=True)
     tables = write_tables(runs, a.outdir)
     write_facts(runs, a.outdir)
-    made = []
-    for wl, rows in tables.items():
-        made.append(fig_comparison(rows, wl, a.outdir))
-        made.append(fig_latency_throughput(rows, wl, a.outdir))
-    made.append(fig_timeseries(runs, a.outdir))
-    made.append(fig_acape_behaviour(runs, a.outdir))
-    for p in made:
-        if p:
-            print("  wrote", p)
+    print("\nTables and LaTeX written. Figures are produced by src/plots.py:")
+    print("  python3 src/plots.py --results %s --outdir figures/comparison" % a.results)
 
 
 if __name__ == "__main__":

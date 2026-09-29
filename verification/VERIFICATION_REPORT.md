@@ -28,6 +28,8 @@ recomputation over the committed logs or by a live experiment run in this contai
 | 12 | "prog_id = 49152" | **REFUTED** — 49152 is the tc filter *priority*, not a prog id |
 | 13 | rtt_proxy flat due to "namespace fd isolation" | **REFUTED** — real cause is a userspace decode bug |
 | 14 | eBPF elephant/mice classification is exercised | **REFUTED** — threshold is unreachable at this link rate |
+| 15 | "Adaptive RED" is the Floyd et al. baseline | **REFUTED** — it never instantiates the `red` qdisc; it is a second fq_codel controller |
+| 16 | The F1 qdisc-selection bug is confined to `acape_v5.py` | **REFUTED** — present in every measurement path, including the Grafana exporter |
 
 ---
 
@@ -158,6 +160,52 @@ A second, smaller defect in the same file: `parse_key()` located the transport
 header at `(ip + 1)`, assuming a 20-byte IP header, so source and destination
 ports are misread whenever IP options are present. Not triggered by this
 testbed's traffic, but incorrect in general.
+
+### 2.2c The "Adaptive RED" baseline is not Adaptive RED
+
+`scripts/adaptive_red.py` is presented in the paper and README as the Adaptive
+RED comparison (Floyd, Gummadi and Shenker, 2001). It contains **zero**
+references to the `red` qdisc:
+
+```
+$ grep -c '\bred\b' scripts/adaptive_red.py
+0
+```
+
+Every adjustment it makes is `tc qdisc change ... fq_codel target ... limit ...`.
+It maintains a simulated `max_p` variable and maps it linearly onto
+`fq_codel`'s `target` and `limit`:
+
+```python
+def maxp_to_target(max_p):
+    ratio = min(max_p / MAX_P, 1.0)
+    return round(TARGET_MAX - ratio * (TARGET_MAX - TARGET_MIN), 2)
+```
+
+So the paper's claim of "24% lower backlog than Adaptive RED" compares ACAPE
+against **a second fq_codel controller written for this project**, not against
+the published algorithm. The file's own docstring concedes this ("Adapts max_p,
+which we map to target — not native fq\_codel params"); the paper does not.
+
+Linux ships Floyd's Adaptive RED as `tc qdisc add ... red ... adaptive`. The
+corrected suite uses that, so its RED row is a real baseline.
+
+### 2.2d The qdisc-selection bug affects every measurement path
+
+F1 is not confined to `acape_v5.py`. The same unanchored `re.search()` over the
+full `tc -s qdisc show` output appears in:
+
+| File | Lines |
+|---|---|
+| `scripts/controller.py` | 66, 73, 80 |
+| `scripts/record_metrics.py` | 33, 37, 38 |
+| `scripts/acape_exporter.py` | 91, 93, 95 |
+| `scripts/adaptive_red.py` | 60, 62, 64 |
+
+Every one reads the **root TBF** stanza. This includes the Prometheus exporter,
+so the Grafana dashboard panels reproduced in the paper (backlog = 355 p, drop
+rate = 22,201 s⁻¹) were displaying the shaper's counters, not fq_codel's,
+throughout.
 
 ### 2.3 C2 (predictive control) never changes the control action
 

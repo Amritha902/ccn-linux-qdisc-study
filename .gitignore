@@ -6,3 +6,8 @@ paper/*.out
 results_dbg/
 node_modules/
 package-lock.json
+paper/scirep/*.aux
+paper/scirep/*.log
+paper/scirep/*.out
+paper/scirep/*.bbl
+paper/scirep/*.blg

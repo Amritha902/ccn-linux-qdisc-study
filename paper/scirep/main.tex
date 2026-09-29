@@ -1,0 +1,71 @@
+%% Scientific Reports submission.
+%%
+%% TO USE ON OVERLEAF:
+%%   1. New Project -> Templates -> search "Scientific Reports"
+%%   2. Replace that project's main.tex with THIS file
+%%   3. Upload refs.bib, body.tex, ../results_prose.tex and ../generated/
+%%      (or run  make flatten  to produce a single self-contained file)
+%%
+%% The wlscirep class is provided by the Overleaf template; do not add a copy.
+\documentclass[fleqn,10pt]{wlscirep}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+
+\title{Runtime parameter adaptation for a flow-queueing active queue
+discipline: a controlled evaluation on stock Linux}
+
+\author[1]{Amritha S}
+\author[1]{Yugeshwaran P}
+\author[1]{Deepti Annuncia}
+\affil[1]{Vellore Institute of Technology, School of Electronics Engineering,
+Department of Electronics and Communication Engineering, Chennai, India}
+
+\keywords{active queue management, bufferbloat, network latency, Linux traffic
+control, eBPF, reproducibility}
+
+\begin{abstract}
+The default Linux queue discipline, \texttt{fq\_codel}, exposes four parameters
+fixed at configuration time. Runtime adaptation of such parameters has been
+proposed repeatedly, but never evaluated under conditions that separate a
+controller's computational cost from the effect of its decisions. We implement
+a controller that adapts all four parameters using an additive-increase
+multiplicative-decrease policy informed by extended Berkeley Packet Filter flow
+telemetry, and evaluate it on an unmodified kernel against eight alternative
+queue disciplines under an identical bottleneck, with three repetitions per
+condition and a sham-controller condition that applies no change. Flow queueing
+with a delay target reduces 95th-percentile latency by 99.0 per cent relative to
+an unmanaged queue at indistinguishable goodput. Adapting that discipline's
+parameters reduces mean queue occupancy by 9.6 per cent under a steady load and
+produces no improvement under a load whose flow count varies, while an existing
+queue discipline requiring no controller outperforms the adapted system by a
+larger margin than the adaptation achieves. We also show that latency measured
+by a sparse probe and by the bulk flows can differ by an order of magnitude and
+can invert the ranking of two disciplines, and that goodput computed from bytes
+sent rather than received exceeds link capacity.
+\end{abstract}
+
+\begin{document}
+\flushbottom
+\maketitle
+\thispagestyle{empty}
+
+\input{body}
+
+\bibliography{refs}
+
+\section*{Data availability}
+All code, kernel configuration, raw measurement logs and analysis scripts are
+available at \url{https://github.com/Amritha902/ccn-linux-qdisc-study}. Every
+table and every numerical value quoted in the text is generated directly from
+the committed logs by the analysis scripts; none is entered by hand.
+
+\section*{Author contributions}
+A.S. designed and implemented the controller, testbed and measurement
+apparatus, conducted the experiments and analysed the results. Y.P. and D.A.
+contributed to the experimental design and to interpretation of the results.
+All authors reviewed the manuscript.
+
+\section*{Competing interests}
+The authors declare no competing interests.
+
+\end{document}

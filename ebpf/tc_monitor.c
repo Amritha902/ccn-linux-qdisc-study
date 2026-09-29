@@ -25,7 +25,20 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
 
-#define ELEPHANT_BYTES   10000000ULL   /* 10 MB threshold */
+/* Elephant threshold.
+ *
+ * This MUST be scaled to the link rate and run length, or it can never fire.
+ * At 10 Mbit a 60 s run carries 75 MB in total, so with 8 concurrent flows a
+ * single flow's maximum possible share is 9.38 MB -- below the original
+ * 10 MB constant. The classifier was therefore structurally unable to report
+ * an elephant in any experiment, independently of the userspace decode bugs,
+ * and the workload profile was pinned to MICE throughout.
+ *
+ * Override at build time:  clang -DELEPHANT_BYTES=1000000ULL ...
+ */
+#ifndef ELEPHANT_BYTES
+#define ELEPHANT_BYTES   1000000ULL    /* 1 MB: bulk flow at ~10 Mbit */
+#endif
 #define MAX_FLOWS        65536
 #define NS_PER_MS        1000000ULL
 
@@ -102,13 +115,19 @@ parse_key(struct __sk_buff *skb, struct flow_key *key)
     key->proto   = ip->protocol;
     key->src_port = key->dst_port = 0;
 
+    /* Use ihl to locate the transport header: (ip + 1) assumes a 20-byte
+     * header and misreads the ports whenever IP options are present. */
+    __u32 ihl = ip->ihl * 4;
+    if (ihl < sizeof(struct iphdr)) return -1;
+    void *l4 = (void *)ip + ihl;
+
     if (ip->protocol == IPPROTO_TCP) {
-        struct tcphdr *tcp = (void *)(ip + 1);
+        struct tcphdr *tcp = l4;
         if ((void *)(tcp + 1) > data_end) return -1;
         key->src_port = bpf_ntohs(tcp->source);
         key->dst_port = bpf_ntohs(tcp->dest);
     } else if (ip->protocol == IPPROTO_UDP) {
-        struct udphdr *udp = (void *)(ip + 1);
+        struct udphdr *udp = l4;
         if ((void *)(udp + 1) > data_end) return -1;
         key->src_port = bpf_ntohs(udp->source);
         key->dst_port = bpf_ntohs(udp->dest);

@@ -27,6 +27,7 @@ recomputation over the committed logs or by a live experiment run in this contai
 | 11 | Parts 2–4 testbed creates a data-path bottleneck | **REFUTED** — 2-node topology shapes ACKs only |
 | 12 | "prog_id = 49152" | **REFUTED** — 49152 is the tc filter *priority*, not a prog id |
 | 13 | rtt_proxy flat due to "namespace fd isolation" | **REFUTED** — real cause is a userspace decode bug |
+| 14 | eBPF elephant/mice classification is exercised | **REFUTED** — threshold is unreachable at this link rate |
 
 ---
 
@@ -128,6 +129,35 @@ MICE → `quantum` always forced to 300 B. The paper cites "quantum = 300 B conf
 MICE profile fired" as *evidence the pipeline works*; it is in fact the signature
 of the bug. The `rtt_proxy` "Known Limitation" has the same cause — it is a
 userspace decode bug, **not** "namespace file-descriptor isolation".
+
+### 2.2b The elephant threshold can never fire at this link rate
+
+Independently of the three decode bugs above, `ebpf/tc_monitor.c` defined:
+
+```c
+#define ELEPHANT_BYTES   10000000ULL   /* 10 MB threshold */
+```
+
+A 60-second run at 10 Mbit carries 75 MB in total. With 8 concurrent flows a
+single flow's maximum possible share is **9.38 MB** — below the threshold. Even
+with the decode path fixed, `elephant_flows` is 0 in every sample:
+
+```
+elephant_flows across all corrected ACAPE ticks: 0 (of 85 ticks)
+needed run length for one flow to reach 10MB with 8 flows: 64 s
+```
+
+So `elephant_ratio` is always 0.0, `select_workload()` always returns MICE, and
+`quantum` is always 300 B — the same end state the decode bugs produced, by a
+different route. **The ELEPHANT and MIXED parameter profiles were unreachable in
+every experiment ever run for this project.** C3 has therefore never been
+exercised, and no claim about workload-aware profile selection is supported by
+any data in this repository.
+
+A second, smaller defect in the same file: `parse_key()` located the transport
+header at `(ip + 1)`, assuming a 20-byte IP header, so source and destination
+ports are misread whenever IP options are present. Not triggered by this
+testbed's traffic, but incorrect in general.
 
 ### 2.3 C2 (predictive control) never changes the control action
 

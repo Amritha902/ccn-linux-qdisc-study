@@ -358,3 +358,114 @@ Two caveats that the earlier drafts of this project understated:
 22. M. Dery, O. Krupnik, and I. Keslassy, "QueuePilot: Reviving Small Buffers With a Learned AQM Policy," in *Proc. IEEE INFOCOM*, 2023.
 23. J. Ye and K.-C. Leung, "Adaptive and Stable Delay Control for Combating Bufferbloat: Theory and Algorithms," *IEEE Systems Journal*, vol. 14, no. 1, pp. 1285–1296, Mar. 2020.
 24. V. S. Borkar, "Stochastic Approximation with Two Time Scales," *Systems & Control Letters*, vol. 29, no. 5, pp. 291–294, 1997.
+
+---
+
+## 12. Recent work (2024–2026)
+
+The field moved substantially while this project was in progress, and in a
+direction that narrows the gap this work claims. The additions below were
+checked against the published record in November 2026.
+
+### 12.1 Adaptive target tuning already exists — in programmable data planes
+
+**DESiRED** [25] is the closest published work to this project's core idea, and
+it predates it. Fabricio Rodriguez et al. build a P4 AQM (iRED) and then use a
+deep reinforcement learning agent fed by In-band Network Telemetry to **tune
+the AQM's target delay parameter at runtime**, reporting a 42× improvement in
+high-resolution video playback and a 90× reduction in stalling.
+
+This is the same idea — runtime adaptation of an AQM's delay target driven by
+live telemetry — realised in P4 rather than Linux `tc`, and with DRL rather
+than AIMD. Any claim that "no prior work adapts an AQM's target at runtime" is
+therefore wrong. What remains distinct about the present work is narrower and
+should be stated as such: **stock Linux, no kernel or data-plane
+modification, eBPF rather than INT, and a transparent AIMD rule rather than a
+learned policy**. That is a deployment-surface difference, not a conceptual one.
+
+**P4-CoDel** [26] implements CoDel itself in a programmable data plane,
+establishing the P4 AQM line that DESiRED builds on.
+
+### 12.2 Large language models reach AQM
+
+**AQM-LLM** [27] distils a large language model into an AQM controller for the
+L4S architecture, with a state encoder mapping network telemetry to token
+embeddings, a specialised head emitting congestion actions in one inference
+step, and LoRA to keep the trainable parameter count small. It was published in
+*IEEE Transactions on Networking* in 2026, with an open platform on FreeBSD 14.
+
+Its relevance here is as a marker of where the learned-AQM frontier now sits:
+the question is no longer whether a learned policy can run inline — QueuePilot
+[22] settled that — but how much context a controller can usefully consume.
+Against that, an AIMD rule over four parameters is a deliberately conservative
+design, and its merit has to be interpretability and deployability rather than
+performance.
+
+### 12.3 AQM and measurement methodology
+
+**Ray et al.** [28] characterise how AQM affects speed-test measurements,
+finding that the presence of AQM changes what standard throughput tests report.
+This bears directly on the methodology used here: it is a published instance of
+the same class of error this project's verification uncovered, where a
+measurement instrument interacts with the queue being measured and the
+resulting number describes the instrument rather than the network.
+
+**BBR over Wi-Fi 6** [29] examines AQM interaction with BBR on modern wireless,
+relevant to the original Part 1 ambition of characterising qdiscs on an 802.11
+interface — an experiment this project attempted but did not in fact perform.
+
+### 12.4 Programmable qdiscs in Linux
+
+**eBPF Qdisc** [30] proposes a fully programmable qdisc written in eBPF, using
+BPF linked lists, red-black trees and local kernel pointers to let scheduling
+and queue-management policy live entirely in BPF. This is the natural successor
+to the approach taken here: rather than a userspace controller issuing
+`tc qdisc change` on a fixed qdisc, the policy itself becomes a BPF program.
+If it lands, it largely subsumes the userspace-controller design pattern.
+
+---
+
+## 13. Assessment of this project against the current field
+
+Stated plainly, because the earlier drafts of this work did not:
+
+**What is genuinely defensible.** A careful, reproducible measurement of nine
+Linux queue disciplines under an identical bottleneck with directly measured
+latency, multiple seeds and confidence intervals, on stock kernels with a
+fully released artefact. Comparative AQM measurements at this level of
+methodological care are less common than they should be, and the verification
+methodology — checking physical invariants rather than trusting summary
+statistics — is transferable.
+
+**What is not novel.** Runtime adaptation of an AQM's delay target is
+established (DESiRED, 2024). AIMD adaptation of an AQM parameter is
+established (Adaptive RED, 2001). Analytical adaptation of CoDel's interval is
+established (Ye and Leung, 2020). Learned AQM policies are established
+(QueuePilot 2023, AQM-LLM 2026). eBPF telemetry at the `tc` hook is routine.
+The combination — AIMD over four `fq_codel` parameters on stock Linux with eBPF
+flow telemetry — appears not to have been published, but a combination is a
+weak novelty claim, and it should be framed as an engineering data point rather
+than a conceptual contribution.
+
+**Where the field has moved.** Toward programmable data planes (P4, eBPF
+qdisc), learned policies (RL, LLM), and changed network–transport contracts
+(L4S). All three reach further than parameter tuning on a fixed qdisc. L4S in
+particular achieves sub-millisecond queueing delay by changing what the network
+signals, which no amount of `target` tuning can match.
+
+**The honest framing for this work.** Not "a novel adaptive AQM" but "a
+measured answer to whether tuning `fq_codel`'s parameters is worth doing, with
+the apparatus to check." Given that CoDel's authors argue its defaults are
+RTT-relative by design, that question was always likely to have a modest
+answer, and a modest answer honestly reported is a legitimate contribution.
+
+---
+
+## References (continued)
+
+25. F. Rodriguez et al., "DESiRED — Dynamic, Enhanced, and Smart iRED: A P4-AQM with Deep Reinforcement Learning and In-band Network Telemetry," *Computer Networks*, vol. 244, 2024. arXiv:2310.18159.
+26. R. Kundel et al., "P4-CoDel: Active Queue Management in Programmable Data Planes," in *Proc. IEEE NFV-SDN*, 2018.
+27. D. Satish et al., "Distilling Large Language Models for Network Active Queue Management," *IEEE Transactions on Networking*, 2026. arXiv:2501.16734.
+28. S. Ray, T. Sharma, J. Marques, P. Schmitt, F. Bronzino, and N. Feamster, "Characterizing the Impact of Active Queue Management on Speed Test Measurements," arXiv:2511.19213, Nov. 2025.
+29. "TCP BBR Performance over Wi-Fi 6: AQM Impacts and Cross-Layer Insights," arXiv:2512.18259, 2025.
+30. C. Hung and P. Wang, "eBPF Qdisc: A Generic Building Block for Traffic Control," Netdevconf 0x17, 2023.

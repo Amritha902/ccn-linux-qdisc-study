@@ -138,29 +138,43 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
 {
   const s = light('Why we measure latency two different ways');
   s.addText('CHOICE  ·  a 20 Hz sparse probe AND in-band bulk-flow RTT from TCP_INFO',
-    { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 14, bold: true, color: DEEP,
+    { x: M, y: 1.15, w: W - 2*M, h: 0.38, fontSize: 14, bold: true, color: DEEP,
       fontFace: BF, isTextBox: true, charSpacing: 1 });
-  s.addText('fq_codel\'s new-flow heuristic deliberately privileges sparse flows. A ping is a sparse flow. So a ping measures the best case, not what the bulk traffic sees.',
-    { x: M, y: 1.7, w: W - 2*M, h: 0.6, fontSize: 15, color: BODY, fontFace: BF, isTextBox: true });
+  s.addText('fq_codel\'s new-flow heuristic deliberately privileges sparse flows. A ping is a sparse flow, so it measures the best case — not what the bulk traffic sees.',
+    { x: M, y: 1.58, w: W - 2*M, h: 0.5, fontSize: 14.5, color: BODY, fontFace: BF, isTextBox: true });
 
-  const rows = [['Sparse ICMP probe', '22.4 ms', 'what an interactive flow sees', TEAL],
-                ['Bulk TCP flows', '36.3 ms', 'what the data flows actually see', DEEP]];
+  const hdr = ['Discipline', 'Sparse probe', 'Bulk flows', 'Ratio'];
+  const rows = [['SFQ  (fair queueing, no AQM)', '30.7 ms', '294.3 ms', '9.6x', WARN],
+                ['FQ-PIE', '22.0 ms', '55.2 ms', '2.5x', BODY],
+                ['fq_codel', '22.4 ms', '36.4 ms', '1.6x', BODY],
+                ['CAKE', '21.8 ms', '33.6 ms', '1.5x', BODY],
+                ['CoDel  (single queue)', '39.2 ms', '44.4 ms', '1.1x', GOOD]];
+  const cx = [M + 0.3, M + 5.3, M + 7.5, M + 9.8];
+  hdr.forEach((h, j) => s.addText(h, { x: cx[j], y: 2.18, w: 2.3, h: 0.3, fontSize: 11.5,
+    bold: true, color: MUTE, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 }));
   rows.forEach((r, i) => {
-    const y = 2.55 + i * 1.25;
-    card(s, M, y, W - 2*M, 1.05);
-    s.addText(r[0], { x: M + 0.35, y: y + 0.12, w: 3.6, h: 0.4, fontSize: 15, bold: true,
-      color: INK, fontFace: BF, isTextBox: true, margin: 0 });
-    s.addText(r[1], { x: M + 4.1, y: y + 0.1, w: 2.0, h: 0.6, fontSize: 28, bold: true,
-      color: r[3], fontFace: HF, isTextBox: true, margin: 0 });
-    s.addText(r[2], { x: M + 6.3, y: y + 0.25, w: 5.2, h: 0.4, fontSize: 13, color: MUTE,
-      fontFace: BF, isTextBox: true, margin: 0 });
+    const y = 2.52 + i * 0.6;
+    s.addShape(P.ShapeType.roundRect, { x: M, y, w: W - 2*M, h: 0.52, rectRadius: 0.05,
+      fill: { color: i === 0 ? 'FBEEF0' : (i % 2 ? 'F6FAFC' : TINT) },
+      line: { color: 'E2ECF2', width: 0.5 } });
+    s.addText(r[0], { x: cx[0], y: y + 0.11, w: 4.9, h: 0.32, fontSize: 13,
+      bold: i === 0, color: INK, fontFace: BF, isTextBox: true, margin: 0 });
+    s.addText(r[1], { x: cx[1], y: y + 0.09, w: 2.0, h: 0.36, fontSize: 14, color: TEAL,
+      fontFace: HF, isTextBox: true, margin: 0 });
+    s.addText(r[2], { x: cx[2], y: y + 0.09, w: 2.0, h: 0.36, fontSize: 14, bold: true,
+      color: r[4], fontFace: HF, isTextBox: true, margin: 0 });
+    s.addText(r[3], { x: cx[3], y: y + 0.11, w: 1.6, h: 0.32, fontSize: 13, bold: true,
+      color: r[4], fontFace: BF, isTextBox: true, margin: 0 });
   });
 
-  card(s, M, 5.15, W - 2*M, 1.0, 'E8F1F6');
-  s.addText('A 62% difference. Quoting only the probe — as the original work did — overstates the benefit to bulk traffic. Both belong in a latency claim.',
-    { x: M + 0.35, y: 5.35, w: W - 2*M - 0.7, h: 0.6, fontSize: 15, color: DEEP,
+  card(s, M, 5.65, W - 2*M, 1.25, 'E8F1F6');
+  s.addText('Quoting only the probe inverts the ranking.',
+    { x: M + 0.35, y: 5.82, w: W - 2*M - 0.7, h: 0.38, fontSize: 17, bold: true,
+      color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
+  s.addText('By probe RTT, SFQ (30.7 ms) beats CoDel (39.2 ms). By what the data flows actually experience, SFQ is 294 ms against CoDel\'s 44 ms — nearly 7x worse. SFQ gives the probe its own short queue but has no AQM, so the bulk queues sit at its 127-packet limit throughout.',
+    { x: M + 0.35, y: 6.2, w: W - 2*M - 0.7, h: 0.65, fontSize: 12.5, color: BODY,
       fontFace: BF, isTextBox: true, margin: 0 });
-  s.addNotes('We also raised the probe rate from 5 Hz to 20 Hz so the p99 is stable.');
+  s.addNotes('The probe-to-bulk ratio is a discipline signature. Any AQM paper quoting a single ping number may be ranking systems backwards.');
 }
 
 /* ----------------------------------------------- 6 choice: sham control */

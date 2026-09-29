@@ -40,6 +40,11 @@ import argparse, csv, json, os, re, signal, struct, subprocess, sys, time
 from collections import deque
 from datetime import datetime
 
+try:
+    import bpfmap          # direct bpf(2) syscall access
+except ImportError:
+    bpfmap = None
+
 VERSION = "6.0.0"
 
 # ── Control constants ─────────────────────────────────────────────────────
@@ -271,6 +276,10 @@ class EBPFPipeline:
         self.active = False
         self.prog_id = None
         self.flow_map_id = None
+        self.map_fd = None
+        self.key_size = 16
+        self.value_size = 56
+        self.use_syscall = False
         self.decode_errors = 0
         self._setup()
 
@@ -309,6 +318,19 @@ class EBPFPipeline:
         self._find_maps()
 
     def _find_maps(self):
+        # Preferred: bpf(2) syscall. Spawning bpftool per tick cost ~2.5s in the
+        # VM and stretched the 0.5s control interval to 3.17s.
+        if bpfmap is not None and bpfmap.available():
+            mid, fd, info = bpfmap.find_map_by_name("flow_ma")
+            if mid is not None:
+                self.flow_map_id = mid
+                self.map_fd = fd
+                self.key_size = info.key_size
+                self.value_size = info.value_size
+                self.use_syscall = True
+                self._log(f"[eBPF] flow_map id={mid} via bpf(2) "
+                          f"(key={info.key_size}B value={info.value_size}B)")
+                return
         out = self._bpftool("map", "list", "--json")
         if not out:
             return
@@ -319,28 +341,37 @@ class EBPFPipeline:
         except (json.JSONDecodeError, KeyError, TypeError) as e:
             self._log(f"[eBPF] map list parse failed: {e}")
         if self.flow_map_id:
-            self._log(f"[eBPF] flow_map id={self.flow_map_id}")
+            self._log(f"[eBPF] flow_map id={self.flow_map_id} via bpftool (slow path)")
 
     def read_flows(self, age_limit_s=2.0):
         empty = {"active": 0, "elephant": 0, "mice": 0, "rtt_ms": 0.0, "ratio": 0.0}
         if not self.active or self.flow_map_id is None:
             return empty
-        out = self._bpftool("map", "dump", "id", str(self.flow_map_id), "--json")
-        if not out:
-            return empty
-        try:
-            entries = json.loads(out)
-        except json.JSONDecodeError as e:
-            self.decode_errors += 1
-            self._log(f"[eBPF] map dump JSON error: {e}")
-            return empty
+        if self.use_syscall:
+            try:
+                values = [v for _, v in bpfmap.iter_map(
+                    self.map_fd, self.key_size, self.value_size)]
+            except OSError as e:
+                self.decode_errors += 1
+                self._log(f"[eBPF] map iteration failed: {e}")
+                return empty
+        else:
+            out = self._bpftool("map", "dump", "id", str(self.flow_map_id), "--json")
+            if not out:
+                return empty
+            try:
+                values = [e.get("value", []) for e in json.loads(out)]
+            except json.JSONDecodeError as e:
+                self.decode_errors += 1
+                self._log(f"[eBPF] map dump JSON error: {e}")
+                return empty
         now = monotonic_ns()                       # F2c
         active = elephant = mice = 0
         total_gap = 0
-        for entry in entries:
+        for raw in values:
             try:
-                fv = parse_flow_value(entry.get("value", []))   # F2a + F2b
-            except (ValueError, struct.error, TypeError) as e:
+                fv = parse_flow_value(raw)         # F2a + F2b
+            except (ValueError, struct.error, TypeError):
                 self.decode_errors += 1            # no longer silently swallowed
                 continue
             if fv["packets"] == 0:

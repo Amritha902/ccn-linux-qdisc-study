@@ -13,7 +13,7 @@ sat in HEAVY for 81% of ticks and the controller simply ratcheted target to its
 floor in every run, which is why all 24 usable runs logged exactly 15
 adjustments -- log(1/5)/log(0.9) = 15.3 steps from 5 ms to the 1 ms floor.
 """
-import argparse, json, os, re, shutil, signal, statistics, subprocess, sys, time
+import argparse, glob, json, os, re, shutil, signal, statistics, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -30,7 +30,7 @@ AQM_SPECS = {
                                 "min 30000 max 90000 burst 55 ecn adaptive"),
     "pie":        ("pie",       "limit 1000 target 15ms tupdate 15ms alpha 2 beta 20"),
     "fq_pie":     ("fq_pie",    "limit 1024 target 15ms tupdate 15ms"),
-    "cake":       ("cake",      "bandwidth 10mbit besteffort"),
+    "cake":       ("cake",      "besteffort"),
     "sfq":        ("sfq",       "perturb 10"),
 }
 
@@ -164,19 +164,46 @@ def main():
                    "rate_mbit": a.rate_mbit, "base_rtt_ms": a.rtt_ms,
                    "duration_s": a.duration, "flows": a.flows,
                    "workload": a.workload, "label": label}
-        try:
-            d = json.load(open(ijson))
-            streams = [s["sender"]["bits_per_second"] / 1e6
-                       for s in d["end"]["streams"] if "sender" in s]
-            summary.update({
-                "throughput_mbps": round(d["end"]["sum_sent"]["bits_per_second"] / 1e6, 4),
-                "retransmits": d["end"]["sum_sent"].get("retransmits"),
-                "n_flows_measured": len(streams),
-                "jain": round(jain(streams), 6),
-                "per_flow_mbps": [round(x, 4) for x in streams],
-            })
-        except Exception as e:
-            summary["iperf_error"] = str(e)
+        # Goodput must come from sum_RECEIVED, not sum_sent. With a large
+        # unmanaged buffer (pfifo) the sender dumps into the queue faster than
+        # the link drains, so sum_sent reports more than the link can carry --
+        # in a 20s pfifo run it read 17.95 Mbps on a 10 Mbit link. sum_received
+        # counts only what actually crossed the bottleneck.
+        stage_files = sorted(glob.glob(os.path.join(outdir, "iperf_stage*.json"))) \
+            or [ijson]
+        stages, jains, tot_bytes, tot_time, tot_rtx = [], [], 0.0, 0.0, 0
+        for sf in stage_files:
+            try:
+                d = json.load(open(sf))
+                end = d["end"]
+                recv = end.get("sum_received", {})
+                sent = end.get("sum_sent", {})
+                streams = [st["receiver"]["bits_per_second"] / 1e6
+                           for st in end.get("streams", []) if "receiver" in st]
+                stages.append({
+                    "file": os.path.basename(sf),
+                    "goodput_mbps": round(recv.get("bits_per_second", 0) / 1e6, 4),
+                    "sent_mbps": round(sent.get("bits_per_second", 0) / 1e6, 4),
+                    "flows": len(streams),
+                    "jain": round(jain(streams), 6),
+                    "retransmits": sent.get("retransmits"),
+                })
+                if streams:
+                    jains.append(jain(streams))
+                tot_bytes += recv.get("bytes", 0)
+                tot_time += recv.get("seconds", 0) or 0
+                tot_rtx += sent.get("retransmits") or 0
+            except Exception as e:
+                summary.setdefault("iperf_errors", []).append(f"{os.path.basename(sf)}: {e}")
+        if tot_time > 0:
+            summary["throughput_mbps"] = round(tot_bytes * 8 / tot_time / 1e6, 4)
+        if stages:
+            summary["stages"] = stages
+            summary["retransmits"] = tot_rtx
+            summary["jain"] = round(statistics.fmean(jains), 6) if jains else None
+            summary["jain_per_stage"] = [st["jain"] for st in stages]
+            summary["n_flows_measured"] = stages[0]["flows"]
+            summary["sent_mbps"] = stages[0]["sent_mbps"]
         summary.update(parse_ping(ping_out))
 
         import csv as _csv

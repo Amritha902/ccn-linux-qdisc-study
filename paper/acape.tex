@@ -286,7 +286,7 @@ approximately 19\,drops/s. Transport is TCP CUBIC \cite{cubic2008} throughout.
   \texttt{tc qdisc change}.
 \end{description}
 
-The separation of $T_2$ and $T_3$ follows the two-timescale stochastic
+Separating $T_2$ from $T_3$ follows the two-timescale stochastic
 approximation argument of Borkar \cite{borkar1997}.
 
 \subsection{Gradient estimation and regime classification}
@@ -375,12 +375,12 @@ sufficed to produce this:
       filter never matched.
 \end{enumerate}
 
-The downstream effect was that the elephant ratio was always 0, the workload
+Downstream, the elephant ratio was always 0, the workload
 profile always MICE, and \texttt{quantum} always 300\,bytes. An earlier draft
 cited that constant \texttt{quantum} as evidence the pipeline was working. It
 was the signature of the failure.
 
-The failure was originally attributed to namespace file-descriptor isolation.
+We originally attributed this failure to namespace file-descriptor isolation.
 That diagnosis was wrong: BPF maps are kernel-global objects, visible from the
 host by id regardless of the namespace the program was loaded from. We verify
 this directly (Fig.~\ref{fig:ebpf}).
@@ -413,14 +413,14 @@ could never hold, so it always equalled the current regime. The consequence was
 that all 375 logged adjustments applied the identical multiplicative decrease
 while a subset were labelled predictive.
 
-The general lesson is that a control input should be validated by checking that
+A control input should be validated by checking that
 varying it changes the output. We now assert this in a regression test:
 a recovering HEAVY state and a stable HEAVY state must produce different
 parameters.
 
 \subsection{Constants that look like measurements}
 
-The earlier work reported ``15 AIMD adjustments'' as a result. It is
+Our earlier work reported ``15 AIMD adjustments'' as a result. It is
 $\lceil \log(1/5)/\log(0.9) \rceil$, the number of $\times 0.9$ steps from
 5\,ms to a 1\,ms floor, and it appeared in 24 of 32 runs because the controller
 drove to the floor and stopped in every one. Under a saturating workload the

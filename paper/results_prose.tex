@@ -28,7 +28,7 @@ measurements side by side. The ratio between them ranges from 1.1$\times$
 (CoDel, a single queue) to 9.6$\times$ (SFQ), because \texttt{fq\_codel}'s
 new-flow heuristic gives a sparse probe preferential service by design.
 
-The consequence is that a single-probe measurement can invert a ranking. By
+A single-probe measurement can therefore invert a ranking. By
 sparse probe alone SFQ (\SfqProbeRttMeanSteady\,ms) appears to beat CoDel
 (\CodelProbeRttMeanSteady\,ms); by the latency the bulk flows actually
 experience, SFQ is \SfqBulkRttMeanSteady\,ms against CoDel's
@@ -62,7 +62,7 @@ the run, the adaptation produces \emph{no} improvement on any metric. Mean
 probe RTT is 1.6\% \emph{worse} ($p=0.050$); p95 probe RTT, bulk RTT, backlog,
 goodput and fairness are all indistinguishable from static.
 
-The direction of that result is worth stating plainly. The workload designed to
+That direction is worth stating plainly. The workload designed to
 give the controller something to respond to is the one in which it helps least.
 Under steady load there is a stable operating point to converge on; under
 change there is not, and the controller's adjustments lag the transitions they

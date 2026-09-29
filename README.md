@@ -236,6 +236,12 @@ the verification report and should not be treated as current.
 
 - Tested at a **10 Mbit bottleneck with 8–24 bulk TCP CUBIC flows** and a 20 ms
   base RTT. Not validated at datacentre or backbone rates.
+- `--seed` indexes an **independent repetition**, not a PRNG seed; iperf3
+  exposes no seed. Confidence intervals describe run-to-run variance.
+- **Runtime adaptation of an AQM's delay target is not novel.** DESiRED
+  (*Computer Networks*, 2024) does it with deep RL and In-band Network
+  Telemetry in P4. What differs here is the deployment surface — stock Linux,
+  no kernel or data-plane change, eBPF, and a transparent AIMD rule.
 - All flows are bulk transfers. **Mixed workloads with sparse latency-sensitive
   flows are exactly where `fq_codel`'s new-flow heuristic and an adaptive
   `quantum` might matter**, and we did not test them.
@@ -251,10 +257,31 @@ the verification report and should not be treated as current.
 
 ## Documents
 
-- [`verification/VERIFICATION_REPORT.md`](verification/VERIFICATION_REPORT.md) — what held up, what did not, with evidence
-- [`verification/CITATION_AUDIT.md`](verification/CITATION_AUDIT.md) — every reference checked; two were wrong
-- [`docs/LITERATURE_SURVEY.md`](docs/LITERATURE_SURVEY.md) — 24 verified references
-- [`paper/acape.tex`](paper/acape.tex) — the paper
+| Document | What it is |
+|---|---|
+| [`verification/VERIFICATION_REPORT.md`](verification/VERIFICATION_REPORT.md) | What held up, what did not, with the evidence for each |
+| [`verification/CITATION_AUDIT.md`](verification/CITATION_AUDIT.md) | Every reference checked against the published record |
+| [`docs/LITERATURE_SURVEY.md`](docs/LITERATURE_SURVEY.md) | 30 verified references through 2026, plus an assessment of this work against the current field |
+| [`docs/PARAMETER_COMPARISON.md`](docs/PARAMETER_COMPARISON.md) | Every qdisc's parameters; this work vs. Adaptive RED, ACoDel, QueuePilot, DESiRED, AQM-LLM and L4S |
+| [`figures/INDEX.md`](figures/INDEX.md) | Numbered index of every figure: STEP (evidence), RUN (per-experiment), FIG (analysis) |
+| [`paper/acape.tex`](paper/acape.tex) | The paper. Every number is generated from the logs |
+
+## Measurement notes
+
+Three things this study does that the original did not, and that we think any
+AQM measurement should:
+
+1. **Report both sparse-probe and bulk-flow latency.** `fq_codel`'s new-flow
+   heuristic privileges a sparse ICMP probe, so the probe and the bulk flows
+   sharing the link report substantially different RTT. Quoting only the probe
+   overstates the benefit to bulk traffic.
+2. **Take goodput from `sum_received`, never `sum_sent`.** Under a bloated
+   buffer the sender reports more than the link can carry — 12.16 Mbps on a
+   10 Mbit link in one `pfifo` run.
+3. **Run a sham-controller condition.** The controller polls at the same
+   cadence but applies nothing, so its CPU cost can be separated from its
+   control decisions. Without it the two are confounded in any latency
+   comparison.
 
 ## License
 

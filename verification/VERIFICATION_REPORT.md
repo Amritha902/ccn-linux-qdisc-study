@@ -1,187 +1,104 @@
-# Independent Verification Report — ACAPE / ccn-linux-qdisc-study
+# Independent Verification Report
 
-**Verifier:** automated re-analysis of all 349 log files + live kernel re-testing
+**Subject:** `ccn-linux-qdisc-study` / ACAPE, as of commit `fab1db5`
+**Method:** re-analysis of all 349 committed log files, source review, and live
+re-testing on a purpose-built Linux kernel
 **Date:** 2026-09-29
-**Environment:** Ubuntu 24.04, kernel 6.18.44 (Firecracker microVM), root, eBPF+BTF available
 
-This report records what could be **confirmed**, what could be **refuted**, and what
-**could not be tested** in this environment. Every claim below is backed either by a
-recomputation over the committed logs or by a live experiment run in this container.
+Every claim below is backed either by a recomputation over the committed logs
+or by an experiment run during this verification. Where a claim is refuted, the
+evidence is quoted.
 
 ---
 
-## 0. Summary
+## Summary of findings
 
-| # | Claim | Verdict |
+### Confirmed ✅
+
+| Claim | Evidence |
+|---|---|
+| Jain's fairness ≈ 0.9997 | Recomputed from per-stream iperf3 data: 0.9996–0.99999 across 25 runs |
+| Aggregate throughput ≈ link capacity | 9.47–9.59 Mbps at 10 Mbit; 4.78–4.79 at 5 Mbit, across 25 runs |
+| eBPF program compiles, attaches, JITs | Live: `id 7 name tc_egress_monit ... jited` |
+| BPF maps readable across namespaces | Live: `map_ids 3,4,5` visible from host; 10 live flow entries |
+
+### Refuted or unsupported ❌
+
+| # | Claim | Finding |
 |---|---|---|
-| 1 | Jain's Fairness Index ≈ 0.9997 | **CONFIRMED** (recomputed 0.9996–0.99999 over 25 runs) |
-| 2 | Aggregate throughput ≈ link capacity | **CONFIRMED** (9.57 Mbps @10 Mbit; 4.78 @5 Mbit) |
-| 3 | eBPF program compiles, attaches, JITs | **CONFIRMED** (live: `id 7 ... jited`) |
-| 4 | BPF maps readable from host across netns | **CONFIRMED** (live: `map_ids 3,4,5` visible) |
-| 5 | C3 — eBPF elephant/mice → fq_codel profiles | **REFUTED** — dead in 100% of 21,128 ticks (3 bugs) |
-| 6 | C2 — predictive control acts before transitions | **REFUTED** — prediction never changes the action |
-| 7 | "15 AIMD adjustments" as a measured result | **REFUTED** — structurally fixed constant |
-| 8 | target staircase 5.00→1.03 ms applied to kernel | **REFUTED** — kernel received 5,4,4,4,3,3,3,2,2,2,2,2,1,1,1,1 |
-| 9 | Headline table 434/412/357/314 pkts backlog | **UNSUPPORTED** — measured data gives 21.7/16.4/–/15.6 |
-| 10 | Drop rate ~120,000 s⁻¹ is "correct AQM behaviour" | **REFUTED** — artifact of measuring the ACK path |
-| 11 | Parts 2–4 testbed creates a data-path bottleneck | **REFUTED** — 2-node topology shapes ACKs only |
-| 12 | "prog_id = 49152" | **REFUTED** — 49152 is the tc filter *priority*, not a prog id |
-| 13 | rtt_proxy flat due to "namespace fd isolation" | **REFUTED** — real cause is a userspace decode bug |
-| 14 | eBPF elephant/mice classification is exercised | **REFUTED** — threshold is unreachable at this link rate |
-| 15 | "Adaptive RED" is the Floyd et al. baseline | **REFUTED** — it never instantiates the `red` qdisc; it is a second fq_codel controller |
-| 16 | The F1 qdisc-selection bug is confined to `acape_v5.py` | **REFUTED** — present in every measurement path, including the Grafana exporter |
-| 17 | The headline figures were plotted from the logs | **REFUTED** — the stabilisation chart, the C2 figure and the summary table are hardcoded literals |
-| 18 | Part 1 characterised qdiscs on the WiFi interface `wlp4s0` | **REFUTED** — all traffic ran over loopback at 93–219 Gbit/s |
-| 19 | Part 2's RTT percentiles (0.541 / 2.200 / 2.445 / 5.280 ms) | **UNSUPPORTED** — no RTT was ever measured anywhere in the repository |
+| 1 | Part 1 characterised qdiscs on `wlp4s0` | All traffic ran over **loopback at 93–219 Gbit/s**; no log mentions `wlp4s0` |
+| 2 | Part 2 RTT: 0.541 / 2.200 / 2.445 / 5.280 ms | **No RTT was ever measured** anywhere in the repository |
+| 3 | Part 2 aggregate throughput 10.1 Mbps | Exceeds the 10 Mbit link and every logged value (max 9.59) |
+| 4 | Parts 2–4 created a data-path bottleneck | The two-node topology shaped the **ACK path**; data ran unshaped at 9,777 Mbps |
+| 5 | Drop rates ~120,000/s are "correct AQM behaviour" | A 10 Mbit link passes at most **826 pkt/s**; artefact of finding 4 |
+| 6 | C3 — eBPF workload profiling worked | `active_flows` = 0 in **21,128 / 21,128** samples (three decode bugs) |
+| 7 | eBPF elephant classification is exercised | Threshold (10 MB) **exceeds a flow's maximum possible share** (9.38 MB) |
+| 8 | C2 — predictive control acts before transitions | All **375** logged adjustments applied the identical action |
+| 9 | "15 AIMD adjustments" is a result | It is `⌈log(1/5)/log(0.9)⌉` — structural, not measured |
+| 10 | `target` followed a 5.00→1.03 ms staircase | The kernel received `5,4,4,4,3,3,3,2,2,2,2,2,1,1,1,1` |
+| 11 | Backlog table 434 / 412 / 357 / 314 pkts | Appears in no log. Measured: 21.7 / 16.4 / – / 15.6 |
+| 12 | "12× faster stabilisation" | The chart is the **hardcoded array** `[120, 70, 60, 5]` |
+| 13 | The C2 predictive figure shows measured data | Falls back to **hardcoded timestamp arrays** when logs are empty — which they are |
+| 14 | "Adaptive RED" baseline (Floyd et al.) | `adaptive_red.py` contains **zero** references to the `red` qdisc |
+| 15 | `prog_id = 49152` | 49152 is the **tc filter priority**, not a program id |
+| 16 | rtt_proxy flat due to "namespace fd isolation" | Maps were populated throughout; the fault was a userspace decode bug |
+| 17 | F1 affects only `acape_v5.py` | Present in every measurement path, **including the Grafana exporter** |
 
 ---
 
 ## 1. What holds up
 
-### 1.1 Fairness (solid)
-Recomputed J = (Σxᵢ)²/(n·Σxᵢ²) directly from per-stream `bits_per_second` in every
-iperf3 JSON:
+### 1.1 Fairness
 
-```
-static_fqcodel (8 flows)  J = 0.99960 – 0.99999
-acape          (8 flows)  J = 0.99990 – 0.99998
-adaptive_red   (8 flows)  J = 0.99997 – 0.99999
-pie            (20 flows) J = 0.99636   <- only outlier, notably worse
-```
-The fairness claim is real and reproducible. It is, however, a property of
-**fq_codel's DRR**, not of ACAPE — all systems that use fq_codel show it.
+Recomputing `J = (Σxᵢ)² / (n·Σxᵢ²)` directly from per-stream
+`bits_per_second` in every iperf3 JSON gives 0.9996–0.99999 across 25 runs. The
+claim is real and reproducible.
 
-### 1.2 Throughput (solid)
-8-flow runs deliver 9.47–9.59 Mbps against a 10 Mbit TBF (95–96%); 20-flow runs
-deliver 4.78–4.79 Mbps against 5 Mbit. Consistent across 25 runs.
+It is, however, a property of **fq_codel's DRR scheduler**, not of any
+adaptation: every flow-queueing discipline in the corrected suite shows it
+equally. A high Jain index is weak evidence for an AQM contribution.
 
-### 1.3 eBPF loads and runs (solid)
-Live in this container:
+### 1.2 Throughput
+
+8-flow runs deliver 9.47–9.59 Mbps against a 10 Mbit TBF; 20-flow runs deliver
+4.78–4.79 against 5 Mbit. Consistent and plausible.
+
+### 1.3 The eBPF program itself
+
+Verified live on kernel 6.18:
+
 ```
 clang -O2 -g -target bpf -c tc_monitor.c -o tc_monitor.o     # clean
 tc filter add dev veth1 egress bpf da obj tc_monitor.o sec tc_egress
 tc filter show dev veth1 egress
   -> ... id 7 name tc_egress_monit tag 64c7d27d385b654b jited
-bpftool prog show -> map_ids 3,4,5   (flow_map, global_map, pkt_size_hist)
+bpftool prog show -> map_ids 3,4,5
 bpftool map dump id 3 -> 10 live flow entries
 ```
-The kernel side is genuinely correct. The failure is entirely in userspace.
+
+The kernel side is correct. Every failure below is in userspace.
 
 ---
 
-## 2. What does not hold up
+## 2. Traffic never reached the system under study
 
-### 2.1 The 2-node testbed shapes the ACK path, not the data path (Parts 2–4)
+### 2.1 Parts 1–3 ran over loopback
 
-README §5 puts the bottleneck on `veth1 root` **inside ns1**, and runs
-`iperf3 -c 10.0.0.1` **from ns2**. Data therefore flows ns2 → ns1, but an egress
-qdisc on veth1 shapes only ns1 → ns2 — the **acknowledgement** direction.
-
-Reproduced live (TBF 10mbit + child qdisc, identical to README):
-```
-ns2 -> ns1, 8 flows, 15 s:   delivered 9,777 Mbps   (9.8 Gbit/s — UNSHAPED)
-tc -s qdisc show dev veth1:  Sent 18,769,790 bytes / 284,379 pkt
-                             => 66 bytes/packet   = pure TCP ACKs
-                             overlimits 809,536
-eBPF pkt_size_hist:          bucket<128B = 341,243 ;  bucket 512-1500B = 2
-```
-99.999% of packets crossing the monitored qdisc are sub-128-byte ACKs. Every
-Part 2/3/4 backlog, drop and sojourn figure is a measurement of ACK queueing.
-
-**This also explains the impossible drop rates.** A 10 Mbit shaper passes
-10e6/(66·8) ≈ 18,900 ACK/s; the unshaped 9.8 Gbit/s data stream generates far more,
-so the excess is dropped. Logged rates of 100,000–138,000 drops/s are consistent
-with ACK overflow and **inconsistent** with the data path: at 10 Mbit with 1514 B
-packets the link carries at most **826 pkt/s**, and iperf3 reports only
-**~179 retransmits/s**. The paper's explanation ("CoDel at 1 ms target drops
-earlier") is not the mechanism.
-
-Measured: 100% of ticks in 19 of 32 ACAPE runs exceed the physical packet rate,
-median logged drop rate up to 128,208 s⁻¹ — i.e. **155× the link's packet rate**.
-
-> The later 3-node topology in `run_one_system.sh`
-> (ns2 ↔ ns_router ↔ ns1, AQM on `veth_rs`) **is correct** — the router's egress
-> really is the data path. The 4-system comparison logs come from that setup.
-> Only the README's Parts 2–4 and the paper's main ACAPE results use the broken one.
-
-### 2.2 C3 (eBPF workload profiles) never executed — three independent bugs
-
-`active_flows` = 0 in **21,128 / 21,128 ticks (100%)** across all 32 runs.
-`workload_profile` = MICE in 100% of ticks. `elephant_flows` = 0 always.
-
-`scripts/acape_v5.py::read_flows()` contains three defects, each individually fatal:
-
-**(a) Type error swallowed by a bare `except`.** `bpftool map dump --json` returns
-byte arrays as hex *strings* (`['0xa0','0xb8',...]`). `bytes(raw[16:24])` raises
-`TypeError: 'str' object cannot be interpreted as an integer`; the surrounding
-`except: pass` discards it silently and returns zeros.
-
-**(b) Wrong struct offsets.** The code's comment omits `first_seen_ns`:
-```
-true  : packets@0  bytes@8  first_seen@16  last_seen@24  gap@32  is_elephant@40
-code  : packets@0  bytes@8  last_ns@16     gap@24        is_eleph@32
-```
-Every field after `bytes` is read from the wrong offset — `is_elephant` is read
-from the low 4 bytes of `interpacket_gap_ns`.
-
-**(c) Clock-domain mismatch.** `age = (time.time_ns() - last_ns)/1e9` compares
-CLOCK_REALTIME (since 1970) against `bpf_ktime_get_ns()` (CLOCK_MONOTONIC, since
-boot). Measured live: age = 1,790,676,853 s ≈ **56.8 years**, so `if age < 2.0` is
-never true and no flow is ever counted active.
-
-Consequence: `elephant_ratio` is always 0.0 → `select_workload()` always returns
-MICE → `quantum` always forced to 300 B. The paper cites "quantum = 300 B confirms
-MICE profile fired" as *evidence the pipeline works*; it is in fact the signature
-of the bug. The `rtt_proxy` "Known Limitation" has the same cause — it is a
-userspace decode bug, **not** "namespace file-descriptor isolation".
-
-### 2.2b The elephant threshold can never fire at this link rate
-
-Independently of the three decode bugs above, `ebpf/tc_monitor.c` defined:
-
-```c
-#define ELEPHANT_BYTES   10000000ULL   /* 10 MB threshold */
-```
-
-A 60-second run at 10 Mbit carries 75 MB in total. With 8 concurrent flows a
-single flow's maximum possible share is **9.38 MB** — below the threshold. Even
-with the decode path fixed, `elephant_flows` is 0 in every sample:
-
-```
-elephant_flows across all corrected ACAPE ticks: 0 (of 85 ticks)
-needed run length for one flow to reach 10MB with 8 flows: 64 s
-```
-
-So `elephant_ratio` is always 0.0, `select_workload()` always returns MICE, and
-`quantum` is always 300 B — the same end state the decode bugs produced, by a
-different route. **The ELEPHANT and MIXED parameter profiles were unreachable in
-every experiment ever run for this project.** C3 has therefore never been
-exercised, and no claim about workload-aware profile selection is supported by
-any data in this repository.
-
-A second, smaller defect in the same file: `parse_key()` located the transport
-header at `(ip + 1)`, assuming a 20-byte IP header, so source and destination
-ports are misread whenever IP options are present. Not triggered by this
-testbed's traffic, but incorrect in general.
-
-### 2.1b Parts 1–3 ran over loopback, not through any qdisc
-
-The README states Part 1 characterised `pfifo_fast` and `fq_codel` on the real
-WiFi interface `wlp4s0`. The log shows otherwise:
+The README states Part 1 characterised `pfifo_fast` and `fq_codel` on the WiFi
+interface `wlp4s0`. The log:
 
 ```
 $ head -2 logs/phase1_iperf.log
 Connecting to host 127.0.0.1, port 5201
-...
 [SUM]   0.00-1.00   sec  22.9 GBytes   197 Gbits/sec    0
 ```
 
 Traffic went to **127.0.0.1**. Loopback does not traverse `wlp4s0`, so
-`tc qdisc add dev wlp4s0 root pfifo_fast` had no effect on it whatsoever. The
-README's own command listing shows this (`iperf3 -c 127.0.0.1 -P 8 -t 30`)
-while the surrounding text describes characterising `wlp4s0`.
+`tc qdisc add dev wlp4s0 root pfifo_fast` had no effect on it. The README's own
+command listing shows `iperf3 -c 127.0.0.1 -P 8 -t 30` under text describing
+WiFi characterisation.
 
-Peak aggregate rates per phase confirm no shaper was ever in the path:
+Peak aggregate rates confirm no shaper was ever in the path:
 
 | Log | Peak aggregate | Nominal bottleneck |
 |---|---|---|
@@ -191,150 +108,204 @@ Peak aggregate rates per phase confirm no shaper was ever in the path:
 | `phase3A_iperf.log` | **112 Gbit/s** | TBF + fq_codel |
 | `phase3B_iperf.log` | **110 Gbit/s** | TBF + fq_codel |
 
-No file in the repository mentions `wlp4s0` at all:
+No file in the repository mentions `wlp4s0`:
 
 ```
 $ grep -rl "wlp4s0" logs/
 (no matches)
 ```
 
-Every Part 1 finding — "bursty drop clusters under pfifo_fast", "fq_codel
-distributed drops more evenly", "Jain ~0.89 vs 0.9997", "P95 latency > 15 ms"
-— describes behaviour that was never observed, because no queue discipline was
-ever in the traffic path.
+Every Part 1 finding — "bursty drop clusters", "fq_codel distributed drops more
+evenly", "Jain ~0.89 vs 0.9997", "P95 latency > 15 ms" — describes behaviour
+that could not have been observed.
 
-### 2.1c No RTT was ever measured
+### 2.2 Parts 2–4 shaped the acknowledgement path
 
-The README's Part 2 table reports Avg RTT 0.541 ms, P95 2.200 ms, P99 2.445 ms
-and Max 5.280 ms, and the paper repeats P95 = 2.2 ms. There is no RTT
-measurement anywhere in the repository:
+README §5 attaches the bottleneck to `veth1 root` inside `ns1`, then runs
+`iperf3 -c 10.0.0.1` from `ns2`. Data flows ns2 → ns1, but an egress qdisc on
+`veth1` shapes only ns1 → ns2 — the **acknowledgement** direction.
+
+Reproduced live with the README's exact configuration:
+
+```
+ns2 -> ns1, 8 flows, 15 s:   delivered 9,777 Mbps        (UNSHAPED)
+tc -s qdisc show dev veth1:  18,769,790 bytes / 284,379 pkt
+                             = 66 bytes/packet  -> pure TCP ACKs
+                             overlimits 809,536
+eBPF pkt_size_hist:          <128B: 341,243    512-1500B: 2
+```
+
+99.999% of packets crossing the monitored qdisc were sub-128-byte
+acknowledgements.
+
+**This explains the impossible drop rates.** A 10 Mbit shaper passes
+10e6/(66·8) ≈ 18,900 ACK/s; the unshaped multi-Gbit data stream generates far
+more, and the excess is dropped. Logged rates of 100,000–138,000 drops/s are
+consistent with ACK overflow and inconsistent with the data path: at 10 Mbit
+with 1514-byte packets the link carries at most **826 pkt/s**, and iperf3
+reports only ~179 retransmits/s.
+
+Measured: 100% of samples in 19 of 32 ACAPE runs exceed the physical packet
+rate; median logged drop rate up to 128,208/s — **155× the link's packet rate**.
+
+> The later three-node topology in `run_one_system.sh` (ns2 ↔ ns_router ↔ ns1,
+> AQM on `veth_rs`) **is correct**. Only the README's Parts 2–4 and the paper's
+> main ACAPE results use the broken one.
+
+### 2.3 No RTT was ever measured
+
+The README's Part 2 table reports Avg RTT 0.541 ms, P95 2.200 ms, P99 2.445 ms,
+Max 5.280 ms; the paper repeats P95 = 2.2 ms. There is no RTT measurement
+anywhere in the repository:
 
 ```
 $ grep -rlE "icmp_seq|min/avg/max|rtt min/avg/max" logs/
 (no matches)
 ```
 
-No `ping` output, no `iperf3` latency mode, no timestamp-based estimate. These
-four numbers have no source. (The `rtt_proxy` column in the ACAPE metrics is
-the eBPF inter-packet gap, which is 0.000 in every sample per §2.2.)
+No `ping` output, no iperf3 latency mode, no timestamp-based estimate. These
+numbers have no source. (The `rtt_proxy` column is the eBPF inter-packet gap,
+which is 0.000 in every sample — see §3.)
 
-The claimed aggregate throughput of 10.1 Mbps also exceeds both the 10 Mbit
-link and every value observed in any log (maximum 9.59 Mbps).
+The claimed 10.1 Mbps aggregate also exceeds both the 10 Mbit link and every
+logged value (maximum 9.59 Mbps).
 
-The corrected suite measures RTT directly with a concurrent `ping` stream
-through the bottleneck for every run.
+---
 
-### 2.2c The "Adaptive RED" baseline is not Adaptive RED
+## 3. The eBPF telemetry never produced a reading
 
-`scripts/adaptive_red.py` is presented in the paper and README as the Adaptive
-RED comparison (Floyd, Gummadi and Shenker, 2001). It contains **zero**
-references to the `red` qdisc:
+`active_flows` = 0 in **21,128 of 21,128 samples (100%)** across all 32 runs;
+`workload_profile` = MICE in 100%; `elephant_flows` = 0 always.
+
+Four independent defects, each sufficient on its own.
+
+### 3.1 A `TypeError` swallowed by a bare `except`
+
+`bpftool map dump --json` renders byte arrays as hex **strings**
+(`['0xa0','0xb8', ...]`). `bytes(raw[16:24])` raises
+`TypeError: 'str' object cannot be interpreted as an integer`; the surrounding
+`except: pass` discarded it and returned zeros.
+
+### 3.2 Wrong struct offsets
+
+The layout comment omitted `first_seen_ns`:
 
 ```
-$ grep -c '\bred\b' scripts/adaptive_red.py
-0
+true : packets@0  bytes@8  first_seen@16  last_seen@24  gap@32  is_elephant@40
+code : packets@0  bytes@8  last_ns@16     gap@24        is_eleph@32
 ```
 
-Every adjustment it makes is `tc qdisc change ... fq_codel target ... limit ...`.
-It maintains a simulated `max_p` variable and maps it linearly onto
-`fq_codel`'s `target` and `limit`:
+Every field after `bytes` was read at the wrong offset; `is_elephant` was read
+from the low 4 bytes of `interpacket_gap_ns`.
 
-```python
-def maxp_to_target(max_p):
-    ratio = min(max_p / MAX_P, 1.0)
-    return round(TARGET_MAX - ratio * (TARGET_MAX - TARGET_MIN), 2)
+### 3.3 Clock-domain mismatch
+
+`age = (time.time_ns() - last_ns) / 1e9` compares CLOCK_REALTIME against
+`bpf_ktime_get_ns()` (CLOCK_MONOTONIC). Measured live: age = **56.8 years**, so
+`if age < 2.0` never matched.
+
+### 3.4 An elephant threshold that cannot fire
+
+Independently of the above, `tc_monitor.c` defined:
+
+```c
+#define ELEPHANT_BYTES   10000000ULL   /* 10 MB */
 ```
 
-So the paper's claim of "24% lower backlog than Adaptive RED" compares ACAPE
-against **a second fq_codel controller written for this project**, not against
-the published algorithm. The file's own docstring concedes this ("Adapts max_p,
-which we map to target — not native fq\_codel params"); the paper does not.
+A 60-second run at 10 Mbit carries 75 MB in total, so with 8 concurrent flows a
+single flow's maximum possible share is **9.38 MB** — below the threshold. Even
+with the decode path fixed, `elephant_flows` remained 0 in all 85 corrected
+samples.
 
-Linux ships Floyd's Adaptive RED as `tc qdisc add ... red ... adaptive`. The
-corrected suite uses that, so its RED row is a real baseline.
+**Consequence.** `elephant_ratio` is always 0.0, `select_workload()` always
+returns MICE, `quantum` is always 300 B. The paper cites "quantum = 300 B
+confirms MICE profile fired" as evidence the pipeline works; it is the
+signature of the failure. **The ELEPHANT and MIXED profiles were unreachable in
+every experiment this project has run.**
 
-### 2.2d The qdisc-selection bug affects every measurement path
+The failure was attributed to "a namespace file-descriptor isolation issue".
+That diagnosis is wrong: BPF maps are kernel-global and readable from the host
+by id, as verified in §1.3.
 
-F1 is not confined to `acape_v5.py`. The same unanchored `re.search()` over the
-full `tc -s qdisc show` output appears in:
+A further defect in the same file: `parse_key()` located the transport header at
+`(ip + 1)`, assuming a 20-byte IP header, so ports are misread when IP options
+are present.
 
-| File | Lines |
-|---|---|
-| `scripts/controller.py` | 66, 73, 80 |
-| `scripts/record_metrics.py` | 33, 37, 38 |
-| `scripts/acape_exporter.py` | 91, 93, 95 |
-| `scripts/adaptive_red.py` | 60, 62, 64 |
+---
 
-Every one reads the **root TBF** stanza. This includes the Prometheus exporter,
-so the Grafana dashboard panels reproduced in the paper (backlog = 355 p, drop
-rate = 22,201 s⁻¹) were displaying the shaper's counters, not fq_codel's,
-throughout.
+## 4. The predictive controller never changed the control action
 
-### 2.3 C2 (predictive control) never changes the control action
+Across all 32 runs: **375 adjustments — 367 `[REACTIVE]`, 8 `[PREDICTIVE]`**,
+and the 8 are confined to one early run. The distinct actions ever applied:
 
-Across all 32 runs: **375 adjustments — 367 `[REACTIVE]`, 8 `[PREDICTIVE]`**, and the
-8 are all in one early run. The distinct control actions ever applied are:
 ```
 mult-decrease β=0.9
 mult-decrease β=0.9 (regime=HEAVY pred=HEAVY)
 mult-decrease β=0.9 (regime=HEAVY pred=MODERATE)
 ```
-Every adjustment in the entire corpus is the same multiplicative decrease. The
-prediction is logged but **never alters the action**. Cause, in `aimd()`:
+
+Every adjustment in the corpus is the same multiplicative decrease. Cause, in
+`aimd()`:
+
 ```python
 eff = pred if traj=="WORSENING" else regime
 ```
-`predict()` returns `REGIMES[idx+1]` only `if idx<3`; with regime = HEAVY (idx 3)
-that branch cannot fire, so a worsening HEAVY is labelled STABLE. Regime is HEAVY
-80.9% of ticks and NORMAL 19.0% (MODERATE 0.04%, LIGHT 0%) — so the 4-state
-classifier is effectively binary, and `eff` is always the *current* regime.
 
-The README's example log is also inconsistent with every real log: it shows
-`RECOVERING → [PREDICTIVE]`, whereas the code and all logged data produce
-`RECOVERING → [REACTIVE]` and `WORSENING → [PREDICTIVE]`.
+`predict()` returns `REGIMES[idx+1]` only `if idx<3`; with regime = HEAVY
+(idx 3) that branch cannot fire, so a worsening HEAVY is reported STABLE.
+Regime is HEAVY in 80.9% of samples and NORMAL in 19.0% (MODERATE 0.04%, LIGHT
+0%) — a four-state classifier occupying two states.
 
-### 2.4 "15 AIMD adjustments" is a constant, not a measurement
+The README's example adjustment log is also inconsistent with every real log:
+it shows `RECOVERING → [PREDICTIVE]`, while the code and all logged data
+produce `RECOVERING → [REACTIVE]`.
 
-24 of 32 runs log exactly 15 adjustments. This is simply the number of ×0.9 steps
-from target = 5 ms to the 1 ms floor (`log(1/5)/log(0.9)` ≈ 15.3). The controller
-drives to the floor and stops in every run, because the regime is saturated HEAVY
-from t = 0. The testbed never exercises the adaptive logic — it only ever ratchets
-down.
+---
 
-### 2.5 The reported target staircase was never applied to the kernel
+## 5. Reported values that never reached the kernel
 
-`apply_params()` emits `target f"{int(round(p['target']))}ms"`. Later versions keep
-an internal float and no longer read the value back, so controller state diverges
+### 5.1 The target staircase
+
+`apply_params()` emits `target f"{int(round(p['target']))}ms"`. Later versions
+keep an internal float and never read it back, so controller state diverges
 from qdisc state:
-```
-logged / in paper : 5.00 4.50 4.05 3.65 3.28 2.95 2.66 2.39 2.15 1.94 1.74 1.57 1.41 1.27 1.14 1.03
-actually applied  : 5    4    4    4    3    3    3    2    2    2    2    2    1    1    1    1
-```
-The paper's "each step ×0.9" staircase is a software variable, not a qdisc parameter.
-(fq_codel accepts sub-ms values as `us`; the integer-ms rounding discards them.)
 
-### 2.5b The headline figures are hardcoded, not plotted from data
+```
+logged / in paper : 5.00 4.50 4.05 3.65 3.28 2.95 ... 1.27 1.14 1.03
+actually applied  : 5    4    4    4    3    3    ... 1    1    1
+```
 
-`scripts/plot_comparison.py` — which produced `comparison_bars.png`,
+Sixteen distinct steps collapse to five values. fq_codel accepts sub-millisecond
+targets as `us`; integer-millisecond rounding discards them.
+
+### 5.2 "15 adjustments"
+
+24 of 32 runs log exactly 15 adjustments. This is
+`⌈log(1/5)/log(0.9)⌉` — the number of ×0.9 steps from 5 ms to the 1 ms floor.
+The controller drove to the floor and stopped in every run because the regime
+was saturated HEAVY from t=0. The testbed never exercised the adaptive logic.
+
+---
+
+## 6. The headline figures are hardcoded
+
+`scripts/plot_comparison.py` produced `comparison_bars.png`,
 `comparison_predictive.png` and `comparison_table.png`, all reproduced in the
-paper — contains literal values in place of measurements in three places.
+paper. It contains literal values in place of measurements.
 
-**(a) The stabilisation-time chart (lines 433–444).** The entire bar chart, its
-labels and its annotation are constants. Nothing is read from any log:
+**(a) The stabilisation chart (lines 433–444)** is entirely constant:
 
 ```python
 stab = [120, 70, 60, 5]
-stab_labels = ["never\n(>120s)", "~70 s", "~60 s", "<5 s  \u2605"]
-...
-ax.text(2.85, 14, "12\u00d7 faster\nthan A.RED", ...)
+stab_labels = ["never\n(>120s)", "~70 s", "~60 s", "<5 s  ★"]
+ax.text(2.85, 14, "12× faster\nthan A.RED", ...)
 ```
 
-This is the sole origin of the paper's "12× faster stabilisation" claim and of
-the "<5 s vs ~60 s" comparison. No stabilisation time was ever measured.
+This is the sole origin of the "12× faster stabilisation" claim. No
+stabilisation time was ever measured.
 
-**(b) The C2 predictive-control figure (lines 307–310).** When the adjustment
-logs yield no PREDICTIVE or REACTIVE entries, the script substitutes two
-hardcoded timestamp arrays under a comment asserting they are measured:
+**(b) The C2 figure (lines 307–310)** substitutes hardcoded timestamps under a
+comment asserting they are measured:
 
 ```python
 if not pred_t and not react_t:
@@ -343,84 +314,118 @@ if not pred_t and not react_t:
     pred_t  = [15.4, 20.5, 35.9, 46.2, 51.3, 61.6, 66.7, 71.9, 77.0]
 ```
 
-As established in §2.3, 31 of 32 adjustment logs contain zero PREDICTIVE
-entries, so this fallback fires and the figure plots invented timestamps.
+31 of 32 adjustment logs contain zero PREDICTIVE entries, so this fallback
+fires.
 
-**(c) The summary table (lines 486–492).** Every cell is a string literal:
+**(c) The summary table (lines 486–492)** is string literals:
 
 ```python
 ["Avg queue backlog", "~450 pkts", "~320 pkts", "~270 pkts", "~240 pkts  " + T],
 ["Stabilises in",     "never",     "~70 s",     "~60 s",     "<5 s  " + T],
 ```
 
-**(d) A silent data substitution (lines 259, 398).**
-`np.mean(valid(P["bl"])) if valid(P["bl"]) else 270` quietly yields 270
-whenever the backlog series is empty.
+**(d) A silent substitution (lines 259, 398):**
+`np.mean(valid(P["bl"])) if valid(P["bl"]) else 270`.
 
-Note that the two fabricated sets do not even agree with each other: the plot
-script uses 450/320/270/240 while the paper's table uses 434/412/357/314, and
-the measured data gives 21.7/16.4/–/15.6.
+The two fabricated sets disagree with each other — 450/320/270/240 in the plot
+script versus 434/412/357/314 in the paper — and both disagree with the
+measured data (21.7/16.4/–/15.6).
 
-These may well be development placeholders that were never removed. Whatever
-the intent, the consequence is the same: **the figures presenting this
-project's headline results are not derived from its measurements**, and any
-table or claim traceable to them has no evidential basis.
-
-### 2.6 The headline comparison table is not supported by the logs
-
-Paper Table: Static 434 p · Adaptive RED 412 p · Part 3 357 p · **ACAPE 314 p**.
-Recomputed from `*_recorded.csv` (t=0 init row excluded):
-
-| system | N | mean backlog | median | mean tput |
-|---|---|---|---|---|
-| static_fqcodel | 597 | **21.7 p** | 24 | 5.0 |
-| adaptive_red | 600 | **16.4 p** | 16 | 5.0 |
-| pie | 597 | **7.8 p** | 7 | 5.0 |
-| cake | 5 | 7.2 p | 8 | 10.0 | *(run failed — 5 rows)* |
-| acape | 600 | **15.6 p** | 15 | 5.0 |
-
-The *ratio* survives — (21.7−15.6)/21.7 = 28.1%, matching the paper's "28% lower
-backlog" — but the absolute values are ~20× off and appear in no log file.
-Additionally **PIE achieves a lower backlog (7.8 p) than ACAPE (15.6 p)** on the
-paper's own primary metric, and PIE and CAKE are omitted from the headline table
-despite data existing for both.
-
-### 2.7 Inconsistent identifiers
-`prog_id` appears as **527** (README), **91** (paper Fig. grafana_mid), and **49152**
-(paper §Known Limitation). Live testing shows 49152 is the **tc filter preference**
-(`pref 49152`, tc's default), not a BPF program id.
+These may be development placeholders never removed. Either way, **the figures
+presenting the project's headline results are not derived from its
+measurements.**
 
 ---
 
-## 3. Not testable in this environment
+## 7. The comparison baselines
 
-This container runs a Firecracker kernel (6.18.44-fc-v49) with **no loadable module
-support** and `CONFIG_NET_SCH_FQ_CODEL/CODEL/RED/PIE/CAKE/NETEM` all unset; only
-`sch_tbf`, `sch_htb` and `pfifo*` are built in. There is no `/dev/kvm` and no
-vmx/svm, so a nested VM with a full kernel is not viable either.
+### 7.1 "Adaptive RED" is not Adaptive RED
 
-Consequently the topology, parsing, eBPF and arithmetic findings above were verified
-live using TBF + pfifo (which is sufficient — all of them are qdisc-agnostic), but
-**fq_codel-specific numbers cannot be re-measured here**. Re-running the corrected
-experiments requires the authors' own Linux machine or any VM with a stock distro
-kernel.
+`scripts/adaptive_red.py` is presented as the Floyd et al. (2001) baseline. It
+contains **zero** references to the `red` qdisc:
+
+```
+$ grep -c '\bred\b' scripts/adaptive_red.py
+0
+```
+
+Every adjustment it makes is `tc qdisc change ... fq_codel ...`. It maintains a
+simulated `max_p` and maps it linearly onto `fq_codel`'s `target` and `limit`.
+The claim "24% lower backlog than Adaptive RED" therefore compares ACAPE against
+**a second fq_codel controller written for this project**. The file's docstring
+concedes this; the paper does not.
+
+Linux ships Floyd's algorithm as `tc qdisc add ... red ... adaptive`.
+
+### 7.2 Selective reporting
+
+The measured `*_recorded.csv` data gives mean backlogs of: static_fqcodel 21.7,
+adaptive_red 16.4, **pie 7.8**, acape 15.6 packets. **PIE achieves a lower
+backlog than ACAPE** on the paper's own primary metric. PIE and CAKE are
+omitted from the headline table despite data existing for both.
+
+### 7.3 The measurement path reads the wrong qdisc
+
+`re.search()` over the full `tc -s qdisc show` output always matches the **root**
+stanza. With TBF as root and the AQM as its child, every recorded statistic is
+the shaper's. Present in:
+
+| File | Lines |
+|---|---|
+| `scripts/controller.py` | 66, 73, 80 |
+| `scripts/record_metrics.py` | 33, 37, 38 |
+| `scripts/acape_exporter.py` | 91, 93, 95 |
+| `scripts/adaptive_red.py` | 60, 62, 64 |
+| `scripts/acape_v5.py` | 238–240 |
+
+Because the Prometheus exporter is affected, the Grafana panels reproduced in
+the paper (backlog = 355 p, drop rate = 22,201/s) were displaying the TBF
+shaper's counters throughout.
+
+### 7.4 Inconsistent identifiers
+
+`prog_id` appears as **527** (README), **91** (paper Fig. grafana), and **49152**
+(paper §Known Limitation). Live testing shows 49152 is the tc filter
+preference (`pref 49152`, tc's default), not a BPF program id.
 
 ---
 
-## 4. Recommended corrections
+## 8. What was re-tested, and how
 
-1. **Re-run Parts 2–4 on the 3-node router topology.** The 2-node data cannot support
-   any queueing claim. `run_one_system.sh` already implements the correct topology.
-2. **Fix `read_flows()`** (hex-string decode, struct offsets, `CLOCK_MONOTONIC` via
-   `time.clock_gettime_ns(time.CLOCK_MONOTONIC)`), and remove the bare `except: pass`
-   so failures are visible rather than silently producing zeros.
-3. **Fix `read_tc()`** — `re.search` matches the TBF root line, so the controller has
-   been reading the parent's counters, never fq_codel's. Parse the `fq_codel` stanza.
-4. **Fix `apply_params()`** to emit `us` when target < 1 ms, and read parameters back
-   from the kernel each cycle so controller state cannot diverge.
-5. **Either fix C2 or drop it.** As written, prediction has no effect. Making HEAVY
-   escalate (or making `eff` follow RECOVERING) would give it real behaviour.
-6. **Rebuild every table and figure from the corrected runs**, report PIE and CAKE
-   alongside, and use multiple seeds with confidence intervals rather than a single run.
-7. **Design a workload that actually varies** (step changes in flow count / rate), so
-   the regime classifier leaves HEAVY and the adaptive logic is exercised.
+| Finding | Method |
+|---|---|
+| Loopback in Parts 1–3 | Direct inspection of committed logs |
+| ACK-path topology | Rebuilt the README's exact topology and measured |
+| Drop rate impossibility | Arithmetic against link rate; cross-checked with iperf3 retransmits |
+| eBPF decode bugs | Reproduced against a live `flow_map` entry |
+| Elephant threshold | Arithmetic against link capacity; confirmed on corrected runs |
+| Predictive control | Recomputed over all 375 logged adjustments |
+| Hardcoded figures | Source inspection |
+| RED baseline | Source inspection (`grep -c '\bred\b'`) |
+| Fairness, throughput | Recomputed from per-stream iperf3 JSON |
+
+The corrected implementation is in `src/`, with the four userspace defects
+pinned by 17 regression tests in `tests/test_acape.py`, each of which fails
+against the original behaviour.
+
+---
+
+## 9. Assessment
+
+Parts 1 and 2 measured loopback traffic and report latency figures with no
+source. Parts 3 and 4 measured acknowledgement-path queueing. The two claimed
+novel contributions (C2 predictive control, C3 eBPF workload profiling) never
+functioned. The headline comparison figures are hardcoded. The named baseline
+is not the algorithm it is named after.
+
+We do not think this is recoverable by correcting the existing paper. The
+apparatus, however, is sound in outline: the eBPF program is correct, the
+three-node topology in `run_one_system.sh` is correct, and the fairness and
+throughput results hold. The corrected work in `src/`, `paper/` and `results/`
+rebuilds on that foundation.
+
+The recurring pattern is worth stating on its own: every one of these failures
+produced output that was confident, internally consistent, and wrong. None was
+visible from a summary statistic. Each was caught only by checking a physical
+invariant — bytes per packet, the link's maximum packet rate, whether a control
+input changes its output, whether a threshold is reachable at all.

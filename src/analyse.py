@@ -245,22 +245,75 @@ def bar_with_ci(ax, rows, metric, ylabel, logy=False):
 
 
 def fig_comparison(rows, wl, outdir):
-    fig, axes = plt.subplots(2, 2, figsize=(11, 8))
+    """Four panels chosen so each one carries information.
+
+    Goodput and Jain are near-identical across every system -- that is the
+    result (no throughput or fairness cost), but plotted on a full axis they
+    read as four flat bars. They are therefore drawn zoomed, with the spread
+    annotated, so the reader can see the values really are equal rather than
+    guessing that the chart is broken.
+    """
+    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.5))
     fig.patch.set_facecolor("white")
-    bar_with_ci(axes[0][0], rows, "rtt_p95_ms", "p95 RTT (ms)", logy=True)
-    axes[0][0].set_title("(a) Tail latency — log scale", fontsize=11, color=TEXT)
-    bar_with_ci(axes[0][1], rows, "throughput_mbps", "Goodput (Mbps)")
-    axes[0][1].set_title("(b) Goodput", fontsize=11, color=TEXT)
-    bar_with_ci(axes[1][0], rows, "backlog_mean_pkts", "Mean backlog (pkts)", logy=True)
-    axes[1][0].set_title("(c) Queue occupancy — log scale", fontsize=11, color=TEXT)
-    bar_with_ci(axes[1][1], rows, "jain", "Jain's fairness index")
-    axes[1][1].set_ylim(0.9, 1.005)
-    axes[1][1].set_title("(d) Flow fairness", fontsize=11, color=TEXT)
+
+    # (a) tail latency -- the dominant effect, spans two orders of magnitude
+    ax = axes[0][0]
+    bar_with_ci(ax, rows, "rtt_p95_ms", "p95 RTT (ms, log scale)", logy=True)
+    ax.set_title("(a) Tail latency — the dominant effect", fontsize=11, color=TEXT)
+    vals = [r["rtt_p95_ms"] for r in rows if r.get("rtt_p95_ms")]
+    if vals:
+        ax.annotate(f"{max(vals)/min(vals):.0f}× spread",
+                    xy=(0.97, 0.93), xycoords="axes fraction", ha="right",
+                    fontsize=10, color=TEXT, fontweight="bold")
+    for i, r in enumerate(rows):
+        v = r.get("rtt_p95_ms")
+        if v:
+            ax.text(i, v * 1.15, f"{v:.0f}", ha="center", fontsize=8, color=TEXT)
+
+    # (b) queue occupancy
+    ax = axes[0][1]
+    bar_with_ci(ax, rows, "backlog_mean_pkts", "Mean backlog (pkts, log scale)", logy=True)
+    ax.set_title("(b) Queue occupancy", fontsize=11, color=TEXT)
+    for i, r in enumerate(rows):
+        v = r.get("backlog_mean_pkts")
+        if v:
+            ax.text(i, v * 1.15, f"{v:.0f}", ha="center", fontsize=8, color=TEXT)
+
+    # (c) goodput -- zoomed, because the point is that it does NOT vary
+    ax = axes[1][0]
+    bar_with_ci(ax, rows, "throughput_mbps", "Goodput (Mbps)")
+    g = [r["throughput_mbps"] for r in rows if r.get("throughput_mbps")]
+    if g:
+        lo, hi = min(g), max(g)
+        pad = max((hi - lo) * 1.8, 0.05)
+        ax.set_ylim(lo - pad, hi + pad)
+        ax.axhline(st.fmean(g), color=TEXT, ls=":", lw=1, alpha=0.6)
+        ax.annotate(f"all within {100*(hi-lo)/st.fmean(g):.1f}% — no throughput cost\n"
+                    f"(axis zoomed to {lo-pad:.2f}–{hi+pad:.2f})",
+                    xy=(0.5, 0.06), xycoords="axes fraction", ha="center",
+                    fontsize=9, color=TEXT)
+    ax.set_title("(c) Goodput — zoomed; the point is that it is flat",
+                 fontsize=11, color=TEXT)
+
+    # (d) fairness -- zoomed for the same reason
+    ax = axes[1][1]
+    bar_with_ci(ax, rows, "jain", "Jain's fairness index")
+    j = [r["jain"] for r in rows if r.get("jain")]
+    if j:
+        lo, hi = min(j), max(j)
+        pad = max((hi - lo) * 1.8, 0.0008)
+        ax.set_ylim(max(0, lo - pad), min(1.0005, hi + pad))
+        ax.annotate(f"all ≥ {lo:.4f} — no fairness cost\n(axis zoomed)",
+                    xy=(0.5, 0.06), xycoords="axes fraction", ha="center",
+                    fontsize=9, color=TEXT)
+    ax.set_title("(d) Flow fairness — zoomed; also flat",
+                 fontsize=11, color=TEXT)
+
     fig.suptitle(f"AQM comparison — {wl} workload, 10 Mbit bottleneck, "
                  f"8 TCP CUBIC flows, 20 ms base RTT\n"
-                 f"mean ± 95% CI across seeds",
+                 f"mean ± 95% CI across seeds; (a) and (b) are log scale",
                  fontsize=12.5, color=TEXT)
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
     p = os.path.join(outdir, f"fig_comparison_{wl}.png")
     fig.savefig(p, dpi=150, facecolor="white")
     plt.close(fig)

@@ -178,6 +178,21 @@ def main():
          "comparison of CLOCK_REALTIME against CLOCK_MONOTONIC giving ages of decades.",
          "cd %s && python3 verification/demo_bugs.py" % ROOT, od)
 
+    host("10", "Throughput overshoot: sum_sent exceeds the link rate",
+         "iperf3's sum_sent counts bytes handed to the socket, not bytes delivered. Under pfifo's "
+         "1000-packet buffer the sender fills the queue and reports 12.16 Mbps on a 10 Mbit link - "
+         "physically impossible as a throughput. The excess appears as an 827-packet backlog and "
+         "2381 ms p95 RTT, not as delivered data. Every flow-queueing AQM shows no overshoot. "
+         "This is why goodput is taken from sum_received.",
+         "cd %s && python3 verification/demo_overshoot.py results" % ROOT, od)
+
+    host("11", "Drop rates in the original logs exceed the link's packet rate",
+         "A 10 Mbit link carrying 1514-byte packets passes at most 826 packets/s, and iperf3 "
+         "reported ~179 retransmits/s. The original logs record 100,000-138,000 drops/s - up to "
+         "155x the physical packet rate. This is the arithmetic that first showed the measurements "
+         "could not describe the data path.",
+         "cd %s && python3 verification/demo_droprate.py" % ROOT, od)
+
     with open(os.path.join(od, "index.json"), "w") as fh:
         json.dump(INDEX, fh, indent=2)
     print(f"\n{len(INDEX)} evidence figures -> {od}")

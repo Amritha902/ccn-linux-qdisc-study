@@ -1,0 +1,10 @@
+{
+  "ticks": 86,
+  "adjustments": 7,
+  "predictive": 0,
+  "mode": "tc-only",
+  "prog_id": null,
+  "metrics": "results/fq_codel_acape_steady_s1/acape_metrics_ctl.csv",
+  "adj": "results/fq_codel_acape_steady_s1/acape_adj_ctl.csv",
+  "state": "results/fq_codel_acape_steady_s1/acape_state_ctl.csv"
+}

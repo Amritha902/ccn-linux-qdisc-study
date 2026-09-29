@@ -1,0 +1,47 @@
+{
+  "aqm": "fq_codel",
+  "qdisc_kind": "fq_codel",
+  "qdisc_args": "target 5ms interval 100ms limit 1024 quantum 1514",
+  "adaptive": true,
+  "ebpf": false,
+  "seed": 2,
+  "rate_mbit": 10.0,
+  "base_rtt_ms": 20,
+  "duration_s": 60,
+  "flows": 8,
+  "workload": "steady",
+  "label": "fq_codel_acape_steady_s2",
+  "throughput_mbps": 9.3729,
+  "stages": [
+    {
+      "file": "iperf_client.json",
+      "goodput_mbps": 9.3729,
+      "sent_mbps": 9.5519,
+      "flows": 8,
+      "jain": 0.999976,
+      "retransmits": 4219
+    }
+  ],
+  "retransmits": 4219,
+  "jain": 0.999976,
+  "jain_per_stage": [
+    0.999976
+  ],
+  "n_flows_measured": 8,
+  "sent_mbps": 9.5519,
+  "rtt_n": 303,
+  "rtt_mean_ms": 23.007,
+  "rtt_min_ms": 20.7,
+  "rtt_p50_ms": 22.6,
+  "rtt_p95_ms": 25.3,
+  "rtt_p99_ms": 27.0,
+  "rtt_max_ms": 70.7,
+  "samples": 81,
+  "backlog_mean_pkts": 5.91,
+  "backlog_p95_pkts": 8.0,
+  "backlog_max_pkts": 9.0,
+  "sojourn_mean_ms": 12.0382,
+  "sojourn_p95_ms": 18.168,
+  "drop_rate_mean_per_s": 36.44,
+  "qdisc_throughput_mean_mbps": 9.6253
+}

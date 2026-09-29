@@ -1,0 +1,47 @@
+{
+  "aqm": "cake",
+  "qdisc_kind": "cake",
+  "qdisc_args": "besteffort",
+  "adaptive": false,
+  "ebpf": false,
+  "seed": 2,
+  "rate_mbit": 10.0,
+  "base_rtt_ms": 20,
+  "duration_s": 60,
+  "flows": 8,
+  "workload": "steady",
+  "label": "cake_steady_s2",
+  "throughput_mbps": 9.4268,
+  "stages": [
+    {
+      "file": "iperf_client.json",
+      "goodput_mbps": 9.4268,
+      "sent_mbps": 9.5004,
+      "flows": 8,
+      "jain": 0.999945,
+      "retransmits": 3173
+    }
+  ],
+  "retransmits": 3173,
+  "jain": 0.999945,
+  "jain_per_stage": [
+    0.999945
+  ],
+  "n_flows_measured": 8,
+  "sent_mbps": 9.5004,
+  "rtt_n": 303,
+  "rtt_mean_ms": 21.809,
+  "rtt_min_ms": 20.7,
+  "rtt_p50_ms": 21.6,
+  "rtt_p95_ms": 23.2,
+  "rtt_p99_ms": 24.7,
+  "rtt_max_ms": 35.5,
+  "samples": 84,
+  "backlog_mean_pkts": 6.58,
+  "backlog_p95_pkts": 10.0,
+  "backlog_max_pkts": 13.0,
+  "sojourn_mean_ms": 8.0314,
+  "sojourn_p95_ms": 13.3232,
+  "drop_rate_mean_per_s": 52.09,
+  "qdisc_throughput_mean_mbps": 9.8717
+}

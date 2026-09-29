@@ -1,0 +1,47 @@
+{
+  "aqm": "pfifo",
+  "qdisc_kind": "pfifo",
+  "qdisc_args": "limit 1000",
+  "adaptive": false,
+  "ebpf": false,
+  "seed": 2,
+  "rate_mbit": 10.0,
+  "base_rtt_ms": 20,
+  "duration_s": 60,
+  "flows": 8,
+  "workload": "steady",
+  "label": "pfifo_steady_s2",
+  "throughput_mbps": 9.4963,
+  "stages": [
+    {
+      "file": "iperf_client.json",
+      "goodput_mbps": 9.4963,
+      "sent_mbps": 12.2453,
+      "flows": 8,
+      "jain": 0.996,
+      "retransmits": 3101
+    }
+  ],
+  "retransmits": 3101,
+  "jain": 0.996,
+  "jain_per_stage": [
+    0.996
+  ],
+  "n_flows_measured": 8,
+  "sent_mbps": 12.2453,
+  "rtt_n": 287,
+  "rtt_mean_ms": 1678.755,
+  "rtt_min_ms": 20.7,
+  "rtt_p50_ms": 1862.0,
+  "rtt_p95_ms": 2343.0,
+  "rtt_p99_ms": 2423.0,
+  "rtt_max_ms": 2427.0,
+  "samples": 93,
+  "backlog_mean_pkts": 809.37,
+  "backlog_p95_pkts": 1000.0,
+  "backlog_max_pkts": 1000.0,
+  "sojourn_mean_ms": 1713.0177,
+  "sojourn_p95_ms": 2388.7216,
+  "drop_rate_mean_per_s": 27.8,
+  "qdisc_throughput_mean_mbps": 9.9554
+}

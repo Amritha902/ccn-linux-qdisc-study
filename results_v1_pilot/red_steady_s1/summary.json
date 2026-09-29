@@ -1,0 +1,47 @@
+{
+  "aqm": "red",
+  "qdisc_kind": "red",
+  "qdisc_args": "limit 1000000 avpkt 1000 bandwidth 10mbit min 30000 max 90000 burst 55 ecn adaptive",
+  "adaptive": false,
+  "ebpf": false,
+  "seed": 1,
+  "rate_mbit": 10.0,
+  "base_rtt_ms": 20,
+  "duration_s": 60,
+  "flows": 8,
+  "workload": "steady",
+  "label": "red_steady_s1",
+  "throughput_mbps": 9.4722,
+  "stages": [
+    {
+      "file": "iperf_client.json",
+      "goodput_mbps": 9.4722,
+      "sent_mbps": 9.6424,
+      "flows": 8,
+      "jain": 0.995063,
+      "retransmits": 1538
+    }
+  ],
+  "retransmits": 1538,
+  "jain": 0.995063,
+  "jain_per_stage": [
+    0.995063
+  ],
+  "n_flows_measured": 8,
+  "sent_mbps": 9.6424,
+  "rtt_n": 298,
+  "rtt_mean_ms": 77.966,
+  "rtt_min_ms": 20.7,
+  "rtt_p50_ms": 78.8,
+  "rtt_p95_ms": 86.1,
+  "rtt_p99_ms": 89.7,
+  "rtt_max_ms": 113.0,
+  "samples": 89,
+  "backlog_mean_pkts": 24.6,
+  "backlog_p95_pkts": 30.0,
+  "backlog_max_pkts": 32.0,
+  "sojourn_mean_ms": 54.0642,
+  "sojourn_p95_ms": 64.272,
+  "drop_rate_mean_per_s": 12.45,
+  "qdisc_throughput_mean_mbps": 9.9241
+}

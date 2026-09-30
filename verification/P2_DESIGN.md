@@ -84,3 +84,75 @@ is narrower than the one written down at pre-registration time: at fixed
 survives changes in `target/interval` is a separate question this campaign
 does not answer, and the papers should say so rather than imply a generality
 that was never measured.
+
+---
+
+# F8: the control loop period was absolute, and so was the run duration
+
+The interval fix made the qdisc a scaled copy of the reference. It did not
+make the controller one, and the 80 ms cell then failed in a way that was
+obvious in the logs and would have been invisible in the summary.
+
+## What happened
+
+At target 80 ms the adapted run produced 86 ticks, regimes split 31 MODERATE,
+28 HEAVY, 27 LIGHT, a target that read 80.000 ms at every single tick, and an
+adjustment log containing nothing but its header. The controller ran for a
+full minute and never moved a parameter.
+
+Adjustments are gated on five consecutive identical regime classifications.
+The regime never repeated five times because the classification was flickering,
+and it was flickering because the controller's loop period is absolute while
+CoDel's interval is not:
+
+| target | AQM interval | loop period | samples per AQM cycle |
+|---|---|---|---|
+| 5 ms | 0.1 s | 0.5 s | averages over 5 cycles |
+| 20 ms | 0.4 s | 0.5 s | averages over 1.25 cycles |
+| 80 ms | 1.6 s | 0.5 s | three samples inside one cycle |
+
+At the reference the controller sees a drop rate averaged over several AQM
+cycles. At 80 ms it sees the inside of a single cycle, which alternates
+between bursts and silence, and reads its own aliasing as an unstable system.
+
+## Why the 20 ms result had to be re-run as well
+
+The 20 ms cell did adapt, reached a 53.9% excursion against the reference's
+57.2%, and passed the instrument check on regime and excursion. But it ran at
+1.25 samples per AQM cycle where the reference runs at 5, and for 60 s where
+the scale-equivalent duration is 240 s. The check passing is evidence that the
+mismatch did not visibly distort that cell; it is not evidence that the cell
+was correctly scaled. Those are different claims and only the second supports
+a scale-invariance result, so the cell was re-run properly rather than kept on
+the strength of the weaker one.
+
+## The fix
+
+`set_bounds()` scales the loop period so it stays five times the AQM interval
+at any operating point: 0.5 s at 5 ms, 2 s at 20 ms, 8 s at 80 ms. The run
+duration scales in `src/run_law_p2.sh`, since a controller that ticks sixteen
+times more slowly needs sixteen times as long to complete a comparable
+trajectory: 60 s, 240 s and 960 s respectively.
+
+At the 5 ms default the scale is 1.0 and the period is the 0.5 s it always
+was, so every earlier run is unaffected. `src/test_bounds.py` asserts that,
+along with the constant samples-per-cycle ratio and the 8 s period at 80 ms.
+
+## The cost, stated plainly
+
+The properly scaled campaign is 2.4 hours of compute against 45 minutes for
+the version that was wrong, almost all of it in the 16x cell. That is the
+price of the claim. A scale-invariance result measured on cells whose control
+loop was not scaled is not a scale-invariance result, and the 80 ms cell is
+the one that makes the claim worth anything, since 4x alone is a narrow range
+to generalise from.
+
+## Four defects, one shape
+
+F5 bounds, F6 step sizes, F7 regime thresholds, F8 loop period and duration.
+Every one was an absolute constant in a system whose subject is a
+dimensionless ratio, and every one was hidden behind the previous until that
+was fixed. Two would have manufactured a confirmation, two a refutation. The
+only reason any of them surfaced is that the controller was deployed sixteen
+times away from the operating point its constants were tuned at, and its logs
+were read rather than its summaries.

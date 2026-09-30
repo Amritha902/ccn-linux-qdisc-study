@@ -76,13 +76,26 @@ I_MIN, I_MAX     = 20.0, 300.0    # ms, overwritten by set_bounds()
 
 def set_bounds(t0):
     """Scale the bounds and the additive step sizes to the operating point."""
-    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE, DR_SCALE
+    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE, DR_SCALE, T2_INTERVAL
     if not t0 or t0 <= 0:
         return
     T_MIN, T_MAX = T_MIN_R * t0, T_MAX_R * t0
     I_MIN, I_MAX = I_MIN_R * t0, I_MAX_R * t0
     STEP_SCALE = t0 / BASE_TARGET
     DR_SCALE = BASE_TARGET / t0
+    # F8. The control loop period was absolute. CoDel's interval scales with
+    # the target, so at a 16x target the controller was sampling every 0.5 s
+    # against a 1.6 s AQM interval: three samples inside a single cycle rather
+    # than an average over several. The regime classification then flickers
+    # between LIGHT, MODERATE and HEAVY, the stable_cnt >= STABLE_ROUNDS gate
+    # never opens, and not one adjustment fires in a whole run. Measured at
+    # target 80 ms: 86 ticks, regimes split 31/28/27, target unchanged at
+    # 80.000 throughout, zero rows in the adjustment log.
+    #
+    # The loop period is scaled so it stays the same multiple of the AQM's own
+    # interval (five times it) wherever the controller is deployed. At the 5 ms
+    # default the scale is 1.0 and the period is the 0.5 s it always was.
+    T2_INTERVAL = T2_BASE * STEP_SCALE
 L_MIN, L_MAX     = 64, 4096       # packets
 BETA             = 0.9            # multiplicative decrease (Floyd et al. 2001)
 ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
@@ -104,6 +117,7 @@ ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
 # the 5 ms default exactly bit-identical: STEP_SCALE is then 1.0 and every
 # step is the constant it always was.
 BASE_TARGET      = 5.0            # ms, the target these constants were tuned at
+T2_BASE          = 0.5            # s, control loop period at BASE_TARGET
 STEP_SCALE       = 1.0            # overwritten by set_bounds()
 # F7. The regime thresholds are drop rates in drops per second, a quantity
 # with units of 1/time, so they are not scale-free. At ratio 1.0 the measured
@@ -132,7 +146,7 @@ DR_SCALE = 1.0                                   # overwritten by set_bounds()
 BL_LIGHT, BL_MOD, BL_HEAVY = 20, 100, 300       # packets
 GRAD_WINDOW   = 10
 STABLE_ROUNDS = 5
-T2_INTERVAL   = 0.5
+T2_INTERVAL   = 0.5     # s at BASE_TARGET, scaled by set_bounds()
 T3_EVERY_N    = 10
 G_THRESH      = 0.5
 

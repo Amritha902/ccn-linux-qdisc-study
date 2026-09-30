@@ -129,6 +129,34 @@ def main():
         checks.append((f"set_bounds({guard!r}) leaves DR_SCALE untouched",
                        acape.DR_SCALE == 1.0))
 
+    # ---- F8: the control loop period must scale too ---------------------
+    # CoDel's interval scales with the target. With an absolute 0.5 s loop
+    # period, a 16x target meant sampling three times inside one 1.6 s AQM
+    # cycle instead of averaging over several, so the regime flickered, the
+    # stability gate never opened, and a whole 86-tick run produced zero
+    # adjustments with the target unchanged at 80.000 ms.
+    acape.set_bounds(5.0)
+    checks.append(("loop period is still 0.5 s at the default",
+                   acape.T2_INTERVAL == 0.5))
+
+    ratios = []
+    for t0 in (5.0, 20.0, 80.0):
+        acape.set_bounds(t0)
+        aqm_interval_s = t0 * 20 / 1000.0      # configured interval is 20x target
+        ratios.append(acape.T2_INTERVAL / aqm_interval_s)
+    checks.append(("loop period stays the same multiple of the AQM interval",
+                   max(ratios) - min(ratios) < 1e-9))
+
+    acape.set_bounds(80.0)
+    checks.append(("an 80 ms target ticks every 8 s, not 0.5 s",
+                   abs(acape.T2_INTERVAL - 8.0) < 1e-9))
+
+    for guard in (0, None, -5.0):
+        acape.set_bounds(5.0)
+        acape.set_bounds(guard)
+        checks.append((f"set_bounds({guard!r}) leaves the loop period untouched",
+                       acape.T2_INTERVAL == 0.5))
+
     bad = [n for n, ok in checks if not ok]
     for n, ok in checks:
         print(f"  {'ok  ' if ok else 'FAIL'}  {n}")

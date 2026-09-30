@@ -1,20 +1,33 @@
 #!/usr/bin/env bash
-# P2 only, re-run under the F5 fix (bounds scaled to the configured target).
+# P2, ratio invariance, with the whole time axis scaled.
 #
-# The P1 dense sweep is complete and unaffected: every one of its runs used the
-# 5 ms default, where the new relative bounds reproduce the old absolute ones
-# exactly. Only these ratio-invariance cells use a non-default target, and only
-# they were endangered by the old clamp.
+# Holding target/RTT fixed is not enough. CoDel's interval, the controller's
+# loop period and the run duration are all times, so a cell at a 16x target is
+# only a scaled copy of the reference if every one of them scales with it.
+# Earlier attempts scaled some and not others, and each omission produced an
+# artefact rather than a measurement:
 #
-# ratio 1.0 is reached at (t=5,rtt=5) already measured, and here at (20,20) and
-# (80,80). ratio 0.25 at (t=5,rtt=20) already measured, and here at (20,80).
+#   interval left at 100 ms  -> target/interval went 0.05, 0.20, 0.80, so the
+#                               cells differed in a second dimensionless group
+#                               (verification/P2_DESIGN.md)
+#   loop period left at 0.5s -> at a 1.6 s AQM interval the controller sampled
+#                               inside a single cycle, the regime flickered,
+#                               the stability gate never opened and not one
+#                               adjustment fired in 86 ticks (F8)
+#   duration left at 60 s    -> fewer adjustment opportunities at large targets,
+#                               so a partial trajectory compared against a
+#                               complete one
+#
+# Here interval scales in run_experiment.py, the loop period scales in
+# acape.py via set_bounds(), and the duration scales below. The reference cell
+# (target 5 ms, RTT 5 ms, 60 s) is already measured in results_sweep.
 set -uo pipefail
 
-DUR="${DUR:-60}"
 SEEDS="${SEEDS:-1 2 3}"
 FLOWS="${FLOWS:-8}"
 RATE="${RATE:-10}"
 OUT="${OUT:-results_law}"
+BASE_DUR="${BASE_DUR:-60}"
 
 run() {
     local desc="$1"; shift
@@ -24,17 +37,20 @@ run() {
 }
 total=0
 
+# target rtt   (scale is target/5, the reference target)
 for pair in "20 20" "80 80" "20 80"; do
   set -- $pair; tgt=$1; rtt=$2
+  scale=$(python3 -c "print(max(1, round($tgt/5)))")
+  dur=$(python3 -c "print(int($BASE_DUR*$scale))")
   for seed in $SEEDS; do
     total=$((total+1))
-    run "[$total] P2 target=${tgt}ms rtt=${rtt}ms static" \
-        --aqm fq_codel --seed "$seed" --duration "$DUR" --flows "$FLOWS" \
+    run "[$total] P2 t=${tgt}ms rtt=${rtt}ms static  (x${scale}, ${dur}s)" \
+        --aqm fq_codel --seed "$seed" --duration "$dur" --flows "$FLOWS" \
         --rate-mbit "$RATE" --rtt-ms "$rtt" --aqm-target-ms "$tgt" \
         --workload steady --outdir "$OUT/ratio_t${tgt}_r${rtt}"
     total=$((total+1))
-    run "[$total] P2 target=${tgt}ms rtt=${rtt}ms adapted" \
-        --aqm fq_codel --seed "$seed" --duration "$DUR" --flows "$FLOWS" \
+    run "[$total] P2 t=${tgt}ms rtt=${rtt}ms adapted (x${scale}, ${dur}s)" \
+        --aqm fq_codel --seed "$seed" --duration "$dur" --flows "$FLOWS" \
         --rate-mbit "$RATE" --rtt-ms "$rtt" --aqm-target-ms "$tgt" \
         --workload steady --adapt --outdir "$OUT/ratio_t${tgt}_r${rtt}"
   done

@@ -61,24 +61,57 @@ def load(*dirs):
     return out
 
 
+# What adaptation costs while it is buying latency. Shrinking the delay target
+# makes CoDel drop earlier, so senders back off sooner: the queue drains and
+# delay falls, but retransmissions rise. Reporting the benefit without these is
+# reporting half the trade.
+#
+# A note on the queue-side columns. `backlog_mean_pkts` is a counter read
+# straight out of `tc -s qdisc`, so it is a direct measurement. The summary
+# field `sojourn_mean_ms` is not a measured sojourn despite its name: the
+# controller derives it as backlog_bytes*8/rate from an instantaneous backlog
+# snapshot once per tick, then averages over ticks. That is a time-average of
+# queue occupancy, whereas bulk RTT is a packet-weighted average, and packets
+# arrive disproportionately during busy periods. The two therefore cannot be
+# expected to reconcile arithmetically, and we checked: the estimated queue
+# reduction accounts for anywhere between 12% and 359% of the measured RTT
+# reduction across cells. So it is shown as a trend indicator under its real
+# name and the mechanism argument rests on backlog, which is measured.
+COSTS = ["drop_rate_mean_per_s", "retransmits", "throughput_mbps",
+         "sojourn_mean_ms", "backlog_mean_pkts"]
+
+
+def _pct(a, b):
+    """Percentage change from static mean a to adapted mean b."""
+    a = [x for x in a if x is not None]; b = [x for x in b if x is not None]
+    if not a or not b or st.fmean(a) == 0:
+        return None
+    return (st.fmean(b) - st.fmean(a)) / st.fmean(a) * 100
+
+
 def cells(runs):
     """Group into (target, rtt) cells and compute the adaptation benefit."""
-    by = defaultdict(lambda: {"static": [], "adapt": []})
+    by = defaultdict(lambda: defaultdict(lambda: {"static": [], "adapt": []}))
     for r in runs:
         k = (r.get("aqm_target_ms") or 5.0, r["base_rtt_ms"])
-        by[k]["adapt" if r.get("adaptive") else "static"].append(r.get(METRIC))
+        arm = "adapt" if r.get("adaptive") else "static"
+        by[k][METRIC][arm].append(r.get(METRIC))
+        for m in COSTS:
+            by[k][m][arm].append(r.get(m))
     out = []
     for (tgt, rtt), g in sorted(by.items()):
-        a = [x for x in g["static"] if x is not None]
-        b = [x for x in g["adapt"] if x is not None]
+        a = [x for x in g[METRIC]["static"] if x is not None]
+        b = [x for x in g[METRIC]["adapt"] if x is not None]
         if len(a) < 2 or len(b) < 2:
             continue
         t, dof, p = welch(a, b)
         benefit = (st.fmean(a) - st.fmean(b)) / st.fmean(a) * 100
-        out.append({"target": tgt, "rtt": rtt, "ratio": tgt / rtt,
-                    "static": st.fmean(a), "adapt": st.fmean(b),
-                    "benefit": benefit, "p": p,
-                    "n": min(len(a), len(b))})
+        c = {"target": tgt, "rtt": rtt, "ratio": tgt / rtt,
+             "static": st.fmean(a), "adapt": st.fmean(b),
+             "benefit": benefit, "p": p, "n": min(len(a), len(b))}
+        for m in COSTS:
+            c[m] = _pct(g[m]["static"], g[m]["adapt"])
+        out.append(c)
     return out
 
 
@@ -135,6 +168,26 @@ def main():
         L.append(f"{c['target']:>8.0f}{c['rtt']:>7.0f}{c['ratio']:>8.3f}"
                  f"{c['static']:>10.2f}{c['adapt']:>10.2f}{c['benefit']:>9.1f}%"
                  f"{c['p']:>9.4f}  {v}")
+
+    # ---- what it costs -------------------------------------------------
+    L += ["", "-" * 92, "WHAT THE LATENCY IS BOUGHT WITH", "-" * 92,
+          "Percentage change, adapted against static, in the same cells.",
+          "A shrinking target makes CoDel drop earlier, so senders back off",
+          "sooner. If the ratio governs the benefit it should govern this too.", "",
+          f"{'ratio':>8s}{'RTT gain':>10s}{'drops':>9s}{'retrans':>9s}"
+          f"{'thrpt':>9s}{'qest':>9s}{'backlog':>9s}", "-" * 92,
+          "qest is backlog-derived, not a measured sojourn; backlog is a tc counter."]
+    for c in sorted(cs, key=lambda c: -c["ratio"]):
+        def f(m):
+            return f"{c[m]:>+8.1f}%" if c.get(m) is not None else f"{'n/a':>9s}"
+        L.append(f"{c['ratio']:>8.3f}{c['benefit']:>9.1f}%"
+                 + f("drop_rate_mean_per_s") + f("retransmits")
+                 + f("throughput_mbps") + f("sojourn_mean_ms")
+                 + f("backlog_mean_pkts"))
+    thr = [c["throughput_mbps"] for c in cs if c.get("throughput_mbps") is not None]
+    if thr:
+        L.append("-" * 92)
+        L.append(f"  worst throughput change across all cells: {min(thr):+.1f}%")
 
     # ---- P2: ratio invariance -----------------------------------------
     L += ["", "-" * 92, "P2  RATIO INVARIANCE (the falsifiable test)", "-" * 92,

@@ -1,0 +1,45 @@
+[acape] bounds for target 20.0ms: target 0.8-80ms interval 80-1.2e+03ms
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=fq_codel handle=10:
+  metrics -> results_law/ratio_t20_r20/fq_codel_acape_t20_steady_s1/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    2.4     HEAVY      STABLE     HEAVY     25.6    15   10.03     0     0  20.000  1024    0
+    4.5     HEAVY      STABLE     HEAVY     14.8    22    9.98     0     0  20.000  1024    0
+    6.7     HEAVY      STABLE     HEAVY     16.8    19   10.01     0     0  20.000  1024    0
+    8.9     HEAVY      STABLE     HEAVY     15.7    14    9.97     0     0  20.000  1024    0
+   11.1     HEAVY      STABLE     HEAVY     16.0    17   10.02     0     0  20.000  1024    0
+   13.4     HEAVY      STABLE     HEAVY     15.8    17    9.94     0     0  20.000  1024    0
+   15.7     HEAVY      STABLE     HEAVY     15.1    21    9.96     0     0  20.000  1024    0
+   17.8     HEAVY      STABLE     HEAVY     16.7    18    9.98     0     0  20.000  1024    0
+   20.0     HEAVY      STABLE     HEAVY     15.6    16   10.05     0     0  20.000  1024    0
+   22.2     HEAVY      STABLE     HEAVY     14.7    20    9.98     0     0  18.000   921    1
+   24.7     HEAVY      STABLE     HEAVY     16.0    18    9.98     0     0  18.000   921    1
+   27.0     HEAVY      STABLE     HEAVY     16.2    16   10.01     0     0  18.000   921    1
+   29.2     HEAVY      STABLE     HEAVY     15.5    16    9.97     0     0  18.000   921    1
+   31.4     HEAVY      STABLE     HEAVY     14.7    19    9.96     0     0  18.000   921    1
+   33.6     HEAVY      STABLE     HEAVY     14.5    15    8.70     0     0  18.000   921    1
+   35.8     HEAVY      STABLE     HEAVY     15.7    20   10.00     0     0  18.000   921    1
+   38.0     HEAVY      STABLE     HEAVY     16.0    15    9.92     0     0  18.000   921    1
+   40.2     HEAVY      STABLE     HEAVY     14.4    19   10.07     0     0  18.000   921    1
+   42.4     HEAVY      STABLE     HEAVY     16.2    17   10.01     0     0  18.000   921    1
+   44.7     HEAVY      STABLE     HEAVY     16.0    15    9.95     0     0  16.200   828    2
+   47.5     HEAVY      STABLE     HEAVY     15.3    19    9.97     0     0  16.200   828    2
+   49.7     HEAVY      STABLE     HEAVY     17.0    14   10.00     0     0  16.200   828    2
+   51.8     HEAVY      STABLE     HEAVY     15.3    16   10.00     0     0  16.200   828    2
+   54.0     HEAVY      STABLE     HEAVY     15.2    18   10.01     0     0  16.200   828    2
+   56.2     HEAVY      STABLE     HEAVY     16.8    16    9.99     0     0  16.200   828    2
+   58.4     HEAVY      STABLE     HEAVY     15.6    16    9.99     0     0  16.200   828    2
+   60.6     HEAVY      STABLE     HEAVY     16.4    21    9.98     0     0  16.200   828    2
+   62.8     HEAVY      STABLE     HEAVY     15.1    16    9.97     0     0  16.200   828    2
+   65.1     HEAVY      STABLE     HEAVY     15.9    18    9.96     0     0  16.200   828    2
+   67.2     HEAVY      STABLE     HEAVY     16.5    16   10.04     0     0  14.600   745    3
+   69.7     HEAVY      STABLE     HEAVY     17.2    17    9.99     0     0  14.600   745    3
+   71.9     HEAVY      STABLE     HEAVY     17.8    15    9.99     0     0  14.600   745    3
+   74.2     HEAVY      STABLE     HEAVY     16.6    17   10.00     0     0  14.600   745    3
+   76.4     HEAVY      STABLE     HEAVY     18.2    14    9.92     0     0  14.600   745    3
+   78.6     HEAVY      STABLE     HEAVY     17.9    16    9.83     0     0  14.600   745    3
+   80.9     HEAVY      STABLE     HEAVY     17.6    12    9.95     0     0  14.600   745    3
+   83.0     HEAVY      STABLE     HEAVY     17.7    15   10.02     0     0  14.600   745    3

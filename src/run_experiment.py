@@ -99,6 +99,10 @@ def main():
     p.add_argument("--aqm-target-ms", type=float, default=None,
                    help="override the AQM delay target (ms); the interval is "
                         "scaled with it so target/interval stays fixed")
+    p.add_argument("--gate", action="store_true",
+                   help="self-gating controller: estimates r = target/RTT from "
+                        "observed telemetry and withholds adaptation below the "
+                        "measured crossover. Implies --adapt and --ebpf.")
     p.add_argument("--no-scale-interval", action="store_true",
                    help="rewrite the target without scaling the interval, "
                         "which changes the configuration's shape as well as "
@@ -119,12 +123,22 @@ def main():
     p.add_argument("--outdir", default=os.path.join(ROOT, "results"))
     a = p.parse_args()
 
+    if a.gate:
+        # The gate decides whether to adapt, so it only means anything on a run
+        # that would otherwise adapt, and it needs the telemetry to decide.
+        # Resolved before the label is built, so a gated run is labelled
+        # consistently with what it actually does.
+        a.adapt = True
+        a.ebpf = True
+
     # --ebpf MUST appear in the label. Without it an eBPF run and a plain
     # adaptive run with the same aqm/workload/seed resolve to the same output
     # directory, and the second silently overwrites the first -- which is what
     # happened on the first full suite, losing the plain staged ACAPE runs and
     # leaving the staged comparison confounded by eBPF polling load.
     suffix = "_acape" if a.adapt else ("_sham" if a.sham else "")
+    if a.gate:
+        suffix += "_gated"
     if a.ebpf:
         suffix += "_ebpf"
     if a.aqm_target_ms is not None:
@@ -200,7 +214,10 @@ def main():
                  "--rate-mbit", str(a.rate_mbit),
                  "--logdir", outdir, "--tag", "ctl",
                  "--duration", str(a.duration)]
-                + (["--ebpf"] if a.ebpf else []),
+                # The gate needs the eBPF RTT proxy to estimate r, so --gate
+                # forces the telemetry on rather than silently not gating.
+                + (["--ebpf"] if (a.ebpf or a.gate) else [])
+                + (["--gate"] if a.gate else []),
                 stdout=open(os.path.join(outdir, "controller.log"), "w"),
                 stderr=subprocess.STDOUT)
             procs.append(ctl)
@@ -278,6 +295,7 @@ def main():
                    "duration_s": a.duration, "flows": a.flows,
                    "workload": a.workload, "label": label,
                    "sham": a.sham, "port": port,
+                   "gate": bool(a.gate),
                    "aqm_target_ms": a.aqm_target_ms,
                    "target_rtt_ratio": (round(a.aqm_target_ms / a.rtt_ms, 4)
                                         if a.aqm_target_ms else

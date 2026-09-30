@@ -37,6 +37,7 @@ documented at its call site and covered by tests/test_acape.py:
 """
 
 import argparse, csv, json, os, re, signal, struct, subprocess, sys, time
+import statistics
 from collections import deque
 from datetime import datetime
 
@@ -116,6 +117,27 @@ ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
 # scale is fixed per run rather than tracking the drifting target, which keeps
 # the 5 ms default exactly bit-identical: STEP_SCALE is then 1.0 and every
 # step is the constant it always was.
+# ── Self-gating ───────────────────────────────────────────────────────────
+# The scaling law says the benefit of adaptation is governed by
+# r = target/RTT, is not statistically distinguishable from zero below
+# r = 0.417, and reaches half its ceiling at r = 0.50. Below the crossover the
+# controller still pays a cost: measured drop rate and retransmissions rise by
+# roughly 10% at r = 0.25 for a 1.4% latency gain that is not significant.
+#
+# A controller that knows the law can decline to act. GATE_R is set to 0.4,
+# just under the lowest ratio at which a benefit was measurable, so the gate
+# opens wherever the benefit was real and stays shut where only the cost was.
+#
+# The ratio has to be computed from what the controller can observe, or the
+# gate is not a contribution. RTT comes from the eBPF flow telemetry, and the
+# statistic used is the median of a sliding window rather than the running
+# minimum that is conventional for base-RTT estimation: measured against a
+# known netem delay the median tracked it to 0.7% while the minimum was wrong
+# by a factor of five. src/check_rtt_estimator.py is the check.
+GATE_R           = 0.4            # gate opens at or above this ratio
+GATE_WINDOW      = 20             # ticks of RTT samples behind the median
+GATE_MIN_SAMPLES = 8              # do not decide before this many samples
+
 BASE_TARGET      = 5.0            # ms, the target these constants were tuned at
 T2_BASE          = 0.5            # s, control loop period at BASE_TARGET
 STEP_SCALE       = 1.0            # overwritten by set_bounds()
@@ -640,6 +662,9 @@ def run(args):
           f"target {T_MIN:.3g}-{T_MAX:.3g}ms interval {I_MIN:.3g}-{I_MAX:.3g}ms",
           flush=True)
     history = deque(maxlen=GRAD_WINDOW)
+    rttbuf = deque(maxlen=GATE_WINDOW)      # for the self-gate's RTT estimate
+    gate_open = None                        # None until enough samples
+    gate_flips = 0
     sbuf = deque(maxlen=8)
     stable_cnt = adj_count = pred_count = tick = 0
     t0 = time.time()
@@ -695,6 +720,27 @@ def run(args):
         rtt_g = gradient(list(history), "rtt_proxy_ms")
         pred, traj = predict(regime, dr_g, bl_g)
 
+        # ---- self-gate --------------------------------------------------
+        # Estimate the path's base RTT from observation, derive r, and decide
+        # whether acting is worth its cost. Decided every tick so the decision
+        # follows the path rather than being fixed at startup.
+        if ed["rtt_ms"] > 0:
+            rttbuf.append(ed["rtt_ms"])
+        r_est = None
+        if args.gate and len(rttbuf) >= GATE_MIN_SAMPLES:
+            rtt_est = statistics.median(rttbuf)
+            if rtt_est > 0:
+                r_est = configured_target / rtt_est
+                now_open = r_est >= GATE_R
+                if gate_open is not None and now_open != gate_open:
+                    gate_flips += 1
+                if gate_open is None:
+                    print(f"[acape] gate {'OPEN' if now_open else 'SHUT'}: "
+                          f"target {configured_target:.3g}ms / est RTT "
+                          f"{rtt_est:.2f}ms = r {r_est:.3f} "
+                          f"(threshold {GATE_R})", flush=True)
+                gate_open = now_open
+
         sbuf.append(regime)
         stable_cnt = (stable_cnt + 1 if len(sbuf) >= STABLE_ROUNDS and
                       len(set(list(sbuf)[-STABLE_ROUNDS:])) == 1 else 0)
@@ -714,7 +760,11 @@ def run(args):
                          regime, traj, pred, workload])
             sf.flush()
 
-        if args.adapt and tick % T3_EVERY_N == 0 and stable_cnt >= STABLE_ROUNDS:
+        # The gate withholds adjustment; it does not stop measurement, so a
+        # gated run still records what it would have seen.
+        gated_off = args.gate and gate_open is False
+        if (args.adapt and not gated_off
+                and tick % T3_EVERY_N == 0 and stable_cnt >= STABLE_ROUNDS):
             old = dict(params)
             new_p, reason, predictive = aimd(regime, traj, pred, params, workload)
             if (abs(new_p["target"] - old["target"]) > 0.01 or
@@ -748,7 +798,17 @@ def run(args):
         print(f"WARNING: {ebpf.decode_errors} eBPF decode errors (not silently ignored)")
     summary = {"ticks": tick, "adjustments": adj_count, "predictive": pred_count,
                "mode": mode, "prog_id": ebpf.prog_id if ebpf else None,
-               "metrics": mpath, "adj": apath, "state": spath}
+               "metrics": mpath, "adj": apath, "state": spath,
+               # What the self-gate decided, so an evaluation can tell a gate
+               # that stayed shut from a controller that had nothing to do.
+               "gate": bool(args.gate),
+               "gate_open": gate_open,
+               "gate_flips": gate_flips,
+               "gate_r_est": (round(configured_target / statistics.median(rttbuf), 4)
+                              if rttbuf else None),
+               "gate_rtt_est_ms": (round(statistics.median(rttbuf), 3)
+                                   if rttbuf else None),
+               "gate_threshold": GATE_R}
     with open(os.path.join(args.logdir, f"acape_summary_{tag}.json"), "w") as fh:
         json.dump(summary, fh, indent=2)
 
@@ -764,6 +824,8 @@ def main():
     p.add_argument("--tag", default=None)
     p.add_argument("--duration", type=float, default=0)
     p.add_argument("--rate-mbit", type=float, default=10.0)
+    p.add_argument("--gate", action="store_true",
+                   help="self-gate: compute r = target/RTT from observed telemetry and withhold adaptation below GATE_R")
     p.add_argument("--adapt", action="store_true", help="enable AIMD control")
     p.add_argument("--ebpf", action="store_true", help="attach eBPF telemetry")
     p.add_argument("--dry", action="store_true")

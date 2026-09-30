@@ -1,0 +1,4 @@
+t_s,backlog_pkts,backlog_bytes,drops_cum,drop_rate_per_s,throughput_mbps,sojourn_est_ms,pkts_cum,root_drops,root_overlimits
+0.680,84,140802,24,35.3072,10.3508,112.6416,1170,32,2090
+1.347,15,33308,48,35.9531,10.0128,26.6464,1734,56,3383
+2.015,14,36336,60,17.9604,9.9857,29.0688,2297,68,4311

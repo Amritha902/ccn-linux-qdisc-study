@@ -44,12 +44,26 @@ def style(ax, title="", xlabel="", ylabel=""):
     ax.tick_params(colors=TEXT, labelsize=9)
 
 
+def _adjustments(rundir):
+    """Rows in the controller's adjustment log, or None if there is no log."""
+    f = os.path.join(rundir, "acape_adj_ctl.csv")
+    if not os.path.exists(f):
+        return None
+    try:
+        with open(f) as fh:
+            return max(0, sum(1 for _ in fh) - 1)
+    except Exception:
+        return None
+
+
 def load(*dirs):
     out = []
     for d in dirs:
         for f in glob.glob(os.path.join(d, "**", "summary.json"), recursive=True):
             try:
                 j = json.load(open(f))
+                if j.get("adaptive"):
+                    j["_adj"] = _adjustments(os.path.dirname(f))
                 if j.get("workload") != "steady" or j.get("aqm") != "fq_codel":
                     continue
                 if j.get("sham") or j.get("ebpf"):
@@ -96,6 +110,8 @@ def cells(runs):
         k = (r.get("aqm_target_ms") or 5.0, r["base_rtt_ms"])
         arm = "adapt" if r.get("adaptive") else "static"
         by[k][METRIC][arm].append(r.get(METRIC))
+        if arm == "adapt" and r.get("_adj") is not None:
+            by[k]["_adj"]["adapt"].append(r["_adj"])
         for m in COSTS:
             by[k][m][arm].append(r.get(m))
     out = []
@@ -106,7 +122,10 @@ def cells(runs):
             continue
         t, dof, p = welch(a, b)
         benefit = (st.fmean(a) - st.fmean(b)) / st.fmean(a) * 100
-        c = {"target": tgt, "rtt": rtt, "ratio": tgt / rtt,
+        adj = [x for x in g["_adj"]["adapt"] if x is not None]
+        c = {"adj": (st.fmean(adj) if adj else None),
+             "inert": bool(adj) and max(adj) == 0,
+             "target": tgt, "rtt": rtt, "ratio": tgt / rtt,
              "static": st.fmean(a), "adapt": st.fmean(b),
              "benefit": benefit, "p": p, "n": min(len(a), len(b)),
              "abs_ms": st.fmean(a) - st.fmean(b)}
@@ -214,7 +233,14 @@ def main():
     os.makedirs(a.outdir, exist_ok=True)
 
     runs = load(a.law, a.sweep, a.baseline)
-    cs = cells(runs)
+    cs_all = cells(runs)
+    # A cell whose adapted arm never adjusted a parameter is measuring static
+    # against static. Its null is true by construction, so it cannot be
+    # evidence that the ratio produces no benefit there, and including it in
+    # the fit or the invariance test would be circular. It is reported
+    # separately instead of silently dropped.
+    cs = [c for c in cs_all if not c.get("inert")]
+    inert = [c for c in cs_all if c.get("inert")]
     if len(cs) < 3:
         print(f"only {len(cs)} complete cells; campaign still running")
         return
@@ -224,13 +250,17 @@ def main():
          "=" * 92,
          "Benefit = reduction in mean bulk-flow RTT, static vs adapted fq_codel.", "",
          f"{'target':>8s}{'RTT':>7s}{'ratio':>8s}{'static':>10s}{'adapted':>10s}"
-         f"{'benefit':>10s}{'gain ms':>9s}{'p':>9s}  verdict",
+         f"{'benefit':>10s}{'gain ms':>9s}{'p':>9s}{'adj':>6s}  verdict",
+         "-" * 92,
+         "adj is the mean number of parameter adjustments the controller made.",
+         "A cell where it is zero or near zero is not measuring adaptation.",
          "-" * 92]
     for c in sorted(cs, key=lambda c: -c["ratio"]):
         v = "significant" if (c["p"] is not None and c["p"] < 0.05) else "not significant"
+        adj_s = "-" if c.get("adj") is None else f"{c['adj']:.0f}"
         L.append(f"{c['target']:>8.0f}{c['rtt']:>7.0f}{c['ratio']:>8.3f}"
                  f"{c['static']:>10.2f}{c['adapt']:>10.2f}{c['benefit']:>9.1f}%"
-                 f"{c['abs_ms']:>9.2f}{c['p']:>9.4f}  {v}")
+                 f"{c['abs_ms']:>9.2f}{c['p']:>9.4f}{adj_s:>6s}  {v}")
 
     # A percentage reduction shrinks automatically when its denominator grows,
     # so a reviewer is right to ask whether the collapse at low ratio is an
@@ -265,6 +295,20 @@ def main():
         L.append(f"  worst throughput change across all cells: {min(thr):+.1f}%")
 
     # ---- P2: ratio invariance -----------------------------------------
+    if inert:
+        L += ["", "-" * 92, "EXCLUDED: CELLS WHERE THE CONTROLLER NEVER ACTED", "-" * 92,
+              "The adapted arm made no adjustment at all, so these compare static",
+              "against static. Their null is true by construction and cannot be",
+              "evidence about queueing, so they are outside the fit and the tests.", ""]
+        for c in inert:
+            L.append(f"  target {c['target']:.0f}ms rtt {c['rtt']:.0f}ms "
+                     f"(r={c['ratio']:.3f}): 0 adjustments, "
+                     f"measured {c['benefit']:+.1f}%")
+        L.append("")
+        L.append("  Cause: the scaled HEAVY threshold lands on the operating drop")
+        L.append("  rate, so the regime oscillates and the stability gate that")
+        L.append("  requires five consecutive identical classifications never opens.")
+
     L += ["", "-" * 92, "P2  RATIO INVARIANCE (the falsifiable test)", "-" * 92,
           "Configurations sharing a ratio but differing in RTT should show the",
           "same benefit. If benefit tracks RTT instead, the hypothesis is wrong.", ""]
@@ -331,8 +375,22 @@ def main():
 
     L += ["", "=" * 92]
     if invariance_ok is True:
+        tested_ratios = sorted({round(c["ratio"], 3) for c in cs
+                                if sum(1 for d in cs
+                                       if round(d["ratio"], 3) == round(c["ratio"], 3)) > 1},
+                               reverse=True)
+        rng = [c for c in cs if round(c["ratio"], 3) in tested_ratios]
+        fold = (max(c["rtt"] for c in rng) / min(c["rtt"] for c in rng)) if rng else 0
         L += ["CONCLUSION: the ratio target/RTT, not RTT, governs the benefit.",
-              "Configurations with equal ratios behave alike across a wide RTT range."]
+              f"Invariance is demonstrated at ratio "
+              f"{', '.join(f'{r:g}' for r in tested_ratios)} over a "
+              f"{fold:.0f}-fold range of RTT, and the fitted curve predicts",
+              f"held-out interior ratios to {st.fmean(errs):.1f} percentage points.",
+              "",
+              "Scope, stated rather than implied: this holds at fixed",
+              "target/interval, which was scaled with the target throughout, and",
+              "rests on cells where the controller demonstrably acted. Cells where",
+              "it never adjusted are excluded above and prove nothing either way."]
         if holdout_ok is False:
             L += ["Ratio invariance holds, but the fitted curve does not predict held-out",
                   "points well; the invariance is reported, the functional form is not."]

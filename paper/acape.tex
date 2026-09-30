@@ -151,7 +151,7 @@ AQM retuning.
 
 QueuePilot \cite{queuepilot2023} trains a reinforcement-learning agent offline
 and distils it into a lightweight online policy adapting ECN marking
-probability. AQM-LLM \cite{aqmllm2026} distils a large language model into an
+probability. AQM-LLM \cite{aqmllm2025} distils a large language model into an
 L4S controller on FreeBSD. Toopchinezhad and Ahmadi \cite{mlaqm2025} survey the
 field and note that most proposals are evaluated only in simulation. L4S
 \cite{rfc9330,rfc9332} reaches a far lower latency floor than any parameter
@@ -179,7 +179,7 @@ conceptual one.
 AIMD adaptation of a drop probability is established \cite{ared2001};
 analytical adaptation of CoDel's \texttt{interval} is established
 \cite{yeleung2020}; learned adaptation of marking probability is established
-\cite{queuepilot2023,aqmllm2026}; and runtime adaptation of an AQM's delay
+\cite{queuepilot2023,aqmllm2025}; and runtime adaptation of an AQM's delay
 target is established \cite{desired2024}. The particular combination used here
 -- AIMD over \texttt{fq\_codel}'s four parameters, driven by eBPF flow
 telemetry, on stock Linux -- appears unpublished, but a combination is a weak
@@ -537,9 +537,10 @@ F.~Rodriguez et al. ``DESiRED, Dynamic, Enhanced, and Smart iRED: A P4-AQM
 with Deep Reinforcement Learning and In-band Network Telemetry,''
 \textit{Computer Networks}, vol.~244, 2024.
 
-\bibitem{aqmllm2026}
-D.~Satish et al. ``Distilling Large Language Models for Network Active Queue
-Management,'' \textit{IEEE Trans. Netw.}, 2026.
+\bibitem{aqmllm2025}
+S.~R.~Pokhrel, D.~Satish, J.~Kua, and A.~Walid, ``Distilling Large Language
+Models for Network Active Queue Management,'' \textit{IEEE Trans. Netw.},
+2025.
 
 \bibitem{queuepilot2023}
 M.~Dery, O.~Krupnik, and I.~Keslassy, ``QueuePilot: Reviving Small Buffers With

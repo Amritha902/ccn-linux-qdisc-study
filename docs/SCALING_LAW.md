@@ -47,7 +47,19 @@ ceiling somewhere between r = 0.25 and r = 1.0. Tested by a dense sweep at base
 RTT 2, 3, 8, 12 and 40 ms at the default 5 ms target, giving r from 2.5 down to
 0.125.
 
-**P2, ratio invariance. This is the falsifiable one.** If r is the governing
+**P2, ratio invariance. This is the falsifiable one.**
+
+*Amended during the campaign, before any P2 measurement was kept.* The first
+attempt varied the target while leaving CoDel's interval at 100 ms, which
+moved `target/interval` from 0.05 to 0.80 across the cells and so varied a
+second dimensionless group alongside the one under test. The interval is now
+scaled with the target. The claim this tests is correspondingly narrower than
+the sentence below implies, and is stated as: at fixed `target/interval`, the
+benefit is governed by `target/RTT`. Whether it survives changes in
+`target/interval` is a separate question this campaign does not answer.
+`verification/P2_DESIGN.md` records what was wrong and why the P1 sweep is
+unaffected.
+ If r is the governing
 variable, then two configurations with the same r must show the same benefit
 even when their RTTs differ several-fold. `target = 20 ms` on a 20 ms path has
 r = 1.0, the same as the default `target = 5 ms` on a 5 ms path, despite four

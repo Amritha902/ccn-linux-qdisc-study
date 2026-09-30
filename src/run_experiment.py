@@ -52,14 +52,34 @@ def jain(xs):
     return (sum(xs) ** 2) / (len(xs) * s2) if s2 > 0 else 0.0
 
 
-def build_testbed(aqm, rate, rtt_ms, target_ms=None):
+def build_testbed(aqm, rate, rtt_ms, target_ms=None, scale_interval=True):
     kind, aqm_args = AQM_SPECS[aqm]
-    # Override the AQM's delay target. Needed to test whether the benefit of
-    # adaptation is governed by the target/RTT ratio rather than by RTT alone:
-    # holding the ratio fixed while varying both should reproduce the same
-    # behaviour if the ratio is what matters.
+    # Override the AQM's delay target, to test whether the benefit of
+    # adaptation is governed by target/RTT rather than by RTT alone.
+    #
+    # The interval is scaled with it by default, and that matters. CoDel has
+    # two time parameters, and the configuration's shape is set by their ratio
+    # as much as by the target. Rewriting the target alone moved
+    # target/interval from 0.05 at the 5 ms default to 0.20 at 20 ms and 0.80
+    # at 80 ms, so cells that were supposed to differ only in target/RTT
+    # differed in a second dimensionless group as well, and the 80 ms cell sat
+    # far outside the 5 to 10 percent envelope CoDel is designed around. A
+    # ratio-invariance test has to scale the whole configuration, holding
+    # target/interval fixed, or it is not holding the configuration's shape
+    # fixed at all.
+    #
+    # P1 is unaffected: it varied RTT alone at the 5 ms target and 100 ms
+    # interval, so target/interval was constant at 0.05 across that sweep.
     if target_ms is not None and "target" in aqm_args:
+        m = re.search(r"target (\d+(?:\.\d+)?)", aqm_args)
+        base_target = float(m.group(1)) if m else 5.0
         aqm_args = re.sub(r"target \S+", f"target {target_ms}ms", aqm_args)
+        if scale_interval and base_target > 0:
+            mi = re.search(r"interval (\d+(?:\.\d+)?)", aqm_args)
+            if mi:
+                scaled = float(mi.group(1)) * (target_ms / base_target)
+                aqm_args = re.sub(r"interval \S+", f"interval {scaled:g}ms",
+                                  aqm_args)
     env = dict(os.environ, RATE_MBIT=str(rate), AQM=kind,
                AQM_ARGS=aqm_args, BASE_RTT_MS=str(rtt_ms))
     r = subprocess.run(["bash", os.path.join(HERE, "testbed.sh"), "setup"],
@@ -77,7 +97,12 @@ def main():
     p.add_argument("--rate-mbit", type=float, default=10.0)
     p.add_argument("--rtt-ms", type=int, default=20)
     p.add_argument("--aqm-target-ms", type=float, default=None,
-                   help="override the AQM delay target (ms)")
+                   help="override the AQM delay target (ms); the interval is "
+                        "scaled with it so target/interval stays fixed")
+    p.add_argument("--no-scale-interval", action="store_true",
+                   help="rewrite the target without scaling the interval, "
+                        "which changes the configuration's shape as well as "
+                        "its scale")
     p.add_argument("--duration", type=int, default=120)
     p.add_argument("--flows", type=int, default=8)
     p.add_argument("--workload", default="steady",
@@ -118,7 +143,8 @@ def main():
     start_jitter = 0.0
 
     kind, aqm_args, setup_out = build_testbed(a.aqm, a.rate_mbit, a.rtt_ms,
-                                              a.aqm_target_ms)
+                                              a.aqm_target_ms,
+                                              not a.no_scale_interval)
     with open(os.path.join(outdir, "00_setup.txt"), "w") as fh:
         fh.write(setup_out)
 

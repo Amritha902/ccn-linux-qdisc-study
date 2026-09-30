@@ -91,3 +91,84 @@ while doing nothing of the kind. Making the range relative to the operating
 point is the correct design independently of this experiment, and it happens
 to be the design a paper about a dimensionless ratio ought to have had from
 the start.
+
+---
+
+# F6: the additive step sizes were absolute too
+
+Found immediately after F5, by reading the target trajectory of the first
+re-run adapted cell rather than trusting that the bounds fix had been enough.
+It had not been.
+
+## The defect
+
+The multiplicative decrease is scale-free, since `p["target"] *= beta` means
+the same thing at any operating point. The additive steps were not:
+
+```python
+p["target"] -= 0.2              # additive-decrease
+p["target"] += ALPHA_T          # additive-increase, 0.5 ms
+p["target"] += 0.2              # gentle-increase
+p["interval"] += 5
+```
+
+As a fraction of the operating point those steps are:
+
+| configured target | 0.2 ms step | 0.5 ms step |
+|---|---|---|
+| 5 ms | 4% | 10% |
+| 20 ms | 1% | 2.5% |
+| 80 ms | 0.25% | 0.6% |
+
+The same controller therefore adapts an order of magnitude more slowly, in
+relative terms, the larger the target it is deployed against.
+
+## The evidence
+
+The first re-run adapted cell at `target = 20 ms` moved from 20.0 to 18.4 ms
+over 84 ticks, entirely in `-0.2` steps: an 8% total excursion. At the 5 ms
+default the identical sequence of control decisions would have moved the
+target 32%.
+
+## Why it endangered P2 in the opposite direction to F5
+
+F5 would have manufactured a confirmation. F6 would have manufactured a
+refutation. At a large configured target the controller does proportionally
+less, so it recovers proportionally less delay, so the cells at `target = 20`
+and `target = 80` would have shown a smaller benefit than the `target = 5`
+cell at the same ratio. The pre-registered rule would have recorded a spread
+greater than 10 percentage points, declared ratio invariance refuted, and the
+refutation would have been an artefact of the controller's own step size
+rather than a fact about queueing.
+
+Both defects were in the same class, absolute constants inside a controller
+whose whole subject is a dimensionless ratio, and the second was only visible
+because the first was fixed and the trajectory then read.
+
+## The fix
+
+Time-valued steps are scaled by `STEP_SCALE = configured_target / 5.0`, so
+every step is the same fraction of the operating point:
+
+```
+t0 =  5.0   gentle 0.200 ms (4.00%)   alpha 0.500 ms (10.00%)
+t0 = 20.0   gentle 0.800 ms (4.00%)   alpha 2.000 ms (10.00%)
+t0 = 80.0   gentle 3.200 ms (4.00%)   alpha 8.000 ms (10.00%)
+```
+
+The scale is fixed per run from the configured target rather than tracking the
+drifting current target, which is what keeps the default exactly
+bit-identical: at 5 ms `STEP_SCALE` is 1.0 and every step is the constant it
+always was. Packet-valued steps (`limit`) are left alone, since a packet count
+is not a time and does not scale with the delay target.
+
+`src/test_bounds.py` covers both defects: that the steps are equal fractions
+at 5, 20 and 80 ms, that they are still exactly 0.2 and 0.5 ms at the default,
+and that an 80 ms target now moves 3.2 ms per gentle step instead of 0.2.
+
+## What was discarded, again
+
+The P2 re-run was stopped after 5 of 18 runs and `results_law/ratio_t20_r20`
+removed. No P2 measurement under either defective version has entered the
+corpus. The 30 P1 runs remain untouched and committed, since all of them ran
+at the 5 ms default where both fixes are no-ops.

@@ -56,6 +56,40 @@ def main():
         checks.append((f"set_bounds({guard!r}) leaves bounds untouched",
                        bounds() == OLD))
 
+    # ---- F6: the additive steps must scale too -------------------------
+    # Only the multiplicative decrease was scale-free. A 0.2 ms step is 4% of
+    # a 5 ms target and 0.25% of an 80 ms one, so the controller adapted far
+    # more slowly in relative terms the larger the target, which would have
+    # refuted ratio invariance by an artefact of its own step size.
+    acape.set_bounds(5.0)
+    checks.append(("STEP_SCALE is 1.0 at the 5 ms default",
+                   acape.STEP_SCALE == 1.0))
+
+    def frac(t0, step):
+        acape.set_bounds(t0)
+        return step * acape.STEP_SCALE / t0
+
+    for step, name in ((0.2, "gentle step"), (acape.ALPHA_T, "alpha step")):
+        fracs = [frac(t, step) for t in (5.0, 20.0, 80.0)]
+        checks.append((f"{name} is the same fraction of target at 5, 20 and 80 ms",
+                       max(fracs) - min(fracs) < 1e-12))
+
+    acape.set_bounds(5.0)
+    checks.append(("gentle step is still exactly 0.2 ms at the default",
+                   0.2 * acape.STEP_SCALE == 0.2))
+    checks.append(("alpha step is still exactly 0.5 ms at the default",
+                   acape.ALPHA_T * acape.STEP_SCALE == 0.5))
+
+    acape.set_bounds(80.0)
+    checks.append(("an 80 ms target moves 3.2 ms per gentle step, not 0.2",
+                   abs(0.2 * acape.STEP_SCALE - 3.2) < 1e-12))
+
+    for guard in (0, None, -5.0):
+        acape.set_bounds(5.0)
+        acape.set_bounds(guard)
+        checks.append((f"set_bounds({guard!r}) leaves STEP_SCALE untouched",
+                       acape.STEP_SCALE == 1.0))
+
     bad = [n for n, ok in checks if not ok]
     for n, ok in checks:
         print(f"  {'ok  ' if ok else 'FAIL'}  {n}")

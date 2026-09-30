@@ -75,15 +75,35 @@ I_MIN, I_MAX     = 20.0, 300.0    # ms, overwritten by set_bounds()
 
 
 def set_bounds(t0):
-    """Scale the parameter bounds to the configured operating point."""
-    global T_MIN, T_MAX, I_MIN, I_MAX
+    """Scale the bounds and the additive step sizes to the operating point."""
+    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE
     if not t0 or t0 <= 0:
         return
     T_MIN, T_MAX = T_MIN_R * t0, T_MAX_R * t0
     I_MIN, I_MAX = I_MIN_R * t0, I_MAX_R * t0
+    STEP_SCALE = t0 / BASE_TARGET
 L_MIN, L_MAX     = 64, 4096       # packets
 BETA             = 0.9            # multiplicative decrease (Floyd et al. 2001)
 ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
+# F6. The multiplicative decrease is scale-free, but the additive steps were
+# not. A 0.2 ms step is 4% of a 5 ms target and 0.25% of an 80 ms one, so the
+# same controller adapted an order of magnitude more slowly, in relative
+# terms, the larger the target it was deployed against. Measured on the first
+# ratio-invariance run, a 20 ms target moved only 20 to 18.4 ms over 84 ticks,
+# an 8% excursion where 5 ms would have moved 32%.
+#
+# For a ratio-invariance experiment that is fatal in the opposite direction to
+# F5: the controller would do less at large targets, show less benefit, and
+# the ratio hypothesis would be recorded as refuted by an artefact of its own
+# step size.
+#
+# The time-valued steps are now scaled by the configured target over the 5 ms
+# default, so every step is the same fraction of the operating point. The
+# scale is fixed per run rather than tracking the drifting target, which keeps
+# the 5 ms default exactly bit-identical: STEP_SCALE is then 1.0 and every
+# step is the constant it always was.
+BASE_TARGET      = 5.0            # ms, the target these constants were tuned at
+STEP_SCALE       = 1.0            # overwritten by set_bounds()
 DR_LIGHT, DR_MOD, DR_HEAVY = 1.0, 10.0, 30.0    # drops/s
 BL_LIGHT, BL_MOD, BL_HEAVY = 20, 100, 300       # packets
 GRAD_WINDOW   = 10
@@ -494,14 +514,15 @@ def aimd(regime, traj, pred, params, workload):
         r = f"{pfx} mult-decrease beta={beta:.2f}"
     elif eff == "MODERATE":
         # Recovering out of HEAVY: ease off instead of another full cut.
-        p["target"] -= 0.2; p["limit"] -= 32
+        p["target"] -= 0.2 * STEP_SCALE; p["limit"] -= 32
         r = f"{pfx} additive-decrease"
     elif eff == "LIGHT":
-        p["target"] += ALPHA_T; p["interval"] += 5; p["limit"] += ALPHA_L
+        p["target"] += ALPHA_T * STEP_SCALE; p["interval"] += 5 * STEP_SCALE
+        p["limit"] += ALPHA_L
         r = f"{pfx} additive-increase"
     else:
         if traj == "RECOVERING":
-            p["target"] += 0.2; p["limit"] += 16
+            p["target"] += 0.2 * STEP_SCALE; p["limit"] += 16
             r = f"{pfx} gentle-increase"
         else:
             return params, "stable", False

@@ -48,8 +48,39 @@ except ImportError:
 VERSION = "6.0.0"
 
 # ── Control constants ─────────────────────────────────────────────────────
-T_MIN, T_MAX     = 0.2, 20.0      # ms  (v5 floored at 1ms; sub-ms now expressible)
-I_MIN, I_MAX     = 20.0, 300.0    # ms
+# F5. The target and interval bounds were absolute: 0.2 to 20 ms and 20 to
+# 300 ms. That is harmless at the 5 ms default but silently wrong anywhere
+# else. Started against a qdisc configured with target 80 ms, the controller
+# read 80 from tc and the clamp cut it to 20 on the very first tick, a
+# fourfold reduction decided by a constant rather than by any control
+# decision. A ratio-invariance experiment run that way would have compared a
+# static 80 ms target against an adapted 20 ms one and reported a large
+# benefit that had nothing to do with control.
+#
+# The bounds are now a fixed multiple of whatever target the qdisc is
+# configured with, so the controller explores the same relative range wherever
+# it is deployed. The multipliers are chosen to reproduce the previous
+# absolute values exactly at the 5 ms default:
+#
+#     T_MIN = 0.04 * 5 = 0.2      T_MAX = 4  * 5 = 20
+#     I_MIN = 4    * 5 = 20       I_MAX = 60 * 5 = 300
+#
+# so every run in every earlier campaign is bit-identical under this change,
+# and only non-default targets behave differently, where the old behaviour was
+# simply a bug.
+T_MIN_R, T_MAX_R = 0.04, 4.0      # x configured target
+I_MIN_R, I_MAX_R = 4.0, 60.0      # x configured target
+T_MIN, T_MAX     = 0.2, 20.0      # ms, overwritten by set_bounds()
+I_MIN, I_MAX     = 20.0, 300.0    # ms, overwritten by set_bounds()
+
+
+def set_bounds(t0):
+    """Scale the parameter bounds to the configured operating point."""
+    global T_MIN, T_MAX, I_MIN, I_MAX
+    if not t0 or t0 <= 0:
+        return
+    T_MIN, T_MAX = T_MIN_R * t0, T_MAX_R * t0
+    I_MIN, I_MAX = I_MIN_R * t0, I_MAX_R * t0
 L_MIN, L_MAX     = 64, 4096       # packets
 BETA             = 0.9            # multiplicative decrease (Floyd et al. 2001)
 ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
@@ -515,6 +546,13 @@ def run(args):
     ebpf_on = bool(ebpf and ebpf.active)
 
     params = get_params(args.ns, args.iface, handle=args.handle, kind=args.kind)
+    # F5: scale the parameter bounds to the target the qdisc is actually
+    # configured with, before any adjustment can be clamped against them.
+    configured_target = params.get("target")
+    set_bounds(configured_target)
+    print(f"[acape] bounds for target {configured_target}ms: "
+          f"target {T_MIN:.3g}-{T_MAX:.3g}ms interval {I_MIN:.3g}-{I_MAX:.3g}ms",
+          flush=True)
     history = deque(maxlen=GRAD_WINDOW)
     sbuf = deque(maxlen=8)
     stable_cnt = adj_count = pred_count = tick = 0

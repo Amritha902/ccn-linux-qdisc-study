@@ -51,7 +51,12 @@ def main():
         r = subprocess.run(
             [sys.executable, os.path.join(HERE, "analyse_law.py"),
              "--law", data, "--sweep", os.path.join(tmp, "none"),
-             "--baseline", os.path.join(tmp, "none"), "--outdir", out],
+             "--baseline", os.path.join(tmp, "none"), "--outdir", out,
+             # Must be redirected. --texdir defaults to paper/generated, so
+             # without this the synthetic fixture overwrites the real
+             # law_facts.tex and table_law.tex that the papers cite, and the
+             # papers would carry invented numbers.
+             "--texdir", os.path.join(out, "tex")],
             capture_output=True, text=True)
         if r.returncode != 0:
             print(r.stdout); print(r.stderr, file=sys.stderr)

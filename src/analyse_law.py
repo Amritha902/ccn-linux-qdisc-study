@@ -165,7 +165,7 @@ def _num(x, nd=2):
     return "n/a" if x is None else f"{x:.{nd}f}"
 
 
-def emit_latex(cs, B, r0, k, r2, invariance_ok, holdout_ok, texdir):
+def emit_latex(cs, B, r0, k, r2, invariance_ok, holdout_ok, texdir, real=True):
     """Write the ratio table and the fact macros the papers cite.
 
     Every number the papers quote about the scaling law comes from here, so
@@ -174,6 +174,13 @@ def emit_latex(cs, B, r0, k, r2, invariance_ok, holdout_ok, texdir):
     sequence, which cost an afternoon earlier in this project.
     """
     if not texdir:
+        return
+    # Refuse to write the papers' generated LaTeX from anything but the real
+    # corpus. The test fixture once overwrote law_facts.tex with synthetic
+    # numbers because it did not pass --texdir, and a paper that cites
+    # generated macros would have carried them silently.
+    if not real:
+        print("  not the default corpus; skipping paper/generated LaTeX")
         return
     os.makedirs(texdir, exist_ok=True)
 
@@ -405,7 +412,8 @@ def main():
     open(os.path.join(a.outdir, "law_report.txt"), "w").write(txt + "\n")
     print(txt)
 
-    emit_latex(cs, B, r0, k, r2, invariance_ok, holdout_ok, a.texdir)
+    real = (a.law, a.sweep, a.baseline) == ("results_law", "results_sweep", "results")
+    emit_latex(cs, B, r0, k, r2, invariance_ok, holdout_ok, a.texdir, real)
 
     # ---- figure --------------------------------------------------------
     fig, axes = plt.subplots(1, 2, figsize=(13, 5)); fig.patch.set_facecolor("white")

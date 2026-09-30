@@ -1,0 +1,168 @@
+%% ============================================================
+\section{A Scaling Law for When Adaptation Pays}
+\label{sec:law}
+
+The RTT sweep of Section~\ref{sec:results} left a result we could not explain.
+Adaptation recovered a large, highly significant share of bulk-flow round-trip
+time on a $5$\,ms path and nothing at $20$, $80$ or $200$\,ms. Read as a table
+that is four measurements and a shrug. The obvious reading, that adaptation
+helps on short paths, is not a mechanism and predicts nothing.
+
+\subsection{The hypothesis}
+
+CoDel's \texttt{target} is a delay budget, fixed at $5$\,ms by default, while
+the path RTT is whatever the path is. The quantity that should govern whether
+that budget is badly chosen is therefore neither the target nor the RTT but
+their ratio,
+\begin{equation}
+r = \frac{\texttt{target}}{\text{path RTT}} .
+\end{equation}
+When $r$ is small the standing-queue budget is a minor addition to the path and
+there is nothing for a controller to win back. When $r$ approaches unity the
+budget is comparable to the path itself, queueing dominates the delay a flow
+sees, and shrinking it is worth a great deal. On this reading RTT never appears
+on its own; it appears only through $r$. That is a stronger claim than the
+table, and unlike the table it can be wrong.
+
+\subsection{Pre-registration}
+
+Because a saturating curve can be fitted to almost any monotone data, the
+hypothesis, the three predictions and their numerical decision thresholds were
+written down and committed to the repository \emph{before} the measurement
+campaign ran. The commit adding \texttt{docs/SCALING\_LAW.md} and the analysis
+script, with its thresholds already in place, precedes the commit adding the
+results directory. The predictions were:
+
+\begin{description}
+\item[P1] A crossover exists between $r = 0.25$ and $r = 1.0$.
+\item[P2] \textbf{Ratio invariance.} Configurations sharing an $r$ but
+      differing in RTT show the same benefit. Threshold: benefits within $10$
+      percentage points. This is the prediction that can refute the hypothesis
+      outright, and a refutation was to be reported as such.
+\item[P3] Leave-one-out prediction across interior ratios, with mean absolute
+      error at or below $5$ percentage points.
+\end{description}
+
+One amendment was made during the campaign and is recorded rather than
+substituted silently. The first attempt at P2 varied the target while leaving
+\texttt{interval} at $100$\,ms, which moved \texttt{target}/\texttt{interval}
+from $0.05$ to $0.80$ across the cells and so varied a second dimensionless
+group alongside the one under test. The interval is now scaled with the target,
+and the claim is correspondingly narrower: \emph{at fixed}
+\texttt{target}/\texttt{interval}, the benefit is governed by $r$.
+
+\subsection{Results}
+
+Table~\ref{tab:law} reports every cell. Figure~\ref{fig:law} plots benefit
+against $r$ and, in the second panel, the same data against RTT alone.
+
+\begin{table}[t]
+\centering
+\caption{Adaptation benefit against the ratio $r = \texttt{target}/\text{RTT}$.
+Reduction in mean bulk-flow RTT, static against adapted \texttt{fq\_codel}.
+Starred rows are significant at $p < 0.05$. \emph{adj} is the mean number of
+parameter adjustments the controller made; a cell where it is zero is not
+measuring adaptation and is excluded from the fit.}
+\label{tab:law}
+\small
+\input{generated/table_law}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig16_scaling_law.png}
+\caption{Benefit against $r$ (left) and against RTT alone (right). The
+collapse onto a single curve in the left panel, and its absence in the right,
+is the result.}
+\label{fig:law}
+\end{figure}
+
+\textbf{P1 holds.} The crossover falls where it was predicted to, between
+$r = 0.25$ and $r = 1.0$, and the curve saturates rather than growing without
+bound. Fitting $b(r) = B / (1 + (r_0/r)^k)$ gives
+\begin{equation}
+b(r) = \frac{\LawCeiling}{1 + (\LawHalfBenefit/r)^{\LawSteepness}}, \qquad
+R^2 = \LawRsq .
+\end{equation}
+Half the available benefit arrives at $r = \LawHalfBenefit$. The significance
+boundary coincides with the crossover: every cell at $r \ge \LawLowestSigRatio$
+is significant and every cell below it is not.
+
+A percentage reduction shrinks on its own when its denominator grows, so the
+collapse at low $r$ could be an artefact of dividing by a larger RTT. It is
+not. In absolute milliseconds the two regimes do not overlap: the gain is
+$\LawGainHiMin$ to $\LawGainHiMax$\,ms above $r = 0.4$ and $\LawGainLoMin$ to
+$\LawGainLoMax$\,ms below it.
+
+\textbf{P2 holds, at $r = 1.0$, across a sixteenfold range of RTT.} Scaling the
+target, the interval, the controller's loop period and the run duration
+together by the same factor:
+
+\begin{center}
+\small
+\begin{tabular}{rrrrr}
+\hline
+target & RTT & benefit & gain & $p$ \\
+\hline
+5\,ms & 5\,ms & 18.4\% & 5.10\,ms & $<$0.001 \\
+20\,ms & 20\,ms & 17.6\% & 10.78\,ms & $<$0.001 \\
+80\,ms & 80\,ms & 16.4\% & 29.73\,ms & 0.0003 \\
+\hline
+\end{tabular}
+\end{center}
+
+Spread is $2.0$ percentage points against a threshold of $10$, and all
+three cells are significant. The \emph{fraction} of delay recovered is what
+stays fixed while the absolute gain grows from $5$ to $30$\,ms, which is the
+claim itself: the ratio governs the proportion recoverable, not the
+milliseconds.
+
+The sharpest discrimination was not anticipated in the pre-registration. Hold
+RTT fixed at $20$\,ms and vary only $r$: the benefit is $1.4\%$ and not
+significant at $r = 0.25$, and $17.6\%$ and significant at $r = 1.0$. Same
+path, twelve times the benefit. The competing explanation, that short paths are
+simply special, predicts nothing for both, since $20$\,ms is one of the RTTs at
+which the original sweep measured nothing. The ratio predicts both the presence
+and the absence; RTT predicts neither.
+
+Invariance at $r = 0.25$ is reported as inconclusive rather than as
+supporting evidence. One of its two cells made no parameter adjustment at all
+across three seeds, because its drop rate sat almost exactly on the scaled
+regime threshold and the classification oscillated. A cell whose adapted arm
+never changes a parameter runs the static configuration twice, so its null is
+true by construction and cannot distinguish an absent effect from an absent
+intervention.
+
+\textbf{P3 holds.} Leave-one-out across interior ratios predicts held-out
+measurements to $1.4$ percentage points on average, worst case $3.5$, against a
+threshold of $5$. Endpoints are excluded deliberately: holding out an extreme
+ratio asks a saturating curve to extrapolate past the data that fixes its own
+ceiling, which tests the fitting procedure rather than the hypothesis.
+
+\subsection{What the benefit costs}
+
+Adaptation is not free, and reporting the latency gain without its price
+reports half the trade. Shrinking the delay target makes CoDel drop earlier, so
+senders back off sooner. Across the cells measured, the drop rate rises by up
+to $\LawDropRiseHigh\%$ and retransmissions by a comparable margin wherever the
+benefit is large, while both fall slightly in the cells where it is absent.
+Throughput is the quantity that does not move: the worst change across every
+cell in the campaign is $\LawWorstThroughput\%$. The controller converts
+retransmissions into latency at a roughly fixed exchange rate, and the ratio
+governs the exchange as well as the gain.
+
+\subsection{Consequence}
+
+Published guidance for CoDel holds that \texttt{target} should be about $5$ to
+$10$ percent of \texttt{interval}, with \texttt{interval} on the order of the
+path RTT. A correctly configured deployment therefore sits at $r$ of roughly
+$0.05$ to $0.10$. Half the available benefit arrives at $r = \LawHalfBenefit$,
+five to ten times outside that envelope.
+
+This says something sharper than that adaptation sometimes helps.
+It says adaptation pays only on boxes already configured well outside CoDel's
+own design envelope, and that on a correctly configured box there is close to
+nothing for a controller to recover. This reading unifies the null result of
+Section~\ref{sec:results} with the null results reported elsewhere in the
+literature as a single effect rather than as separate disappointments, and it
+gives an operator a number to compute before deploying a controller at all.

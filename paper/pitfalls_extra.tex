@@ -1,0 +1,73 @@
+\subsection{Absolute constants in a scale-free controller}
+\label{sec:pitfall:scale}
+
+Four defects of one shape, found in sequence because each was masked by the
+one before it. All four lived in a controller whose entire subject is a
+dimensionless ratio, and all four were absolute times.
+
+\textbf{Bounds.} \texttt{target} was clamped to $[0.2, 20]$\,ms absolute. The
+controller does not assume the default target; it reads the configured one from
+\texttt{tc}. Started against a qdisc configured with \texttt{target 80ms} it
+began at $80$ and the clamp cut it to $20$ on the first adjustment: a fourfold
+reduction decided by a constant, before any control logic ran. In the ratio
+invariance cell at $r = 1.0$ this would have compared a static $80$\,ms target
+against an adapted $20$\,ms one, produced a large significant benefit matching
+the hypothesis' own prediction, and been reported as a clean confirmation. The
+clamp also moves that cell to $r = 0.25$, so it was not testing the ratio on
+its label.
+
+\textbf{Step sizes.} The multiplicative decrease is scale-free; the additive
+steps were not. A $0.2$\,ms step is $4\%$ of a $5$\,ms target and $0.25\%$ of
+an $80$\,ms one, so the controller adapted an order of magnitude more slowly,
+in relative terms, the larger the target. Measured: a $20$\,ms target moved
+$20.0$ to $18.4$\,ms over $84$ ticks, an $8\%$ excursion where $5$\,ms would
+have moved $32\%$. This defect points the other way from the first: the
+controller simply does less at large targets, shows less benefit, and the
+pre-registered threshold would have recorded invariance as refuted.
+
+\textbf{Regime thresholds.} \texttt{classify()} selects the control law from a
+drop rate in drops per second, which has units of inverse time. At $r = 1.0$
+the measured static drop rate is $59.3$/s at a $5$\,ms target, $20.2$/s at
+$20$\,ms and $7.1$/s at $80$\,ms, classifying identical relative congestion as
+HEAVY, MODERATE and LIGHT. The three cells required to be treated identically
+would each have received a different control law, and the LIGHT branch
+\emph{increases} the target, the opposite action.
+
+\textbf{Control period and run duration.} CoDel's \texttt{interval} scales with
+the target; the controller's loop period did not. At a $1.6$\,s AQM interval the
+controller sampled every $0.5$\,s, taking three samples inside one cycle rather
+than averaging over several. The classification flickered, the gate requiring
+five consecutive identical classifications never opened, and an entire $86$-tick
+run produced zero adjustments with the target reading $80.000$\,ms throughout.
+Fixing it required scaling the run duration too, from $60$ to $960$\,s at the
+sixteenfold cell, since a controller ticking sixteen times more slowly needs
+sixteen times as long for a comparable trajectory.
+
+Every bound, step and threshold is now expressed as a multiple of the
+configured operating point, as Section~\ref{sec:bounds} sets out, with
+multipliers chosen so the $5$\,ms default reproduces the previous absolute
+values exactly. That equality is asserted by a test rather than left as a
+claim, along with the old behaviour each fix replaces.
+
+\subsection{A null that was true by construction}
+\label{sec:pitfall:inert}
+
+Distinguishing an absent effect from an absent intervention requires checking
+that the intervention happened. In the $r = 0.25$ invariance pair, one cell's
+controller ran $109$, $108$ and $108$ ticks across three seeds and adjusted
+nothing at all. Its drop rate averaged $7.7$/s while the scaled HEAVY threshold
+sat at $7.5$/s, so the classification oscillated on the boundary and the
+stability gate never opened. A cell whose adapted arm never changes a parameter
+runs the static configuration twice; its null is true by construction and is
+not evidence that the ratio produces no benefit there.
+
+Two such cells exist, both at $80$\,ms RTT, and one of them is from the
+original RTT sweep where it had been read as evidence that adaptation does not
+help on long paths. Part of that null was the controller not acting.
+
+The crossover itself survives this, which is what makes it a measurement: it is
+bracketed by cells in which the controller demonstrably acted, from $12.4\%$
+benefit at $r = 0.625$ with seven adjustments down to $0.0\%$ at $r = 0.125$
+with eight. A controller that adjusted eight times and recovered nothing is a
+genuine null. The mean adjustment count is reported for every cell in
+Table~\ref{tab:law} so that a reader can see where the controller was working.

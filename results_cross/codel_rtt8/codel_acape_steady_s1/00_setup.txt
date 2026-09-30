@@ -15,5 +15,5 @@ qdisc codel 10: parent 1:1 limit 1024p target 5ms interval 100ms
 PING 192.168.2.2 (192.168.2.2) 56(84) bytes of data.
 
 --- 192.168.2.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2005ms
-rtt min/avg/max/mdev = 8.880/12.879/20.664/5.505 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+rtt min/avg/max/mdev = 8.914/12.411/19.291/4.864 ms

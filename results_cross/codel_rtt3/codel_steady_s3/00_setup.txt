@@ -6,14 +6,14 @@ qdisc tbf 1: root refcnt 3 rate 10Mbit burst 4Kb lat 400ms
  Sent 160 bytes 2 pkt (dropped 0, overlimits 0 requeues 0) 
  backlog 0b 0p requeues 0
 qdisc codel 10: parent 1:1 limit 1024p target 5ms interval 100ms 
- Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) 
+ Sent 160 bytes 2 pkt (dropped 0, overlimits 0 requeues 0) 
  backlog 0b 0p requeues 0
-  count 0 lastcount 0 ldelay 0us drop_next 0us
-  maxpacket 0 ecn_mark 0 drop_overlimit 0
+  count 0 lastcount 0 ldelay 1us drop_next 0us
+  maxpacket 90 ecn_mark 0 drop_overlimit 0
 
   --- connectivity client -> server ---
 PING 192.168.2.2 (192.168.2.2) 56(84) bytes of data.
 
 --- 192.168.2.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2005ms
-rtt min/avg/max/mdev = 2.864/7.435/16.415/6.350 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2006ms
+rtt min/avg/max/mdev = 2.975/7.398/16.118/6.165 ms

@@ -70,18 +70,42 @@ VERSION = "6.0.0"
 # and only non-default targets behave differently, where the old behaviour was
 # simply a bug.
 T_MIN_R, T_MAX_R = 0.04, 4.0      # x configured target
-I_MIN_R, I_MAX_R = 4.0, 60.0      # x configured target
+# F9. The interval bounds were a multiple of the configured TARGET, which
+# bakes in fq_codel's own interval/target ratio of 20 (100ms against 5ms).
+# PIE's ratio is 1: its tupdate default is 15ms at a 15ms target. Bounds of
+# [4*t0, 60*t0] therefore put PIE's configured tupdate BELOW the floor, and the
+# first adjustment quadrupled it from 15ms to 60ms, a change to PIE's control
+# period that no control decision asked for. The same defect as F5, one level
+# up: a constant calibrated on one qdisc's shape, imposed on another's.
+#
+# Bounds are now a multiple of the configured INTERVAL, so each qdisc keeps its
+# own shape. The multipliers reproduce the previous values exactly at
+# fq_codel's 100ms default: 0.2*100 = 20 and 3*100 = 300.
+I_MIN_R, I_MAX_R = 0.2, 3.0       # x configured interval
+I_RATIO          = 10.0           # interval/target floor, set from the qdisc
 T_MIN, T_MAX     = 0.2, 20.0      # ms, overwritten by set_bounds()
 I_MIN, I_MAX     = 20.0, 300.0    # ms, overwritten by set_bounds()
 
 
-def set_bounds(t0):
-    """Scale the bounds and the additive step sizes to the operating point."""
-    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE, DR_SCALE, T2_INTERVAL
+def set_bounds(t0, i0=None):
+    """Scale the bounds and step sizes to the configured operating point.
+
+    t0 is the configured target, i0 the configured interval. Target-derived
+    quantities scale with t0; the interval bounds scale with i0 so a qdisc
+    whose interval/target ratio differs from fq_codel's is not forced onto
+    fq_codel's shape (F9). Omitting i0 assumes fq_codel's ratio of 20, which
+    keeps the single-argument call behaving exactly as before.
+    """
+    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE, DR_SCALE, T2_INTERVAL, I_RATIO
     if not t0 or t0 <= 0:
         return
     T_MIN, T_MAX = T_MIN_R * t0, T_MAX_R * t0
-    I_MIN, I_MAX = I_MIN_R * t0, I_MAX_R * t0
+    iref = i0 if (i0 and i0 > 0) else t0 * 20
+    I_MIN, I_MAX = I_MIN_R * iref, I_MAX_R * iref
+    # Preserve the qdisc's own interval/target coupling rather than CoDel's.
+    # At fq_codel's defaults this is 100/5 = 20, and the old rule's floor of 10
+    # never bound, so behaviour there is unchanged.
+    I_RATIO = (iref / t0) / 2.0
     STEP_SCALE = t0 / BASE_TARGET
     DR_SCALE = BASE_TARGET / t0
     # F8. The control loop period was absolute. CoDel's interval scales with
@@ -630,8 +654,13 @@ def aimd(regime, traj, pred, params, workload):
     p["target"]   = max(T_MIN, min(T_MAX, p["target"]))
     p["interval"] = max(I_MIN, min(I_MAX, p["interval"]))
     p["limit"]    = max(L_MIN, min(L_MAX, int(p["limit"])))
-    if p["interval"] <= p["target"] * 10:
-        p["interval"] = min(I_MAX, p["target"] * 10)
+    # F9. This enforced interval >= 10*target, which is CoDel's own coupling:
+    # its interval must span a path RTT while its target is a small fraction of
+    # one. PIE's tupdate sits at roughly 1x its target, so the rule inflated
+    # PIE's control period by an order of magnitude the moment it fired. The
+    # coupling now preserves whatever ratio the qdisc was configured with.
+    if I_RATIO and p["interval"] < p["target"] * I_RATIO:
+        p["interval"] = min(I_MAX, p["target"] * I_RATIO)
     return p, f"{r} | regime={regime} pred={pred} wkld={workload}", predictive
 
 
@@ -669,9 +698,12 @@ def run(args):
     # F5: scale the parameter bounds to the target the qdisc is actually
     # configured with, before any adjustment can be clamped against them.
     configured_target = params.get("target")
-    set_bounds(configured_target)
-    print(f"[acape] bounds for target {configured_target}ms: "
-          f"target {T_MIN:.3g}-{T_MAX:.3g}ms interval {I_MIN:.3g}-{I_MAX:.3g}ms",
+    configured_interval = params.get("interval")
+    set_bounds(configured_target, configured_interval)
+    print(f"[acape] bounds for target {configured_target}ms "
+          f"interval {configured_interval}ms: "
+          f"target {T_MIN:.3g}-{T_MAX:.3g}ms interval {I_MIN:.3g}-{I_MAX:.3g}ms "
+          f"(interval/target ratio {(configured_interval/configured_target if configured_target else 0):.1f})",
           flush=True)
     history = deque(maxlen=GRAD_WINDOW)
     rttbuf = deque(maxlen=GATE_WINDOW)      # for the self-gate's RTT estimate

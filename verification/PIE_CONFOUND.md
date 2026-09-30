@@ -91,3 +91,66 @@ Read conservatively, that means the crossover is not purely a property of the
 delay target. Flow queueing sharpens it. That is a narrower claim than the
 pre-registration hoped for, and it is what the data supports until PIE is
 re-run properly.
+
+---
+
+# F9: the interval bounds and coupling carried fq_codel's shape
+
+Found on the first re-run, by reading the trajectory rather than trusting that
+the two fixes above were enough. They were not.
+
+## What the re-run showed
+
+Both earlier fixes worked: 180 s duration, 102 ticks, 10 adjustments against
+the previous three, and `interval_ms` starting at PIE's real 15 ms rather than
+the hardcoded 100 ms. Then the interval read `15.00`, `60.00`, `135.00`.
+
+PIE's configured `tupdate` is 15 ms. The controller moved it to 60, then 135.
+Neither was a control decision.
+
+## Two CoDel-specific constants
+
+`I_MIN, I_MAX` were `[4 t_0, 60 t_0]`, a multiple of the configured **target**.
+That bakes in fq_codel's own interval/target ratio of 20, since its defaults
+are a 100 ms interval at a 5 ms target. PIE's ratio is 1: its `tupdate`
+default is 15 ms at a 15 ms target. So `I_MIN` came out at 60 ms, PIE's
+configured 15 ms sat **below the floor**, and the first adjustment quadrupled
+it.
+
+The coupling rule `interval >= 10 * target` is CoDel's own invariant. CoDel's
+interval must span a path RTT while its target is a small fraction of one, so
+a factor of ten is a sensible floor there and never binds at its defaults.
+Applied to PIE, whose `tupdate` sits at roughly one times its target, the rule
+inflates the control period by an order of magnitude the moment it fires.
+
+Together these two meant the adapted PIE arm was running with a control period
+four to nine times what it was configured with, for reasons that have nothing
+to do with the delay target the scaling law is about.
+
+## The fix
+
+The interval bounds are now a multiple of the configured **interval**, and the
+coupling preserves whatever interval/target ratio the qdisc was configured
+with, rather than CoDel's:
+
+| qdisc | configured | bounds | coupling floor | binds? |
+|---|---|---|---|---|
+| `fq_codel` | target 5, interval 100 | [20, 300] | 50 ms | no |
+| `pie` | target 15, tupdate 15 | [3, 45] | 7.5 ms | no |
+
+The multipliers reproduce fq_codel's previous values exactly, `0.2 * 100 = 20`
+and `3 * 100 = 300`, and its coupling ratio comes out at exactly the 10 the
+rule used to hardcode. Every earlier run is therefore unaffected, which
+`src/test_bounds.py` asserts along with the two old behaviours this replaces.
+
+## The pattern, again
+
+This is F5 one level up. F5 was a constant calibrated on one operating point
+and imposed on another. F9 is a constant calibrated on one qdisc's *shape* and
+imposed on another's. Both were invisible until the controller was taken
+somewhere its constants had never been exercised, and both were found by
+reading a parameter trajectory rather than a summary statistic.
+
+Five defects of this class now: bounds, step sizes, regime thresholds, loop
+period, and the interval relationships. Every one of them an assumption about
+scale or shape written as a literal.

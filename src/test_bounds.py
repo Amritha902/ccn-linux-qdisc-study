@@ -157,6 +157,37 @@ def main():
         checks.append((f"set_bounds({guard!r}) leaves the loop period untouched",
                        acape.T2_INTERVAL == 0.5))
 
+    # ---- F9: interval bounds and coupling must follow the qdisc's shape ---
+    # The interval bounds were a multiple of the configured TARGET, baking in
+    # fq_codel's interval/target ratio of 20. PIE's ratio is 1, so its
+    # configured 15ms tupdate fell below the 60ms floor and the first
+    # adjustment quadrupled it. The interval >= 10*target rule was CoDel's own
+    # coupling and inflated PIE's control period by an order of magnitude.
+    acape.set_bounds(5.0, 100.0)
+    checks.append(("fq_codel interval bounds are still exactly [20, 300]",
+                   (acape.I_MIN, acape.I_MAX) == (20.0, 300.0)))
+    checks.append(("fq_codel interval coupling is still 10x target",
+                   acape.I_RATIO == 10.0))
+    checks.append(("fq_codel's configured interval sits inside its bounds",
+                   acape.I_MIN <= 100.0 <= acape.I_MAX))
+
+    acape.set_bounds(15.0, 15.0)
+    checks.append(("PIE's configured tupdate sits inside its bounds",
+                   acape.I_MIN <= 15.0 <= acape.I_MAX))
+    checks.append(("PIE's interval coupling does not inflate its tupdate",
+                   15.0 >= 15.0 * acape.I_RATIO))
+
+    # Pin the defect: under the old target-derived bounds PIE was clamped up.
+    old_imin = 4.0 * 15.0
+    checks.append(("the old bounds really did put PIE's tupdate below the floor",
+                   15.0 < old_imin))
+    checks.append(("and the old coupling really did inflate it tenfold",
+                   15.0 * 10.0 == 150.0))
+
+    acape.set_bounds(5.0)
+    checks.append(("single-argument set_bounds stays backward compatible",
+                   (acape.I_MIN, acape.I_MAX) == (20.0, 300.0)))
+
     bad = [n for n, ok in checks if not ok]
     for n, ok in checks:
         print(f"  {'ok  ' if ok else 'FAIL'}  {n}")

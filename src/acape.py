@@ -283,14 +283,40 @@ def get_params(ns, iface, handle=None, kind="fq_codel"):
     return p
 
 
+# Which parameters each delay-targeting qdisc actually accepts, and under what
+# name. Writing fq_codel's four at a plain `codel` or a `pie` makes tc reject
+# the whole command, so the controller could only ever drive fq_codel. Keeping
+# this as a table is what lets the same control law be tested on a different
+# AQM algorithm, which is the point of the cross-AQM experiment: PIE regulates
+# a drop probability with a proportional-integral controller rather than a
+# sojourn threshold, so if the same ratio governs it, the result is about delay
+# targets in general and not about CoDel's mechanism.
+#
+# `tupdate` is PIE's update period, the closest analogue of CoDel's interval,
+# so the controller's interval state maps onto it.
+PARAM_SETS = {
+    "fq_codel": [("target", "target"), ("interval", "interval"),
+                 ("limit", "limit"), ("quantum", "quantum")],
+    "codel":    [("target", "target"), ("interval", "interval"),
+                 ("limit", "limit")],
+    "pie":      [("target", "target"), ("tupdate", "interval"),
+                 ("limit", "limit")],
+    "fq_pie":   [("target", "target"), ("tupdate", "interval"),
+                 ("limit", "limit")],
+}
+TIME_PARAMS = {"target", "interval", "tupdate"}
+
+
 def apply_params(ns, iface, p, parent="1:1", handle="10:", kind="fq_codel", dry=False):
     """F3: emit microsecond resolution and verify by reading back."""
+    spec = PARAM_SETS.get(kind, PARAM_SETS["fq_codel"])
     cmd = ["ip", "netns", "exec", ns, "tc", "qdisc", "change", "dev", iface,
-           "parent", parent, "handle", handle, kind,
-           "target", fmt_time(p["target"]),
-           "interval", fmt_time(p["interval"]),
-           "limit", str(int(p["limit"])),
-           "quantum", str(int(p["quantum"]))]
+           "parent", parent, "handle", handle, kind]
+    for tc_name, state_key in spec:
+        if state_key not in p:
+            continue
+        cmd += [tc_name, (fmt_time(p[state_key]) if tc_name in TIME_PARAMS
+                          else str(int(p[state_key])))]
     if dry:
         print("  [DRY] " + " ".join(cmd))
         return True, dict(p)

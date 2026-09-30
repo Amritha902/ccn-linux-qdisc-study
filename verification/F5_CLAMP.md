@@ -172,3 +172,82 @@ The P2 re-run was stopped after 5 of 18 runs and `results_law/ratio_t20_r20`
 removed. No P2 measurement under either defective version has entered the
 corpus. The 30 P1 runs remain untouched and committed, since all of them ran
 at the 5 ms default where both fixes are no-ops.
+
+---
+
+# F7: the regime thresholds were absolute as well
+
+Third defect of the same class, found by auditing every remaining constant at
+once rather than waiting to trip over the next one. The audit was prompted by
+noticing that the first re-run cell reached its plateau by a different route
+than the cell it is supposed to be compared against.
+
+## The defect
+
+`classify()` decides which control law applies from a drop rate in drops per
+second, against fixed thresholds:
+
+```python
+DR_LIGHT, DR_MOD, DR_HEAVY = 1.0, 10.0, 30.0    # drops/s
+```
+
+Drops per second has units of one over time, so it is not scale-free. Measured
+on the static arm at ratio 1.0:
+
+| configured target | drops/s | regime under fixed thresholds | action |
+|---|---|---|---|
+| 5 ms | 59.3 | HEAVY | multiplicative decrease |
+| 20 ms | 20.2 | MODERATE | additive decrease |
+| 80 ms | 7.1 | LIGHT | additive **increase** |
+
+The three cells whose whole purpose is to be treated identically each received
+a different control law, and the 80 ms cell would have been driven in the
+opposite direction to the other two.
+
+This was visible in the trajectories before the numbers were in. At ratio 1.0
+the 5 ms cell descends in multiplicative steps of varying size to a 52%
+excursion, while the 20 ms cell descends in uniform additive steps to 32%.
+
+## The fix, and two caveats stated plainly
+
+Thresholds are scaled by `BASE_TARGET / t0`. Under that scaling all three
+cells classify as HEAVY, with margin: 59.3 against 30, 20.2 against 7.5, and
+7.1 against 1.875.
+
+The first caveat is that the measured drop rate falls as roughly `t^-0.78`
+rather than the `t^-1` this scaling assumes, so the correction is not exact
+and is not claimed to be. The second is that exactness is not what P2 needs.
+P2 needs every compared cell to receive the same control law, which is a
+weaker condition, and one that can be checked directly from the logged
+regimes after the runs rather than argued for in advance. That check is
+reported with the P2 result.
+
+## What was not scaled, and why
+
+Backlog thresholds are left alone. Measured at ratio 1.0, mean backlog moves
+by only x0.90 and x2.17 across a sixteenfold change in target, so it is close
+to invariant already and scaling it would introduce an error rather than
+remove one. `composite_gradient()` normalises by the drop threshold, so it
+follows the scaling automatically. Packet-valued and byte-valued constants
+(`limit` steps, `quantum`) are not times and do not scale with a delay target.
+
+## The pattern
+
+Three defects, one cause: absolute constants inside a controller whose entire
+subject is a dimensionless ratio. Each was invisible until the previous one
+was fixed, because each was masked by the one before it. F5 would have
+manufactured a confirmation, F6 a refutation, and F7 would have applied three
+different control laws to the three cells being compared.
+
+The general lesson is worth more than the individual fixes. A controller
+intended to work at any operating point must express every threshold, bound
+and step in units relative to that operating point, and the only reliable way
+to find where it does not is to deploy it far from the point its constants
+were tuned at and read what it actually did.
+
+## State of the corpus
+
+No P2 measurement under any of the three defective versions has been kept. The
+30 P1 runs are untouched and committed, all having run at the 5 ms default
+where every fix is exactly a no-op, which `src/test_bounds.py` asserts across
+twenty-six checks.

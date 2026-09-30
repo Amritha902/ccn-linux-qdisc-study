@@ -76,12 +76,13 @@ I_MIN, I_MAX     = 20.0, 300.0    # ms, overwritten by set_bounds()
 
 def set_bounds(t0):
     """Scale the bounds and the additive step sizes to the operating point."""
-    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE
+    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE, DR_SCALE
     if not t0 or t0 <= 0:
         return
     T_MIN, T_MAX = T_MIN_R * t0, T_MAX_R * t0
     I_MIN, I_MAX = I_MIN_R * t0, I_MAX_R * t0
     STEP_SCALE = t0 / BASE_TARGET
+    DR_SCALE = BASE_TARGET / t0
 L_MIN, L_MAX     = 64, 4096       # packets
 BETA             = 0.9            # multiplicative decrease (Floyd et al. 2001)
 ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
@@ -104,7 +105,30 @@ ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
 # step is the constant it always was.
 BASE_TARGET      = 5.0            # ms, the target these constants were tuned at
 STEP_SCALE       = 1.0            # overwritten by set_bounds()
-DR_LIGHT, DR_MOD, DR_HEAVY = 1.0, 10.0, 30.0    # drops/s
+# F7. The regime thresholds are drop rates in drops per second, a quantity
+# with units of 1/time, so they are not scale-free. At ratio 1.0 the measured
+# static drop rate is 59.3/s at target 5 ms, 20.2/s at 20 ms and 7.1/s at
+# 80 ms, which against the fixed thresholds below classifies the same relative
+# congestion as HEAVY, MODERATE and LIGHT respectively. The three cells that
+# ratio invariance requires to be treated identically would each have received
+# a different control law, and at 80 ms the LIGHT branch increases the target,
+# the opposite action.
+#
+# The thresholds are therefore scaled by BASE_TARGET/t0. Two honest caveats.
+# The measured drop rate falls as roughly t^-0.78 rather than the t^-1 this
+# scaling assumes, so the correction is not exact. And what P2 actually needs
+# is weaker than exactness: it needs every compared cell to receive the same
+# control law. Under this scaling all three land in HEAVY with margin (59.3
+# against 30, 20.2 against 7.5, 7.1 against 1.875), which is verified from the
+# trajectories after the runs rather than assumed here.
+#
+# Backlog is deliberately not scaled. Measured at ratio 1.0 it moves by only
+# x0.90 and x2.17 across a sixteenfold change in target, so it is close to
+# invariant already and scaling it would introduce an error rather than remove
+# one. composite_gradient() normalises by these thresholds, so it follows
+# automatically.
+DR_LIGHT, DR_MOD, DR_HEAVY = 1.0, 10.0, 30.0    # drops/s at BASE_TARGET
+DR_SCALE = 1.0                                   # overwritten by set_bounds()
 BL_LIGHT, BL_MOD, BL_HEAVY = 20, 100, 300       # packets
 GRAD_WINDOW   = 10
 STABLE_ROUNDS = 5
@@ -461,17 +485,18 @@ def gradient(history, attr):
 
 
 def classify(dr, bl):
-    if dr > DR_HEAVY or bl > BL_HEAVY:
+    """F7: drop-rate thresholds scale with the operating point, backlog does not."""
+    if dr > DR_HEAVY * DR_SCALE or bl > BL_HEAVY:
         return "HEAVY"
-    if dr > DR_MOD or bl > BL_MOD:
+    if dr > DR_MOD * DR_SCALE or bl > BL_MOD:
         return "MODERATE"
-    if dr > DR_LIGHT or bl > BL_LIGHT:
+    if dr > DR_LIGHT * DR_SCALE or bl > BL_LIGHT:
         return "LIGHT"
     return "NORMAL"
 
 
 def composite_gradient(dr_g, bl_g):
-    return 0.6 * dr_g / DR_HEAVY + 0.4 * bl_g / BL_HEAVY
+    return 0.6 * dr_g / (DR_HEAVY * DR_SCALE) + 0.4 * bl_g / BL_HEAVY
 
 
 def predict(regime, dr_g, bl_g):

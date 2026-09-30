@@ -90,6 +90,45 @@ def main():
         checks.append((f"set_bounds({guard!r}) leaves STEP_SCALE untouched",
                        acape.STEP_SCALE == 1.0))
 
+    # ---- F7: the regime thresholds must scale too -----------------------
+    # Drops per second has units of 1/time. At ratio 1.0 the measured static
+    # drop rates are 59.3, 20.2 and 7.1 per second at targets 5, 20 and 80 ms,
+    # which against fixed thresholds classify identical relative congestion as
+    # HEAVY, MODERATE and LIGHT. Ratio invariance cannot be tested by an
+    # instrument that applies a different control law in each compared cell.
+    MEASURED = {5.0: 59.3, 20.0: 20.2, 80.0: 7.1}   # drops/s, static arm
+
+    acape.set_bounds(5.0)
+    checks.append(("DR_SCALE is 1.0 at the 5 ms default",
+                   acape.DR_SCALE == 1.0))
+    checks.append(("thresholds are unchanged at the default",
+                   acape.DR_HEAVY * acape.DR_SCALE == 30.0))
+
+    regimes = []
+    for t0, dr in MEASURED.items():
+        acape.set_bounds(t0)
+        regimes.append(acape.classify(dr, 12))
+    checks.append(("all three ratio-1.0 cells get the same control law",
+                   len(set(regimes)) == 1))
+    checks.append(("and that law is HEAVY, as at the 5 ms reference",
+                   set(regimes) == {"HEAVY"}))
+
+    # Pin the defect itself, so the claim in F7 is checkable, not asserted.
+    acape.set_bounds(5.0)
+    old = [acape.classify(dr, 12) for dr in MEASURED.values()]
+    checks.append(("unscaled thresholds really did split the three cells",
+                   old == ["HEAVY", "MODERATE", "LIGHT"]))
+
+    acape.set_bounds(5.0)
+    checks.append(("backlog thresholds are left unscaled",
+                   acape.BL_HEAVY == 300 and acape.BL_LIGHT == 20))
+
+    for guard in (0, None, -5.0):
+        acape.set_bounds(5.0)
+        acape.set_bounds(guard)
+        checks.append((f"set_bounds({guard!r}) leaves DR_SCALE untouched",
+                       acape.DR_SCALE == 1.0))
+
     bad = [n for n, ok in checks if not ok]
     for n, ok in checks:
         print(f"  {'ok  ' if ok else 'FAIL'}  {n}")

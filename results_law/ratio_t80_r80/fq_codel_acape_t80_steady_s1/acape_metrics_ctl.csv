@@ -1,0 +1,5 @@
+t_s,drop_rate_per_s,drops_exp,backlog_pkts,backlog_bytes,throughput_mbps,sojourn_est_ms,rtt_proxy_ms,active_flows,elephant_flows,mice_flows,elephant_ratio,regime,trajectory,predicted_regime,workload_profile,target_ms,interval_ms,limit_pkts,quantum_bytes,root_drops,root_overlimits
+0.939,124.2119,88,50,109008,10.1568,87.2064,0.000,0,0,0,0.000,HEAVY,STABLE,HEAVY,MICE,80.0000,100.00,1024,1514,96,1719
+1.604,16.5303,99,23,63588,10.0989,50.8704,0.000,0,0,0,0.000,HEAVY,STABLE,HEAVY,MICE,80.0000,100.00,1024,1514,107,2785
+2.315,1.4072,100,24,72672,9.9009,58.1376,0.000,0,0,0,0.000,MODERATE,RECOVERING,LIGHT,MICE,80.0000,100.00,1024,1514,108,3842
+2.987,5.9537,104,32,84784,10.0026,67.8272,0.000,0,0,0,0.000,HEAVY,RECOVERING,MODERATE,MICE,80.0000,100.00,1024,1514,112,4777

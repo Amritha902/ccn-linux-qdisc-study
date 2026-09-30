@@ -72,7 +72,12 @@ def main():
     p.add_argument("--rtt-ms", type=int, default=20)
     p.add_argument("--duration", type=int, default=120)
     p.add_argument("--flows", type=int, default=8)
-    p.add_argument("--workload", default="steady", choices=["steady", "staged"])
+    p.add_argument("--workload", default="steady",
+                   choices=["steady", "staged", "mixed"])
+    p.add_argument("--sparse-flows", type=int, default=3,
+                   help="latency-sensitive UDP flows in the mixed workload")
+    p.add_argument("--sparse-kbit", type=int, default=200,
+                   help="per-flow rate of each sparse flow")
     p.add_argument("--adapt", action="store_true", help="run the ACAPE controller")
     p.add_argument("--sham", action="store_true",
                    help="run the controller but never apply changes "
@@ -165,7 +170,37 @@ def main():
 
         # ── traffic ──────────────────────────────────────────────────────
         ijson = os.path.join(outdir, "iperf_client.json")
-        if a.workload == "steady":
+        if a.workload == "mixed":
+            # Bulk TCP alongside sparse, latency-sensitive UDP flows.
+            #
+            # This is the condition in which fq_codel's new-flow heuristic and
+            # the `quantum` parameter are supposed to matter: sparse flows are
+            # given priority on arrival, and `quantum` sets how many bytes a
+            # flow is served per round. A bulk-only workload cannot exercise
+            # either, so a null result on bulk-only traffic says nothing about
+            # them. The UDP flows report their own one-way delay variation and
+            # loss, which is what a latency-sensitive application experiences.
+            usrv = subprocess.Popen(
+                nsx("ns_server", "iperf3", "-s", "-p", str(port + 1)),
+                stdout=open(os.path.join(outdir, "iperf_udp_server.log"), "w"),
+                stderr=subprocess.STDOUT)
+            procs.append(usrv)
+            time.sleep(1.0)
+            bulk_p = subprocess.Popen(
+                nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(port),
+                    "-P", str(a.flows), "-t", str(a.duration), "-i", "1",
+                    "-J", "--logfile", ijson),
+                stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            time.sleep(2.0)          # let the bulk flows fill the queue first
+            subprocess.run(
+                nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(port + 1),
+                    "-u", "-b", f"{a.sparse_kbit}k", "-l", "300",
+                    "-P", str(a.sparse_flows), "-t", str(max(5, a.duration - 4)),
+                    "-i", "1", "-J",
+                    "--logfile", os.path.join(outdir, "iperf_sparse.json")),
+                check=False)
+            bulk_p.wait(timeout=a.duration + 30)
+        elif a.workload == "steady":
             subprocess.run(
                 nsx("ns_client", "iperf3", "-c", SERVER_IP, "-p", str(port),
                     "-P", str(a.flows), "-t", str(a.duration), "-i", "1",
@@ -260,6 +295,30 @@ def main():
         for sf in stage_files:
             bulk_samples.extend(iperf_inband_rtt(sf))
         summary.update(summarise(bulk_samples, "bulk_rtt"))
+
+        # sparse latency-sensitive flows (mixed workload only)
+        sp = os.path.join(outdir, "iperf_sparse.json")
+        if os.path.exists(sp):
+            try:
+                sd = json.load(open(sp))
+                streams = sd["end"].get("streams", [])
+                jit = [st["udp"]["jitter_ms"] for st in streams if "udp" in st]
+                lost = [st["udp"]["lost_percent"] for st in streams if "udp" in st]
+                rates = [st["udp"]["bits_per_second"] / 1e6
+                         for st in streams if "udp" in st]
+                iv = [s2["jitter_ms"] for i2 in sd.get("intervals", [])
+                      for s2 in i2.get("streams", []) if "jitter_ms" in s2]
+                summary.update({
+                    "sparse_n_flows": len(jit),
+                    "sparse_jitter_mean_ms": round(statistics.fmean(jit), 4) if jit else None,
+                    "sparse_jitter_max_ms": round(max(jit), 4) if jit else None,
+                    "sparse_loss_mean_pct": round(statistics.fmean(lost), 4) if lost else None,
+                    "sparse_loss_max_pct": round(max(lost), 4) if lost else None,
+                    "sparse_goodput_mbps": round(sum(rates), 4) if rates else None,
+                })
+                summary.update(summarise(iv, "sparse_jitter"))
+            except Exception as e:
+                summary["sparse_error"] = str(e)
         cwnds = []
         for sf in stage_files:
             cwnds.extend(iperf_cwnd(sf))

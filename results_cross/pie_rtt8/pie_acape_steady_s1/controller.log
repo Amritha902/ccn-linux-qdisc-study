@@ -1,0 +1,44 @@
+[acape] bounds for target 15.0ms: target 0.6-60ms interval 60-900ms
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=pie handle=10:
+  metrics -> results_cross/pie_rtt8/pie_acape_steady_s1/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    1.9     HEAVY      STABLE     HEAVY     82.8     3    9.95     0     0  15.000  1000    0
+    3.6     HEAVY      STABLE     HEAVY     77.8     2    8.35     0     0  15.000  1000    0
+    5.2     HEAVY      STABLE     HEAVY     65.5    10   10.06     0     0  15.000  1000    0
+    6.9     HEAVY      STABLE     HEAVY     61.6     9   10.00     0     0  15.000  1000    0
+    8.6     HEAVY      STABLE     HEAVY     69.8    10    9.95     0     0  15.000  1000    0
+   10.3     HEAVY      STABLE     HEAVY     68.9     7    9.96     0     0  15.000  1000    0
+   12.0     HEAVY      STABLE     HEAVY     57.0     5   10.00     0     0  15.000  1000    0
+   13.6     HEAVY      STABLE     HEAVY     56.4    10   10.00     0     0  15.000  1000    0
+   15.3     HEAVY      STABLE     HEAVY     57.0    10   10.00     0     0  15.000  1000    0
+   17.0     HEAVY      STABLE     HEAVY     62.7    11    9.98     0     0  13.500   900    1
+   19.0     HEAVY      STABLE     HEAVY     66.7     8    9.94     0     0  13.500   900    1
+   20.7     HEAVY      STABLE     HEAVY     68.9     6   10.05     0     0  13.500   900    1
+   22.4     HEAVY      STABLE     HEAVY     65.6    12    9.89     0     0  13.500   900    1
+   24.1     HEAVY      STABLE     HEAVY     60.2    10   10.09     0     0  13.500   900    1
+   25.8     HEAVY      STABLE     HEAVY     63.3     5    9.96     0     0  13.500   900    1
+   27.4     HEAVY      STABLE     HEAVY     65.5     7   10.02     0     0  13.500   900    1
+   29.1     HEAVY      STABLE     HEAVY     63.4     6    9.93     0     0  13.500   900    1
+   30.8     HEAVY      STABLE     HEAVY     70.4    12   10.08     0     0  13.500   900    1
+   32.5     HEAVY      STABLE     HEAVY     66.7     6   10.00     0     0  13.500   900    1
+   34.2     HEAVY      STABLE     HEAVY     66.6    10    9.98     0     0  12.100   810    2
+   36.3     HEAVY      STABLE     HEAVY     61.0    11   10.00     0     0  12.100   810    2
+   37.9     HEAVY      STABLE     HEAVY     64.3    11   10.03     0     0  12.100   810    2
+   39.6     HEAVY      STABLE     HEAVY     67.1    10    9.95     0     0  12.100   810    2
+   41.3     HEAVY      STABLE     HEAVY     64.8     6   10.00     0     0  12.100   810    2
+   42.9     HEAVY      STABLE     HEAVY     68.2    11   10.00     0     0  12.100   810    2
+   44.7     HEAVY      STABLE     HEAVY     68.1     8    9.94     0     0  12.100   810    2
+   46.4     HEAVY      STABLE     HEAVY     71.6     7   10.05     0     0  12.100   810    2
+   48.1     HEAVY      STABLE     HEAVY     67.6     8    9.92     0     0  12.100   810    2
+   49.9     HEAVY      STABLE     HEAVY     65.7    12   10.01     0     0  12.100   810    2
+   51.6     HEAVY      STABLE     HEAVY     65.7    10    9.93     0     0  10.900   729    3
+   53.7     HEAVY      STABLE     HEAVY     69.0    12    9.98     0     0  10.900   729    3
+   55.4     HEAVY      STABLE     HEAVY     67.4    10   10.05     0     0  10.900   729    3
+   57.2     HEAVY      STABLE     HEAVY     69.3     6    9.95     0     0  10.900   729    3
+   58.8     HEAVY      STABLE     HEAVY     72.8     6   10.10     0     0  10.900   729    3
+
+Done — 35 ticks, 3 adjustments (0 predictive), mode=tc-only

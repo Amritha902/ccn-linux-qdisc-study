@@ -1,15 +1,15 @@
 -----------------------------------------------------------
 Server listening on 5201 (test #1)
 -----------------------------------------------------------
-Accepted connection from 192.168.1.2, port 57666
-[  5] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57682
-[  8] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57686
-[ 10] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57698
-[ 12] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57714
-[ 14] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57730
-[ 16] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57740
-[ 18] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57748
-[ 20] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 57750
+Accepted connection from 192.168.1.2, port 45498
+[  5] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 45506
+[  8] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56334
+[ 10] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56340
+[ 12] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56348
+[ 14] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56360
+[ 16] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56362
+[ 18] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56366
+[ 20] local 192.168.2.2 port 5201 connected to 192.168.1.2 port 56374
 [ ID] Interval           Transfer     Bitrate
 [  5]   0.00-1.00   sec   128 KBytes  1.05 Mbits/sec                  
 [  8]   0.00-1.00   sec  0.00 Bytes  0.00 bits/sec                  
@@ -39,7 +39,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]   2.00-3.00   sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]   2.00-3.00   sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]   2.00-3.00   sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]   2.00-3.00   sec  1.00 MBytes  8.40 Mbits/sec                  
+[SUM]   2.00-3.00   sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]   3.00-4.00   sec   128 KBytes  1.05 Mbits/sec                  
 [  8]   3.00-4.00   sec   128 KBytes  1.05 Mbits/sec                  
@@ -49,7 +49,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]   3.00-4.00   sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]   3.00-4.00   sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]   3.00-4.00   sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]   3.00-4.00   sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]   3.00-4.00   sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]   4.00-5.00   sec   128 KBytes  1.05 Mbits/sec                  
 [  8]   4.00-5.00   sec   128 KBytes  1.05 Mbits/sec                  
@@ -79,7 +79,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]   6.00-7.00   sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]   6.00-7.00   sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]   6.00-7.00   sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]   6.00-7.00   sec  1.00 MBytes  8.39 Mbits/sec                  
+[SUM]   6.00-7.00   sec  1.00 MBytes  8.38 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]   7.00-8.00   sec   256 KBytes  2.10 Mbits/sec                  
 [  8]   7.00-8.00   sec   256 KBytes  2.10 Mbits/sec                  
@@ -109,7 +109,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]   9.00-10.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]   9.00-10.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]   9.00-10.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]   9.00-10.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]   9.00-10.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  10.00-11.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  10.00-11.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -139,7 +139,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  12.00-13.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  12.00-13.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  12.00-13.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  12.00-13.00  sec  1.00 MBytes  8.39 Mbits/sec                  
+[SUM]  12.00-13.00  sec  1.00 MBytes  8.38 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  13.00-14.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  13.00-14.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -149,27 +149,27 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  13.00-14.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  13.00-14.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  13.00-14.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  13.00-14.00  sec  1.00 MBytes  8.39 Mbits/sec                  
+[SUM]  13.00-14.00  sec  1.00 MBytes  8.40 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
-[  8]  14.00-15.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  8]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 10]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 12]  14.00-15.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 14]  14.00-15.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 16]  14.00-15.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 12]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 14]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 16]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 18]  14.00-15.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  14.00-15.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  14.00-15.00  sec  1.25 MBytes  10.5 Mbits/sec                  
+[ 20]  14.00-15.00  sec   256 KBytes  2.10 Mbits/sec                  
+[SUM]  14.00-15.00  sec  1.88 MBytes  15.7 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  15.00-16.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  8]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 10]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  15.00-16.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 14]  15.00-16.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 16]  15.00-16.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 12]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 16]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  15.00-16.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 20]  15.00-16.00  sec   256 KBytes  2.10 Mbits/sec                  
-[SUM]  15.00-16.00  sec  1.75 MBytes  14.7 Mbits/sec                  
+[ 20]  15.00-16.00  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  15.00-16.00  sec  1.12 MBytes  9.44 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  16.00-17.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  16.00-17.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -189,7 +189,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  17.00-18.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  17.00-18.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  17.00-18.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  17.00-18.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]  17.00-18.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  18.00-19.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  18.00-19.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -221,25 +221,25 @@ Accepted connection from 192.168.1.2, port 57666
 [ 20]  20.00-21.00  sec   128 KBytes  1.05 Mbits/sec                  
 [SUM]  20.00-21.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  5]  21.00-22.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  8]  21.00-22.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 10]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 12]  21.00-22.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 14]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 16]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  21.00-22.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  21.00-22.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]  21.00-22.00  sec  1.38 MBytes  11.5 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
-[  8]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  5]  22.00-23.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  8]  22.00-23.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 10]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 12]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 12]  22.00-23.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 14]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 16]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 18]  22.00-23.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  22.00-23.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  22.00-23.00  sec  1.75 MBytes  14.7 Mbits/sec                  
+[ 18]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 20]  22.00-23.00  sec   256 KBytes  2.10 Mbits/sec                  
+[SUM]  22.00-23.00  sec  1.62 MBytes  13.6 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -247,9 +247,9 @@ Accepted connection from 192.168.1.2, port 57666
 [ 12]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 14]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 16]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 18]  23.00-24.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 20]  23.00-24.00  sec   256 KBytes  2.10 Mbits/sec                  
-[SUM]  23.00-24.00  sec  1.25 MBytes  10.5 Mbits/sec                  
+[ 18]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 20]  23.00-24.00  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  23.00-24.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  24.00-25.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  24.00-25.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -301,25 +301,25 @@ Accepted connection from 192.168.1.2, port 57666
 [ 20]  28.00-29.00  sec   128 KBytes  1.05 Mbits/sec                  
 [SUM]  28.00-29.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 10]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 14]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 16]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 18]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  29.00-30.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  29.00-30.00  sec  1.00 MBytes  8.39 Mbits/sec                  
+[  5]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  8]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 10]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 12]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 14]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 16]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 18]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 20]  29.00-30.00  sec   256 KBytes  2.10 Mbits/sec                  
+[SUM]  29.00-30.00  sec  2.00 MBytes  16.8 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[  8]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 10]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 12]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 14]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 16]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 18]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 20]  30.00-31.00  sec   256 KBytes  2.10 Mbits/sec                  
-[SUM]  30.00-31.00  sec  2.00 MBytes  16.8 Mbits/sec                  
+[  5]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  8]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 10]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 12]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 16]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 18]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 20]  30.00-31.00  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  30.00-31.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  31.00-32.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  31.00-32.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -339,7 +339,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  32.00-33.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  32.00-33.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  32.00-33.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  32.00-33.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]  32.00-33.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  33.00-34.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  33.00-34.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -359,7 +359,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  34.00-35.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  34.00-35.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  34.00-35.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  34.00-35.00  sec  1.00 MBytes  8.39 Mbits/sec                  
+[SUM]  34.00-35.00  sec  1.00 MBytes  8.38 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  35.00-36.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  35.00-36.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -371,45 +371,45 @@ Accepted connection from 192.168.1.2, port 57666
 [ 20]  35.00-36.00  sec   128 KBytes  1.05 Mbits/sec                  
 [SUM]  35.00-36.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 10]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  5]  36.00-37.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  8]  36.00-37.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 10]  36.00-37.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 12]  36.00-37.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 14]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 16]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 18]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  36.00-37.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  36.00-37.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[ 16]  36.00-37.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 18]  36.00-37.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 20]  36.00-37.00  sec   256 KBytes  2.09 Mbits/sec                  
+[SUM]  36.00-37.00  sec  1.88 MBytes  15.7 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  37.00-38.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  5]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 10]  37.00-38.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 10]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 12]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 14]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  37.00-38.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 16]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  37.00-38.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  37.00-38.00  sec  1.25 MBytes  10.5 Mbits/sec                  
+[SUM]  37.00-38.00  sec  1.12 MBytes  9.44 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  38.00-39.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  38.00-39.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 10]  38.00-39.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  38.00-39.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 14]  38.00-39.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 16]  38.00-39.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 18]  38.00-39.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 20]  38.00-39.00  sec   256 KBytes  2.10 Mbits/sec                  
-[SUM]  38.00-39.00  sec  1.75 MBytes  14.7 Mbits/sec                  
+[  8]  38.00-39.01  sec   128 KBytes  1.05 Mbits/sec                  
+[ 10]  38.00-39.01  sec  0.00 Bytes  0.00 bits/sec                  
+[ 12]  38.00-39.01  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  38.00-39.01  sec  0.00 Bytes  0.00 bits/sec                  
+[ 16]  38.00-39.01  sec   128 KBytes  1.05 Mbits/sec                  
+[ 18]  38.00-39.01  sec   128 KBytes  1.05 Mbits/sec                  
+[ 20]  38.00-39.01  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  38.00-39.00  sec   768 KBytes  6.29 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 10]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 14]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 16]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 18]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  39.00-40.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  39.00-40.00  sec  1.00 MBytes  8.39 Mbits/sec                  
+[  8]  39.01-40.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 10]  39.01-40.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 12]  39.01-40.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  39.01-40.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 16]  39.01-40.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 18]  39.01-40.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 20]  39.01-40.00  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  39.00-40.00  sec  1.25 MBytes  10.5 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  40.00-41.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  40.00-41.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -419,7 +419,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  40.00-41.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  40.00-41.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  40.00-41.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  40.00-41.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]  40.00-41.00  sec  1.00 MBytes  8.40 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  41.00-42.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  41.00-42.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -461,25 +461,25 @@ Accepted connection from 192.168.1.2, port 57666
 [ 20]  44.00-45.00  sec   128 KBytes  1.05 Mbits/sec                  
 [SUM]  44.00-45.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  5]  45.00-46.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 10]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 12]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 14]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 16]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 14]  45.00-46.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 16]  45.00-46.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 20]  45.00-46.00  sec   256 KBytes  2.10 Mbits/sec                  
-[SUM]  45.00-46.00  sec  2.00 MBytes  16.8 Mbits/sec                  
+[ 20]  45.00-46.00  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  45.00-46.00  sec  1.50 MBytes  12.6 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  5]  46.00-47.00  sec   256 KBytes  2.10 Mbits/sec                  
 [  8]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 10]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 12]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 14]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 16]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  46.00-47.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 16]  46.00-47.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 18]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  46.00-47.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  46.00-47.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[ 20]  46.00-47.00  sec   256 KBytes  2.10 Mbits/sec                  
+[SUM]  46.00-47.00  sec  1.50 MBytes  12.6 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  47.00-48.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  47.00-48.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -499,7 +499,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  48.00-49.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  48.00-49.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  48.00-49.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  48.00-49.00  sec  1.00 MBytes  8.38 Mbits/sec                  
+[SUM]  48.00-49.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  49.00-50.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  49.00-50.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -531,25 +531,25 @@ Accepted connection from 192.168.1.2, port 57666
 [ 20]  51.00-52.00  sec   128 KBytes  1.05 Mbits/sec                  
 [SUM]  51.00-52.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
-[  8]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 10]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 12]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 14]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  5]  52.00-53.00  sec   256 KBytes  2.09 Mbits/sec                  
+[  8]  52.00-53.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 10]  52.00-53.00  sec   256 KBytes  2.09 Mbits/sec                  
+[ 12]  52.00-53.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 14]  52.00-53.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 16]  52.00-53.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 18]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 20]  52.00-53.00  sec   256 KBytes  2.10 Mbits/sec                  
-[SUM]  52.00-53.00  sec  1.88 MBytes  15.7 Mbits/sec                  
+[ 18]  52.00-53.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 20]  52.00-53.00  sec   128 KBytes  1.05 Mbits/sec                  
+[SUM]  52.00-53.00  sec  1.25 MBytes  10.5 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
-[  8]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
+[  8]  53.00-54.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 10]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 12]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 14]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
+[ 12]  53.00-54.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 14]  53.00-54.00  sec   256 KBytes  2.10 Mbits/sec                  
 [ 16]  53.00-54.00  sec   256 KBytes  2.10 Mbits/sec                  
-[ 18]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
-[ 20]  53.00-54.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  53.00-54.00  sec  1.12 MBytes  9.43 Mbits/sec                  
+[ 18]  53.00-54.00  sec   256 KBytes  2.10 Mbits/sec                  
+[ 20]  53.00-54.00  sec   256 KBytes  2.10 Mbits/sec                  
+[SUM]  53.00-54.00  sec  1.75 MBytes  14.7 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [  5]  54.00-55.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  54.00-55.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -601,7 +601,7 @@ Accepted connection from 192.168.1.2, port 57666
 [ 20]  58.00-59.00  sec   128 KBytes  1.05 Mbits/sec                  
 [SUM]  58.00-59.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  59.00-60.00  sec   256 KBytes  2.10 Mbits/sec                  
+[  5]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
 [  8]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 10]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 12]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
@@ -609,25 +609,25 @@ Accepted connection from 192.168.1.2, port 57666
 [ 16]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 18]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
 [ 20]  59.00-60.00  sec   128 KBytes  1.05 Mbits/sec                  
-[SUM]  59.00-60.00  sec  1.12 MBytes  9.44 Mbits/sec                  
+[SUM]  59.00-60.00  sec  1.00 MBytes  8.39 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
-[  5]  60.00-60.06  sec  0.00 Bytes  0.00 bits/sec                  
-[  8]  60.00-60.06  sec  0.00 Bytes  0.00 bits/sec                  
-[ 10]  60.00-60.06  sec   128 KBytes  16.5 Mbits/sec                  
-[ 12]  60.00-60.06  sec   128 KBytes  16.6 Mbits/sec                  
-[ 14]  60.00-60.06  sec   128 KBytes  16.6 Mbits/sec                  
-[ 16]  60.00-60.06  sec   128 KBytes  16.5 Mbits/sec                  
-[ 18]  60.00-60.06  sec   128 KBytes  16.5 Mbits/sec                  
-[ 20]  60.00-60.06  sec   128 KBytes  16.5 Mbits/sec                  
-[SUM]  60.00-60.06  sec   768 KBytes  98.8 Mbits/sec                  
+[  5]  60.00-60.07  sec   128 KBytes  16.1 Mbits/sec                  
+[  8]  60.00-60.07  sec   128 KBytes  16.1 Mbits/sec                  
+[ 10]  60.00-60.07  sec   128 KBytes  16.1 Mbits/sec                  
+[ 12]  60.00-60.07  sec   128 KBytes  16.2 Mbits/sec                  
+[ 14]  60.00-60.07  sec   128 KBytes  16.2 Mbits/sec                  
+[ 16]  60.00-60.07  sec  0.00 Bytes  0.00 bits/sec                  
+[ 18]  60.00-60.07  sec   128 KBytes  16.1 Mbits/sec                  
+[ 20]  60.00-60.07  sec  0.00 Bytes  0.00 bits/sec                  
+[SUM]  60.00-60.07  sec   768 KBytes  96.8 Mbits/sec                  
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bitrate
-[  5]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[  8]   0.00-60.06  sec  8.38 MBytes  1.17 Mbits/sec                  receiver
-[ 10]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[ 12]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[ 14]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[ 16]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[ 18]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[ 20]   0.00-60.06  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
-[SUM]   0.00-60.06  sec  67.9 MBytes  9.48 Mbits/sec                  receiver
+[  5]   0.00-60.07  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
+[  8]   0.00-60.07  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
+[ 10]   0.00-60.07  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
+[ 12]   0.00-60.07  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
+[ 14]   0.00-60.07  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
+[ 16]   0.00-60.07  sec  8.38 MBytes  1.17 Mbits/sec                  receiver
+[ 18]   0.00-60.07  sec  8.50 MBytes  1.19 Mbits/sec                  receiver
+[ 20]   0.00-60.07  sec  8.38 MBytes  1.17 Mbits/sec                  receiver
+[SUM]   0.00-60.07  sec  67.8 MBytes  9.46 Mbits/sec                  receiver

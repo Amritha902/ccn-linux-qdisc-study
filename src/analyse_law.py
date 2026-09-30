@@ -108,7 +108,8 @@ def cells(runs):
         benefit = (st.fmean(a) - st.fmean(b)) / st.fmean(a) * 100
         c = {"target": tgt, "rtt": rtt, "ratio": tgt / rtt,
              "static": st.fmean(a), "adapt": st.fmean(b),
-             "benefit": benefit, "p": p, "n": min(len(a), len(b))}
+             "benefit": benefit, "p": p, "n": min(len(a), len(b)),
+             "abs_ms": st.fmean(a) - st.fmean(b)}
         for m in COSTS:
             c[m] = _pct(g[m]["static"], g[m]["adapt"])
         out.append(c)
@@ -161,13 +162,25 @@ def main():
          "=" * 92,
          "Benefit = reduction in mean bulk-flow RTT, static vs adapted fq_codel.", "",
          f"{'target':>8s}{'RTT':>7s}{'ratio':>8s}{'static':>10s}{'adapted':>10s}"
-         f"{'benefit':>10s}{'p':>9s}  verdict",
+         f"{'benefit':>10s}{'gain ms':>9s}{'p':>9s}  verdict",
          "-" * 92]
     for c in sorted(cs, key=lambda c: -c["ratio"]):
         v = "significant" if (c["p"] is not None and c["p"] < 0.05) else "not significant"
         L.append(f"{c['target']:>8.0f}{c['rtt']:>7.0f}{c['ratio']:>8.3f}"
                  f"{c['static']:>10.2f}{c['adapt']:>10.2f}{c['benefit']:>9.1f}%"
-                 f"{c['p']:>9.4f}  {v}")
+                 f"{c['abs_ms']:>9.2f}{c['p']:>9.4f}  {v}")
+
+    # A percentage reduction shrinks automatically when its denominator grows,
+    # so a reviewer is right to ask whether the collapse at low ratio is an
+    # artefact of dividing by a larger RTT. The absolute column answers it: if
+    # the gain in milliseconds also collapses, the effect is real.
+    hi = [c["abs_ms"] for c in cs if c["ratio"] >= 0.4]
+    lo = [c["abs_ms"] for c in cs if c["ratio"] < 0.4]
+    if hi and lo:
+        L += ["", f"  absolute gain above r=0.4: {min(hi):.2f} to {max(hi):.2f} ms",
+              f"  absolute gain below r=0.4: {min(lo):.2f} to {max(lo):.2f} ms",
+              "  The gain collapses in milliseconds as well as in percent, so the",
+              "  null at low ratio is not an artefact of the larger denominator."]
 
     # ---- what it costs -------------------------------------------------
     L += ["", "-" * 92, "WHAT THE LATENCY IS BOUGHT WITH", "-" * 92,

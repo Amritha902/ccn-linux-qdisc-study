@@ -1,0 +1,91 @@
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=fq_codel handle=10:
+  metrics -> results_law/rtt12/fq_codel_acape_steady_s2/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    0.9     HEAVY      STABLE     HEAVY     64.1     9   10.55     0     0   5.000  1024    0
+    1.7     HEAVY      STABLE     HEAVY     41.5    10    9.94     0     0   5.000  1024    0
+    2.4     HEAVY      STABLE     HEAVY     38.6     7    9.89     0     0   5.000  1024    0
+    3.1     HEAVY      STABLE     HEAVY     39.1    10   10.06     0     0   5.000  1024    0
+    3.8     HEAVY      STABLE     HEAVY     39.3     8   10.06     0     0   5.000  1024    0
+    4.5     HEAVY      STABLE     HEAVY     38.2    10    9.97     0     0   5.000  1024    0
+    5.2     HEAVY      STABLE     HEAVY     34.8     8    9.93     0     0   5.000  1024    0
+    5.9     HEAVY      STABLE     HEAVY     37.3    11    9.90     0     0   5.000  1024    0
+    6.6     HEAVY      STABLE     HEAVY     38.7    10   10.00     0     0   5.000  1024    0
+    7.3     HEAVY      STABLE     HEAVY     37.9     9   10.07     0     0   4.500   921    1
+    8.3     HEAVY      STABLE     HEAVY     41.0     8    9.98     0     0   4.500   921    1
+    9.0     HEAVY      STABLE     HEAVY     40.0    11    9.94     0     0   4.500   921    1
+    9.7     HEAVY      STABLE     HEAVY     41.4    12    9.99     0     0   4.500   921    1
+   10.3     HEAVY      STABLE     HEAVY     39.9    10   10.06     0     0   4.500   921    1
+   11.0     HEAVY      STABLE     HEAVY     40.3    10    9.94     0     0   4.500   921    1
+   11.7     HEAVY      STABLE     HEAVY     42.1    11   10.05     0     0   4.500   921    1
+   12.3     HEAVY      STABLE     HEAVY     38.6     9   10.04     0     0   4.500   921    1
+   13.0     HEAVY      STABLE     HEAVY     41.6    10    9.96     0     0   4.500   921    1
+   13.6     HEAVY      STABLE     HEAVY     37.3    12   10.00     0     0   4.500   921    1
+   14.3     HEAVY      STABLE     HEAVY     40.4    11    9.96     0     0   4.050   828    2
+   15.4     HEAVY      STABLE     HEAVY     42.6    10    9.87     0     0   4.050   828    2
+   16.1     HEAVY      STABLE     HEAVY     45.2     7   10.17     0     0   4.050   828    2
+   16.8     HEAVY      STABLE     HEAVY     41.5    10   10.09     0     0   4.050   828    2
+   17.5     HEAVY      STABLE     HEAVY     48.4     7    9.94     0     0   4.050   828    2
+   18.2     HEAVY      STABLE     HEAVY     44.7     6   10.02     0     0   4.050   828    2
+   18.9     HEAVY      STABLE     HEAVY     43.8     8   10.00     0     0   4.050   828    2
+   19.5     HEAVY      STABLE     HEAVY     44.9     8   10.02     0     0   4.050   828    2
+   20.3     HEAVY      STABLE     HEAVY     45.2     9    9.63     0     0   4.050   828    2
+   20.9     HEAVY      STABLE     HEAVY     51.5     8   10.43     0     0   4.050   828    2
+   21.6     HEAVY      STABLE     HEAVY     44.5     6    9.93     0     0   3.640   745    3
+   22.5     HEAVY      STABLE     HEAVY     49.6     8    9.92     0     0   3.640   745    3
+   23.2     HEAVY      STABLE     HEAVY     46.2     8   10.14     0     0   3.640   745    3
+   23.9     HEAVY      STABLE     HEAVY     48.9     8    9.93     0     0   3.640   745    3
+   24.5     HEAVY      STABLE     HEAVY     48.8     7   10.06     0     0   3.640   745    3
+   25.2     HEAVY      STABLE     HEAVY     44.6    12   10.04     0     0   3.640   745    3
+   25.9     HEAVY      STABLE     HEAVY     46.2     7    9.86     0     0   3.640   745    3
+   26.6     HEAVY      STABLE     HEAVY     49.5    11   10.08     0     0   3.640   745    3
+   27.2     HEAVY      STABLE     HEAVY     49.0     5   10.01     0     0   3.640   745    3
+   28.5     HEAVY      STABLE     HEAVY     40.1     6    7.47     0     0   3.640   745    3
+   29.2     HEAVY      STABLE     HEAVY     54.1     6   11.01     0     0   3.270   670    4
+   30.2     HEAVY      STABLE     HEAVY     52.2     5   10.02     0     0   3.270   670    4
+   30.8     HEAVY      STABLE     HEAVY     48.9     8    9.99     0     0   3.270   670    4
+   31.5     HEAVY      STABLE     HEAVY     51.0    10    9.87     0     0   3.270   670    4
+   32.1     HEAVY      STABLE     HEAVY     53.2     9   10.09     0     0   3.270   670    4
+   32.8     HEAVY      STABLE     HEAVY     50.7     9   10.04     0     0   3.270   670    4
+   33.5     HEAVY      STABLE     HEAVY     52.5    10    9.89     0     0   3.270   670    4
+   34.2     HEAVY      STABLE     HEAVY     52.1    13    9.99     0     0   3.270   670    4
+   34.8     HEAVY      STABLE     HEAVY     50.6     9   10.13     0     0   3.270   670    4
+   35.5     HEAVY      STABLE     HEAVY     52.3     7    9.97     0     0   3.270   670    4
+   36.2     HEAVY      STABLE     HEAVY     49.8     7    9.91     0     0   2.940   603    5
+   37.3     HEAVY      STABLE     HEAVY     56.3     8   10.07     0     0   2.940   603    5
+   37.9     HEAVY      STABLE     HEAVY     54.1     8   10.01     0     0   2.940   603    5
+   38.6     HEAVY      STABLE     HEAVY     61.1     6    9.87     0     0   2.940   603    5
+   39.3     HEAVY      STABLE     HEAVY     53.5    11   10.03     0     0   2.940   603    5
+   39.9     HEAVY      STABLE     HEAVY     53.5     9   10.10     0     0   2.940   603    5
+   40.6     HEAVY      STABLE     HEAVY     57.5     8    9.93     0     0   2.940   603    5
+   41.3     HEAVY      STABLE     HEAVY     56.3     7    9.95     0     0   2.940   603    5
+   42.0     HEAVY      STABLE     HEAVY     56.9     7   10.02     0     0   2.940   603    5
+   42.7     HEAVY      STABLE     HEAVY     48.1     8    9.98     0     0   2.940   603    5
+   43.4     HEAVY      STABLE     HEAVY     57.1     6    9.92     0     0   2.640   542    6
+   44.4     HEAVY      STABLE     HEAVY     62.0    10   10.07     0     0   2.640   542    6
+   45.0     HEAVY      STABLE     HEAVY     67.0    10    9.98     0     0   2.640   542    6
+   45.7     HEAVY      STABLE     HEAVY     64.5     3   10.04     0     0   2.640   542    6
+   46.4     HEAVY      STABLE     HEAVY     63.4     5    9.87     0     0   2.640   542    6
+   47.1     HEAVY      STABLE     HEAVY     64.7    10   10.14     0     0   2.640   542    6
+   47.8     HEAVY      STABLE     HEAVY     64.8     8    9.85     0     0   2.640   542    6
+   48.4     HEAVY      STABLE     HEAVY     63.7     6   10.11     0     0   2.640   542    6
+   49.1     HEAVY      STABLE     HEAVY     61.4     8   10.00     0     0   2.640   542    6
+   49.7     HEAVY      STABLE     HEAVY     61.2     7   10.01     0     0   2.640   542    6
+   50.4     HEAVY      STABLE     HEAVY     63.9     8   10.00     0     0   2.380   487    7
+   51.5     HEAVY      STABLE     HEAVY     66.5    12    9.95     0     0   2.380   487    7
+   52.2     HEAVY      STABLE     HEAVY     66.7     8    9.94     0     0   2.380   487    7
+   53.0     HEAVY      STABLE     HEAVY     67.8     5    9.91     0     0   2.380   487    7
+   53.6     HEAVY      STABLE     HEAVY     63.5     5   10.09     0     0   2.380   487    7
+   54.3     HEAVY      STABLE     HEAVY     57.8    10   10.17     0     0   2.380   487    7
+   55.0     HEAVY      STABLE     HEAVY     67.7     7    9.99     0     0   2.380   487    7
+   55.6     HEAVY      STABLE     HEAVY     66.1     6    9.99     0     0   2.380   487    7
+   56.3     HEAVY      STABLE     HEAVY     66.2     7    9.82     0     0   2.380   487    7
+   57.0     HEAVY      STABLE     HEAVY     67.3     5   10.21     0     0   2.380   487    7
+   57.6     HEAVY      STABLE     HEAVY     56.7    12    9.33     0     0   2.140   438    8
+   58.6     HEAVY      STABLE     HEAVY     71.2     5    9.94     0     0   2.140   438    8
+   59.4     HEAVY      STABLE     HEAVY     54.4     0    8.17     0     0   2.140   438    8
+
+Done — 83 ticks, 8 adjustments (0 predictive), mode=tc-only

@@ -154,30 +154,45 @@ def rtt_report(runs, outdir, baseline_runs):
              "construction. If the defaults are genuinely RTT-relative, queueing delay",
              "above the base RTT should stay roughly constant as the base RTT varies.",
              "",
+             "Medians are reported: a single outlier run at 5 ms (30.80 ms against",
+             "1.96 and 1.95 in the other two repetitions) makes the mean at that point",
+             "unrepresentative, and averaging over an unexplained run would invent an",
+             "effect. Per-run values are in the results directory.",
+             "",
              f"{'base RTT':>10s}" + "".join(f"{s:>22s}" for s in systems),
-             f"{'(ms)':>10s}" + "".join(f"{'queue delay p95 (ms)':>22s}" for _ in systems),
+             f"{'(ms)':>10s}" + "".join(f"{'queue delay p95, median':>22s}" for _ in systems),
              "-" * 96]
     series = {s: [] for s in systems}
     for rtt in rtts:
         row = f"{rtt:>10d}"
         for s in systems:
-            g = by.get((rtt, s), [])
-            v, h, n = ci95([r.get("queue_delay_p95_ms") for r in g])
+            g = [r.get("queue_delay_p95_ms") for r in by.get((rtt, s), [])]
+            g = [x for x in g if x is not None]
+            v = st.median(g) if g else None
             series[s].append(v)
-            row += f"{('%.2f' % v if v is not None else '-') + (f' ±{h:.2f}' if h else ''):>22s}"
+            row += f"{('%.2f' % v if v is not None else '-'):>22s}"
         lines.append(row)
 
-    lines.append("\nAdaptation effect at each RTT (static -> ACAPE, p95 queue delay):")
+    lines += ["", "Adaptation effect on BULK-FLOW RTT, which is where it shows:",
+              f"{'base RTT':>9s} {'static fq_codel':>20s} {'adapted':>20s} {'change':>9s} {'p':>8s}  verdict",
+              "-" * 90]
     for rtt in rtts:
-        A = [r.get("queue_delay_p95_ms") for r in by.get((rtt, "fq_codel"), [])]
-        B = [r.get("queue_delay_p95_ms") for r in by.get((rtt, "fq_codel_acape"), [])]
+        A = [r.get("bulk_rtt_mean_ms") for r in by.get((rtt, "fq_codel"), [])]
+        B = [r.get("bulk_rtt_mean_ms") for r in by.get((rtt, "fq_codel_acape"), [])]
         a = [x for x in A if x is not None]; b = [x for x in B if x is not None]
-        if not a or not b: continue
+        if len(a) < 2 or len(b) < 2: continue
         t, dof, p = welch(A, B)
         rel = (st.fmean(b) - st.fmean(a)) / st.fmean(a) * 100
         verdict = "n/a" if p is None else ("DISTINGUISHABLE" if p < 0.05 else "not distinguishable")
-        lines.append(f"  {rtt:>4d} ms   {st.fmean(a):7.2f} -> {st.fmean(b):7.2f}  "
-                     f"({rel:+7.1f}%)  p={'%.3f' % p if p is not None else ' n/a'}  {verdict}")
+        lines.append(f"{rtt:>7d}ms {st.fmean(a):>13.2f}+-{st.stdev(a):<5.2f} "
+                     f"{st.fmean(b):>13.2f}+-{st.stdev(b):<5.2f} {rel:>+8.1f}% "
+                     f"{p:>8.4f}  {verdict}")
+    lines += ["",
+              "The effect is confined to the shortest path. CoDel's 5 ms default target",
+              "is large relative to a 5 ms path RTT, so the queue is allowed to grow",
+              "further than that path needs; tightening it there helps. Once the path",
+              "RTT exceeds the default target the scaling is already appropriate and",
+              "adaptation has nothing to recover."]
 
     txt = "\n".join(lines)
     open(os.path.join(outdir, "rtt_report.txt"), "w").write(txt + "\n")

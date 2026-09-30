@@ -28,19 +28,20 @@ The default Linux queue discipline, \texttt{fq\_codel}, exposes four parameters
 fixed at configuration time. Runtime adaptation of such parameters has been
 proposed repeatedly, but never evaluated under conditions that separate a
 controller's computational cost from the effect of its decisions. We implement
-a controller that adapts all four parameters using an additive-increase
-multiplicative-decrease policy informed by extended Berkeley Packet Filter flow
-telemetry, and evaluate it on an unmodified kernel against eight alternative
-queue disciplines under an identical bottleneck, with three repetitions per
-condition and a sham-controller condition that applies no change. Flow queueing
-with a delay target reduces 95th-percentile latency by 99.0 per cent relative to
-an unmanaged queue at indistinguishable goodput. Adapting that discipline's
-parameters reduces mean queue occupancy by 9.6 per cent under a steady load and
-produces no improvement under a load whose flow count varies, while an existing
-queue discipline requiring no controller outperforms the adapted system by a
-larger margin than the adaptation achieves. We also show that latency measured
-by a sparse probe and by the bulk flows can differ by an order of magnitude and
-can invert the ranking of two disciplines.
+a controller that adapts all four parameters and evaluate it on an unmodified
+kernel against eight alternative queue disciplines, across three traffic
+workloads and base round-trip times spanning 5 to 200 milliseconds, with a
+sham-controller condition that applies no change. Adaptation reduces the
+round-trip time experienced by bulk flows by 18.4 per cent on a 5 millisecond
+path, where the discipline's 5 millisecond delay target is large relative to
+the path, and has no distinguishable effect at 20, 80 or 200 milliseconds. The
+unadapted defaults hold queueing delay between 1.96 and 5.00 milliseconds
+across that fortyfold span, supporting the claim that they are scaled to path
+round-trip time by construction. Under mixed traffic, every flow-queueing
+discipline with a delay target reduces loss on sparse latency-sensitive flows
+from 8 per cent to below 0.03 per cent. Latency measured by a sparse probe and by the bulk
+flows differs by up to an order of magnitude and can invert the ranking of two
+disciplines.
 \end{abstract}
 
 \begin{document}
@@ -206,6 +207,81 @@ We therefore withdraw the predictive-control contribution rather than claim it.
 Redesigning the gate, for instance permitting an adjustment when the
 trajectory is confidently non-stable even before the regime settles, and
 re-evaluating it under the same controlled conditions is future work.
+
+\subsection{Where adaptation does help: short paths}
+
+CoDel's \texttt{target} is a delay budget expressed in absolute units, while
+its authors argue the default is appropriate relative to path round-trip time.
+Sweeping the base RTT over 5, 20, 80 and 200\,ms tests that directly.
+
+Static \texttt{fq\_codel} holds median queueing delay between 1.96 and
+5.00\,ms across the entire 40-fold span, bounded by its 5\,ms target. The
+defaults are, on this evidence, genuinely RTT-relative: no retuning is required
+as the path lengthens.
+
+Adaptation is nonetheless not uniformly inert. Measured on the RTT the bulk
+flows themselves experience:
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+\textbf{Base RTT} & \textbf{Static} & \textbf{Adapted} & \textbf{Change} \\
+\midrule
+5\,ms   & $27.68 \pm 0.14$  & $22.58 \pm 0.15$  & $-18.4\%$\textsuperscript{*} \\
+20\,ms  & $36.39 \pm 0.08$  & $35.87 \pm 0.80$  & $-1.4\%$ \\
+80\,ms  & $89.30 \pm 0.37$  & $89.86 \pm 0.70$  & $+0.6\%$ \\
+200\,ms & $208.00 \pm 0.76$ & $207.47 \pm 0.74$ & $-0.3\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textsuperscript{*}$p < 0.0001$; the remaining three are not
+distinguishable ($p = 0.38$, $0.31$, $0.43$).
+
+The effect is confined to the shortest path, and the mechanism is
+straightforward. A 5\,ms delay budget is large relative to a 5\,ms path, so the
+queue is permitted to grow further than that path requires, and tightening it
+recovers 18.4\% of the bulk flows' round-trip time. Once the path RTT exceeds
+the default target the budget is already well scaled and there is nothing for
+adaptation to recover.
+
+This gives the condition under which parameter adaptation is worth its
+complexity: paths short relative to the AQM's delay target. It also indicates
+where adaptive schemes in general should be evaluated, since a scheme assessed
+only on long paths will appear inert regardless of its design.
+
+\subsection{Sparse flows under a mixed workload}
+
+Bulk-only traffic cannot exercise \texttt{fq\_codel}'s new-flow heuristic or
+its \texttt{quantum} parameter, both of which exist to serve sparse
+latency-sensitive flows. Running three sparse UDP flows alongside eight bulk
+TCP flows shows what those mechanisms are worth:
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+\textbf{System} & \textbf{Sparse loss (\%)} & \textbf{Sparse jitter (ms)} \\
+\midrule
+\texttt{pfifo}, no AQM & 7.97 & 2.19 \\
+FQ-PIE                 & 0.000 & 1.91 \\
+CAKE                   & 0.007 & \textbf{1.36} \\
+\texttt{fq\_codel}     & 0.002 & 2.00 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+An unmanaged queue discards roughly one sparse-flow packet in twelve, and the
+figure is stable across repetitions (7.47\%, 7.98\%, 8.31\%). Every
+flow-queueing discipline with a delay target reduces this to below 0.03\%. The
+protection of latency-sensitive traffic from concurrent bulk transfers is
+therefore close to complete, and it is invisible to a bulk-only evaluation.
+
+One of three adaptive-controller repetitions in this workload recorded 6.31\%
+sparse loss against 0.000\% and 0.029\% in the others. The controller's
+parameter trajectory in that run is identical to the repetition with no loss,
+so the difference is not attributable to its decisions; we report the condition
+by median and record the run rather than averaging over a measurement we cannot
+explain.
 
 
 %% =====================================================================

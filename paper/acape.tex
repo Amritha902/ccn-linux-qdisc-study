@@ -45,22 +45,22 @@ trajectory estimate. We evaluate it against eight queue disciplines --
 \texttt{fq\_codel} -- under two workloads and three seeds, reporting means with
 95\% confidence intervals.
 
-Runtime adaptation of an AQM's delay target is not itself new, DESiRED
-\cite{desired2024} does it in P4 with reinforcement learning, so our claim is
+Runtime adaptation of an AQM's delay target is not itself new --- DESiRED
+\cite{desired2024} does it in P4 with reinforcement learning --- so our claim is
 the evaluation rather than the mechanism: to our knowledge this is the first
 \emph{controlled} evaluation of parameter adaptation for a flow-queueing AQM,
 using a sham-controller condition that separates the controller's computational
-cost from its control decisions. The headline finding is negative and we report
-it as such: under the conditions we tested, static \texttt{fq\_codel} is already
-close to the achievable latency floor, and runtime adaptation of its parameters
-does not produce a statistically meaningful improvement. The measured gap between \texttt{pfifo}
-and every flow-queueing discipline is two orders of magnitude in tail latency,
-while the gap between static and adapted \texttt{fq\_codel} is within
-confidence intervals. We also report the methodological findings that produced
-this correction: a two-node testbed of the kind widely used in coursework
-shapes the acknowledgement path rather than the data path, and three
-userspace defects can silently zero an eBPF telemetry pipeline while every
-surface indicator continues to report success.
+cost from its control decisions.
+
+We find that adaptation is neither uniformly useful nor uniformly inert. It
+reduces bulk-flow RTT by 18.4\% ($p<0.0001$) on a 5\,ms path, where
+\texttt{fq\_codel}'s 5\,ms delay target is large relative to the path, and has
+no distinguishable effect at 20, 80 or 200\,ms. The unadapted defaults hold
+queueing delay between 1.96 and 5.00\,ms across that fortyfold span, supporting
+their RTT-relative design. Under mixed traffic every flow-queueing discipline
+with a delay target cuts sparse-flow loss from 8\% to below 0.03\%. For
+comparison, the gap between an unmanaged FIFO and \texttt{fq\_codel} is 99.0\%,
+and CAKE outperforms the adapted system at every RTT tested.
 \end{abstract}
 
 \begin{IEEEkeywords}

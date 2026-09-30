@@ -1,0 +1,19 @@
+{
+ "LawCells": "7",
+ "LawCeiling": "19.0",
+ "LawHalfBenefit": "0.22",
+ "LawSteepness": "3.6",
+ "LawRsq": "0.674",
+ "LawPeakBenefit": "21.7",
+ "LawRatioMax": "2.500",
+ "LawRatioMin": "0.025",
+ "LawLowestSigRatio": "0.025",
+ "LawGainHiMin": "5.00",
+ "LawGainHiMax": "7.50",
+ "LawGainLoMin": "-0.50",
+ "LawGainLoMax": "20.00",
+ "LawWorstThroughput": "0.0",
+ "LawDropRiseHigh": "17",
+ "LawInvariance": "fails",
+ "LawHoldout": "not predictive"
+}

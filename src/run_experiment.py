@@ -52,8 +52,14 @@ def jain(xs):
     return (sum(xs) ** 2) / (len(xs) * s2) if s2 > 0 else 0.0
 
 
-def build_testbed(aqm, rate, rtt_ms):
+def build_testbed(aqm, rate, rtt_ms, target_ms=None):
     kind, aqm_args = AQM_SPECS[aqm]
+    # Override the AQM's delay target. Needed to test whether the benefit of
+    # adaptation is governed by the target/RTT ratio rather than by RTT alone:
+    # holding the ratio fixed while varying both should reproduce the same
+    # behaviour if the ratio is what matters.
+    if target_ms is not None and "target" in aqm_args:
+        aqm_args = re.sub(r"target \S+", f"target {target_ms}ms", aqm_args)
     env = dict(os.environ, RATE_MBIT=str(rate), AQM=kind,
                AQM_ARGS=aqm_args, BASE_RTT_MS=str(rtt_ms))
     r = subprocess.run(["bash", os.path.join(HERE, "testbed.sh"), "setup"],
@@ -70,6 +76,8 @@ def main():
                    help="independent repetition index (not a PRNG seed)")
     p.add_argument("--rate-mbit", type=float, default=10.0)
     p.add_argument("--rtt-ms", type=int, default=20)
+    p.add_argument("--aqm-target-ms", type=float, default=None,
+                   help="override the AQM delay target (ms)")
     p.add_argument("--duration", type=int, default=120)
     p.add_argument("--flows", type=int, default=8)
     p.add_argument("--workload", default="steady",
@@ -94,6 +102,8 @@ def main():
     suffix = "_acape" if a.adapt else ("_sham" if a.sham else "")
     if a.ebpf:
         suffix += "_ebpf"
+    if a.aqm_target_ms is not None:
+        suffix += f"_t{a.aqm_target_ms:g}"
     label = f"{a.aqm}{suffix}_{a.workload}_s{a.seed}"
     outdir = os.path.join(a.outdir, label)
     os.makedirs(outdir, exist_ok=True)
@@ -107,7 +117,8 @@ def main():
     port = BASE_PORT
     start_jitter = 0.0
 
-    kind, aqm_args, setup_out = build_testbed(a.aqm, a.rate_mbit, a.rtt_ms)
+    kind, aqm_args, setup_out = build_testbed(a.aqm, a.rate_mbit, a.rtt_ms,
+                                              a.aqm_target_ms)
     with open(os.path.join(outdir, "00_setup.txt"), "w") as fh:
         fh.write(setup_out)
 
@@ -241,6 +252,10 @@ def main():
                    "duration_s": a.duration, "flows": a.flows,
                    "workload": a.workload, "label": label,
                    "sham": a.sham, "port": port,
+                   "aqm_target_ms": a.aqm_target_ms,
+                   "target_rtt_ratio": (round(a.aqm_target_ms / a.rtt_ms, 4)
+                                        if a.aqm_target_ms else
+                                        round(5.0 / a.rtt_ms, 4)),
                    "start_jitter_s": round(start_jitter, 3),
                    "seed_semantics": "independent repetition index, "
                                      "not a PRNG seed"}

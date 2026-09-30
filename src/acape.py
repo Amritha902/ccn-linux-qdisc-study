@@ -290,11 +290,23 @@ def get_params(ns, iface, handle=None, kind="fq_codel"):
             v = parse_time_to_ms(m.group(1))
             if v is not None:
                 p["target"] = v
-        m = re.search(r"interval (\S+?)(?:\s|$)", head)
-        if m:
-            v = parse_time_to_ms(m.group(1))
-            if v is not None:
-                p["interval"] = v
+        # The controller's `interval` state is whatever the qdisc calls its
+        # update period, so it must be read under that qdisc's own name.
+        # PIE calls it tupdate and has no `interval` at all, so searching only
+        # for `interval` left the state at its hardcoded 100 ms default while
+        # PIE was actually configured with 15 ms, and the first adjustment then
+        # wrote tupdate 100ms: a 6.7x change to PIE's update period that the
+        # controller never decided to make. PARAM_SETS already names the
+        # mapping, so it is used here rather than duplicated.
+        names = [tc for tc, st in PARAM_SETS.get(kind, PARAM_SETS["fq_codel"])
+                 if st == "interval"] or ["interval"]
+        for nm in names:
+            m = re.search(rf"{nm} (\S+?)(?:\s|$)", head)
+            if m:
+                v = parse_time_to_ms(m.group(1))
+                if v is not None:
+                    p["interval"] = v
+                break
         m = re.search(r"limit (\d+)p?", head)
         if m:
             p["limit"] = int(m.group(1))

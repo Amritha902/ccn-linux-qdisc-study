@@ -33,25 +33,35 @@ run() {
 }
 total=0
 
+# Duration must scale with the qdisc's own default target, for the same reason
+# the loop period does (F8): the controller's period scales by target/5ms, so
+# at PIE's 15ms default it ticks three times more slowly and needs three times
+# as long for a comparable trajectory. Run at a flat 60s, PIE managed 34 ticks
+# and 3 adjustments against codel's 8, and showed no benefit -- an under-driven
+# instrument, not a refutation.
 sweep() {
-    local aqm="$1"; shift
+    local aqm="$1"; local tgt="$2"; shift 2
+    local scale dur
+    scale=$(python3 -c "print(max(1, round($tgt/5)))")
+    dur=$(python3 -c "print(int($DUR*$scale))")
+    echo "### $aqm: default target ${tgt}ms, scale x${scale}, duration ${dur}s"
     for rtt in "$@"; do
       for seed in $SEEDS; do
         total=$((total+1))
         run "[$total] $aqm rtt=${rtt}ms static" \
-            --aqm "$aqm" --seed "$seed" --duration "$DUR" --flows "$FLOWS" \
+            --aqm "$aqm" --seed "$seed" --duration "$dur" --flows "$FLOWS" \
             --rate-mbit "$RATE" --rtt-ms "$rtt" --workload steady \
             --outdir "$OUT/${aqm}_rtt${rtt}"
         total=$((total+1))
         run "[$total] $aqm rtt=${rtt}ms adapted" \
-            --aqm "$aqm" --seed "$seed" --duration "$DUR" --flows "$FLOWS" \
+            --aqm "$aqm" --seed "$seed" --duration "$dur" --flows "$FLOWS" \
             --rate-mbit "$RATE" --rtt-ms "$rtt" --workload steady --adapt \
             --outdir "$OUT/${aqm}_rtt${rtt}"
       done
     done
 }
 
-sweep codel 3 5 8 20
-sweep pie   8 15 30 60
+sweep codel  5 3 5 8 20
+sweep pie   15 8 15 30 60
 
 echo "### cross-AQM campaign complete: $total runs -> $OUT"

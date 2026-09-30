@@ -1,0 +1,96 @@
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=fq_codel handle=10:
+  metrics -> results_sweep/rtt80/fq_codel_acape_steady_s1/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    0.8     HEAVY      STABLE     HEAVY    110.6     6   10.23     0     0   5.000  1024    0
+    1.5     LIGHT      STABLE     LIGHT      4.2     7    9.62     0     0   5.000  1024    0
+    2.2  MODERATE  RECOVERING     LIGHT     20.2     3    9.89     0     0   5.000  1024    0
+    2.9     LIGHT  RECOVERING    NORMAL      7.7     2   10.09     0     0   5.000  1024    0
+    3.6     LIGHT  RECOVERING    NORMAL      8.7     4    9.92     0     0   5.000  1024    0
+    4.2     LIGHT      STABLE     LIGHT      8.9     6   10.00     0     0   5.000  1024    0
+    4.9  MODERATE      STABLE  MODERATE     16.9     7    9.98     0     0   5.000  1024    0
+    5.6     LIGHT      STABLE     LIGHT      8.9     0    9.68     0     0   5.000  1024    0
+    6.5     LIGHT      STABLE     LIGHT      3.0     7    6.67     0     0   5.000  1024    0
+    7.2  MODERATE      STABLE  MODERATE     12.8     6   11.16     0     0   5.000  1024    0
+    7.9  MODERATE      STABLE  MODERATE     12.4     3   10.04     0     0   5.000  1024    0
+    8.6     LIGHT      STABLE     LIGHT      8.8     0    9.72     0     0   5.000  1024    0
+    9.3     LIGHT      STABLE     LIGHT      7.3     5   10.06     0     0   5.000  1024    0
+    9.9  MODERATE      STABLE  MODERATE     15.7     3   10.11     0     0   5.000  1024    0
+   10.6     LIGHT      STABLE     LIGHT      7.5     3    9.83     0     0   5.000  1024    0
+   11.2  MODERATE      STABLE  MODERATE     10.6     3    9.92     0     0   5.000  1024    0
+   11.9     LIGHT      STABLE     LIGHT      5.9     3   10.04     0     0   5.000  1024    0
+   12.6  MODERATE      STABLE  MODERATE     13.5     5    9.88     0     0   5.000  1024    0
+   13.3     LIGHT      STABLE     LIGHT      7.2     0    9.79     0     0   5.000  1024    0
+   13.9     LIGHT      STABLE     LIGHT      9.1     3   10.02     0     0   5.000  1024    0
+   14.6     LIGHT      STABLE     LIGHT      9.4     3    9.82     0     0   5.000  1024    0
+   15.2  MODERATE      STABLE  MODERATE     12.3     2    9.84     0     0   5.000  1024    0
+   15.9     LIGHT      STABLE     LIGHT      8.5     1    9.94     0     0   5.000  1024    0
+   16.6     LIGHT      STABLE     LIGHT      7.7     4   10.10     0     0   5.000  1024    0
+   17.3  MODERATE      STABLE  MODERATE     11.5     6    9.80     0     0   5.000  1024    0
+   17.9  MODERATE      STABLE  MODERATE     11.6     0   10.12     0     0   5.000  1024    0
+   18.6     LIGHT      STABLE     LIGHT      6.0     5    9.84     0     0   5.000  1024    0
+   19.3  MODERATE      STABLE  MODERATE     13.0     6    9.93     0     0   5.000  1024    0
+   20.0  MODERATE      STABLE  MODERATE     12.6     1    9.86     0     0   5.000  1024    0
+   20.7     LIGHT      STABLE     LIGHT      7.2     0    9.62     0     0   5.000  1024    0
+   21.4     LIGHT      STABLE     LIGHT      8.5     4    9.95     0     0   5.000  1024    0
+   22.1  MODERATE      STABLE  MODERATE     14.9     2    9.97     0     0   5.000  1024    0
+   22.8     LIGHT      STABLE     LIGHT      6.1     1    9.97     0     0   5.000  1024    0
+   23.5     LIGHT      STABLE     LIGHT      9.6     5    9.66     0     0   5.000  1024    0
+   24.2     LIGHT      STABLE     LIGHT      9.6     6   10.04     0     0   5.000  1024    0
+   24.9  MODERATE      STABLE  MODERATE     13.6     5   10.04     0     0   5.000  1024    0
+   25.5     LIGHT      STABLE     LIGHT      7.6     7    9.94     0     0   5.000  1024    0
+   26.2  MODERATE      STABLE  MODERATE     13.0     4    9.85     0     0   5.000  1024    0
+   26.9     LIGHT      STABLE     LIGHT      7.5     0    9.98     0     0   5.000  1024    0
+   27.5     LIGHT      STABLE     LIGHT      7.8     3    9.99     0     0   5.000  1024    0
+   28.2  MODERATE      STABLE  MODERATE     17.2     2    9.94     0     0   5.000  1024    0
+   28.9     LIGHT      STABLE     LIGHT      1.5     7    9.68     0     0   5.000  1024    0
+   29.5  MODERATE      STABLE  MODERATE     15.0     3    9.93     0     0   5.000  1024    0
+   30.2     LIGHT      STABLE     LIGHT      9.4     5   10.03     0     0   5.000  1024    0
+   30.9  MODERATE      STABLE  MODERATE     10.1     1    9.93     0     0   5.000  1024    0
+   31.6  MODERATE      STABLE  MODERATE     11.5     2   10.01     0     0   5.000  1024    0
+   32.2     LIGHT      STABLE     LIGHT      7.2     4    9.93     0     0   5.000  1024    0
+   32.9  MODERATE      STABLE  MODERATE     12.0     3   10.03     0     0   5.000  1024    0
+   33.6     LIGHT      STABLE     LIGHT      8.9     5    9.74     0     0   5.000  1024    0
+   34.3     LIGHT      STABLE     LIGHT      8.8     3    9.96     0     0   5.000  1024    0
+   34.9     LIGHT      STABLE     LIGHT      7.7     6   10.19     0     0   5.000  1024    0
+   35.6  MODERATE      STABLE  MODERATE     13.3     0    9.82     0     0   5.000  1024    0
+   36.2     LIGHT      STABLE     LIGHT      6.2     7   10.04     0     0   5.000  1024    0
+   36.9  MODERATE      STABLE  MODERATE     15.2     0    9.87     0     0   5.000  1024    0
+   37.6     LIGHT      STABLE     LIGHT      5.8     4    9.77     0     0   5.000  1024    0
+   38.3     LIGHT      STABLE     LIGHT      8.9     3   10.01     0     0   5.000  1024    0
+   38.9     LIGHT      STABLE     LIGHT      9.2     5    9.87     0     0   5.000  1024    0
+   39.6  MODERATE      STABLE  MODERATE     13.5     2    9.54     0     0   5.000  1024    0
+   40.4     LIGHT      STABLE     LIGHT      8.4     5    9.91     0     0   5.000  1024    0
+   41.1  MODERATE      STABLE  MODERATE     14.5     3   10.10     0     0   5.000  1024    0
+   41.7  MODERATE      STABLE  MODERATE     10.4     0    9.97     0     0   5.000  1024    0
+   42.4     LIGHT      STABLE     LIGHT      9.0     4    9.84     0     0   5.000  1024    0
+   43.1  MODERATE      STABLE  MODERATE     11.2     1    9.84     0     0   5.000  1024    0
+   43.8     LIGHT      STABLE     LIGHT      5.9     7   10.15     0     0   5.000  1024    0
+   44.5  MODERATE      STABLE  MODERATE     11.3     2    9.78     0     0   5.000  1024    0
+   45.2  MODERATE      STABLE  MODERATE     11.5     4   10.02     0     0   5.000  1024    0
+   45.9     LIGHT      STABLE     LIGHT      5.9     4   10.07     0     0   5.000  1024    0
+   46.5  MODERATE      STABLE  MODERATE     11.8     2    9.92     0     0   5.000  1024    0
+   47.2     LIGHT      STABLE     LIGHT      6.0     7    9.98     0     0   5.000  1024    0
+   47.9  MODERATE      STABLE  MODERATE     12.3     4    9.96     0     0   5.000  1024    0
+   48.5     LIGHT      STABLE     LIGHT      9.2     6   10.05     0     0   5.000  1024    0
+   49.2  MODERATE      STABLE  MODERATE     13.0     4    9.85     0     0   5.000  1024    0
+   49.9     LIGHT      STABLE     LIGHT      4.7     6   10.12     0     0   5.000  1024    0
+   50.5  MODERATE      STABLE  MODERATE     12.5     1   10.03     0     0   5.000  1024    0
+   51.1     LIGHT      STABLE     LIGHT      6.1     4    9.87     0     0   5.000  1024    0
+   51.8  MODERATE      STABLE  MODERATE     13.4     2    9.95     0     0   5.000  1024    0
+   52.5     LIGHT      STABLE     LIGHT      7.5     5    9.97     0     0   5.000  1024    0
+   53.1  MODERATE      STABLE  MODERATE     13.7     0    9.96     0     0   5.000  1024    0
+   53.8     LIGHT      STABLE     LIGHT      7.1     3    9.88     0     0   5.000  1024    0
+   54.6  MODERATE      STABLE  MODERATE     11.1     5    9.82     0     0   5.000  1024    0
+   55.3     LIGHT      STABLE     LIGHT      9.9     3   10.16     0     0   5.000  1024    0
+   56.0     LIGHT      STABLE     LIGHT      8.7     6    9.97     0     0   5.000  1024    0
+   56.7  MODERATE      STABLE  MODERATE     10.2     1    9.89     0     0   5.000  1024    0
+   57.4     LIGHT      STABLE     LIGHT      7.0     6    9.88     0     0   5.000  1024    0
+   58.0  MODERATE      STABLE  MODERATE     13.3     1   10.09     0     0   5.000  1024    0
+   58.8     LIGHT      STABLE     LIGHT      8.5     1    9.78     0     0   5.000  1024    0
+   59.4     LIGHT      STABLE     LIGHT      8.8     4   10.00     0     0   5.000  1024    0
+
+Done — 88 ticks, 0 adjustments (0 predictive), mode=tc-only

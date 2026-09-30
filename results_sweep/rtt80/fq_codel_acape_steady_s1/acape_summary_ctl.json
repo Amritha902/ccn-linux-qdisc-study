@@ -1,0 +1,10 @@
+{
+  "ticks": 88,
+  "adjustments": 0,
+  "predictive": 0,
+  "mode": "tc-only",
+  "prog_id": null,
+  "metrics": "results_sweep/rtt80/fq_codel_acape_steady_s1/acape_metrics_ctl.csv",
+  "adj": "results_sweep/rtt80/fq_codel_acape_steady_s1/acape_adj_ctl.csv",
+  "state": "results_sweep/rtt80/fq_codel_acape_steady_s1/acape_state_ctl.csv"
+}

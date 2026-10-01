@@ -1,0 +1,4 @@
+t_s,regime,trajectory,predicted,predictive,old_target,new_target,applied_target,old_limit,new_limit,applied_limit,workload,reason
+6.94,LIGHT,STABLE,LIGHT,0,5.0000,5.5000,5.5000,1024,1088,1088,ELEPHANT,[REACTIVE] additive-increase | regime=LIGHT pred=LIGHT wkld=ELEPHANT
+14.54,LIGHT,STABLE,LIGHT,0,5.5000,6.0000,6.0000,1088,1152,1152,ELEPHANT,[REACTIVE] additive-increase | regime=LIGHT pred=LIGHT wkld=ELEPHANT
+21.99,LIGHT,STABLE,LIGHT,0,6.0000,6.5000,6.5000,1152,1216,1216,ELEPHANT,[REACTIVE] additive-increase | regime=LIGHT pred=LIGHT wkld=ELEPHANT

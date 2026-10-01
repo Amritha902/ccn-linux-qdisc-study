@@ -1,0 +1,42 @@
+[eBPF] attached prog_id=4 jited=True
+[eBPF] flow_map id=1 via bpf(2) (key=16B value=56B)
+[acape] bounds for target 5.0ms interval 100.0ms: target 0.2-20ms interval 20-300ms (interval/target ratio 20.0)
+
+==============================================================================
+  ACAPE v6.0.0   mode=eBPF   qdisc=fq_codel handle=10:
+  metrics -> results/fq_codel_acape_ebpf_staged_s1/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    0.9     LIGHT      STABLE     LIGHT      4.4     5   10.01     3     0   5.000  1024    0
+    1.5     LIGHT      STABLE     LIGHT      6.0     4   10.11     3     2   5.000  1024    0
+    2.2     LIGHT      STABLE     LIGHT      6.0     2    9.92     3     2   5.000  1024    0
+    2.9     LIGHT      STABLE     LIGHT      4.5     4    9.90     3     2   5.000  1024    0
+    3.5     LIGHT      STABLE     LIGHT      5.9     2    9.59     3     2   5.000  1024    0
+    4.2     LIGHT      STABLE     LIGHT      5.9     5    9.67     3     2   5.000  1024    0
+    4.9     LIGHT      STABLE     LIGHT      5.9     3    9.79     3     2   5.000  1024    0
+    5.6     LIGHT      STABLE     LIGHT      4.4     5    9.99     3     2   5.000  1024    0
+    6.3     LIGHT      STABLE     LIGHT      5.7     4   10.05     3     2   5.000  1024    0
+    6.9     LIGHT      STABLE     LIGHT      6.1     5   10.09     3     2   5.500  1088    1
+    8.1     LIGHT      STABLE     LIGHT      5.3     3    9.73     3     2   5.500  1088    1
+    8.8     LIGHT      STABLE     LIGHT      7.0     5    9.26     3     2   5.500  1088    1
+    9.5     LIGHT      STABLE     LIGHT      4.4     8    9.72     3     2   5.500  1088    1
+   10.4     LIGHT      STABLE     LIGHT      6.6     3    9.17     3     2   5.500  1088    1
+   11.1     LIGHT      STABLE     LIGHT      5.3     3   10.53     3     2   5.500  1088    1
+   11.8     LIGHT      STABLE     LIGHT      5.9     3    9.86     3     2   5.500  1088    1
+   12.5     LIGHT      STABLE     LIGHT      5.7     1    9.63     3     2   5.500  1088    1
+   13.2     LIGHT      STABLE     LIGHT      4.5     3    9.86     3     2   5.500  1088    1
+   13.8     LIGHT      STABLE     LIGHT      7.5     0   10.12     3     2   5.500  1088    1
+   14.5     LIGHT      STABLE     LIGHT      4.3     2    9.61     3     2   6.000  1152    2
+   15.7     LIGHT      STABLE     LIGHT      5.3     6    9.85     3     2   6.000  1152    2
+   16.3     LIGHT      STABLE     LIGHT      4.4     5    9.94     3     2   6.000  1152    2
+   17.1     LIGHT      STABLE     LIGHT      5.4     4    9.40     3     2   6.000  1152    2
+   17.8     LIGHT      STABLE     LIGHT      5.6     2    9.79     3     2   6.000  1152    2
+   18.5     LIGHT      STABLE     LIGHT      4.5     5    9.98     3     2   6.000  1152    2
+   19.2     LIGHT      STABLE     LIGHT      5.7     5    9.84     3     2   6.000  1152    2
+   19.9     LIGHT      STABLE     LIGHT      5.8     3    9.87     3     2   6.000  1152    2
+   20.5     LIGHT      STABLE     LIGHT      5.9     3    9.89     3     2   6.000  1152    2
+   21.3     LIGHT      STABLE     LIGHT      4.1     4    9.60     3     2   6.000  1152    2
+   22.0     LIGHT      STABLE     LIGHT      5.6     5    9.66     3     2   6.500  1216    3
+   23.0     LIGHT      STABLE     LIGHT      5.0     5    9.78     3     2   6.500  1216    3
+   23.7     LIGHT      STABLE     LIGHT      5.8     4    9.90     3     2   6.500  1216    3

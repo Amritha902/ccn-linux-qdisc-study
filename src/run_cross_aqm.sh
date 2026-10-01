@@ -29,16 +29,24 @@ OUT="${OUT:-results_cross}"
 # results were already valid, and worse, re-running into an existing directory
 # corrupted iperf's log (verification/IPERF_APPEND.md). Cells that already hold
 # a complete run are skipped.
-have() {
-    local d="$1"
-    [ -f "$d/summary.json" ] || return 1
-    python3 - "$d/summary.json" <<'EOP'
-import json,sys
-try:
-    j=json.load(open(sys.argv[1]))
-    sys.exit(0 if j.get("bulk_rtt_mean_ms") is not None else 1)
-except Exception:
-    sys.exit(1)
+# True when a cell already holds the expected number of runs, each with a
+# usable bulk_rtt. Defined AND called: an earlier version of this guard was
+# written but never invoked, so a restart silently re-ran 24 valid codel cells
+# before reaching the one it was restarted for.
+cell_done() {
+    local dir="$1" want="$2"
+    [ -d "$dir" ] || return 1
+    python3 - "$dir" "$want" <<'EOP'
+import glob, json, os, sys
+d, want = sys.argv[1], int(sys.argv[2])
+good = 0
+for f in glob.glob(os.path.join(d, "*", "summary.json")):
+    try:
+        if json.load(open(f)).get("bulk_rtt_mean_ms") is not None:
+            good += 1
+    except Exception:
+        pass
+sys.exit(0 if good >= want else 1)
 EOP
 }
 
@@ -63,6 +71,13 @@ sweep() {
     dur=$(python3 -c "print(int($DUR*$scale))")
     echo "### $aqm: default target ${tgt}ms, scale x${scale}, duration ${dur}s"
     for rtt in "$@"; do
+      local cell="$OUT/${aqm}_rtt${rtt}"
+      local want=$(( $(echo $SEEDS | wc -w) * 2 ))
+      if cell_done "$cell" "$want"; then
+          echo "### $aqm rtt=${rtt}ms: already complete ($want runs), skipping"
+          total=$((total+want))
+          continue
+      fi
       for seed in $SEEDS; do
         total=$((total+1))
         run "[$total] $aqm rtt=${rtt}ms static" \

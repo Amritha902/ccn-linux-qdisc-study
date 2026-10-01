@@ -8,3 +8,4 @@ t_s,regime,trajectory,predicted,predictive,old_target,new_target,applied_target,
 119.87,HEAVY,STABLE,HEAVY,0,7.9500,7.1550,7.1500,531,477,477,MICE,[REACTIVE] mult-decrease beta=0.90 | regime=HEAVY pred=HEAVY wkld=MICE
 137.08,HEAVY,STABLE,HEAVY,0,7.1500,6.4350,6.4300,477,429,429,MICE,[REACTIVE] mult-decrease beta=0.90 | regime=HEAVY pred=HEAVY wkld=MICE
 154.20,HEAVY,STABLE,HEAVY,0,6.4300,5.7870,5.7900,429,386,386,MICE,[REACTIVE] mult-decrease beta=0.90 | regime=HEAVY pred=HEAVY wkld=MICE
+171.35,HEAVY,STABLE,HEAVY,0,5.7900,5.2110,5.2100,386,347,347,MICE,[REACTIVE] mult-decrease beta=0.90 | regime=HEAVY pred=HEAVY wkld=MICE

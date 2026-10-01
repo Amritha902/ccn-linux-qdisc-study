@@ -63,16 +63,67 @@ adaptation itself achieves.
 %% =====================================================================
 \section*{Discussion}
 
-\subsection*{Interpretation}
+\subsection*{A scaling law for when adaptation pays}
 
-The dominant determinant of queueing latency on this class of link is the
-presence of flow queueing combined with a delay target, not the values of that
-mechanism's parameters. The gap between an unmanaged queue and any
-flow-queueing discipline is two orders of magnitude; the gap between default
-and adapted parameters is below one percent on latency. This is consistent with
-the position of CoDel's authors\cite{nichols2012} that its defaults are
-expressed relative to path round-trip time by construction and require no
-tuning.
+Whether adapting an AQM's parameters at runtime is worth doing has been
+answered both ways in the literature, with systems reporting gains and
+evaluations reporting none. Both answers are right, and which one applies is
+decided by a single dimensionless number.
+
+\texttt{target} is a delay budget, fixed at 5\,ms by default, while the path
+round-trip time is whatever the path is. The quantity that governs whether
+that budget is badly chosen is therefore neither the target nor the RTT but
+their ratio, $r = \texttt{target}/\text{RTT}$. On this reading RTT never
+appears on its own; it appears only through $r$.
+
+Measured across path RTTs from 2 to 200\,ms, the benefit follows
+$b(r) = B/(1 + (r_0/r)^k)$ with a ceiling of \LawCeiling\% and half of it
+reached at $r = \LawHalfBenefit$ ($R^2 = \LawRsq$). The hypothesis, its three
+predictions and their numerical thresholds were committed to the repository
+before the campaign that tests them ran.
+
+Ratio invariance is the prediction able to refute the claim, and it holds.
+Scaling \texttt{target}, \texttt{interval}, the control period and the run
+duration together by the same factor, the benefit is 18.4\%, 17.6\% and 16.4\%
+at 5, 20 and 80\,ms, a spread of 2.0 percentage points across a sixteenfold
+range of RTT. Held-out interior ratios are predicted to 1.4 percentage points.
+The sharpest discrimination holds the path fixed: at 20\,ms the benefit is
+1.4\% and not significant at $r = 0.25$ against 17.6\% and significant at
+$r = 1.0$. Same path, twelve times the benefit, which no account in terms of
+RTT reproduces.
+
+The crossover is not a property of CoDel's mechanism. Fitted independently,
+plain \texttt{codel} places it at $r_0 = 0.49$, identical to
+\texttt{fq\_codel}, and PIE, which regulates a drop probability with a
+proportional-integral controller and shares nothing with CoDel but the
+existence of a delay target, places it within a factor of two. What flow
+queueing changes is the ceiling, 14.5\% against 20.5\%, and the sharpness of
+the transition, not its location.
+
+\subsection*{What this means in practice}
+
+Published guidance places \texttt{target} at 5 to 10 percent of
+\texttt{interval}, with \texttt{interval} on the order of the path RTT, so a
+correctly configured deployment sits at $r$ of roughly 0.05 to 0.10. Half the
+available benefit arrives at $r = \LawHalfBenefit$, five to ten times outside
+that envelope. Runtime parameter adaptation is therefore best understood as a
+remedy for misconfiguration rather than as an improvement on correct
+configuration, and an operator can compute the relevant number before
+deploying a controller at all.
+
+The gain is not free. It is bought with up to \LawDropRiseHigh\% more drops
+and comparable retransmissions, at a throughput cost never exceeding
+\LawWorstThroughput\% in any cell measured. The ratio governs the exchange
+rate as well as the gain.
+
+This also explains the null results. The dominant determinant of queueing
+latency on this class of link remains the presence of flow queueing combined
+with a delay target rather than the values of that mechanism's parameters: the
+gap between an unmanaged queue and any flow-queueing discipline is two orders
+of magnitude. That is consistent with the position of CoDel's
+authors\cite{nichols2012} that its defaults are expressed relative to path
+round-trip time by construction. The law says precisely where that position
+stops holding.
 
 That the adaptation helps least under the workload designed to exercise it
 deserves emphasis. Under a steady load the controller has a stable operating

@@ -11,8 +11,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
 
-\title{Runtime parameter adaptation for a flow-queueing active queue
-discipline: a controlled evaluation on stock Linux}
+\title{When does adapting an active queue discipline's parameters pay?
+A scaling law in \texttt{target}/RTT, measured on stock Linux}
 
 \author[1]{Amritha S}
 \author[1]{Yugeshwaran P}
@@ -25,24 +25,36 @@ control, eBPF, reproducibility}
 
 \begin{abstract}
 The default Linux queue discipline, \texttt{fq\_codel}, exposes four parameters
-fixed at configuration time. Runtime adaptation of such parameters has been
-proposed repeatedly, but never evaluated under conditions that separate a
-controller's computational cost from the effect of its decisions. We implement
-a controller that adapts all four parameters and evaluate it on an unmodified
-kernel against eight alternative queue disciplines, across three traffic
-workloads and base round-trip times spanning 5 to 200 milliseconds, with a
-sham-controller condition that applies no change. Adaptation reduces the
-round-trip time experienced by bulk flows by 18.4 per cent on a 5 millisecond
-path, where the discipline's 5 millisecond delay target is large relative to
-the path, and has no distinguishable effect at 20, 80 or 200 milliseconds. The
-unadapted defaults hold queueing delay between 1.96 and 5.00 milliseconds
-across that fortyfold span, supporting the claim that they are scaled to path
-round-trip time by construction. Under mixed traffic, every flow-queueing
-discipline with a delay target reduces loss on sparse latency-sensitive flows
-from 8 per cent to below 0.03 per cent. Latency measured by a sparse probe and by the bulk
-flows differs by up to an order of magnitude and can invert the ranking of two
-disciplines.
+fixed at configuration time. Whether adapting them at runtime is worth doing
+has been answered both ways, with systems reporting gains and evaluations
+reporting none. We show that both answers are right, and that which one applies
+is decided by a single dimensionless number. Across 178 runs spanning three
+workloads, eight alternative queue disciplines and path round-trip times from
+2 to 200\,ms, the benefit of adaptation is governed not by RTT but by the ratio
+$r = \texttt{target}/\text{RTT}$, saturating at \LawCeiling\ per cent with half
+the benefit at $r = \LawHalfBenefit$. The hypothesis, its three predictions and
+their numerical thresholds were committed before the campaign that tests them
+ran. Ratio invariance, the prediction able to refute the claim, holds to 2.0
+percentage points across a sixteenfold range of RTT; held-out ratios are
+predicted to 1.4 points; and at a fixed 20\,ms path the benefit moves from
+1.4 per cent to 17.6 per cent on changing $r$ alone, which no account in terms
+of RTT reproduces. The crossover is not specific to CoDel: fitted
+independently, plain \texttt{codel} and PIE, which shares no mechanism with
+CoDel beyond having a delay target, place it within a factor of two. Published
+guidance places a correctly configured deployment at $r$ of 0.05 to 0.10, so
+half the available benefit arrives five to ten times outside that envelope:
+adaptation is a remedy for misconfiguration rather than an improvement on
+correct configuration, which unifies the null results in this work and in the
+literature as one effect. Flow queueing with a delay target remains the
+dominant effect, reducing 95th-percentile latency by 99.0 per cent relative to
+an unmanaged queue at indistinguishable goodput, and an existing discipline
+requiring no controller outperforms the adapted system.
 \end{abstract}
+
+\graphicspath{{../generated/}{../../figures/}{../../figures/steps/}{../../figures/comparison/}{../../figures/runs/}}
+% Numbers quoted in the text come from the analysis pipeline, not by hand.
+\input{../generated/facts}
+\input{../generated/law_facts}
 
 \begin{document}
 \flushbottom

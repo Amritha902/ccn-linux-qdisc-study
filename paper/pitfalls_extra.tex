@@ -71,3 +71,57 @@ benefit at $r = 0.625$ with seven adjustments down to $0.0\%$ at $r = 0.125$
 with eight. A controller that adjusted eight times and recovered nothing is a
 genuine null. The mean adjustment count is reported for every cell in
 Table~\ref{tab:law} so that a reader can see where the controller was working.
+
+\subsection{Telemetry that is not free, and a table that hid it}
+\label{sec:pitfall:telemetry}
+
+Two defects compounded here, and the second concealed the first.
+
+\textbf{A tool that appends.} \texttt{iperf3 --logfile} appends rather than
+truncating. The experiment driver reuses its output directory, so re-running a
+cell wrote a second complete JSON document onto the end of the first, leaving
+a file that does not parse. Every field derived from it became
+\texttt{null}: goodput, bulk-flow RTT and the entire in-band RTT sample set.
+Every field derived from \texttt{ping} or \texttt{tc} was unaffected and
+looked normal, so the summary gave no sign that half its contents were
+missing. A corpus-wide scan found the damage confined to runs that had been
+repeated: three staged runs re-run during development, and an arm of a later
+campaign whose driver re-ran completed cells on every restart. Stale logs are
+now removed before a run starts, which makes a repeat idempotent rather than
+destructive.
+
+\textbf{A row that merged two configurations.} The analysis keyed table rows
+on the queue discipline and the controller mode but ignored whether eBPF
+telemetry was attached, so an eBPF run and a plain adaptive run were averaged
+together. The staged table reported $n=6$ for \texttt{fq\_codel + ACAPE} where
+every other row had three. Two problems in one cell: the row averaged across
+a configuration difference this paper argues elsewhere must be held apart, and
+because the confidence-interval helper silently drops missing values, the
+goodput and bulk-RTT columns were computed from three samples and printed
+beside an $n$ of six.
+
+Separating the configurations and repairing the three damaged runs turns the
+confound into a measurement. The telemetry's own cost, on the staged workload,
+is now visible:
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\hline
+staged & goodput & probe RTT p95 & bulk RTT \\
+ & (Mbps) & (ms) & (ms) \\
+\hline
+\texttt{fq\_codel} + ACAPE & 9.18 & 23.47 & 51.74 \\
+\quad + eBPF telemetry & 9.35 & 27.57 & 58.75 \\
+\hline
+\end{tabular}
+\end{center}
+
+Attaching the flow telemetry costs $13.6\%$ of bulk-flow RTT and $17.5\%$ of
+probe-RTT p95 while leaving goodput alone. That is a larger effect than most
+of the parameter adaptation this paper set out to measure, which is the
+argument for the sham-controller condition of
+Section~\ref{sec:testbed} and against reporting an instrumented run beside an
+uninstrumented one. The reported $n$ is now the smallest number of samples
+behind any metric in a row, and the analysis prints a warning whenever a
+row's metrics are not all backed by the same number of runs.

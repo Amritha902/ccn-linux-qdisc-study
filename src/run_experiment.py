@@ -146,6 +146,18 @@ def main():
     label = f"{a.aqm}{suffix}_{a.workload}_s{a.seed}"
     outdir = os.path.join(a.outdir, label)
     os.makedirs(outdir, exist_ok=True)
+    # iperf3's --logfile APPENDS. Re-running a cell into an existing directory
+    # therefore concatenated a second JSON document onto the first, leaving a
+    # file that does not parse, so bulk_rtt_mean_ms and throughput_mbps came
+    # out None while every other field looked normal. It corrupted the three
+    # staged eBPF runs that were re-run earlier and the whole codel arm of the
+    # cross-AQM campaign. Stale logs are removed so a re-run is idempotent.
+    for stale in glob.glob(os.path.join(outdir, "iperf_*.json")) + \
+                 glob.glob(os.path.join(outdir, "iperf_*.log")):
+        try:
+            os.remove(stale)
+        except OSError:
+            pass
 
     # `--seed` indexes an INDEPENDENT REPETITION, not a PRNG seed. iperf3
     # exposes no seed and the qdiscs are deterministic given the traffic, so

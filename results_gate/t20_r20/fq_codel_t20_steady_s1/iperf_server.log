@@ -1545,4 +1545,123 @@ Accepted connection from 192.168.1.2, port 37964
 [  8] 153.00-154.00 sec   256 KBytes  2.10 Mbits/sec                  
 [ 10] 153.00-154.00 sec   256 KBytes  2.10 Mbits/sec                  
 [ 12] 153.00-154.00 sec   128 KBytes  1.05 Mbits/sec                  
-[ 14] 153.00-
+[ 14] 153.00-154.00 sec   256 KBytes  2.10 Mbits/sec                  
+[ 16] 153.00-154.00 sec   256 KBytes  2.10 Mbits/sec                  
+[ 18] 153.00-154.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 153.00-154.00 sec   256 KBytes  2.10 Mbits/sec                  
+[SUM] 153.00-154.00 sec  1.62 MBytes  13.6 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 154.00-155.00 sec   256 KBytes  2.10 Mbits/sec                  
+[  8] 154.00-155.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 154.00-155.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 154.00-155.00 sec   256 KBytes  2.10 Mbits/sec                  
+[ 14] 154.00-155.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 154.00-155.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 154.00-155.00 sec   256 KBytes  2.10 Mbits/sec                  
+[ 20] 154.00-155.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 154.00-155.00 sec  1.38 MBytes  11.5 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 155.00-156.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 155.00-156.00 sec  1.00 MBytes  8.39 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 156.00-157.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 156.00-157.00 sec  1.00 MBytes  8.39 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 157.00-158.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 157.00-158.00 sec  1.00 MBytes  8.40 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 158.00-159.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 158.00-159.00 sec  1.00 MBytes  8.39 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 159.00-160.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 159.00-160.00 sec  1.00 MBytes  8.38 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 160.00-161.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 160.00-161.00 sec  1.00 MBytes  8.40 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 161.00-162.00 sec   256 KBytes  2.10 Mbits/sec                  
+[  8] 161.00-162.00 sec   256 KBytes  2.10 Mbits/sec                  
+[ 10] 161.00-162.00 sec   256 KBytes  2.10 Mbits/sec                  
+[ 12] 161.00-162.00 sec   256 KBytes  2.09 Mbits/sec                  
+[ 14] 161.00-162.00 sec   256 KBytes  2.09 Mbits/sec                  
+[ 16] 161.00-162.00 sec   256 KBytes  2.09 Mbits/sec                  
+[ 18] 161.00-162.00 sec   256 KBytes  2.09 Mbits/sec                  
+[ 20] 161.00-162.00 sec   256 KBytes  2.09 Mbits/sec                  
+[SUM] 161.00-162.00 sec  2.00 MBytes  16.8 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 162.00-163.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 162.00-163.00 sec  1.00 MBytes  8.39 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 163.00-164.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 163.00-164.00 sec  1.00 MBytes  8.39 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 14] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 16] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 18] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 20] 164.00-165.00 sec   128 KBytes  1.05 Mbits/sec                  
+[SUM] 164.00-165.00 sec  1.00 MBytes  8.39 Mbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[  5] 165.00-166.00 sec   128 KBytes  1.05 Mbits/sec                  
+[  8] 165.00-166.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 10] 165.00-166.00 sec   128 KBytes  1.05 Mbits/sec                  
+[ 12] 16

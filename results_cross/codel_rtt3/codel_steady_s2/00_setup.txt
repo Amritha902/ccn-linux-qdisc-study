@@ -16,4 +16,4 @@ PING 192.168.2.2 (192.168.2.2) 56(84) bytes of data.
 
 --- 192.168.2.2 ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 2006ms
-rtt min/avg/max/mdev = 2.884/4.301/7.056/1.947 ms
+rtt min/avg/max/mdev = 3.011/4.374/7.004/1.859 ms

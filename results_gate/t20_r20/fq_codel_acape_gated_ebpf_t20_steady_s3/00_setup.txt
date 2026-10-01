@@ -1,0 +1,19 @@
+  kernel: 6.12.48
+  AQM under test: fq_codel target 20.0ms interval 400ms limit 1024 quantum 1514
+
+  --- router egress qdisc (the bottleneck, on the DATA path) ---
+qdisc tbf 1: root refcnt 3 rate 10Mbit burst 4Kb lat 400ms 
+ Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+qdisc fq_codel 10: parent 1:1 limit 1024p flows 1024 quantum 1514 target 20ms interval 400ms memory_limit 32Mb ecn drop_batch 64 
+ Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) 
+ backlog 0b 0p requeues 0
+  maxpacket 0 drop_overlimit 0 new_flow_count 0 ecn_mark 0
+  new_flows_len 0 old_flows_len 0
+
+  --- connectivity client -> server ---
+PING 192.168.2.2 (192.168.2.2) 56(84) bytes of data.
+
+--- 192.168.2.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 20.920/29.636/46.709/12.073 ms

@@ -114,3 +114,60 @@ satisfy every one of G1, G2 and G3. That would be a false validation. The gate
 mechanism is implementable and its decisions follow the law, but it is not
 validated by this evidence, and a deployable gate needs an RTT estimate this
 telemetry does not provide.
+
+## The self-gating controller (docs/GATE_PREREG.md)
+
+Two cells either side of the crossover, three arms each.
+
+**r = 1.0**, target 20 ms on a 20 ms path. Gate OPEN on all three seeds.
+
+| mode | bulk RTT | retransmits | drops/s | benefit |
+|---|---|---|---|---|
+| static | 61.68 | 7586 | 15.8 | |
+| ungated | 50.16 | 10818 | 23.8 | +18.7%, p < 0.0001 |
+| gated | 50.05 | 10840 | 23.6 | +18.9%, p < 0.0001 |
+
+**r = 0.25**, target 5 ms on a 20 ms path. Gate SHUT on all three seeds,
+zero adjustments.
+
+| mode | bulk RTT | retransmits | drops/s | benefit |
+|---|---|---|---|---|
+| static | 36.52 | 3824 | 33.9 | |
+| ungated | 35.76 | 4126 | 35.2 | +2.1%, p = 0.15 |
+| gated | 36.82 | 3811 | 32.5 | -0.8%, p = 0.50 |
+
+**G1, the gate costs nothing where the benefit is real: PASS.** Gated and
+ungated differ by 0.2 percentage points, against a tolerance of 4.
+
+**G2, the gate recovers the cost where the benefit is not real: PASS.** With
+the gate shut, retransmissions are within 0.3% of the static arm, 3811 against
+3824, while the ungated controller pays 4126, an extra 7.9%, for a 2.1% gain
+that is not statistically significant. That overhead is precisely what the
+gate exists to avoid, and it avoids it.
+
+**G3, the estimated ratio is within 25% of the configured one: FAIL.** At the
+`r = 1.0` cell the gate estimates 1.29 to 1.32, an error of 29 to 32%, because
+the RTT proxy reads 15.2 ms for a 20 ms path. At the `r = 0.25` cell the error
+is 8%.
+
+### Why the decisions were correct anyway, and why that is not a validation
+
+Both cells sit far from the gate's 0.4 threshold, at true ratios of 1.0 and
+0.25, so an error of 30% cannot flip either decision. The gate was not tested
+anywhere its accuracy matters.
+
+Taking the estimator error at face value, the decision boundary is uncertain
+by roughly 25% in `r`, so any true ratio between about 0.3 and 0.5 could be
+decided either way. Together with the estimator result above, where the proxy
+saturates between 14 and 22 ms whatever the path, the position is:
+
+- the gating **mechanism** works, opening and shutting as the law says it
+  should, costing nothing when open and recovering the full overhead when
+  shut;
+- the **estimator** it depends on does not measure what it needs to;
+- and this evaluation **cannot** distinguish the two, because its cells avoid
+  the only region where the estimator's error would show.
+
+The gate is therefore reported as a demonstrated mechanism and not as a
+deployable control, and the honest next step is an RTT estimate that tracks
+the path, which this telemetry does not provide.

@@ -1,0 +1,2 @@
+t_s,regime,trajectory,predicted,predictive,old_target,new_target,applied_target,old_limit,new_limit,applied_limit,workload,reason
+16.89,HEAVY,STABLE,HEAVY,0,15.0000,13.5000,13.5000,1000,900,900,MICE,[REACTIVE] mult-decrease beta=0.90 | regime=HEAVY pred=HEAVY wkld=MICE

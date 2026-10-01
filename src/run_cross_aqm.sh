@@ -25,6 +25,23 @@ FLOWS="${FLOWS:-8}"
 RATE="${RATE:-10}"
 OUT="${OUT:-results_cross}"
 
+# A chain restart used to redo the whole codel sweep, 28 minutes of work whose
+# results were already valid, and worse, re-running into an existing directory
+# corrupted iperf's log (verification/IPERF_APPEND.md). Cells that already hold
+# a complete run are skipped.
+have() {
+    local d="$1"
+    [ -f "$d/summary.json" ] || return 1
+    python3 - "$d/summary.json" <<'EOP'
+import json,sys
+try:
+    j=json.load(open(sys.argv[1]))
+    sys.exit(0 if j.get("bulk_rtt_mean_ms") is not None else 1)
+except Exception:
+    sys.exit(1)
+EOP
+}
+
 run() {
     local desc="$1"; shift
     echo "### $desc"

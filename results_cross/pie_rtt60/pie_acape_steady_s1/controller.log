@@ -1,0 +1,24 @@
+[acape] bounds for target 15.0ms interval 15.0ms: target 0.6-60ms interval 3-45ms (interval/target ratio 1.0)
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=pie handle=10:
+  metrics -> results_cross/pie_rtt60/pie_acape_steady_s1/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    2.0     HEAVY      STABLE     HEAVY     29.9     5    9.26     0     0  15.000  1000    0
+    3.7     HEAVY      STABLE     HEAVY     15.8     6    9.94     0     0  15.000  1000    0
+    5.6     HEAVY      STABLE     HEAVY     16.8     7    9.82     0     0  15.000  1000    0
+    7.4     HEAVY      STABLE     HEAVY     12.6     7   10.01     0     0  15.000  1000    0
+    9.1     HEAVY      STABLE     HEAVY     10.3    17   10.05     0     0  15.000  1000    0
+   10.9     HEAVY      STABLE     HEAVY     19.9     5    9.92     0     0  15.000  1000    0
+   12.7     HEAVY      STABLE     HEAVY     14.4    11    9.82     0     0  15.000  1000    0
+   14.5     HEAVY      STABLE     HEAVY     11.2     0   10.07     0     0  15.000  1000    0
+   16.2     HEAVY      STABLE     HEAVY     14.1     8   10.03     0     0  15.000  1000    0
+   18.1     HEAVY      STABLE     HEAVY     14.1     9    9.82     0     0  13.500   900    1
+   20.3     HEAVY      STABLE     HEAVY     14.5     7    9.99     0     0  13.500   900    1
+   22.1     HEAVY      STABLE     HEAVY     12.6     0    9.83     0     0  13.500   900    1
+   23.9     HEAVY      STABLE     HEAVY     17.3     6    9.74     0     0  13.500   900    1
+   25.6     HEAVY      STABLE     HEAVY     13.6     9   10.01     0     0  13.500   900    1
+   27.4     HEAVY      STABLE     HEAVY     13.8     8    9.92     0     0  13.500   900    1
+   29.1     HEAVY      STABLE     HEAVY     14.7     7    9.99     0     0  13.500   900    1

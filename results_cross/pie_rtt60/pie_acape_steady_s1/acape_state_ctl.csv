@@ -1,0 +1,4 @@
+t_s,dr_gradient,bl_gradient,rtt_gradient,composite_g,regime,trajectory,predicted,workload
+9.144,-2.3491,1.3806,0.0000,-0.1391,HEAVY,STABLE,HEAVY,MICE
+18.055,-0.5746,0.0513,0.0000,-0.0344,HEAVY,STABLE,HEAVY,MICE
+27.375,-0.1064,0.0499,0.0000,-0.0063,HEAVY,STABLE,HEAVY,MICE

@@ -60,6 +60,75 @@ adaptation itself achieves.
 
 \input{../results_prose}
 
+%% ---------------------------------------------------------------- figures
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{step04_corrected_three_node_router_topology.png}
+\caption{The measurement topology, captured as configured. The bottleneck sits
+on the router's egress toward the server, so it is on the data path. TBF is the
+shaper and the queue discipline under study is its child. An earlier two-node
+arrangement placed the bottleneck where it shaped acknowledgements rather than
+data; every backlog and drop measurement taken that way was a measurement of
+the acknowledgement path.}
+\label{fig:topology}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{step07_ebpf_flow_telemetry_is_live_under_traffic.png}
+\caption{The eBPF flow telemetry reading live per-flow state under traffic at
+the \texttt{tc} egress hook, through the \texttt{bpf(2)} syscall rather than by
+spawning \texttt{bpftool}. An earlier version of this path reported zero for
+every sample while the program was correctly loaded and its maps correctly
+populated, which is why the capture shows non-zero counters rather than only a
+successful attach.}
+\label{fig:ebpf}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig12_controller_behaviour.png}
+\caption{The controller acting: regime classification, the parameter
+trajectory it produces, and the queue it is responding to. A controller that
+classifies but never adjusts is indistinguishable from the static
+configuration in a summary statistic, so the adjustment count is reported for
+every cell.}
+\label{fig:controller}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig16_scaling_law.png}
+\caption{The central result. Left: adaptation benefit against
+$r = \texttt{target}/\text{RTT}$, collapsing onto a single saturating curve.
+Right: the same measurements against path RTT alone, where they do not
+collapse. Filled points are statistically significant; labels give
+target/RTT in ms.}
+\label{fig:law}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig01_latency_tail_steady.png}
+\caption{Tail latency across all nine configurations under steady load, log
+scale. The dominant effect by two orders of magnitude is the presence or
+absence of flow queueing with a delay target, not the tuning of that
+mechanism's parameters. CAKE, which requires no controller, outperforms the
+adapted system.}
+\label{fig:tail}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig13_sham_control_steady.png}
+\caption{The sham-controller condition. The sham polls at the same cadence as
+the real controller and applies no parameter change, so any difference between
+sham and static is the controller's computational cost rather than the effect
+of its decisions. Without this condition the two are confounded.}
+\label{fig:sham}
+\end{figure}
+
+
 %% =====================================================================
 \section*{Discussion}
 

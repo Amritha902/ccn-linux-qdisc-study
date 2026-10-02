@@ -2,16 +2,36 @@
 
 ## The files
 
+Two documents, and they are deliberately not the same.
+
 | file | what it is |
 |---|---|
-| `paper/acape.pdf` | IEEE two-column, 11 pages. Use for a conference. |
-| `paper/scirep/submission.tex` | Single self-contained file for Overleaf, Scientific Reports class. All macros inlined, no `\input` left. |
-| `paper/scirep/preview.pdf` | 6-page local render of the above. The real one needs the Overleaf template's `wlscirep.cls`. |
+| `paper/acape.pdf` | **The paper.** IEEE two-column, 11 pages, nine figures. Selective: each figure carries an argument the text depends on. This is what a conference submission looks like. |
+| `paper/report.pdf` | **The report.** 31 pages, every implementation capture and every analysis figure full size, 46 embedded, plus all 63 per-run figures tabulated. This is the evidence record, not a paper. |
+| `paper/scirep/submission.tex` | Single self-contained file for the Overleaf Scientific Reports template. All macros inlined, six figures. |
+| `paper/scirep/preview.pdf` | 7-page local render of the above. The real one needs the template's `wlscirep.cls`. |
+| `paper/scirep/figs/` | The six image files the submission needs, already gathered. Upload this folder. |
 | `paper/ACAPE_2026.pptx` | 17-slide deck with design rationale. |
 
-For Overleaf: start the Scientific Reports template, replace its `main.tex`
-with `submission.tex`, upload `refs.bib` and the figures from
-`paper/generated/` and `figures/comparison/`. Nothing else is needed.
+### Overleaf, exactly
+
+1. Open the Scientific Reports template.
+2. Replace its `main.tex` with `paper/scirep/submission.tex`.
+3. Upload `paper/scirep/refs.bib`.
+4. Upload the six files in `paper/scirep/figs/` to the project root.
+
+Nothing else. No `\input` remains in `submission.tex` and no macro is
+undefined.
+
+### Why two documents
+
+A conference paper with 46 figures is not a conference paper. The paper shows
+the topology as built, the telemetry reading live, the controller acting, the
+scaling law, the tail-latency comparison and the sham-controller condition:
+three pieces of implementation evidence and three results, which is what the
+argument needs. The report carries everything, so a reader who wants to check
+rather than read has all of it. Both are generated from the same figure index,
+so they cannot disagree.
 
 ## The claim
 

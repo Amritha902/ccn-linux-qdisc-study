@@ -166,3 +166,57 @@ nothing for a controller to recover. This reading unifies the null result of
 Section~\ref{sec:results} with the null results reported elsewhere in the
 literature as a single effect rather than as separate disappointments, and it
 gives an operator a number to compute before deploying a controller at all.
+
+\subsection{Does the crossover transfer to other AQMs?}
+\label{sec:law:transfer}
+
+A crossover measured on one queue discipline may be a fact about delay
+targets or a fact about CoDel's sojourn-threshold mechanism. To separate
+these we fitted the same curve independently to plain \texttt{codel}, which
+shares CoDel's mechanism without flow queueing, and to PIE, which reaches a
+delay target by a proportional-integral controller on drop probability and
+shares nothing else with CoDel. Each was swept at its own default target, with
+the control period and run duration scaled accordingly.
+
+\begin{center}
+\small
+\begin{tabular}{lrrrr}
+\hline
+qdisc & cells & ceiling & $r_0$ & $R^2$ \\
+\hline
+\texttt{fq\_codel} & 7 & 20.5\% & 0.49 & 0.986 \\
+\texttt{codel} & 4 & 13.0\% & 0.42 & 0.978 \\
+\texttt{pie} & 5 & 29.0\% & 1.06 & 0.992 \\
+\hline
+\end{tabular}
+\end{center}
+
+Two results and one failure, against thresholds fixed before the campaign.
+
+\textbf{The saturating form transfers.} All three are well described by it,
+$R^2$ between 0.978 and 0.992.
+
+\textbf{The ratio governs a different mechanism.} Holding the path at
+$20$\,ms, \texttt{fq\_codel} at $r = 0.25$ recovers $1.4\%$ and is not
+significant, while PIE at $r = 0.75$ recovers $11.0\%$ at $p = 0.0089$: a
+$9.6$ point separation at identical path, rate, flow count and load. No
+account in terms of RTT reproduces it.
+
+\textbf{The crossover's location does not transfer within the tolerance we
+set.} The pre-registered rule asked for agreement within a factor of two; the
+spread is $2.52$. The CoDel family agrees closely, $0.49$ against $0.42$, but
+PIE sits roughly twice as high.
+
+That failure has a likely cause this campaign cannot rule out. PIE's native
+\texttt{target}/\texttt{tupdate} is $1.0$ while CoDel's
+\texttt{target}/\texttt{interval} is $0.05$, and the law was established with
+that second group held at $0.05$. Sweeping each qdisc at its own defaults
+varied it across the very comparison intended to isolate mechanism, so the
+test conflates a different mechanism with a different configuration shape.
+
+What the campaign supports is therefore narrower than the strongest reading
+and wider than a single-qdisc result: $r$ governs the benefit for all three
+mechanisms, but its critical value is not universal, lying near $0.45$ for the
+CoDel family and roughly twice that for PIE. Flow queueing does not move the
+crossover at all, $0.49$ against $0.42$. What it changes is the ceiling,
+$13.0\%$ against $20.5\%$, and the sharpness of the transition.

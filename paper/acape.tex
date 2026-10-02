@@ -535,12 +535,17 @@ throughout. Whether the crossover ratio moves when that second group changes
 is a separate question this work does not answer, and the law should be read as
 conditional on it.
 
-\textbf{Link rate.} All experiments use a $10$\,Mbit bottleneck, where one
-MTU-sized packet serialises in $1.2$\,ms and the $5$\,ms default target is
-comfortably above one packet time. On much slower links the target falls below
-the serialisation time of a single packet, a regime in which CoDel's defaults
-are independently known to behave badly, and which may require a third
-dimensionless group that this work does not measure.
+\textbf{Link rate, and a second group that is real.} Holding $r$ at $1.0$ and
+varying only the link rate from $2$ to $50$\,Mbit, the benefit is not constant:
+it peaks near $18\%$ at $5$ to $10$\,Mbit and falls to $13.2\%$ at $2$\,Mbit
+and $7.1\%$ at $50$\,Mbit. A second dimensionless group,
+$\texttt{target}/(\mathrm{MTU}/\mathrm{rate})$, therefore matters, and the
+single-variable law is incomplete. We had predicted that the benefit would be
+suppressed where the target falls below one packet's serialisation time, and
+it is not: at $2$\,Mbit a packet takes $6.06$\,ms against a $5$\,ms target,
+which CoDel cannot reach, yet adaptation still recovers $13.2\%$ by reducing
+occupancy above that floor. The dependence is a peak rather than a floor, and
+its functional form is not established here.
 
 %% ============================================================
 \section{Conclusion}

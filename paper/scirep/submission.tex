@@ -494,13 +494,22 @@ The sharpest discrimination holds the path fixed: at 20\,ms the benefit is
 $r = 1.0$. Same path, twelve times the benefit, which no account in terms of
 RTT reproduces.
 
-The crossover is not a property of CoDel's mechanism. Fitted independently,
-plain \texttt{codel} places it at $r_0 = 0.49$, identical to
-\texttt{fq\_codel}, and PIE, which regulates a drop probability with a
+The ratio governs more than one mechanism, though its critical value is not
+universal. Fitted independently, plain \texttt{codel} places the crossover at
+$r_0 = 0.42$ against \texttt{fq\_codel}'s 0.49, so flow queueing does not move
+it; what flow queueing changes is the ceiling, 13.0\% against 20.5\%, and the
+sharpness of the transition. PIE, which regulates a drop probability with a
 proportional-integral controller and shares nothing with CoDel but the
-existence of a delay target, places it within a factor of two. What flow
-queueing changes is the ceiling, 14.5\% against 20.5\%, and the sharpness of
-the transition, not its location.
+existence of a delay target, places it at 1.06, roughly twice as high. That
+exceeds the factor of two we had set as the agreement threshold, and the
+failure has a cause this comparison cannot rule out: PIE's native
+\texttt{target}/\texttt{tupdate} is 1.0 where CoDel's
+\texttt{target}/\texttt{interval} is 0.05, and the law was established with
+that second group held fixed. Sweeping each qdisc at its own defaults varied
+it across the comparison meant to isolate mechanism. The discriminating test
+is independent of the fit and survives it: at a fixed 20\,ms path, PIE at
+$r = 0.75$ recovers 11.0\% at $p = 0.0089$ where \texttt{fq\_codel} at
+$r = 0.25$ recovers 1.4\% and is not significant.
 
 \subsection*{What this means in practice}
 

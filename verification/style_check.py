@@ -38,7 +38,12 @@ print(f"  prose words {nw}   sentences {ns}\n")
 flags = []
 
 # 1. em-dashes ------------------------------------------------------------
-em = len(re.findall(r"---|—", raw))
+# Markdown table delimiter rows (|---|---|) and setext/thematic rules are
+# layout, not punctuation, so they are stripped before counting. Counting them
+# flagged every document that contained a table.
+_prose = "\n".join(l for l in raw.splitlines()
+                   if not re.fullmatch(r"[\s|:\-]*-{3,}[\s|:\-]*", l))
+em = len(re.findall(r"(?<!-)---(?!-)|—", _prose))
 r = per1k(em)
 print(f"1. Em-dashes                 {em:4d}   {r:5.2f}/1k words")
 print(f"   Human academic prose typically < 2/1k. LLM output often 4-8/1k.")

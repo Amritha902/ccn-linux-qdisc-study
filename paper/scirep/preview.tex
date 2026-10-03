@@ -5,31 +5,42 @@
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs,graphicx,url,amsmath}
 \usepackage[hidelinks]{hyperref}
-\graphicspath{{../generated/}{../../figures/comparison/}{../../figures/steps/}}
+\graphicspath{{../generated/}{../../figures/comparison/}{../../figures/steps/}{../../figures/runs/}{figs/}}
 \input{../generated/facts}
+\input{../generated/law_facts}
 \providecommand{\keywords}[1]{}
-\title{\vspace{-1cm}Runtime parameter adaptation for a flow-queueing active
-queue discipline: a controlled evaluation on stock Linux}
+\title{\vspace{-1cm}When does adapting an active queue discipline's parameters
+pay? A scaling law in \texttt{target}/RTT, measured on stock Linux}
 \author{Amritha S \and Yugeshwaran P \and Deepti Annuncia}
 \date{Vellore Institute of Technology, Chennai}
 \begin{document}
 \twocolumn[\maketitle
 \begin{abstract}\noindent
 The default Linux queue discipline, \texttt{fq\_codel}, exposes four parameters
-fixed at configuration time. Runtime adaptation of such parameters has been
-proposed repeatedly, but never evaluated under conditions that separate a
-controller's computational cost from the effect of its decisions. We implement
-a controller that adapts all four parameters using an additive-increase
-multiplicative-decrease policy informed by eBPF flow telemetry, and evaluate it
-on an unmodified kernel against eight alternative queue disciplines under an
-identical bottleneck, with three repetitions per condition and a
-sham-controller condition that applies no change. Flow queueing with a delay
-target reduces 95th-percentile latency by 99.0 per cent relative to an
-unmanaged queue at indistinguishable goodput. Adapting that discipline's
-parameters reduces mean queue occupancy by 9.6 per cent under a steady load and
-produces no improvement under a load whose flow count varies, while an existing
-queue discipline requiring no controller outperforms the adapted system by a
-larger margin than the adaptation achieves.
+fixed at configuration time. Whether adapting them at runtime is worth doing
+has been answered both ways, with systems reporting gains and evaluations
+reporting none. We show that both answers are right, and that which one applies
+is decided by a single dimensionless number. Across 178 runs spanning three
+workloads, eight alternative queue disciplines and path round-trip times from
+2 to 200\,ms, the benefit of adaptation is governed not by RTT but by the ratio
+$r = \texttt{target}/\text{RTT}$, saturating at \LawCeiling\ per cent with half
+the benefit at $r = \LawHalfBenefit$. The hypothesis, its three predictions and
+their numerical thresholds were committed before the campaign that tests them
+ran. Ratio invariance, the prediction able to refute the claim, holds to 2.0
+percentage points across a sixteenfold range of RTT; held-out ratios are
+predicted to 1.4 points; and at a fixed 20\,ms path the benefit moves from
+1.4 per cent to 17.6 per cent on changing $r$ alone, which no account in terms
+of RTT reproduces. The crossover is not specific to CoDel: fitted
+independently, plain \texttt{codel} and PIE, which shares no mechanism with
+CoDel beyond having a delay target, place it within a factor of two. Published
+guidance places a correctly configured deployment at $r$ of 0.05 to 0.10, so
+half the available benefit arrives five to ten times outside that envelope:
+adaptation is a remedy for misconfiguration rather than an improvement on
+correct configuration, which unifies the null results in this work and in the
+literature as one effect. Flow queueing with a delay target remains the
+dominant effect, reducing 95th-percentile latency by 99.0 per cent relative to
+an unmanaged queue at indistinguishable goodput, and an existing discipline
+requiring no controller outperforms the adapted system.
 \end{abstract}
 \vspace{0.6cm}]
 \input{body}

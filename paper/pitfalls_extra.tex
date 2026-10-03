@@ -1,0 +1,127 @@
+\subsection{Absolute constants in a scale-free controller}
+\label{sec:pitfall:scale}
+
+Four defects of one shape, found in sequence because each was masked by the
+one before it. All four lived in a controller whose entire subject is a
+dimensionless ratio, and all four were absolute times.
+
+\textbf{Bounds.} \texttt{target} was clamped to $[0.2, 20]$\,ms absolute. The
+controller does not assume the default target; it reads the configured one from
+\texttt{tc}. Started against a qdisc configured with \texttt{target 80ms} it
+began at $80$ and the clamp cut it to $20$ on the first adjustment: a fourfold
+reduction decided by a constant, before any control logic ran. In the ratio
+invariance cell at $r = 1.0$ this would have compared a static $80$\,ms target
+against an adapted $20$\,ms one, produced a large significant benefit matching
+the hypothesis' own prediction, and been reported as a clean confirmation. The
+clamp also moves that cell to $r = 0.25$, so it was not testing the ratio on
+its label.
+
+\textbf{Step sizes.} The multiplicative decrease is scale-free; the additive
+steps were not. A $0.2$\,ms step is $4\%$ of a $5$\,ms target and $0.25\%$ of
+an $80$\,ms one, so the controller adapted an order of magnitude more slowly,
+in relative terms, the larger the target. Measured: a $20$\,ms target moved
+$20.0$ to $18.4$\,ms over $84$ ticks, an $8\%$ excursion where $5$\,ms would
+have moved $32\%$. This defect points the other way from the first: the
+controller simply does less at large targets, shows less benefit, and the
+pre-registered threshold would have recorded invariance as refuted.
+
+\textbf{Regime thresholds.} \texttt{classify()} selects the control law from a
+drop rate in drops per second, which has units of inverse time. At $r = 1.0$
+the measured static drop rate is $59.3$/s at a $5$\,ms target, $20.2$/s at
+$20$\,ms and $7.1$/s at $80$\,ms, classifying identical relative congestion as
+HEAVY, MODERATE and LIGHT. The three cells required to be treated identically
+would each have received a different control law, and the LIGHT branch
+\emph{increases} the target, the opposite action.
+
+\textbf{Control period and run duration.} CoDel's \texttt{interval} scales with
+the target; the controller's loop period did not. At a $1.6$\,s AQM interval the
+controller sampled every $0.5$\,s, taking three samples inside one cycle rather
+than averaging over several. The classification flickered, the gate requiring
+five consecutive identical classifications never opened, and an entire $86$-tick
+run produced zero adjustments with the target reading $80.000$\,ms throughout.
+Fixing it required scaling the run duration too, from $60$ to $960$\,s at the
+sixteenfold cell, since a controller ticking sixteen times more slowly needs
+sixteen times as long for a comparable trajectory.
+
+Every bound, step and threshold is now expressed as a multiple of the
+configured operating point, as Section~\ref{sec:bounds} sets out, with
+multipliers chosen so the $5$\,ms default reproduces the previous absolute
+values exactly. That equality is asserted by a test rather than left as a
+claim, along with the old behaviour each fix replaces.
+
+\subsection{A null that was true by construction}
+\label{sec:pitfall:inert}
+
+Distinguishing an absent effect from an absent intervention requires checking
+that the intervention happened. In the $r = 0.25$ invariance pair, one cell's
+controller ran $109$, $108$ and $108$ ticks across three seeds and adjusted
+nothing at all. Its drop rate averaged $7.7$/s while the scaled HEAVY threshold
+sat at $7.5$/s, so the classification oscillated on the boundary and the
+stability gate never opened. A cell whose adapted arm never changes a parameter
+runs the static configuration twice; its null is true by construction and is
+not evidence that the ratio produces no benefit there.
+
+Two such cells exist, both at $80$\,ms RTT, and one of them is from the
+original RTT sweep where it had been read as evidence that adaptation does not
+help on long paths. Part of that null was the controller not acting.
+
+The crossover itself survives this, which is what makes it a measurement: it is
+bracketed by cells in which the controller demonstrably acted, from $12.4\%$
+benefit at $r = 0.625$ with seven adjustments down to $0.0\%$ at $r = 0.125$
+with eight. A controller that adjusted eight times and recovered nothing is a
+genuine null. The mean adjustment count is reported for every cell in
+Table~\ref{tab:law} so that a reader can see where the controller was working.
+
+\subsection{Telemetry that is not free, and a table that hid it}
+\label{sec:pitfall:telemetry}
+
+Two defects compounded here, and the second concealed the first.
+
+\textbf{A tool that appends.} \texttt{iperf3 --logfile} appends rather than
+truncating. The experiment driver reuses its output directory, so re-running a
+cell wrote a second complete JSON document onto the end of the first, leaving
+a file that does not parse. Every field derived from it became
+\texttt{null}: goodput, bulk-flow RTT and the entire in-band RTT sample set.
+Every field derived from \texttt{ping} or \texttt{tc} was unaffected and
+looked normal, so the summary gave no sign that half its contents were
+missing. A corpus-wide scan found the damage confined to runs that had been
+repeated: three staged runs re-run during development, and an arm of a later
+campaign whose driver re-ran completed cells on every restart. Stale logs are
+now removed before a run starts, which makes a repeat idempotent rather than
+destructive.
+
+\textbf{A row that merged two configurations.} The analysis keyed table rows
+on the queue discipline and the controller mode but ignored whether eBPF
+telemetry was attached, so an eBPF run and a plain adaptive run were averaged
+together. The staged table reported $n=6$ for \texttt{fq\_codel + ACAPE} where
+every other row had three. Two problems in one cell: the row averaged across
+a configuration difference this paper argues elsewhere must be held apart, and
+because the confidence-interval helper silently drops missing values, the
+goodput and bulk-RTT columns were computed from three samples and printed
+beside an $n$ of six.
+
+Separating the configurations and repairing the three damaged runs turns the
+confound into a measurement. The telemetry's own cost, on the staged workload,
+is now visible:
+
+\begin{center}
+\small
+\begin{tabular}{lrrr}
+\hline
+staged & goodput & probe RTT p95 & bulk RTT \\
+ & (Mbps) & (ms) & (ms) \\
+\hline
+\texttt{fq\_codel} + ACAPE & 9.18 & 23.47 & 51.74 \\
+\quad + eBPF telemetry & 9.35 & 27.57 & 58.75 \\
+\hline
+\end{tabular}
+\end{center}
+
+Attaching the flow telemetry costs $13.6\%$ of bulk-flow RTT and $17.5\%$ of
+probe-RTT p95 while leaving goodput alone. That is a larger effect than most
+of the parameter adaptation this paper set out to measure, which is the
+argument for the sham-controller condition of
+Section~\ref{sec:testbed} and against reporting an instrumented run beside an
+uninstrumented one. The reported $n$ is now the smallest number of samples
+behind any metric in a row, and the analysis prints a warning whenever a
+row's metrics are not all backed by the same number of runs.

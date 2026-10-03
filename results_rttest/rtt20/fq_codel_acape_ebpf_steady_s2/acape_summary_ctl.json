@@ -1,0 +1,16 @@
+{
+  "ticks": 82,
+  "adjustments": 7,
+  "predictive": 0,
+  "mode": "eBPF",
+  "prog_id": 32,
+  "metrics": "results_rttest/rtt20/fq_codel_acape_ebpf_steady_s2/acape_metrics_ctl.csv",
+  "adj": "results_rttest/rtt20/fq_codel_acape_ebpf_steady_s2/acape_adj_ctl.csv",
+  "state": "results_rttest/rtt20/fq_codel_acape_ebpf_steady_s2/acape_state_ctl.csv",
+  "gate": false,
+  "gate_open": null,
+  "gate_flips": 0,
+  "gate_r_est": 0.2751,
+  "gate_rtt_est_ms": 18.174,
+  "gate_threshold": 0.4
+}

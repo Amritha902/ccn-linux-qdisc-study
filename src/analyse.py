@@ -17,9 +17,12 @@ DISPLAY = {
     "cake": "CAKE", "red": "RED (adaptive)", "sfq": "SFQ",
     "fq_codel_sham": "fq_codel + sham ctl",
     "fq_codel_acape": "fq_codel + ACAPE",
+    "fq_codel_acape_ebpf": "fq_codel + ACAPE + eBPF",
+    "fq_codel_sham_ebpf": "fq_codel + sham ctl + eBPF",
 }
 ORDER = ["pfifo", "sfq", "red", "codel", "pie", "fq_pie", "cake",
-         "fq_codel", "fq_codel_sham", "fq_codel_acape"]
+         "fq_codel", "fq_codel_sham", "fq_codel_sham_ebpf",
+         "fq_codel_acape", "fq_codel_acape_ebpf"]
 
 
 def ci95(xs):
@@ -50,11 +53,25 @@ def load(resdir):
 
 
 def system_key(r):
+    """One key per CONFIGURATION, not per qdisc.
+
+    The eBPF flag was ignored here, so an eBPF run and a plain adaptive run
+    landed in the same row. The staged table then reported n = 6 for
+    `fq_codel + ACAPE` while every other row had 3, merging two
+    configurations that the pitfalls section argues must be kept apart
+    because the eBPF polling load confounds the comparison. Worse, three of
+    those six had an unparseable iperf log, so the goodput and bulk-RTT
+    columns were computed from three samples and labelled as six.
+    """
     if r.get("adaptive"):
-        return f"{r['aqm']}_acape"
-    if r.get("sham"):
-        return f"{r['aqm']}_sham"
-    return r["aqm"]
+        k = f"{r['aqm']}_acape"
+    elif r.get("sham"):
+        k = f"{r['aqm']}_sham"
+    else:
+        return r["aqm"]
+    if r.get("ebpf"):
+        k += "_ebpf"
+    return k
 
 
 METRICS = [
@@ -84,11 +101,27 @@ def build_table(runs, workload):
         if k not in by:
             continue
         group = by[k]
-        row = {"system": DISPLAY.get(k, k), "key": k, "n": len(group)}
+        # n is per metric, not per group. ci95() already drops None, so a
+        # metric missing from some runs was being summarised over fewer
+        # samples than the n printed beside it. The reported n is now the
+        # smallest number of samples behind any metric in the row, and a
+        # metric whose own count is lower is flagged so it cannot pass
+        # silently.
+        row = {"system": DISPLAY.get(k, k), "key": k}
+        counts = []
         for mk, _, _ in METRICS:
             m, h, n = ci95([g.get(mk) for g in group])
             row[mk] = m
             row[mk + "_ci"] = h
+            row[mk + "_n"] = n
+            counts.append(n)
+        row["n"] = min(counts) if counts else 0
+        row["n_max"] = max(counts) if counts else 0
+        row["n_runs"] = len(group)
+        if row["n"] != row["n_runs"]:
+            print(f"  NOTE {DISPLAY.get(k, k)} ({workload}): {len(group)} runs "
+                  f"but metrics backed by {row['n']} to {row['n_max']} samples; "
+                  f"some metric is missing from a run")
         rows.append(row)
     return rows
 

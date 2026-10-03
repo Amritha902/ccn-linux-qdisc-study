@@ -1,0 +1,16 @@
+{
+  "ticks": 105,
+  "adjustments": 10,
+  "predictive": 0,
+  "mode": "tc-only",
+  "prog_id": null,
+  "metrics": "results_cross/pie_rtt8/pie_acape_steady_s1/acape_metrics_ctl.csv",
+  "adj": "results_cross/pie_rtt8/pie_acape_steady_s1/acape_adj_ctl.csv",
+  "state": "results_cross/pie_rtt8/pie_acape_steady_s1/acape_state_ctl.csv",
+  "gate": false,
+  "gate_open": null,
+  "gate_flips": 0,
+  "gate_r_est": null,
+  "gate_rtt_est_ms": null,
+  "gate_threshold": 0.4
+}

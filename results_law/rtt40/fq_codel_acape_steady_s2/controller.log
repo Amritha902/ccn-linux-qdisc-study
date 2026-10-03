@@ -1,0 +1,92 @@
+
+==============================================================================
+  ACAPE v6.0.0   mode=tc-only   qdisc=fq_codel handle=10:
+  metrics -> results_law/rtt40/fq_codel_acape_steady_s2/acape_metrics_ctl.csv
+==============================================================================
+      t    regime        traj      pred     dr/s    bl    tput flows eleph  tgt_ms   lim  adj
+---------------------------------------------------------------------------------------------
+    0.9     HEAVY      STABLE     HEAVY     37.5     6   10.06     0     0   5.000  1024    0
+    1.6  MODERATE      STABLE  MODERATE     19.9     7   10.06     0     0   5.000  1024    0
+    2.3  MODERATE      STABLE  MODERATE     17.3     4   10.08     0     0   5.000  1024    0
+    3.0  MODERATE      STABLE  MODERATE     20.0     6   10.05     0     0   5.000  1024    0
+    3.7  MODERATE      STABLE  MODERATE     18.5     6    9.92     0     0   5.000  1024    0
+    4.4  MODERATE      STABLE  MODERATE     18.4     6   10.06     0     0   5.000  1024    0
+    5.0  MODERATE      STABLE  MODERATE     20.6     3    9.97     0     0   5.000  1024    0
+    5.7  MODERATE      STABLE  MODERATE     18.2     6   10.06     0     0   5.000  1024    0
+    6.4  MODERATE      STABLE  MODERATE     20.9     2    9.94     0     0   5.000  1024    0
+    7.0  MODERATE      STABLE  MODERATE     19.4     5   10.06     0     0   4.800   992    1
+    8.0  MODERATE      STABLE  MODERATE     19.0     5   10.00     0     0   4.800   992    1
+    8.7  MODERATE      STABLE  MODERATE     17.7     6   10.00     0     0   4.800   992    1
+    9.8  MODERATE      STABLE  MODERATE     15.2     8    7.02     0     0   4.800   992    1
+   10.6  MODERATE      STABLE  MODERATE     21.1     4   10.73     0     0   4.800   992    1
+   11.3  MODERATE      STABLE  MODERATE     17.5     3    9.94     0     0   4.800   992    1
+   12.0  MODERATE      STABLE  MODERATE     19.5     5   10.09     0     0   4.800   992    1
+   12.6  MODERATE      STABLE  MODERATE     19.9     2   10.03     0     0   4.800   992    1
+   13.3  MODERATE      STABLE  MODERATE     16.7     4    9.96     0     0   4.800   992    1
+   13.9  MODERATE      STABLE  MODERATE     21.7     7   10.00     0     0   4.800   992    1
+   14.6  MODERATE      STABLE  MODERATE     16.4     6    9.96     0     0   4.600   960    2
+   15.6  MODERATE      STABLE  MODERATE     18.3     8    9.97     0     0   4.600   960    2
+   16.3  MODERATE      STABLE  MODERATE     24.9     4    9.88     0     0   4.600   960    2
+   16.9  MODERATE      STABLE  MODERATE     13.7     4   10.05     0     0   4.600   960    2
+   17.6  MODERATE      STABLE  MODERATE     20.8     4    9.97     0     0   4.600   960    2
+   18.3  MODERATE      STABLE  MODERATE     17.3     8   10.08     0     0   4.600   960    2
+   18.9  MODERATE      STABLE  MODERATE     20.5     5   10.05     0     0   4.600   960    2
+   19.6  MODERATE      STABLE  MODERATE     20.7     4    9.90     0     0   4.600   960    2
+   20.2  MODERATE      STABLE  MODERATE     18.9     5   10.03     0     0   4.600   960    2
+   20.9  MODERATE      STABLE  MODERATE     19.7     3    9.96     0     0   4.600   960    2
+   21.5  MODERATE      STABLE  MODERATE     14.9     6    9.99     0     0   4.400   928    3
+   22.6  MODERATE      STABLE  MODERATE     19.8     4    9.86     0     0   4.400   928    3
+   23.3  MODERATE      STABLE  MODERATE     18.7     4   10.00     0     0   4.400   928    3
+   24.0  MODERATE      STABLE  MODERATE     19.7     3   10.09     0     0   4.400   928    3
+   24.6  MODERATE      STABLE  MODERATE     18.8     4   10.03     0     0   4.400   928    3
+   25.3  MODERATE      STABLE  MODERATE     17.7     5    9.93     0     0   4.400   928    3
+   26.0  MODERATE      STABLE  MODERATE     19.4     4    9.98     0     0   4.400   928    3
+   26.7  MODERATE      STABLE  MODERATE     20.6     4   10.06     0     0   4.400   928    3
+   27.3  MODERATE      STABLE  MODERATE     19.5     1    9.98     0     0   4.400   928    3
+   28.0  MODERATE      STABLE  MODERATE     16.0     7   10.00     0     0   4.400   928    3
+   28.7  MODERATE      STABLE  MODERATE     18.4     7   10.00     0     0   4.200   896    4
+   29.7  MODERATE      STABLE  MODERATE     19.9     2    9.91     0     0   4.200   896    4
+   30.4  MODERATE      STABLE  MODERATE     15.1     7   10.09     0     0   4.200   896    4
+   31.1  MODERATE      STABLE  MODERATE     23.0     3    9.91     0     0   4.200   896    4
+   31.7  MODERATE      STABLE  MODERATE     17.2     6   10.15     0     0   4.200   896    4
+   32.4  MODERATE      STABLE  MODERATE     19.4     2    9.95     0     0   4.200   896    4
+   33.1  MODERATE      STABLE  MODERATE     17.7     5    9.98     0     0   4.200   896    4
+   33.7  MODERATE      STABLE  MODERATE     19.3     5   10.07     0     0   4.200   896    4
+   34.5  MODERATE      STABLE  MODERATE     18.2     6    9.98     0     0   4.200   896    4
+   35.1  MODERATE      STABLE  MODERATE     20.4     6   10.09     0     0   4.200   896    4
+   35.8  MODERATE      STABLE  MODERATE     23.6     2    9.88     0     0   4.000   864    5
+   36.8  MODERATE      STABLE  MODERATE     14.9     6   10.02     0     0   4.000   864    5
+   37.5  MODERATE      STABLE  MODERATE     21.9     4    9.98     0     0   4.000   864    5
+   38.2  MODERATE      STABLE  MODERATE     16.6     6    9.82     0     0   4.000   864    5
+   38.9  MODERATE      STABLE  MODERATE     20.4     5    9.81     0     0   4.000   864    5
+   39.6  MODERATE      STABLE  MODERATE     17.8     5   10.00     0     0   4.000   864    5
+   40.2  MODERATE      STABLE  MODERATE     19.2     3   10.03     0     0   4.000   864    5
+   40.9  MODERATE      STABLE  MODERATE     20.4     5   10.01     0     0   4.000   864    5
+   41.6  MODERATE      STABLE  MODERATE     18.8     5   10.06     0     0   4.000   864    5
+   42.2  MODERATE      STABLE  MODERATE     17.9     5    9.94     0     0   4.000   864    5
+   42.9  MODERATE      STABLE  MODERATE     18.2     4   10.02     0     0   3.800   832    6
+   43.9  MODERATE      STABLE  MODERATE     17.2     5    9.95     0     0   3.800   832    6
+   44.6  MODERATE      STABLE  MODERATE     20.1     2    9.95     0     0   3.800   832    6
+   45.3  MODERATE      STABLE  MODERATE     18.2     3   10.11     0     0   3.800   832    6
+   45.9  MODERATE      STABLE  MODERATE     19.5     3    9.97     0     0   3.800   832    6
+   46.6  MODERATE      STABLE  MODERATE     18.0     5   10.03     0     0   3.800   832    6
+   47.3  MODERATE      STABLE  MODERATE     20.3     4   10.08     0     0   3.800   832    6
+   47.9  MODERATE      STABLE  MODERATE     16.1     6    9.93     0     0   3.800   832    6
+   48.6  MODERATE      STABLE  MODERATE     17.4     8    9.83     0     0   3.800   832    6
+   49.3  MODERATE      STABLE  MODERATE     21.6     6   10.13     0     0   3.800   832    6
+   50.0  MODERATE      STABLE  MODERATE     19.3     5   10.05     0     0   3.600   800    7
+   51.0  MODERATE      STABLE  MODERATE     19.3     5    9.98     0     0   3.600   800    7
+   51.7  MODERATE      STABLE  MODERATE     17.9     4    9.95     0     0   3.600   800    7
+   52.4  MODERATE      STABLE  MODERATE     20.9     1    9.81     0     0   3.600   800    7
+   53.1  MODERATE      STABLE  MODERATE     17.3     3    9.83     0     0   3.600   800    7
+   53.8  MODERATE      STABLE  MODERATE     17.1     5   10.20     0     0   3.600   800    7
+   54.5  MODERATE      STABLE  MODERATE     21.0     5   10.03     0     0   3.600   800    7
+   55.2  MODERATE      STABLE  MODERATE     16.3     6   10.01     0     0   3.600   800    7
+   55.8  MODERATE      STABLE  MODERATE     21.2     4    9.96     0     0   3.600   800    7
+   56.5  MODERATE      STABLE  MODERATE     17.4     5   10.04     0     0   3.600   800    7
+   57.2  MODERATE      STABLE  MODERATE     17.8     5    9.93     0     0   3.400   768    8
+   58.2  MODERATE      STABLE  MODERATE     19.7     7   10.06     0     0   3.400   768    8
+   58.8  MODERATE      STABLE  MODERATE     20.2     3   10.03     0     0   3.400   768    8
+   59.5  MODERATE      STABLE  MODERATE     19.3     4    9.94     0     0   3.400   768    8
+
+Done — 84 ticks, 8 adjustments (0 predictive), mode=tc-only

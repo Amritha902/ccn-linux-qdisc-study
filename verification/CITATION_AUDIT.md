@@ -61,3 +61,35 @@ therefore incorrect and must not appear in the paper. What remains distinct is
 the deployment surface, stock Linux, no kernel or data-plane modification, a
 transparent AIMD rule, which is an engineering distinction, not a conceptual
 one.
+
+## Third pass, during the scaling-law campaign
+
+Re-verified the two most recent references against their primary sources,
+since a journal year in the future is exactly the shape of an invented
+citation and this project has already produced two.
+
+**`aqmllm2026` was wrong on two counts and is now `aqmllm2025`.**
+
+| Field | Was | Verified |
+|---|---|---|
+| First author | Satish, D. | Pokhrel, S. R. |
+| Authors | "and others" | Pokhrel, Satish, Kua, Walid |
+| Year | 2026 | 2025 |
+| Venue | IEEE Trans. Netw. | IEEE Trans. Netw. (correct) |
+
+Source: arXiv:2501.16734, submitted 28 January 2025, carrying a published-in
+note for IEEE Transactions on Networking 2025. The paper exists and the venue
+was right; the attribution and the date were not. Satish is the second author,
+not the first, so the citation credited the wrong person as lead.
+
+Corrected in `paper/scirep/refs.bib`, the manual `\bibitem` list in
+`paper/acape.tex`, and the three files citing the key.
+
+**`mlaqm2025` verified correct, no change.** Toopchinezhad, M. P. and Ahmadi,
+M., *Machine Learning Approaches for Active Queue Management: A Survey,
+Taxonomy, and Future Directions*, Computer Networks vol. 262, 2025, DOI
+10.1016/j.comnet.2025.111174. Authors, volume, venue and year all match. The
+arXiv preprint is 2410.02563.
+
+Running total for this project: two fabricated citations removed in the first
+audit, one misattributed and misdated citation corrected here.

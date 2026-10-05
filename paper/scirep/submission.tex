@@ -368,7 +368,8 @@ assumed negligible, because it is not.
 Every figure quoted below is generated from the run logs by
 \texttt{src/analyse.py}; none is typed by hand.
 
-\subsection{Flow queueing dominates}
+\subsection{Step 1: the apparatus, and that it measures the data path}
+
 
 the steady-workload table gives all ten conditions. The largest effect by two
 orders of magnitude is the presence of a flow-queueing discipline with a delay
@@ -388,7 +389,48 @@ its sparse probe reads \SfqProbeRttMeanSteady\,ms while the bulk flows sharing
 the link read \SfqBulkRttMeanSteady\,ms. The AQM and the scheduler do distinct
 jobs and both are necessary.
 
-\subsection{Sparse and bulk latency are not interchangeable}
+
+Figure~\ref{fig:topology} is the topology as configured, captured from the
+live system rather than drawn. Reading left to right: the client offers eight
+bulk TCP flows and a sparse probe stream, the router carries \texttt{netem} for
+base delay, a token-bucket shaper as root qdisc and the discipline under test
+as its child, and the server terminates the flows. What matters is where the
+shaper sits. On \texttt{veth\_rs} egress it constrains traffic travelling
+toward the server, which is the direction the bulk data flows, so the queue
+under study holds data packets. An earlier two-node arrangement placed it so
+that it shaped the reverse direction, and every backlog figure taken that way
+was measuring acknowledgements.
+
+Figure~\ref{fig:ebpf} shows the flow telemetry reading non-zero per-flow state
+while traffic is running. The counters, not the successful attach, are the
+point: an earlier version of this path loaded correctly, populated its maps
+correctly, and returned zero for every sample, so a capture showing only that
+the program attached would not have established anything.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{step04_corrected_three_node_router_topology.png}
+\caption{The measurement topology, captured as configured. The bottleneck sits
+on the router's egress toward the server, so it is on the data path. TBF is the
+shaper and the queue discipline under study is its child. An earlier two-node
+arrangement placed the bottleneck where it shaped acknowledgements rather than
+data; every backlog and drop measurement taken that way was a measurement of
+the acknowledgement path.}
+\label{fig:topology}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{step07_ebpf_flow_telemetry_is_live_under_traffic.png}
+\caption{The eBPF flow telemetry reading live per-flow state under traffic at
+the \texttt{tc} egress hook, through the \texttt{bpf(2)} syscall rather than by
+spawning \texttt{bpftool}. An earlier version of this path reported zero for
+every sample while the program was correctly loaded and its maps correctly
+populated, which is why the capture shows non-zero counters rather than only a
+successful attach.}
+\label{fig:ebpf}
+\end{figure}
+\subsection{Step 2: latency across all nine configurations}
+
 
 Figure~\ref{fig:sparsebulk} plots the two
 measurements side by side. The ratio between them ranges from 1.1$\times$
@@ -402,7 +444,45 @@ experience, SFQ is \SfqBulkRttMeanSteady\,ms against CoDel's
 \CodelBulkRttMeanSteady\,ms. Reported here are both throughout, and this work suggest any AQM
 evaluation should.
 
-\subsection{The controller's computational cost is negligible}
+
+Figure~\ref{fig:tail} plots 95th-percentile probe latency for every
+configuration on a logarithmic axis. The axis has to be logarithmic because the
+span is three orders of magnitude. Two groups separate cleanly: the
+flow-queueing disciplines that enforce a delay target sit near the bottom
+within a few milliseconds of one another, and the unmanaged queue sits two
+orders of magnitude above them. The static, sham and adapted
+\texttt{fq\_codel} bars are indistinguishable at this scale, which is the first
+indication that parameter tuning is a second-order effect.
+
+Figure~\ref{fig:sparsebulk} separates the two latency populations. The sparse
+probe and the bulk flows do not experience the same queue: flow-queueing
+disciplines privilege sparse flows by construction, so a single reported
+latency averages two quantities the mechanism deliberately treats differently.
+The ratio between them runs from 1.1 to 9.6 across the systems measured, which
+is why both are reported throughout this work rather than one.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig01_latency_tail_steady.png}
+\caption{Tail latency across all nine configurations under steady load, log
+scale. The dominant effect by two orders of magnitude is the presence or
+absence of flow queueing with a delay target, not the tuning of that
+mechanism's parameters. CAKE, which requires no controller, outperforms the
+adapted system.}
+\label{fig:tail}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig02_latency_sparse_vs_bulk_steady.png}
+\caption{Sparse probe flow against bulk TCP flow round-trip time, measured
+separately. Flow-queueing disciplines privilege sparse flows by construction,
+so a single latency number averages two populations the mechanism treats
+differently. The ratio between them ranges from 1.1 to 9.6 across the systems
+tested, which is why both are reported throughout rather than one.}
+\label{fig:sparsebulk}
+\end{figure}
+\subsection{Step 3: separating the controller's cost from its decisions}
+
 
 A sham condition runs the controller at its full polling cadence and applies
 no parameter change. Against static \texttt{fq\_codel} it is indistinguishable
@@ -415,7 +495,43 @@ CPU cost with its control decisions, and this work could not attribute an effect
 either. Having established the cost is nil, differences that remain are
 attributable to the decisions.
 
-\subsection{Adaptation: a small effect under steady load, none under change}
+
+Figure~\ref{fig:sham} compares three arms: the static configuration, the
+sham controller, and the real one. The sham polls at the same cadence and runs
+the same classification and prediction code, then applies nothing. Any gap
+between static and sham is therefore the cost of running the controller, and
+any gap between sham and adapted is the effect of its decisions. Without that
+middle arm the two are confounded, and a controller that merely consumed CPU
+would be indistinguishable from one that helped.
+
+Figure~\ref{fig:controller} shows the controller in operation over a run: the
+regime it classifies, the parameter trajectory that classification produces,
+and the queue it is responding to. A controller that classifies continuously
+but never adjusts anything looks identical to the static configuration in a
+summary statistic, which is why the number of adjustments is reported for every
+cell in this work.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig13_sham_control_steady.png}
+\caption{The sham-controller condition. The sham polls at the same cadence as
+the real controller and applies no parameter change, so any difference between
+sham and static is the controller's computational cost rather than the effect
+of its decisions. Without this condition the two are confounded.}
+\label{fig:sham}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig12_controller_behaviour.png}
+\caption{The controller acting: regime classification, the parameter
+trajectory it produces, and the queue it is responding to. A controller that
+classifies but never adjusts is indistinguishable from the static
+configuration in a summary statistic, so the adjustment count is reported for
+every cell.}
+\label{fig:controller}
+\end{figure}
+\subsection{Step 4: what adaptation achieves, parameter by parameter}
+
 
 Under the \textbf{steady} workload the adaptation produces a real but small
 improvement: mean backlog falls \FqCodelBacklogSteady\ from
@@ -435,7 +551,30 @@ Under steady load there is a stable operating point to converge on; under
 change there is not, and the controller's adjustments lag the transitions they
 are reacting to.
 
-\subsection{An off-the-shelf alternative outperforms the adapted system}
+
+Figure~\ref{fig:allparams} places every measured quantity against every
+system in one view, each column normalised so that quantities with different
+units can be compared, with the measured value printed in each cell. Goodput,
+probe and bulk round-trip time, queue occupancy, drop rate, retransmissions and
+Jain's fairness index appear together. The block structure is the result: the
+flow-queueing disciplines with a delay target form one band that separates from
+the rest on every latency column while remaining indistinguishable on goodput.
+Within that band, the static, sham and adapted rows differ very little, which
+is the same conclusion the preceding subsections reach one metric at a time.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig08_allparams_steady.png}
+\caption{Every measured parameter against every system under steady load,
+normalised per column so the systems can be compared across quantities that
+do not share units. Goodput, probe and bulk RTT, queue occupancy, drop rate,
+retransmissions and Jain's fairness index are shown together, with the
+measured values printed in each cell. The block structure is the result: the
+flow-queueing disciplines with a delay target separate from the rest on every
+latency column while remaining indistinguishable on goodput.}
+\label{fig:allparams}
+\end{figure}
+\subsection{Step 5: an alternative requiring no controller}
 
 CAKE, configured with no controller and a single \texttt{besteffort} argument,
 achieves \CakeProbeRttPninetyfiveSteady\,ms p95 probe RTT under the steady
@@ -448,7 +587,7 @@ which the adaptation beats the static defaults. For a practitioner seeking
 lower latency on this class of link, changing queue discipline is a larger and
 far simpler win than tuning \texttt{fq\_codel}'s parameters.
 
-\subsection{Predictive control never engaged}
+\subsection{Step 6: the predictive path never engaged}
 
 No adjustment in any run was tagged predictive. The cause is structural rather
 than a coding fault, and it survives the correction described in
@@ -464,7 +603,8 @@ Redesigning the gate, for instance permitting an adjustment when the
 trajectory is confidently non-stable even before the regime settles, and
 re-evaluating it under the same controlled conditions is future work.
 
-\subsection{Where adaptation does help: short paths}
+\subsection{Step 7: the sweep that produced the law}
+
 
 CoDel's \texttt{target} is a delay budget expressed in absolute units, while
 its authors argue the default is appropriate relative to path round-trip time.
@@ -506,7 +646,42 @@ complexity: paths short relative to the AQM's delay target. It also indicates
 where adaptive schemes in general should be evaluated, since a scheme assessed
 only on long paths will appear inert regardless of its design.
 
-\subsection{Sparse flows under a mixed workload}
+
+Figure~\ref{fig:rttsweep} sweeps base round-trip time at a fixed delay
+target. Adaptation recovers a large and highly significant share of bulk-flow
+latency on the shortest path and nothing at 20, 80 or 200\,ms. Read as four
+independent measurements this is simply unexplained, and that is how it stood
+before the analysis below.
+
+Figure~\ref{fig:law} resolves it, and is the central figure of this work. The
+left panel plots the same benefit against $r = \texttt{target}/\mathrm{RTT}$,
+where the measurements collapse onto one saturating curve; filled markers are
+statistically significant and each label gives target and RTT in milliseconds.
+The right panel plots the identical measurements against path RTT alone, where
+they do not collapse. The contrast between the two panels is the argument: RTT
+does not organise the data, and the ratio does.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{fig15_rtt_sweep.png}
+\caption{The RTT sweep that motivated the scaling law. Adaptation recovers a
+large and highly significant share of bulk-flow RTT on a short path and
+nothing at 20, 80 or 200\,ms. Read as four separate measurements this is
+unexplained; read through $r = \texttt{target}/\text{RTT}$ it is one curve,
+which is the argument of Figure~\ref{fig:law}.}
+\label{fig:rttsweep}
+\end{figure}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig16_scaling_law.png}
+\caption{The central result. Left: adaptation benefit against
+$r = \texttt{target}/\text{RTT}$, collapsing onto a single saturating curve.
+Right: the same measurements against path RTT alone, where they do not
+collapse. Filled points are statistically significant; labels give
+target/RTT in ms.}
+\label{fig:law}
+\end{figure}
+\subsection{Step 8: sparse flows under mixed traffic}
 
 Bulk-only traffic cannot exercise \texttt{fq\_codel}'s new-flow heuristic or
 its \texttt{quantum} parameter, both of which exist to serve sparse
@@ -539,112 +714,6 @@ so the difference is not attributable to its decisions; reported here are the co
 by median and record the run rather than averaging over a measurement this work cannot
 explain.
 
-
-%% ---------------------------------------------------------------- figures
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{step04_corrected_three_node_router_topology.png}
-\caption{The measurement topology, captured as configured. The bottleneck sits
-on the router's egress toward the server, so it is on the data path. TBF is the
-shaper and the queue discipline under study is its child. An earlier two-node
-arrangement placed the bottleneck where it shaped acknowledgements rather than
-data; every backlog and drop measurement taken that way was a measurement of
-the acknowledgement path.}
-\label{fig:topology}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{step07_ebpf_flow_telemetry_is_live_under_traffic.png}
-\caption{The eBPF flow telemetry reading live per-flow state under traffic at
-the \texttt{tc} egress hook, through the \texttt{bpf(2)} syscall rather than by
-spawning \texttt{bpftool}. An earlier version of this path reported zero for
-every sample while the program was correctly loaded and its maps correctly
-populated, which is why the capture shows non-zero counters rather than only a
-successful attach.}
-\label{fig:ebpf}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{fig12_controller_behaviour.png}
-\caption{The controller acting: regime classification, the parameter
-trajectory it produces, and the queue it is responding to. A controller that
-classifies but never adjusts is indistinguishable from the static
-configuration in a summary statistic, so the adjustment count is reported for
-every cell.}
-\label{fig:controller}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{fig16_scaling_law.png}
-\caption{The central result. Left: adaptation benefit against
-$r = \texttt{target}/\text{RTT}$, collapsing onto a single saturating curve.
-Right: the same measurements against path RTT alone, where they do not
-collapse. Filled points are statistically significant; labels give
-target/RTT in ms.}
-\label{fig:law}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{fig01_latency_tail_steady.png}
-\caption{Tail latency across all nine configurations under steady load, log
-scale. The dominant effect by two orders of magnitude is the presence or
-absence of flow queueing with a delay target, not the tuning of that
-mechanism's parameters. CAKE, which requires no controller, outperforms the
-adapted system.}
-\label{fig:tail}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{fig13_sham_control_steady.png}
-\caption{The sham-controller condition. The sham polls at the same cadence as
-the real controller and applies no parameter change, so any difference between
-sham and static is the controller's computational cost rather than the effect
-of its decisions. Without this condition the two are confounded.}
-\label{fig:sham}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{fig08_allparams_steady.png}
-\caption{Every measured parameter against every system under steady load,
-normalised per column so the systems can be compared across quantities that
-do not share units. Goodput, probe and bulk RTT, queue occupancy, drop rate,
-retransmissions and Jain's fairness index are shown together, with the
-measured values printed in each cell. The block structure is the result: the
-flow-queueing disciplines with a delay target separate from the rest on every
-latency column while remaining indistinguishable on goodput.}
-\label{fig:allparams}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{fig02_latency_sparse_vs_bulk_steady.png}
-\caption{Sparse probe flow against bulk TCP flow round-trip time, measured
-separately. Flow-queueing disciplines privilege sparse flows by construction,
-so a single latency number averages two populations the mechanism treats
-differently. The ratio between them ranges from 1.1 to 9.6 across the systems
-tested, which is why both are reported throughout rather than one.}
-\label{fig:sparsebulk}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{fig15_rtt_sweep.png}
-\caption{The RTT sweep that motivated the scaling law. Adaptation recovers a
-large and highly significant share of bulk-flow RTT on a short path and
-nothing at 20, 80 or 200\,ms. Read as four separate measurements this is
-unexplained; read through $r = \texttt{target}/\text{RTT}$ it is one curve,
-which is the argument of Figure~\ref{fig:law}.}
-\label{fig:rttsweep}
-\end{figure}
-
-%% =====================================================================
-\section*{Discussion}
 
 \subsection*{A scaling law for when adaptation pays}
 

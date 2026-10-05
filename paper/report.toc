@@ -1,34 +1,42 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
-\contentsline {paragraph}{Structure.}{3}{section*.2}%
-\contentsline {section}{\numberline {2}Methodology}{3}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Why a purpose-built kernel was required}{3}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Topology, and why the first one was wrong}{5}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Flow telemetry, and the silent failure it had}{6}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Controller}{6}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Measurement}{6}{subsection.2.5}%
-\contentsline {subsection}{\numberline {2.6}Experimental design}{7}{subsection.2.6}%
-\contentsline {section}{\numberline {3}Results}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Step 1: flow queueing dominates everything else}{8}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Step 2: the two latencies are not interchangeable}{8}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Step 3: separating the controller's cost from its decisions}{8}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Step 4: what adaptation achieves, parameter by parameter}{11}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Step 5: under a load that changes, adaptation does not help}{11}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Step 6: an alternative requiring no controller does better}{14}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}Step 7: the predictive path never engaged}{14}{subsection.3.7}%
-\contentsline {subsection}{\numberline {3.8}Step 8: sparse flows under mixed traffic}{14}{subsection.3.8}%
-\contentsline {section}{\numberline {4}Comparison}{16}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Disciplines under test and their parameters}{16}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Against the base paper and six recent systems}{16}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}What none of the prior systems reports}{16}{subsection.4.3}%
-\contentsline {section}{\numberline {5}The scaling law}{16}{section.5}%
-\contentsline {subsection}{\numberline {5.1}From an unexplained table to a hypothesis}{16}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Pre-registration}{16}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Result}{17}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}What it costs, and what it means}{18}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Measurement defects found and corrected}{18}{section.6}%
-\contentsline {section}{\numberline {7}Threats to validity}{18}{section.7}%
-\contentsline {section}{\numberline {8}Conclusion}{19}{section.8}%
-\contentsline {section}{\numberline {A}Complete figure set}{19}{appendix.A}%
-\contentsline {section}{\numberline {B}Implementation captures not shown above}{19}{appendix.B}%
-\contentsline {section}{\numberline {C}Per-run figures}{19}{appendix.C}%
-\contentsline {section}{\numberline {D}Reproducing every number}{22}{appendix.D}%
+\contentsline {section}{Abstract}{1}{Doc-Start}%
+\contentsline {section}{\numberline {1}Introduction}{8}{section.1}%
+\contentsline {paragraph}{Structure.}{8}{paragraph*.1}%
+\contentsline {section}{\numberline {2}Literature survey}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}The problem and the standard it set}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Drop-probability schemes}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Delay-target schemes}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Runtime adaptation, the line this work sits in}{9}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}What that line does not supply}{9}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Programmable telemetry}{9}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Methodology}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Why a purpose-built kernel was required}{9}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Topology, and why the first one was wrong}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Flow telemetry, and the silent failure it had}{12}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Controller}{12}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Measurement}{14}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Experimental design}{14}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Results}{15}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Step 1: flow queueing dominates everything else}{15}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Step 2: the two latencies are not interchangeable}{17}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Step 3: separating the controller's cost from its decisions}{17}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Step 4: what adaptation achieves, parameter by parameter}{20}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Step 5: under a load that changes, adaptation does not help}{20}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Step 6: an alternative requiring no controller does better}{23}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Step 7: the predictive path never engaged}{23}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Step 8: sparse flows under mixed traffic}{23}{subsection.4.8}%
+\contentsline {section}{\numberline {5}Comparison}{24}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Disciplines under test and their parameters}{24}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Against the base paper and six recent systems}{24}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}What none of the prior systems reports}{25}{subsection.5.3}%
+\contentsline {section}{\numberline {6}The scaling law}{25}{section.6}%
+\contentsline {subsection}{\numberline {6.1}From an unexplained table to a hypothesis}{25}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Pre-registration}{25}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Result}{25}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}What it costs, and what it means}{26}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Measurement defects found and corrected}{27}{section.7}%
+\contentsline {section}{\numberline {8}Threats to validity}{27}{section.8}%
+\contentsline {section}{\numberline {9}Conclusion}{28}{section.9}%
+\contentsline {section}{\numberline {A}Complete figure set}{28}{appendix.A}%
+\contentsline {section}{\numberline {B}Implementation captures not shown above}{28}{appendix.B}%
+\contentsline {section}{\numberline {C}Per-run figures}{28}{appendix.C}%
+\contentsline {section}{\numberline {D}Reproducing every number}{44}{appendix.D}%

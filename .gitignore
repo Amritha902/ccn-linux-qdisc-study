@@ -11,3 +11,15 @@ paper/scirep/*.log
 paper/scirep/*.out
 paper/scirep/*.bbl
 paper/scirep/*.blg
+paper/*.bbl
+paper/*.blg
+paper/*.lof
+paper/*.lot
+paper/overleaf_report/*.aux
+paper/overleaf_report/*.log
+paper/overleaf_report/*.out
+paper/overleaf_report/*.bbl
+paper/overleaf_report/*.blg
+paper/overleaf_report/*.lof
+paper/overleaf_report/*.lot
+paper/overleaf_report/*.toc

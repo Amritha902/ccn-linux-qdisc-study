@@ -45,27 +45,58 @@ def fig(name, caption=None, width=r"0.95\linewidth", star=False):
 DOC = []
 A = DOC.append
 
-A(r"""\documentclass[10pt,a4paper]{article}
-\usepackage[margin=2.1cm]{geometry}
+A(r"""\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.4cm]{geometry}
 \usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}
 \usepackage{graphicx,booktabs,longtable,amsmath,amssymb,url,array}
+\usepackage{titlesec,fancyhdr,enumitem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{caption}\captionsetup{font=small,labelfont=bf}
 \graphicspath{{../figures/}{../figures/steps/}{../figures/comparison/}{../figures/runs/}{generated/}}
 \setcounter{tocdepth}{2}
+\setlength{\parskip}{0.35em}
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{0.7em}{}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Runtime Parameter Adaptation for Linux Queue Disciplines}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
 \input{generated/facts}
 \input{generated/law_facts}
 
-\title{\vspace{-1.2cm}Runtime Parameter Adaptation for Linux Queue
-Disciplines:\\A Scaling Law in \texttt{target}/RTT\\[4pt]
-\large Technical Report with Complete Methodology, Results and Comparison}
-\author{Amritha S \and Yugeshwaran P \and Deepti Annuncia\\[2pt]
-\small Department of Electronics and Communication Engineering,
-Vellore Institute of Technology, Chennai}
-\date{\today}
-\begin{document}\maketitle
+\begin{document}
 
-\begin{abstract}\noindent
+\begin{titlepage}
+\centering
+\vspace*{1.0cm}
+{\large\scshape Vellore Institute of Technology, Chennai}\\[0.3cm]
+{\large School of Electronics Engineering}\\[0.2cm]
+{\large Department of Electronics and Communication Engineering}\\[2.2cm]
+
+\rule{\linewidth}{0.5pt}\\[0.5cm]
+{\LARGE\bfseries Runtime Parameter Adaptation for\\[0.25cm]
+Linux Queue Disciplines}\\[0.5cm]
+{\Large A Scaling Law in \texttt{target}/RTT}\\[0.4cm]
+\rule{\linewidth}{0.5pt}\\[1.0cm]
+
+{\large Technical Report}\\[0.25cm]
+{\normalsize Complete Methodology, Results and Comparison}\\[2.2cm]
+
+{\large\bfseries Submitted by}\\[0.4cm]
+{\large Amritha S \quad\textbar\quad Yugeshwaran P \quad\textbar\quad
+Deepti Annuncia}\\[2.0cm]
+
+\vfill
+{\normalsize Every measurement in this report was produced on a purpose-built
+Linux guest and is reproducible from the committed logs by the commands in
+Appendix~\ref{s:repro}.}\\[0.8cm]
+{\large \today}
+\end{titlepage}
+
+\newpage
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+\noindent
 Linux ships \texttt{fq\_codel} as its default queue discipline with four
 parameters fixed at configuration time. Whether adapting them at runtime is
 worth doing has been answered both ways in the literature. This report
@@ -82,9 +113,18 @@ configuration. The report gives the full methodology, the complete result set
 with every figure described at its point of use, a parameter-level comparison
 against the base paper and six recent systems, and the nine measurement
 defects found and corrected during the work.
-\end{abstract}
 
+\vspace{0.8em}
+\noindent\textbf{Keywords:} active queue management; bufferbloat;
+\texttt{fq\_codel}; CoDel; runtime parameter adaptation; dimensionless
+scaling law; Linux traffic control; eBPF telemetry; pre-registered evaluation.
+
+\newpage
 \tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
 \newpage
 """)
 
@@ -110,7 +150,9 @@ pays. Systems report gains; independent evaluations report none; neither camp
 states when the other is right. This report establishes that condition
 experimentally, and it is a dimensionless ratio.
 
-\paragraph{Structure.} Section~\ref{s:method} gives the methodology and the
+\paragraph{Structure.} Section~\ref{s:lit} surveys the literature this
+work sits in and states what it does not supply. Section~\ref{s:method} gives
+the methodology and the
 evidence that the apparatus measures what it claims to.
 Section~\ref{s:results} gives the results as eight steps, each figure placed
 and described where its argument sits. Section~\ref{s:cmp} compares this work
@@ -118,6 +160,88 @@ against the base paper and six recent systems at parameter level.
 Section~\ref{s:law} derives and tests the scaling law.
 Section~\ref{s:defects} documents the nine measurement defects found during
 the work. Appendix~\ref{s:app} holds the complete figure set.
+""")
+
+# ------------------------------------------------------------------ 1b
+A(r"""\section{Literature survey}\label{s:lit}
+
+\subsection{The problem and the standard it set}
+
+Gettys and Nichols characterised bufferbloat: buffer memory became cheap
+faster than queue management improved, so devices acquired buffers larger than
+any control loop required, and loss-based TCP filled them\cite{gettys2012}.
+RFC 7567 sets the IETF position, recommending that devices deploy AQM by
+default and explicitly preferring schemes that need no per-flow
+configuration\cite{rfc7567}. That preference for the absence of manual tuning
+is the standard against which any adaptive scheme has to be judged, and it is
+why a null result for adaptation is treated here as a reportable outcome
+rather than a failed experiment.
+
+\subsection{Drop-probability schemes}
+
+Random Early Detection opened the field, signalling congestion by dropping
+with a probability derived from average queue length\cite{red1993}. Its
+sensitivity to configuration prompted Adaptive RED, which adjusts the maximum
+drop probability by an additive-increase multiplicative-decrease rule against
+a queue-length target\cite{ared2001}. PIE replaced queue length with a delay
+estimate inside a proportional-integral controller\cite{rfc8033}. The AIMD
+policy in the controller evaluated here, including its $\beta=0.9$ decrease
+factor, is taken from Adaptive RED, which makes that scheme the closest
+methodological ancestor of this work.
+
+\subsection{Delay-target schemes}
+
+CoDel abandoned queue length entirely, dropping when the minimum sojourn time
+over a sliding interval exceeds a target\cite{nichols2012,rfc8289}. Its
+authors argue that the two parameters are expressed relative to path
+round-trip time by construction and therefore require no tuning. The scaling
+law of Section~\ref{s:law} quantifies the point at which that claim stops
+holding. \texttt{fq\_codel} pairs CoDel with Deficit Round Robin across
+roughly a thousand flow queues and is now the Linux default\cite{rfc8290};
+CAKE integrates shaping, flow queueing and host fairness\cite{cake2018};
+FQ-PIE is the corresponding combination for PIE\cite{fqpie2019}. L4S
+standardises a low-latency service class on a dual-queue coupled
+AQM\cite{rfc9330,rfc9332}. All eight of these disciplines are measured here
+under an identical bottleneck.
+
+\subsection{Runtime adaptation, the line this work sits in}
+
+Ye and Leung derive stability conditions for CoDel and adapt its
+\texttt{interval} analytically\cite{yeleung2020}. QueuePilot learns a
+marking policy for small buffers by reinforcement
+learning\cite{queuepilot2023}, and AQM-LLM distils a language model into a
+marking controller\cite{aqmllm2025}. DESiRED performs runtime adaptation of
+an AQM's delay target in P4 using deep reinforcement learning and in-band
+telemetry\cite{desired2024}. Runtime adaptation of a delay target is
+therefore not novel, and no such claim is made here. Toopchinezhad and Ahmadi
+survey the machine-learning AQM literature and observe that heuristic schemes
+require careful parameter adjustment, which limits their real-world
+applicability\cite{mlaqm2025}. SCRR revisits fair-queueing scheduling for
+modern link rates\cite{scrr2025}, and Ray et al.\ characterise how the
+presence of an AQM distorts speed-test measurement\cite{ray2025}.
+
+\subsection{What that line does not supply}
+
+Every system above reports that its adaptation improved something, and the
+independent evaluations that find nothing are equally confident. What none of
+them supplies is the condition under which the other is right. None runs a
+control condition that separates a controller's computational cost from the
+effect of its decisions. None reports sparse-probe and bulk-flow latency
+separately, despite flow-queueing disciplines privileging sparse flows by
+construction. None compares against eight alternative disciplines under one
+identical bottleneck. And none states a numerical prediction before measuring
+it. The contribution claimed here is accordingly not the adaptation mechanism
+but the predicate that says when it pays, together with the apparatus required
+to establish it.
+
+\subsection{Programmable telemetry}
+
+eBPF at the \texttt{tc} clsact hook permits per-flow state to be maintained
+in kernel maps and read from userspace\cite{ebpfqdisc2023}. The telemetry
+path used here reads those maps through \texttt{bpf(2)} directly rather than
+by spawning \texttt{bpftool}, which reduced the cost of one control tick from
+3.17\,s to 0.709\,s. Its remaining cost is measured and reported in
+Section~\ref{s:results} rather than assumed negligible, because it is not.
 """)
 
 # ------------------------------------------------------------------ 2
@@ -202,8 +326,14 @@ the eBPF program maintains flow state. At a control tick it reads
 \texttt{tc} statistics and the eBPF maps, classifies a congestion regime from
 drop rate and backlog, and estimates a trajectory from the gradient over a
 ten-tick window. At an adjustment opportunity it applies an additive-increase
-multiplicative-decrease rule taken from Adaptive RED, with
-$\beta=0.9$ on decrease.
+multiplicative-decrease rule taken from Adaptive RED\cite{ared2001}, with
+$\beta=0.9$ on decrease. The step sizes are fixed multiples of the configured
+target rather than a decaying gain sequence, so the loop does not converge to
+a fixed point by construction; whether it settles is a measured question that
+Section~\ref{s:results} answers. Observation and update run on separate
+timescales, ticking an order of magnitude faster than adjusting, which follows
+the two-timescale stochastic approximation
+framework\cite{borkar1997}.
 
 Every bound, step size and threshold is expressed relative to the configured
 target $t_0$ rather than as an absolute time:
@@ -259,7 +389,7 @@ controller. A tenth arm, the sham controller, runs the full polling and
 classification path and applies no parameter change, which separates the
 controller's computational cost from the effect of its decisions.
 
-The workloads are three: a steady bulk load of eight TCP CUBIC flows; a
+The workloads are three: a steady bulk load of eight TCP CUBIC\cite{cubic2008} flows; a
 staged load whose flow count varies from two to twenty-four during the run;
 and a mixed load adding sparse constant-rate UDP probes alongside the bulk
 traffic. Each cell is repeated three times and reported with 95\% confidence
@@ -282,6 +412,29 @@ All numbers below are generated from the run logs by \texttt{src/analyse.py}
 and \texttt{src/analyse\_law.py}; none is typed by hand. The results are given
 as eight steps, and each figure is described where its argument sits rather
 than left to a caption.
+
+Tables~\ref{t:steady} and~\ref{t:staged} carry the complete numeric result
+set for the two primary workloads, every quantity as mean $\pm$ standard
+deviation across seeds. The eight steps that follow read those two tables in
+order, with the figures that make each reading visible.
+
+\begin{table}[htbp]
+\centering\scriptsize
+\caption{Steady workload: all ten conditions, mean $\pm$ sd across seeds.
+Eight bulk TCP CUBIC flows with a sparse UDP probe over a 10\,Mbit/s
+bottleneck at 20\,ms base RTT.}
+\label{t:steady}
+\input{generated/table_steady}
+\end{table}
+
+\begin{table}[htbp]
+\centering\scriptsize
+\caption{Staged workload: the offered load steps during the run, so the queue
+is never in steady state. This is the workload built to exercise the
+controller, and the one on which it helps least.}
+\label{t:staged}
+\input{generated/table_staged}
+\end{table}
 
 \subsection{Step 1: flow queueing dominates everything else}
 
@@ -356,7 +509,7 @@ Figure~\ref{f:fig08} places every measured quantity against every system, in
 one view. Each column is normalised so that quantities with different units
 can be compared, and the measured value is printed in each cell. Goodput,
 probe and bulk round-trip time, queue occupancy, drop rate, retransmissions
-and Jain's fairness index appear together.
+and Jain's fairness index\cite{jain1984} appear together.
 
 The block structure is the result. The flow-queueing disciplines with a delay
 target form one band that separates from the rest on every latency column
@@ -519,7 +672,13 @@ measurements against path RTT alone, where they do not collapse. The contrast
 between the panels is the argument.
 """)
 A(fig("fig16_scaling_law.png", star=True, width=r"0.96\linewidth"))
-A(r"""\input{generated/table_law}
+A(r"""\begin{table}[htbp]
+\centering\scriptsize
+\caption{Scaling-law fit and the pre-registered verdicts. Every threshold in
+the decision column was committed to the repository before the data existed.}
+\label{t:law}
+\input{generated/table_law}
+\end{table}
 
 Ratio invariance is the prediction able to refute the claim, and it holds.
 Scaling \texttt{target}, \texttt{interval}, the control period and the run
@@ -678,7 +837,7 @@ for e in IDX["runs"]:
 A(r"""\bottomrule
 \end{longtable}
 
-\section{Reproducing every number}
+\section{Reproducing every number}\label{s:repro}
 
 \begin{verbatim}
 python3 src/analyse.py        # tables and fact macros
@@ -692,6 +851,9 @@ Pre-registered hypotheses and their decision thresholds are in
 \texttt{docs/SCALING\_LAW.md}, \texttt{docs/CROSS\_AQM\_PREREG.md},
 \texttt{docs/SERIALIZATION\_PREREG.md} and \texttt{docs/GATE\_PREREG.md}. The
 defects of Section~\ref{s:defects} are documented in \texttt{verification/}.
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
 
 \end{document}
 """)

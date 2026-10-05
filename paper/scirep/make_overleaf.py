@@ -76,6 +76,17 @@ open(os.path.join(OUT, "paper.tex"), "w").write(tex)
 cited = sorted({k.strip() for m in re.findall(r"\\cite\{([^}]+)\}", tex)
                 for k in m.split(",")})
 
+why = {
+    "fig01_latency_tail_steady.png":
+        "tail latency across all nine disciplines, ours against theirs",
+    "fig08_allparams_steady.png":
+        "every measured quantity against every system, parameter level",
+    "fig16_scaling_law.png":
+        "the contribution: benefit collapses onto one curve under target/RTT",
+}
+placed_table = "\n".join(
+    f"- `{n}` - {why.get(n, 'referenced from the text')}" for n in wanted)
+
 groups = {"implementation captures (step*)": [f for f in extra
                                                if f.startswith("step")],
           "per-run time series (run*)": [f for f in extra
@@ -114,22 +125,9 @@ readme = f"""# Overleaf upload: the conference paper
 
 Total {len(wanted) + len(extra) + 2} files.
 
-## The {len(wanted)} figures, and why each is in the paper
+## The {len(wanted)} figures the manuscript places
 
-Two establish the apparatus. Seven carry results. None is decorative and each
-is referenced from the text.
-
-| file | what it carries |
-|---|---|
-| `step04_corrected_three_node_router_topology.png` | the topology as configured, bottleneck on the data path |
-| `step07_ebpf_flow_telemetry_is_live_under_traffic.png` | the telemetry reading non-zero per-flow state under load |
-| `fig16_scaling_law.png` | **the central result.** Benefit against target/RTT collapses onto one curve; against RTT alone it does not |
-| `fig15_rtt_sweep.png` | the RTT sweep that motivated the law |
-| `fig01_latency_tail_steady.png` | tail latency across all nine systems, log scale |
-| `fig08_allparams_steady.png` | every parameter against every system, normalised, values printed |
-| `fig02_latency_sparse_vs_bulk_steady.png` | sparse probe against bulk flow RTT, measured separately |
-| `fig13_sham_control_steady.png` | the sham-controller condition, cost separated from decisions |
-| `fig12_controller_behaviour.png` | the controller acting: regime, trajectory, queue |
+{placed_table}
 
 ## If something does not compile
 

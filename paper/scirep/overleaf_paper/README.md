@@ -14,10 +14,10 @@
 - `paper.tex`, the whole manuscript in one file. Two-column article class,
   self-contained preamble, no `\input` left and no custom `.cls` required, so
   it compiles on a bare Overleaf project.
-- `refs.bib`, 22 of its entries cited by the text.
-- 9 PNG figures the manuscript places, flat, named exactly as it
+- `refs.bib`, 18 of its entries cited by the text.
+- 3 PNG figures the manuscript places, flat, named exactly as it
   asks for them.
-- 152 further PNG figures from the project, also flat: the remaining
+- 158 further PNG figures from the project, also flat: the remaining
   comparison plots for both workloads, the implementation captures and the
   per-run time series. LaTeX reads only what `\includegraphics` names, so
   these sit in the project without affecting the compile or the page count.
@@ -26,22 +26,11 @@
 
 Total 163 files.
 
-## The 9 figures, and why each is in the paper
+## The 3 figures the manuscript places
 
-Two establish the apparatus. Seven carry results. None is decorative and each
-is referenced from the text.
-
-| file | what it carries |
-|---|---|
-| `step04_corrected_three_node_router_topology.png` | the topology as configured, bottleneck on the data path |
-| `step07_ebpf_flow_telemetry_is_live_under_traffic.png` | the telemetry reading non-zero per-flow state under load |
-| `fig16_scaling_law.png` | **the central result.** Benefit against target/RTT collapses onto one curve; against RTT alone it does not |
-| `fig15_rtt_sweep.png` | the RTT sweep that motivated the law |
-| `fig01_latency_tail_steady.png` | tail latency across all nine systems, log scale |
-| `fig08_allparams_steady.png` | every parameter against every system, normalised, values printed |
-| `fig02_latency_sparse_vs_bulk_steady.png` | sparse probe against bulk flow RTT, measured separately |
-| `fig13_sham_control_steady.png` | the sham-controller condition, cost separated from decisions |
-| `fig12_controller_behaviour.png` | the controller acting: regime, trajectory, queue |
+- `fig01_latency_tail_steady.png` - tail latency across all nine disciplines, ours against theirs
+- `fig08_allparams_steady.png` - every measured quantity against every system, parameter level
+- `fig16_scaling_law.png` - the contribution: benefit collapses onto one curve under target/RTT
 
 ## If something does not compile
 
@@ -53,7 +42,7 @@ is referenced from the text.
 - **Compile times out**: the project carries the full figure set, and Overleaf
   bills compile time per project rather than per figure used. Deleting the
   unused PNGs from the project is safe; the manuscript names only the
-  9 listed above.
+  3 listed above.
 - **`IEEEtran.bst` not found**: Overleaf ships it. On a bare local TeX
   install, change `\bibliographystyle{IEEEtran}` to
   `\bibliographystyle{unsrt}`.
@@ -62,14 +51,14 @@ is referenced from the text.
 
 `paper.tex` carries its own preamble and no `\input`, so dropping it into a
 publisher template is a matter of replacing that template's `main.tex` body
-and uploading the same 9 PNGs plus `refs.bib` to the project root.
+and uploading the same 3 PNGs plus `refs.bib` to the project root.
 Nothing else has to be wired up.
 
 ## Figure inventory
 
-The 152 figures beyond the manuscript's own, by group:
+The 158 figures beyond the manuscript's own, by group:
 
-- **implementation captures (step*)**: 9 files
+- **implementation captures (step*)**: 11 files
 - **per-run time series (run*)**: 108 files
-- **comparison and analysis plots**: 35 files
+- **comparison and analysis plots**: 39 files
 

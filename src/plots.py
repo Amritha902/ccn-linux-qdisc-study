@@ -464,42 +464,85 @@ def fig12(runs, od):
     save(fig, od, "fig12_controller_behaviour.png")
 
 
-# ── fig13: sham control — is a difference real or just controller CPU? ────
+# ── fig13: sham control ─ differences from static, not truncated bars ──
+# An earlier version drew four bar charts with the y-axis cropped to the data
+# range. A bar encodes its value by length, so cropping the baseline turned
+# differences of a fraction of a percent into bars of visibly different
+# height, and the axis limit was computed from the means alone, which clipped
+# the error bars off the top of the panel. Both faults pushed the same way:
+# toward seeing an effect. What the runs actually show is that no arm is
+# separable from any other, so the figure now plots each arm's difference from
+# static with the confidence interval of that difference, against a zero line.
+# An interval covering zero is the result, and it is legible as such.
 def fig13(runs, wl, od):
     want = ["fq_codel", "fq_codel_sham", "fq_codel_acape"]
-    g = [(k, grp) for k, grp in grouped(runs, wl) if k in want]
-    if len(g) < 2:
+    g = dict((k, grp) for k, grp in grouped(runs, wl) if k in want)
+    if "fq_codel" not in g or len(g) < 2:
         return
-    metrics = [("sparse_rtt_mean_ms", "probe RTT mean (ms)"),
-               ("bulk_rtt_mean_ms", "bulk RTT mean (ms)"),
-               ("backlog_mean_pkts", "mean backlog (pkts)"),
-               ("throughput_mbps", "goodput (Mbps)")]
-    fig, axes = plt.subplots(1, 4, figsize=(16, 4.6)); fig.patch.set_facecolor("white")
-    for ax, (metric, lbl) in zip(axes, metrics):
-        vals, errs, labels, cols = [], [], [], []
-        for k, grp in g:
-            m, h, _ = ci95([r.get(metric) for r in grp])
+    metrics = [("sparse_rtt_mean_ms", "probe RTT"),
+               ("bulk_rtt_mean_ms", "bulk RTT"),
+               ("backlog_mean_pkts", "mean backlog"),
+               ("throughput_mbps", "goodput")]
+    arms = [k for k in ("fq_codel_sham", "fq_codel_acape") if k in g]
+
+    fig, ax = plt.subplots(figsize=(10.5, 5.0))
+    fig.patch.set_facecolor("white")
+    offs = {arms[0]: 0.19}
+    if len(arms) > 1:
+        offs[arms[1]] = -0.19
+    seen = set()
+    for row, (metric, lbl) in enumerate(metrics):
+        base = [x.get(metric) for x in g["fq_codel"] if x.get(metric) is not None]
+        bm, bh, bn = ci95(base)
+        if bm is None or bm == 0:
+            continue
+        for k in arms:
+            vs = [x.get(metric) for x in g[k] if x.get(metric) is not None]
+            m, h, n = ci95(vs)
             if m is None:
                 continue
-            vals.append(m); errs.append(h)
-            labels.append(DISPLAY.get(k, k)); cols.append(colour(k))
-        x = np.arange(len(vals))
-        ax.bar(x, vals, yerr=errs, capsize=3, color=cols, edgecolor="white")
-        ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=8)
-        if vals:
-            lo, hi = min(vals), max(vals)
-            pad = max((hi - lo) * 2.2, hi * 0.01)
-            ax.set_ylim(max(0, lo - pad), hi + pad)
-            for i, v in enumerate(vals):
-                ax.text(i, v, f"{v:.2f}", ha="center", va="bottom",
-                        fontsize=8, color=TEXT)
-        style(ax, ylabel=lbl)
+            # difference as a percentage of the static arm, with the two
+            # intervals combined in quadrature
+            d = (m - bm) / bm * 100.0
+            e = math.sqrt(h ** 2 + bh ** 2) / bm * 100.0
+            y = row + offs[k]
+            covers = abs(d) <= e
+            ax.errorbar(d, y, xerr=e, fmt="o", markersize=7,
+                        color=colour(k), ecolor=colour(k), elinewidth=1.6,
+                        capsize=4, markerfacecolor=colour(k) if not covers
+                        else "white", markeredgewidth=1.6,
+                        label=DISPLAY.get(k, k).replace("\n", " ")
+                        if k not in seen else None)
+            seen.add(k)
+            # label on the marker's own line, masked so the whisker does
+            # not run through it. Placing it past the whisker end strands the
+            # number far from its marker when the interval is wide.
+            ax.annotate(f"{d:+.2f}%", (d, y), textcoords="offset points",
+                        xytext=(9, 0), ha="left", va="center",
+                        fontsize=8.5, color=TEXT,
+                        bbox=dict(boxstyle="round,pad=0.15", fc="white",
+                                  ec="none", alpha=0.92))
+
+    ax.axvline(0, color=TEXT, linewidth=1.2, zorder=0)
+    ax.set_yticks(range(len(metrics)))
+    ax.set_yticklabels([l for _, l in metrics], fontsize=10)
+    ax.set_ylim(-0.75, len(metrics) - 0.25)
+    style(ax, xlabel="difference from static fq_codel (%), 95% CI")
+    ax.legend(frameon=False, fontsize=9, loc="upper center",
+              bbox_to_anchor=(0.5, -0.17), ncol=2)
+    lo, hi = ax.get_xlim()
+    pad = (hi - lo) * 0.06
+    ax.set_xlim(lo - pad, hi + pad)
     fig.suptitle(
-        f"Sham-controller control condition — {wl} workload\n"
-        "'sham' runs the controller at the same polling cadence but applies no change. "
-        "static vs sham isolates the controller's CPU cost; sham vs ACAPE isolates its decisions.",
-        fontsize=11.5, color=TEXT)
-    fig.tight_layout(rect=[0, 0, 1, 0.88])
+        f"Sham-controller control condition ─ {wl} workload\n"
+        "The sham arm polls at the controller's cadence and applies nothing, "
+        "so static against sham is the controller's cost and sham against "
+        "ACAPE is its decisions.\n"
+        "Every interval covers zero: on this workload neither the cost nor "
+        "the decisions are separable from the static arm. Open markers mark "
+        "the intervals that cover zero.",
+        fontsize=10.5, color=TEXT)
+    fig.tight_layout(rect=[0, 0.02, 1, 0.84])
     save(fig, od, f"fig13_sham_control_{wl}.png")
 
 

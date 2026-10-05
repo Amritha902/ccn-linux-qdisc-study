@@ -697,13 +697,25 @@ Figure~\ref{f:fig13} compares three arms: static, sham and adapted. The sham
 polls at the same cadence and runs the same classification and prediction
 code, then applies nothing. Any gap between static and sham is the cost of
 running the controller. Any gap between sham and adapted is the effect of its
-decisions. Without the middle arm the two are confounded, and a controller
-that merely consumed CPU would be indistinguishable from one that helped.
+decisions.
 
-The measured gap between static and sham is within the confidence intervals on
-every metric, so the controller's computational cost is not detectable at this
-link rate. That is a prerequisite for interpreting the next step, not a result
-in itself.
+The figure plots each arm as its difference from the static arm rather than as
+a bar, because the differences are small enough that a bar chart would have to
+crop its own baseline to show them, and a cropped baseline turns a fraction of
+a percent into a visibly taller bar. Read against the zero line, every
+interval covers zero. The largest point estimate is the adapted arm's 9.6\%
+reduction in mean backlog, and its interval runs from $-24$\% to $+5$\%.
+
+Two conclusions follow, and they are different in kind. The controller's
+computational cost is not detectable at this link rate, which is a
+prerequisite for interpreting the rest of the work rather than a result. And
+the effect of its decisions is not detectable either, on any of the four
+metrics, under the steady workload at 20\,ms. The scaling law of
+Section~\ref{s:law} explains why: this cell sits at $r=0.25$, where the
+measured benefit of adaptation is 1.4\% and not significant. The sham
+condition is what allows those two statements to be separated at all; without
+the middle arm, a controller that merely consumed CPU would be
+indistinguishable from one that helped.
 
 \begin{figure}[htbp]
 \centering
@@ -822,7 +834,7 @@ and it is a property of the discipline class, not of the controller.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig14_mixed_workload.png}
-\caption{fig14\_mixed\_workload.png. }
+\caption{fig14\_mixed\_workload.png. fig14\_mixed\_workload}
 \label{f:fig14}
 \end{figure}
 
@@ -896,7 +908,7 @@ helps on short paths, is not a mechanism and predicts nothing.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig15_rtt_sweep.png}
-\caption{fig15\_rtt\_sweep.png. }
+\caption{fig15\_rtt\_sweep.png. fig15\_rtt\_sweep}
 \label{f:fig15}
 \end{figure}
 
@@ -933,7 +945,7 @@ between the panels is the argument.
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.96\linewidth,height=0.4\textheight,keepaspectratio]{fig16_scaling_law.png}
-\caption{fig16\_scaling\_law.png. }
+\caption{fig16\_scaling\_law.png. fig16\_scaling\_law}
 \label{f:fig16}
 \end{figure*}
 

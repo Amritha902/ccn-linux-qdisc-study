@@ -503,6 +503,16 @@ any gap between sham and adapted is the effect of its decisions. Without that
 middle arm the two are confounded, and a controller that merely consumed CPU
 would be indistinguishable from one that helped.
 
+Each arm is plotted as its difference from the static arm against a zero line
+rather than as a bar, because the differences are small enough that a bar
+chart would have to crop its own baseline to render them, and a cropped
+baseline turns a fraction of a percent into a visibly taller bar. Every
+interval covers zero. The largest point estimate is the adapted arm's 9.6\%
+reduction in mean backlog, whose interval runs from $-24$\% to $+5$\%. The
+controller's computational cost is therefore not detectable at this link rate,
+and neither is the effect of its decisions on this workload, which sits at
+$r=0.25$ where Equation~\ref{eq:law} predicts almost no benefit.
+
 Figure~\ref{fig:controller} shows the controller in operation over a run: the
 regime it classifies, the parameter trajectory that classification produces,
 and the queue it is responding to. A controller that classifies continuously
@@ -513,10 +523,15 @@ cell in this work.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{fig13_sham_control_steady.png}
-\caption{The sham-controller condition. The sham polls at the same cadence as
-the real controller and applies no parameter change, so any difference between
-sham and static is the controller's computational cost rather than the effect
-of its decisions. Without this condition the two are confounded.}
+\caption{The sham-controller condition, as each arm's difference from the
+static arm with its 95\% confidence interval. The sham polls at the same
+cadence as the real controller and applies no parameter change, so any
+difference between sham and static is the controller's computational cost
+rather than the effect of its decisions; without this condition the two are
+confounded. Every interval covers zero, so at $r=0.25$ neither the cost nor
+the decisions are separable from the static configuration. Differences this
+small are shown against a zero line rather than as bars, which would require
+cropping the baseline.}
 \label{fig:sham}
 \end{figure}
 \begin{figure}[htbp]

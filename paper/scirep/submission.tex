@@ -11,7 +11,7 @@
 \usepackage{caption}
 \captionsetup{font=small,labelfont=bf}
 \graphicspath{{./}{figs/}}
-\providecommand{\keywords}[1]{\par\noindent\textbf{Keywords:} #1}
+\providecommand{\keywords}[1]{\par\medskip\noindent\textbf{Keywords:} #1}
 \setlength{\parskip}{0pt}
 \sloppy
 
@@ -196,6 +196,12 @@ Vellore Institute of Technology, Chennai, India}
 %% Shared manuscript body. Included by main.tex (Scientific Reports class on
 %% Overleaf) and by preview.tex (plain article class, compiles anywhere).
 
+\keywords{active queue management; bufferbloat; \texttt{fq\_codel};
+CoDel delay target; queueing delay; dimensionless scaling law; runtime
+parameter adaptation; eBPF traffic control; Linux \texttt{tc};
+reproducible network measurement}
+
+%% =====================================================================
 \section*{Introduction}
 
 Bufferbloat, persistently full network buffers that inflate queueing delay
@@ -241,14 +247,120 @@ alternative queue disciplines under an identical bottleneck, with three
 independent repetitions per condition, two workloads, and a sham-controller
 condition that isolates computational cost from control decisions.
 
-Our principal findings are that the presence of a flow-queueing discipline with
-a delay target reduces tail latency by 99.0\% relative to an unmanaged
-first-in-first-out queue at indistinguishable goodput; that adapting that
-discipline's parameters yields a 9.6\% reduction in mean queue occupancy under
-a steady load and no improvement at all under a load whose flow count varies;
-and that CAKE\cite{cake2018}, an existing queue discipline requiring no
-controller, outperforms the adapted system by a larger margin than the
-adaptation itself achieves.
+The central result is a scaling law. The benefit of adapting a delay-targeting
+queue discipline's parameters is governed not by path round-trip time but by
+the dimensionless ratio
+%
+\begin{equation}
+r \;=\; \frac{\texttt{target}}{\mathrm{RTT}},
+\label{eq:ratio}
+\end{equation}
+%
+where \texttt{target} is the discipline's configured standing-queue delay
+budget. Writing $b(r)$ for the percentage reduction in mean bulk-flow
+round-trip time obtained by adapting the parameters, measurement across path
+RTTs from 2 to 200\,ms gives
+%
+\begin{equation}
+b(r) \;=\; \frac{B}{1 + \left(r_{0}/r\right)^{k}},
+\qquad
+\begin{aligned}
+B &= \LawCeiling\,\%\\
+r_{0} &= \LawHalfBenefit\\
+k &= \LawSteepness
+\end{aligned}
+\label{eq:law}
+\end{equation}
+%
+with $R^{2} = \LawRsq$. Here $B$ is the ceiling, $r_0$ the ratio at which half
+of it is reached, and $k$ the sharpness of the transition. Equation~\ref{eq:law}
+has an immediate operational reading. Published guidance places a correctly
+configured deployment at $r$ between 0.05 and 0.10, whereas half the available
+benefit arrives only at $r = \LawHalfBenefit$, five to ten times outside that
+envelope. Parameter adaptation is therefore a remedy for misconfiguration
+rather than an improvement on correct configuration.
+
+Three further results frame it. Flow queueing combined with a delay target
+reduces tail latency by 99.0\% relative to an unmanaged first-in-first-out
+queue at indistinguishable goodput, an effect two orders of magnitude larger
+than any parameter tuning measured here. CAKE\cite{cake2018}, an existing
+discipline requiring no controller at all, outperforms the adapted system at
+every path RTT tested. And the ratio governs more than one mechanism: fitted
+independently, plain \texttt{codel} places $r_0$ at 0.42 against
+\texttt{fq\_codel}'s 0.49, while PIE, which shares no mechanism with CoDel
+beyond possessing a delay target, places it at 1.06.
+
+
+%% =====================================================================
+\section*{Related work}
+
+\paragraph{The problem.}
+Gettys and Nichols characterised bufferbloat: buffer memory became cheap faster
+than queue management improved, so devices acquired buffers larger than any
+control loop required, and loss-based TCP filled them\cite{gettys2012}. The
+IETF position, RFC 7567, recommends that devices deploy AQM by default and
+explicitly prefers schemes needing no per-flow configuration. That preference
+for \emph{no manual tuning} is the standard against which any adaptive scheme
+must be judged, and it is the reason the present work treats a null result for
+adaptation as a publishable outcome rather than a failure.
+
+\paragraph{Drop-probability schemes.}
+Random Early Detection\cite{red1993} originated the field, signalling
+congestion by dropping with a probability derived from average queue length.
+Its sensitivity to configuration prompted Adaptive RED\cite{ared2001}, which
+adjusts the maximum drop probability by an additive-increase
+multiplicative-decrease rule against a queue-length target. PIE\cite{rfc8033}
+replaced queue length with a delay estimate inside a proportional-integral
+controller. The AIMD policy used by the controller evaluated here is taken
+directly from Adaptive RED, which is why that scheme is the closest
+methodological ancestor of this work.
+
+\paragraph{Delay-target schemes.}
+CoDel\cite{nichols2012,rfc8289} abandoned queue length entirely, dropping when
+the minimum sojourn time over a sliding interval exceeds a target. Its authors
+argue the two parameters are expressed relative to path round-trip time by
+construction and require no tuning. Equation~\ref{eq:law} quantifies exactly
+when that claim stops holding. \texttt{fq\_codel}\cite{rfc8290} pairs CoDel
+with Deficit Round Robin across roughly a thousand flow queues and is now the
+Linux default; CAKE\cite{cake2018} integrates shaping, flow queueing and
+host fairness; FQ-PIE\cite{fqpie2019} is the corresponding combination for
+PIE. L4S\cite{rfc9330,rfc9332} standardises a low-latency service class built
+on a dual-queue coupled AQM.
+
+\paragraph{Runtime adaptation, the line this work sits in.}
+Ye and Leung derive stability conditions for CoDel and adapt its
+\texttt{interval} analytically\cite{yeleung2020}. QueuePilot learns a marking
+policy for small buffers by reinforcement learning\cite{queuepilot2023}, and
+AQM-LLM distils a language model into a marking
+controller\cite{aqmllm2025}. DESiRED performs runtime adaptation of an AQM's
+delay target in P4 using deep reinforcement learning and in-band
+telemetry\cite{desired2024}; runtime adaptation of a delay target is therefore
+not itself novel, and no such claim is made here. Toopchinezhad and Ahmadi
+survey the machine-learning AQM literature and note that heuristic schemes
+require meticulous parameter adjustment, which limits real-world
+applicability\cite{mlaqm2025}. SCRR revisits fair-queueing scheduling for
+modern link rates\cite{scrr2025}, and Ray et al.\ characterise how AQM
+presence distorts speed-test measurement\cite{ray2025}.
+
+\paragraph{What is absent from that line.}
+Every system above reports that its adaptation improved something, and the
+evaluations that find nothing are equally confident. What none of them
+supplies is the condition under which the other is right. None runs a control
+condition separating a controller's computational cost from the effect of its
+decisions; none reports sparse-probe and bulk-flow latency separately, despite
+flow-queueing disciplines privileging sparse flows by construction; none
+compares against eight alternative disciplines under an identical bottleneck;
+and none states numerical predictions before measuring them. The contribution
+claimed here is accordingly not the mechanism but the predicate of
+Equation~\ref{eq:law}, together with the apparatus required to establish it.
+
+\paragraph{Programmable telemetry.}
+eBPF at the \texttt{tc} clsact hook permits per-flow state to be maintained in
+kernel maps and read from userspace\cite{ebpfqdisc2023}. The telemetry path
+used here reads those maps through \texttt{bpf(2)} directly rather than by
+spawning \texttt{bpftool}, reducing the cost of one control tick from 3.17\,s
+to 0.709\,s. Its cost is nonetheless measured and reported rather than
+assumed negligible, because it is not.
 
 %% =====================================================================
 \section*{Results}

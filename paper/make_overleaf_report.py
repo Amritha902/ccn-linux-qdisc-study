@@ -61,6 +61,22 @@ for name in wanted:
 if missing:
     raise SystemExit("figures not found: " + ", ".join(missing))
 
+# every remaining project figure travels with the project, so one can be added
+# to the report without going to find its file. LaTeX reads only what
+# \includegraphics names, so these do not affect the compile.
+extra = []
+for d in FIGDIRS:
+    if not os.path.isdir(d):
+        continue
+    for f in sorted(os.listdir(d)):
+        if not f.lower().endswith(".png"):
+            continue
+        dest = os.path.join(OUT, f)
+        if os.path.exists(dest):
+            continue
+        shutil.copy2(os.path.join(d, f), dest)
+        extra.append(f)
+
 shutil.copy2(os.path.join(HERE, "refs.bib"), os.path.join(OUT, "refs.bib"))
 open(os.path.join(OUT, "report.tex"), "w").write(tex)
 
@@ -81,9 +97,15 @@ readme = f"""# Overleaf upload: the technical report
   inlined, so the generated fact macros, the three result tables and the
   scaling-law table are all inside it. Nothing has to be regenerated.
 - `refs.bib`, 23 references.
-- {len(wanted)} PNG figures, flat, named exactly as the document asks for them.
+- {len(wanted)} PNG figures the document places, flat, named exactly as it
+  asks for them.
+- {len(extra)} further project figures, also flat: the per-run time series the
+  report tabulates rather than embeds, and the remaining captures. LaTeX reads
+  only what `\\includegraphics` names, so they sit in the project without
+  affecting the compile or the page count, and adding one takes a single line
+  with no file to go and find.
 
-Total {len(wanted) + 2} files.
+Total {len(wanted) + len(extra) + 2} files.
 
 ## If something does not compile
 
@@ -92,6 +114,9 @@ Total {len(wanted) + 2} files.
 - **A figure is missing**: every filename in the document is a bare basename
   and all PNGs are at the root, so this means a file did not upload. Re-upload
   the zip rather than individual files.
+- **Compile times out**: Overleaf bills compile time per project, and this one
+  carries the full figure set. Deleting the unused PNGs is safe; the document
+  names only the {len(wanted)} it places.
 - **`IEEEtran.bst` not found**: Overleaf ships it. If a local TeX install does
   not, change `\\bibliographystyle{{IEEEtran}}` to `\\bibliographystyle{{unsrt}}`.
 
@@ -112,5 +137,6 @@ with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:
 
 n = len(os.listdir(OUT))
 mb = os.path.getsize(zpath) / 1e6
-print(f"{OUT}: {n} files ({len(wanted)} figures)")
+print(f"{OUT}: {n} files "
+      f"({len(wanted)} placed + {len(extra)} supporting figures)")
 print(f"{zpath}: {mb:.1f} MB")

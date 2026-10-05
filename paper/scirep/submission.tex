@@ -228,7 +228,7 @@ the Low Latency, Low Loss and Scalable throughput (L4S) architecture
 learning-based AQM literature and observes that most proposals are evaluated
 only in simulation.
 
-Runtime adaptation of an AQM delay target is therefore established, and we do
+Runtime adaptation of an AQM delay target is therefore established, and this work do
 not claim it as novel. What is absent from this literature is a controlled
 evaluation of whether such adaptation helps. Every system cited above reports
 that its adaptation improved some quantity. None separates the computational
@@ -238,11 +238,11 @@ despite flow-queueing disciplines privileging sparse flows by design; none
 compares against the range of queue disciplines an operator could simply deploy
 instead; and none reports a null result.
 
-We address that gap. We implement a userspace controller that adapts all four
+This work address that gap. This work implements a userspace controller that adapts all four
 \texttt{fq\_codel} parameters using the AIMD policy of Adaptive RED together
 with a gradient-based estimate of the congestion trajectory, instrumented by an
 extended Berkeley Packet Filter (eBPF) program at the Linux traffic control
-egress hook. We evaluate it on an unmodified Linux kernel against eight
+egress hook. The controller is evaluated it on an unmodified Linux kernel against eight
 alternative queue disciplines under an identical bottleneck, with three
 independent repetitions per condition, two workloads, and a sham-controller
 condition that isolates computational cost from control decisions.
@@ -337,7 +337,7 @@ delay target in P4 using deep reinforcement learning and in-band
 telemetry\cite{desired2024}; runtime adaptation of a delay target is therefore
 not itself novel, and no such claim is made here. Toopchinezhad and Ahmadi
 survey the machine-learning AQM literature and note that heuristic schemes
-require meticulous parameter adjustment, which limits real-world
+require careful parameter adjustment, which limits real-world
 applicability\cite{mlaqm2025}. SCRR revisits fair-queueing scheduling for
 modern link rates\cite{scrr2025}, and Ray et al.\ characterise how AQM
 presence distorts speed-test measurement\cite{ray2025}.
@@ -399,7 +399,7 @@ A single-probe measurement can therefore invert a ranking. By
 sparse probe alone SFQ (\SfqProbeRttMeanSteady\,ms) appears to beat CoDel
 (\CodelProbeRttMeanSteady\,ms); by the latency the bulk flows actually
 experience, SFQ is \SfqBulkRttMeanSteady\,ms against CoDel's
-\CodelBulkRttMeanSteady\,ms. We report both throughout, and we suggest any AQM
+\CodelBulkRttMeanSteady\,ms. Reported here are both throughout, and this work suggest any AQM
 evaluation should.
 
 \subsection{The controller's computational cost is negligible}
@@ -411,7 +411,7 @@ $p=0.24$ (staged), backlog $p=0.94$ and $p=0.76$.
 
 This matters for interpreting the next subsection. Without it, any difference
 between static and adapted \texttt{fq\_codel} would confound the controller's
-CPU cost with its control decisions, and we could not attribute an effect to
+CPU cost with its control decisions, and this work could not attribute an effect to
 either. Having established the cost is nil, differences that remain are
 attributable to the decisions.
 
@@ -459,7 +459,7 @@ that would classify it as WORSENING or RECOVERING. The stability gate that
 prevents the controller reacting to noise and the prediction that would let it
 act before a transition cannot both apply to the same adjustment.
 
-We therefore withdraw the predictive-control contribution rather than claim it.
+The predictive-control claim is therefore withdrawn the predictive-control contribution rather than claim it.
 Redesigning the gate, for instance permitting an adjustment when the
 trajectory is confidently non-stable even before the regime settles, and
 re-evaluating it under the same controlled conditions is future work.
@@ -535,8 +535,8 @@ therefore close to complete, and it is invisible to a bulk-only evaluation.
 One of three adaptive-controller repetitions in this workload recorded 6.31\%
 sparse loss against 0.000\% and 0.029\% in the others. The controller's
 parameter trajectory in that run is identical to the repetition with no loss,
-so the difference is not attributable to its decisions; we report the condition
-by median and record the run rather than averaging over a measurement we cannot
+so the difference is not attributable to its decisions; reported here are the condition
+by median and record the run rather than averaging over a measurement this work cannot
 explain.
 
 
@@ -706,7 +706,7 @@ it; what flow queueing changes is the ceiling, 13.0\% against 20.5\%, and the
 sharpness of the transition. PIE, which regulates a drop probability with a
 proportional-integral controller and shares nothing with CoDel but the
 existence of a delay target, places it at 1.06, roughly twice as high. That
-exceeds the factor of two we had set as the agreement threshold, and the
+exceeds the factor of two this work had set as the agreement threshold, and the
 failure has a cause this comparison cannot rule out: PIE's native
 \texttt{target}/\texttt{tupdate} is 1.0 where CoDel's
 \texttt{target}/\texttt{interval} is 0.05, and the law was established with
@@ -751,12 +751,12 @@ configuration already suffices.
 
 \subsection*{Measurement practices}
 
-Three aspects of our methodology produced results that a conventional
-evaluation would have missed, and we suggest them as general practice.
+Three aspects of the methodology produced results that a conventional
+evaluation would have missed, and this work suggest them as general practice.
 
 First, sparse-probe and bulk-flow latency must be reported separately. Because
 \texttt{fq\_codel} and related disciplines give a newly arriving sparse flow
-preferential service, an ICMP probe measures a privileged path. We observe
+preferential service, an ICMP probe measures a privileged path. This work observe
 ratios between probe and bulk latency ranging from 1.1 to 9.6 across
 disciplines, and the ranking of two disciplines inverts depending on which is
 quoted. Recent work by Ray et al.\cite{ray2025} documents a related effect in
@@ -765,10 +765,10 @@ report.
 
 Second, goodput must be computed from bytes received rather than bytes sent.
 Under a large unmanaged buffer the sender enqueues faster than the link drains,
-and the sender-side figure exceeded the link capacity in our measurements.
+and the sender-side figure exceeded the link capacity in the measurements.
 
 Third, a control system's computational cost must be separated from its control
-decisions. Our sham condition runs the controller at full polling cadence while
+decisions. The sham condition runs the controller at full polling cadence while
 applying no parameter change; it is statistically indistinguishable from the
 static configuration on every metric, which licenses attributing the observed
 differences to the controller's decisions rather than its overhead. Without
@@ -776,24 +776,24 @@ this condition the two explanations are confounded.
 
 \subsection*{Limitations}
 
-Our measurements are confined to a 10\,Mbit bottleneck with 8 to 24 bulk TCP
+The measurements are confined to a 10\,Mbit bottleneck with 8 to 24 bulk TCP
 CUBIC\cite{cubic2008} flows and a 20\,ms base round-trip time, representative
 of a residential or access link rather than a datacentre or backbone. All flows
 are bulk transfers; mixed workloads containing sparse latency-sensitive flows
 are precisely where \texttt{fq\_codel}'s new-flow heuristic and an adaptive
-\texttt{quantum} might plausibly matter, and we have not tested them. Our null
-result should not be extrapolated to that setting. We evaluate a single
+\texttt{quantum} might plausibly matter, and this work have not tested them. The null
+result should not be extrapolated to that setting. The controller is evaluated a single
 bottleneck; multi-hop topologies with several congested links are not covered.
-Experiments run under hardware-assisted emulation, and we validated shaper
+Experiments run under hardware-assisted emulation, and this work validated shaper
 accuracy under emulation before collecting results, but measurements at
 substantially higher link rates would require revalidation.
 
-The predictive component of our controller never engaged. An adjustment fires
+The predictive component of the controller never engaged. An adjustment fires
 only after the congestion regime has been unchanged for five consecutive
 samples, while the trajectory estimate is derived from the gradient over that
 same window and is therefore below its threshold by then. The stability gate
 that prevents reaction to noise and the prediction that would permit action
-before a transition cannot both apply to a single adjustment. We report this
+before a transition cannot both apply to a single adjustment. Reported here are this
 component as withdrawn rather than claim it; redesigning the gate and
 re-evaluating under the same controlled conditions is future work.
 
@@ -807,7 +807,7 @@ be replaced\cite{desired2024}, and proposals for a fully programmable eBPF
 queue discipline\cite{ebpfqdisc2023} would allow the same within
 Linux. Scheduling advances such as self-clocked round robin\cite{scrr2025}
 address the round-robin scheduler underlying \texttt{fq\_codel} rather than its
-AQM. For an operator seeking lower latency today, our measurements suggest that
+AQM. For an operator seeking lower latency today, the measurements suggest that
 selecting an appropriate queue discipline is a larger and simpler improvement
 than tuning the parameters of one.
 
@@ -826,7 +826,7 @@ Measured directly, such a configuration passed the data transfer unshaped at
 18{,}769{,}790 bytes, exactly 66 bytes per packet. Every queue statistic
 collected on such a topology describes acknowledgement queueing.
 
-We therefore use three network namespaces, representing a client, a router and
+This work therefore use three network namespaces, representing a client, a router and
 a server, connected by two virtual Ethernet pairs. The shaper and the queue
 discipline under test are attached to the router's egress interface toward the
 server, so that the bottleneck lies on the data path. A token bucket filter at
@@ -840,7 +840,7 @@ like-for-like. Network emulation adds 10\,ms of delay at each edge, giving a
 Nine configurations were measured: \texttt{pfifo} (no AQM), stochastic fair
 queueing, adaptive RED\cite{red1993,ared2001}, CoDel\cite{rfc8289},
 PIE\cite{rfc8033}, FQ-PIE\cite{fqpie2019}, CAKE\cite{cake2018}, static
-\texttt{fq\_codel}\cite{rfc8290}, and \texttt{fq\_codel} under our controller.
+\texttt{fq\_codel}\cite{rfc8290}, and \texttt{fq\_codel} under the controller.
 CAKE was configured in best-effort mode without its own bandwidth parameter so
 that the token bucket filter remained the sole shaper.
 
@@ -865,7 +865,7 @@ would confound the latency comparison that the sham condition exists to isolate.
 
 \subsection*{Measurements}
 
-For each run we record: per-flow goodput and retransmission counts from the
+For each run this work record: per-flow goodput and retransmission counts from the
 traffic generator, computed from bytes received; a 500\,ms time series of the
 AQM's own queue statistics, parsed from the specific queue discipline rather
 than from whichever appears first in the kernel's output; a 20\,Hz ICMP probe

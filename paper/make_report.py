@@ -30,16 +30,36 @@ def esc(s):
     return re.sub(r"\s+,\s+", ", ", s)
 
 
-def fig(name, caption=None, width=r"0.95\linewidth", star=False):
+def fig(name, caption=None, width=r"0.95\linewidth", star=False,
+        label=True, index=False):
+    """Emit one figure.
+
+    `label` must be false for the appendix copies. Every analysis figure
+    appears twice, once beside the argument it supports and once in the
+    complete set at the back, and both emitted the same \label. LaTeX keeps
+    the last definition, so every cross-reference in Results resolved to the
+    appendix copy and sent the reader thirty pages away from the figure being
+    discussed. The appendix is an index, so the body copy keeps the label.
+
+    `index` keeps the file name in the caption, which belongs in that appendix
+    index and is noise anywhere else.
+    """
     e = BY.get(name, {})
-    cap = caption or f"{esc(e.get('title',name))}. {esc(e.get('caption',''))}"
+    if caption:
+        cap = caption
+    else:
+        head = f"{esc(e.get('title', name))}. " if not index else \
+               f"\\texttt{{{esc(name)}}}. {esc(e.get('title', name))}. "
+        cap = head + esc(e.get("caption", ""))
     cap = cap.replace(" .", ".")
     env = "figure*" if star else "figure"
-    return "\n".join([rf"\begin{{{env}}}[htbp]", r"\centering",
-                      rf"\includegraphics[width={width},height=0.4\textheight,keepaspectratio]{{{name}}}",
-                      rf"\caption{{{cap}}}",
-                      rf"\label{{f:{name.split('_')[0]}}}",
-                      rf"\end{{{env}}}", ""])
+    out = [rf"\begin{{{env}}}[htbp]", r"\centering",
+           rf"\includegraphics[width={width},height=0.4\textheight,keepaspectratio]{{{name}}}",
+           rf"\caption{{{cap}}}"]
+    if label:
+        out.append(rf"\label{{f:{name.split('_')[0]}}}")
+    out += [rf"\end{{{env}}}", ""]
+    return "\n".join(out)
 
 
 DOC = []
@@ -318,6 +338,7 @@ Figure~\ref{f:step09} is the diagnosis of that failure.
 """)
 A(fig("step06_ebpf_telemetry_program_compiles__attaches_and_ji.png"))
 A(fig("step07_ebpf_flow_telemetry_is_live_under_traffic.png"))
+A(fig("step09_why_the_ebpf_telemetry_read_zero_in_every_histor.png"))
 
 A(r"""\subsection{Controller}
 
@@ -424,7 +445,7 @@ order, with the figures that make each reading visible.
 Eight bulk TCP CUBIC flows with a sparse UDP probe over a 10\,Mbit/s
 bottleneck at 20\,ms base RTT.}
 \label{t:steady}
-\input{generated/table_steady}
+\resizebox{\textwidth}{!}{\input{generated/table_steady}}
 \end{table}
 
 \begin{table}[htbp]
@@ -433,7 +454,7 @@ bottleneck at 20\,ms base RTT.}
 is never in steady state. This is the workload built to exercise the
 controller, and the one on which it helps least.}
 \label{t:staged}
-\input{generated/table_staged}
+\resizebox{\textwidth}{!}{\input{generated/table_staged}}
 \end{table}
 
 \subsection{Step 1: flow queueing dominates everything else}
@@ -448,8 +469,8 @@ two orders of magnitude above them, at
 \FqCodelProbeRttPninetyfiveSteady\,ms, a 99.0\% reduction at goodput that is
 statistically indistinguishable.
 
-The static, sham and adapted \texttt{fq\_codel} bars are not separable at this
-scale. That is the first indication that parameter tuning is a second-order
+The static, sham and adapted \texttt{fq\_codel} points are not separable at
+this scale. That is the first indication that parameter tuning is a second-order
 effect, and it is visible before any statistics are applied.
 """)
 A(fig("fig01_latency_tail_steady.png"))
@@ -465,9 +486,11 @@ A(r"""\subsection{Step 2: the two latencies are not interchangeable}
 Separating the sparse probe from the bulk flows, as in Figure~\ref{f:fig02}, shows they do
 not experience the same queue. Flow-queueing disciplines privilege sparse
 flows by construction, so reporting one latency averages two quantities the
-mechanism deliberately treats differently. The ratio between them runs from
-1.1 to 9.6 across the systems measured, which is why both appear throughout
-this report.
+mechanism deliberately treats differently. Each pair is joined by a rule whose length is the
+gap being argued about, and the ratio is printed against it: it runs from 1.0
+under an unmanaged queue, where no discipline is privileging anything, to 9.6
+under SFQ, which isolates flows but applies no delay target. That is why both
+latencies appear throughout this report.
 """)
 A(fig("fig02_latency_sparse_vs_bulk_steady.png"))
 A(r"""Underlying those latencies is the queue occupancy in
@@ -530,10 +553,14 @@ sham and adapted rows differ very little, which is the same conclusion the
 preceding steps reach one metric at a time.
 """)
 A(fig("fig08_allparams_steady.png", star=True, width=r"0.98\linewidth"))
-A(r"""The same data read as a latency-throughput
-trade-off, and Figure~\ref{f:fig05} the fairness index. Fairness sits at the
-ceiling for every flow-queueing discipline, so it does not discriminate
-between them here.
+A(r"""Figure~\ref{f:fig07} sets latency against goodput, with the goodput axis
+running from zero to the link rate rather than being cropped to the data. Every
+system sits in the same vertical line at about 9.4\,Mbit/s while latency spans
+two orders of magnitude, so there is no trade-off to read horizontally: the
+latency ordering is bought with nothing. Figure~\ref{f:fig05} gives the
+fairness index on a zero-based axis for the same reason. Fairness sits at the
+ceiling for every flow-queueing discipline, within a total range of 0.5\%, so
+it does not discriminate between them here.
 """)
 A(fig("fig07_tradeoff_steady.png"))
 A(fig("fig05_fairness_steady.png"))
@@ -689,7 +716,7 @@ A(r"""\begin{table}[htbp]
 \caption{Scaling-law fit and the pre-registered verdicts. Every threshold in
 the decision column was committed to the repository before the data existed.}
 \label{t:law}
-\input{generated/table_law}
+\resizebox{\textwidth}{!}{\input{generated/table_law}}
 \end{table}
 
 Ratio invariance is the prediction able to refute the claim, and it holds.
@@ -824,15 +851,15 @@ shown = {"fig01_latency_tail_steady.png", "fig02_latency_sparse_vs_bulk_steady.p
 for e in IDX["figures"]:
     n = e["path"].split("/")[-1]
     if n not in shown:
-        A(fig(n))
+        A(fig(n, label=False, index=True))
 A(r"""\section{Implementation captures not shown above}
 
 """)
 for e in IDX["steps"]:
     n = e["path"].split("/")[-1]
     if not n.startswith(("step01", "step02", "step03", "step04", "step05",
-                         "step06", "step07", "step08")):
-        A(fig(n))
+                         "step06", "step07", "step08", "step09")):
+        A(fig(n, label=False, index=True))
 
 A(r"""\section{Per-run figures}
 

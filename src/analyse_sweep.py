@@ -20,7 +20,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from findings import welch
 
-PALETTE = ["#4C78A8", "#F58518", "#54A24B", "#E45756", "#72B7B2", "#B279A2"]
+PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#4a3aa7"]
+SERIES = PALETTE
 GRID, TEXT = "#D9D9D9", "#2B2B2B"
 DISPLAY = {"pfifo": "pfifo\n(no AQM)", "fq_codel": "fq_codel\n(static)",
            "cake": "CAKE", "fq_pie": "FQ-PIE",
@@ -198,29 +199,28 @@ def rtt_report(runs, outdir, baseline_runs):
     open(os.path.join(outdir, "rtt_report.txt"), "w").write(txt + "\n")
     print(txt)
 
-    fig, axes = plt.subplots(1, 2, figsize=(12.5, 5)); fig.patch.set_facecolor("white")
+    # The second panel was dropped. It plotted total p95 RTT against base RTT
+    # for three systems, which put three lines on top of one another along the
+    # y = x reference: total latency tracks base latency, which is true by
+    # construction and carries no argument. The queueing delay above the base,
+    # panel (a), is the quantity the sweep exists to measure.
+    fig, ax = plt.subplots(figsize=(8.6, 5.2)); fig.patch.set_facecolor("white")
+    marks = ["o", "s", "^", "D"]
     for i, s in enumerate(systems):
         ys = [y for y in series[s]]
-        axes[0].plot(rtts, ys, "o-", color=PALETTE[i], linewidth=1.8,
-                     markersize=7, label=DISPLAY.get(s, s).replace("\n", " "))
-    axes[0].legend(frameon=False, fontsize=9)
-    style(axes[0], "(a) Queueing delay above base RTT", "base RTT (ms)", "p95 queue delay (ms)")
+        ax.plot(rtts, ys, marks[i % len(marks)] + "-", color=SERIES[i % len(SERIES)],
+                linewidth=2.0, markersize=9, markeredgecolor="white",
+                markeredgewidth=1.2,
+                label=DISPLAY.get(s, s).replace("\n", " "))
+    ax.set_ylim(0, max(max(series[s]) for s in systems) * 1.25)
+    ax.legend(frameon=False, fontsize=12, ncol=len(systems),
+              loc="upper center", bbox_to_anchor=(0.5, 1.02))
+    style(ax, xlabel="base RTT (ms)", ylabel="p95 queueing delay above base (ms)")
 
-    for i, s in enumerate(systems):
-        ys = []
-        for rtt in rtts:
-            g = by.get((rtt, s), [])
-            v, _, _ = ci95([r.get("sparse_rtt_p95_ms") for r in g])
-            ys.append(v)
-        axes[1].plot(rtts, ys, "o-", color=PALETTE[i], linewidth=1.8, markersize=7,
-                     label=DISPLAY.get(s, s).replace("\n", " "))
-    axes[1].plot(rtts, rtts, "--", color=TEXT, linewidth=1, alpha=0.5, label="base RTT")
-    axes[1].legend(frameon=False, fontsize=9)
-    style(axes[1], "(b) Total p95 RTT against base", "base RTT (ms)", "p95 RTT (ms)")
-
-    fig.suptitle("RTT sweep: CoDel's defaults are RTT-relative by design\n"
-                 "10 Mbit, 8 bulk TCP flows, mean over 3 repetitions", fontsize=12, color=TEXT)
-    fig.tight_layout(rect=[0, 0, 1, 0.9])
+    fig.suptitle("RTT sweep: queueing delay above the base path RTT\n"
+                 "10 Mbit, 8 bulk TCP flows, mean over 3 repetitions",
+                 fontsize=13.5, color=TEXT)
+    fig.tight_layout(rect=[0, 0, 1, 0.88])
     p = os.path.join(outdir, "fig15_rtt_sweep.png")
     fig.savefig(p, dpi=150, facecolor="white"); plt.close(fig); print("\n  wrote", p)
 

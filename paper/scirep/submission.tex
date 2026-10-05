@@ -407,9 +407,9 @@ point: an earlier version of this path loaded correctly, populated its maps
 correctly, and returned zero for every sample, so a capture showing only that
 the program attached would not have established anything.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{step04_corrected_three_node_router_topology.png}
+\includegraphics[width=\linewidth]{step04_corrected_three_node_router_topology.png}
 \caption{The measurement topology, captured as configured. The bottleneck sits
 on the router's egress toward the server, so it is on the data path. TBF is the
 shaper and the queue discipline under study is its child. An earlier two-node
@@ -417,10 +417,10 @@ arrangement placed the bottleneck where it shaped acknowledgements rather than
 data; every backlog and drop measurement taken that way was a measurement of
 the acknowledgement path.}
 \label{fig:topology}
-\end{figure}
-\begin{figure}[htbp]
+\end{figure*}
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{step07_ebpf_flow_telemetry_is_live_under_traffic.png}
+\includegraphics[width=\linewidth]{step07_ebpf_flow_telemetry_is_live_under_traffic.png}
 \caption{The eBPF flow telemetry reading live per-flow state under traffic at
 the \texttt{tc} egress hook, through the \texttt{bpf(2)} syscall rather than by
 spawning \texttt{bpftool}. An earlier version of this path reported zero for
@@ -428,7 +428,7 @@ every sample while the program was correctly loaded and its maps correctly
 populated, which is why the capture shows non-zero counters rather than only a
 successful attach.}
 \label{fig:ebpf}
-\end{figure}
+\end{figure*}
 \subsection{Step 2: latency across all nine configurations}
 
 
@@ -451,36 +451,36 @@ span is three orders of magnitude. Two groups separate cleanly: the
 flow-queueing disciplines that enforce a delay target sit near the bottom
 within a few milliseconds of one another, and the unmanaged queue sits two
 orders of magnitude above them. The static, sham and adapted
-\texttt{fq\_codel} bars are indistinguishable at this scale, which is the first
+\texttt{fq\_codel} points are indistinguishable at this scale, which is the first
 indication that parameter tuning is a second-order effect.
 
 Figure~\ref{fig:sparsebulk} separates the two latency populations. The sparse
 probe and the bulk flows do not experience the same queue: flow-queueing
 disciplines privilege sparse flows by construction, so a single reported
 latency averages two quantities the mechanism deliberately treats differently.
-The ratio between them runs from 1.1 to 9.6 across the systems measured, which
+The ratio between them runs from 1.0 to 9.6 across the systems measured, which
 is why both are reported throughout this work rather than one.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{fig01_latency_tail_steady.png}
+\includegraphics[width=\linewidth]{fig01_latency_tail_steady.png}
 \caption{Tail latency across all nine configurations under steady load, log
 scale. The dominant effect by two orders of magnitude is the presence or
 absence of flow queueing with a delay target, not the tuning of that
 mechanism's parameters. CAKE, which requires no controller, outperforms the
 adapted system.}
 \label{fig:tail}
-\end{figure}
-\begin{figure}[htbp]
+\end{figure*}
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{fig02_latency_sparse_vs_bulk_steady.png}
+\includegraphics[width=\linewidth]{fig02_latency_sparse_vs_bulk_steady.png}
 \caption{Sparse probe flow against bulk TCP flow round-trip time, measured
 separately. Flow-queueing disciplines privilege sparse flows by construction,
 so a single latency number averages two populations the mechanism treats
-differently. The ratio between them ranges from 1.1 to 9.6 across the systems
+differently. The ratio between them ranges from 1.0 to 9.6 across the systems
 tested, which is why both are reported throughout rather than one.}
 \label{fig:sparsebulk}
-\end{figure}
+\end{figure*}
 \subsection{Step 3: separating the controller's cost from its decisions}
 
 
@@ -521,9 +521,9 @@ but never adjusts anything looks identical to the static configuration in a
 summary statistic, which is why the number of adjustments is reported for every
 cell in this work.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{fig13_sham_control_steady.png}
+\includegraphics[width=\linewidth]{fig13_sham_control_steady.png}
 \caption{The sham-controller condition, as each arm's difference from the
 static arm with its 95\% confidence interval. The sham polls at the same
 cadence as the real controller and applies no parameter change, so any
@@ -534,17 +534,17 @@ the decisions are separable from the static configuration. Differences this
 small are shown against a zero line rather than as bars, which would require
 cropping the baseline.}
 \label{fig:sham}
-\end{figure}
-\begin{figure}[htbp]
+\end{figure*}
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{fig12_controller_behaviour.png}
+\includegraphics[width=\linewidth]{fig12_controller_behaviour.png}
 \caption{The controller acting: regime classification, the parameter
 trajectory it produces, and the queue it is responding to. A controller that
 classifies but never adjusts is indistinguishable from the static
 configuration in a summary statistic, so the adjustment count is reported for
 every cell.}
 \label{fig:controller}
-\end{figure}
+\end{figure*}
 \subsection{Step 4: what adaptation achieves, parameter by parameter}
 
 
@@ -577,7 +577,7 @@ the rest on every latency column while remaining indistinguishable on goodput.
 Within that band, the static, sham and adapted rows differ very little, which
 is the same conclusion the preceding subsections reach one metric at a time.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
 \includegraphics[width=\linewidth]{fig08_allparams_steady.png}
 \caption{Every measured parameter against every system under steady load,
@@ -588,7 +588,7 @@ measured values printed in each cell. The block structure is the result: the
 flow-queueing disciplines with a delay target separate from the rest on every
 latency column while remaining indistinguishable on goodput.}
 \label{fig:allparams}
-\end{figure}
+\end{figure*}
 \subsection{Step 5: an alternative requiring no controller}
 
 CAKE, configured with no controller and a single \texttt{besteffort} argument,
@@ -676,17 +676,17 @@ The right panel plots the identical measurements against path RTT alone, where
 they do not collapse. The contrast between the two panels is the argument: RTT
 does not organise the data, and the ratio does.
 
-\begin{figure}[htbp]
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{fig15_rtt_sweep.png}
+\includegraphics[width=\linewidth]{fig15_rtt_sweep.png}
 \caption{The RTT sweep that motivated the scaling law. Adaptation recovers a
 large and highly significant share of bulk-flow RTT on a short path and
 nothing at 20, 80 or 200\,ms. Read as four separate measurements this is
 unexplained; read through $r = \texttt{target}/\text{RTT}$ it is one curve,
 which is the argument of Figure~\ref{fig:law}.}
 \label{fig:rttsweep}
-\end{figure}
-\begin{figure}[htbp]
+\end{figure*}
+\begin{figure*}[htbp]
 \centering
 \includegraphics[width=\linewidth]{fig16_scaling_law.png}
 \caption{The central result. Left: adaptation benefit against
@@ -695,7 +695,7 @@ Right: the same measurements against path RTT alone, where they do not
 collapse. Filled points are statistically significant; labels give
 target/RTT in ms.}
 \label{fig:law}
-\end{figure}
+\end{figure*}
 \subsection{Step 8: sparse flows under mixed traffic}
 
 Bulk-only traffic cannot exercise \texttt{fq\_codel}'s new-flow heuristic or
@@ -817,7 +817,7 @@ evaluation would have missed, and this work suggest them as general practice.
 First, sparse-probe and bulk-flow latency must be reported separately. Because
 \texttt{fq\_codel} and related disciplines give a newly arriving sparse flow
 preferential service, an ICMP probe measures a privileged path. This work observe
-ratios between probe and bulk latency ranging from 1.1 to 9.6 across
+ratios between probe and bulk latency ranging from 1.0 to 9.6 across
 disciplines, and the ranking of two disciplines inverts depending on which is
 quoted. Recent work by Ray et al.\cite{ray2025} documents a related effect in
 which the presence of an AQM changes what standard throughput measurements

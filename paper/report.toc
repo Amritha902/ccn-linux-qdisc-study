@@ -14,15 +14,15 @@
 \contentsline {subsection}{\numberline {3.3}Flow telemetry, and the silent failure it had}{12}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Controller}{12}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Measurement}{14}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Experimental design}{14}{subsection.3.6}%
-\contentsline {section}{\numberline {4}Results}{15}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Step 1: flow queueing dominates everything else}{15}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Step 2: the two latencies are not interchangeable}{17}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Step 3: separating the controller's cost from its decisions}{17}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Step 4: what adaptation achieves, parameter by parameter}{19}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Step 5: under a load that changes, adaptation does not help}{21}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Step 6: an alternative requiring no controller does better}{21}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Step 7: the predictive path never engaged}{21}{subsection.4.7}%
+\contentsline {subsection}{\numberline {3.6}Experimental design}{15}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Results}{16}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Step 1: flow queueing dominates everything else}{16}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Step 2: the two latencies are not interchangeable}{16}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Step 3: separating the controller's cost from its decisions}{18}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Step 4: what adaptation achieves, parameter by parameter}{20}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Step 5: under a load that changes, adaptation does not help}{20}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Step 6: an alternative requiring no controller does better}{22}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Step 7: the predictive path never engaged}{23}{subsection.4.7}%
 \contentsline {subsection}{\numberline {4.8}Step 8: sparse flows under mixed traffic}{23}{subsection.4.8}%
 \contentsline {section}{\numberline {5}Comparison}{24}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Disciplines under test and their parameters}{24}{subsection.5.1}%
@@ -32,10 +32,10 @@
 \contentsline {subsection}{\numberline {6.1}From an unexplained table to a hypothesis}{24}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Pre-registration}{25}{subsection.6.2}%
 \contentsline {subsection}{\numberline {6.3}Result}{25}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}What it costs, and what it means}{26}{subsection.6.4}%
-\contentsline {section}{\numberline {7}Measurement defects found and corrected}{26}{section.7}%
+\contentsline {subsection}{\numberline {6.4}What it costs, and what it means}{27}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Measurement defects found and corrected}{27}{section.7}%
 \contentsline {section}{\numberline {8}Threats to validity}{27}{section.8}%
-\contentsline {section}{\numberline {9}Conclusion}{27}{section.9}%
+\contentsline {section}{\numberline {9}Conclusion}{28}{section.9}%
 \contentsline {section}{\numberline {A}Complete figure set}{28}{appendix.A}%
 \contentsline {section}{\numberline {B}Implementation captures not shown above}{28}{appendix.B}%
 \contentsline {section}{\numberline {C}Per-run figures}{28}{appendix.C}%

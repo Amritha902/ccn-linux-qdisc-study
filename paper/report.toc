@@ -10,7 +10,7 @@
 \contentsline {subsection}{\numberline {2.6}Programmable telemetry}{9}{subsection.2.6}%
 \contentsline {section}{\numberline {3}Methodology}{9}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Why a purpose-built kernel was required}{9}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Topology, and why the first one was wrong}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.2}Topology, and why the first one was wrong}{12}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Flow telemetry, and the silent failure it had}{12}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Controller}{12}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Measurement}{14}{subsection.3.5}%
@@ -27,7 +27,7 @@
 \contentsline {section}{\numberline {5}Comparison}{24}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Disciplines under test and their parameters}{24}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Against the base paper and six recent systems}{24}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}What none of the prior systems reports}{24}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.3}Four omissions common to the whole table}{24}{subsection.5.3}%
 \contentsline {section}{\numberline {6}The scaling law}{24}{section.6}%
 \contentsline {subsection}{\numberline {6.1}From an unexplained table to a hypothesis}{24}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Pre-registration}{25}{subsection.6.2}%

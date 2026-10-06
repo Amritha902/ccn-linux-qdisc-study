@@ -290,11 +290,12 @@ AQM-LLM\cite{aqmllm2025}      & 2025 & action policy  & distilled LLM \\
 \end{tabular}
 \end{table}
 
-What none of them runs is a control condition separating a controller's
-computational cost from the effect of its decisions, and none reports
-sparse-probe and bulk-flow latency separately despite flow queueing
-privileging sparse flows by construction. Both are needed before a small
-difference can be attributed to anything.
+Two pieces of apparatus are missing throughout. A controller that merely
+occupies the CPU is hard to tell from one that helps unless a third arm runs
+the same code and applies nothing, and the sparse probe is usually averaged
+into the bulk flows even where the discipline was built to treat them
+differently. Without both, a small difference cannot be attributed to
+anything.
 
 %% =====================================================================
 \section{Method}\label{s:method}

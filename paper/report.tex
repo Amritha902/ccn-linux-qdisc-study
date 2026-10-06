@@ -172,16 +172,17 @@ presence of an AQM distorts speed-test measurement\cite{ray2025}.
 \subsection{What that line does not supply}
 
 Every system above reports that its adaptation improved something, and the
-independent evaluations that find nothing are equally confident. What none of
-them supplies is the condition under which the other is right. None runs a
-control condition that separates a controller's computational cost from the
-effect of its decisions. None reports sparse-probe and bulk-flow latency
-separately, despite flow-queueing disciplines privileging sparse flows by
-construction. None compares against eight alternative disciplines under one
-identical bottleneck. And none states a numerical prediction before measuring
-it. The contribution claimed here is accordingly not the adaptation mechanism
-but the predicate that says when it pays, together with the apparatus required
-to establish it.
+independent evaluations that find nothing are equally confident. Neither camp
+says where the boundary between them lies, and the apparatus for finding it is
+mostly absent too. A controller that merely occupies the CPU looks much like
+one that helps, unless a third arm is run that does the work and applies
+nothing, which none of this literature does. Sparse and bulk latency are
+averaged into a single figure even where the discipline under test was built
+to treat the two populations differently. Comparison sets stop at two or three
+disciplines. Numerical predictions, where they appear at all, were written
+after the measurements they describe. The claim made here is therefore not the
+adaptation mechanism, which is old, but the predicate that says when it pays,
+and the apparatus needed to establish it.
 
 \subsection{Programmable telemetry}
 
@@ -700,13 +701,18 @@ is established, by DESiRED, so the mechanism is not the contribution here.
 And no entry in the table states the condition under which its adaptation
 pays, which is what this report supplies.
 
-\subsection{What none of the prior systems reports}
+\subsection{Four omissions common to the whole table}
 
-None runs a control condition that separates a controller's computational cost
-from the effect of its decisions. None reports sparse-probe and bulk-flow
-latency separately, despite flow-queueing disciplines privileging sparse flows
-by construction. None compares against eight alternative disciplines under an
-identical bottleneck. None states numerical predictions before measuring them.
+Taken together the systems above leave four gaps, and this work was built
+around closing them. Without a control arm the computational cost of a
+controller cannot be told apart from the effect of its decisions, so a busy
+process and a useful one are indistinguishable in the results. Averaging the
+sparse probe into the bulk flows discards the very distinction that flow
+queueing exists to create. A comparison against two or three disciplines
+cannot say whether the gain belongs to the adaptation or to the family of
+discipline it was tried on, which is why eight alternatives share one
+bottleneck here. And a prediction written after its measurement is not a
+prediction.
 
 \section{The scaling law}\label{s:law}
 

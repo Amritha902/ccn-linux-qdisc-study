@@ -244,11 +244,12 @@ control; pre-registered evaluation}
 %% ---------------------------------------------------------------- intro
 \section{Introduction}\label{sec:intro}
 
-Bufferbloat is the inflation of queueing delay by buffers larger than any
-control loop requires, with throughput left unaffected\cite{gettys2012}. The
-Linux response is \texttt{fq\_codel}, which applies Deficit Round Robin across
-roughly a thousand flow queues and runs an independent CoDel instance in
-each\cite{rfc8290}. Four parameters govern it and none changes once set:
+Bufferbloat occurs when buffers are larger than any control loop needs. The
+queueing delay rises and the throughput stays where it
+was\cite{gettys2012}. Linux answers it with \texttt{fq\_codel}, which divides
+traffic across roughly a thousand flow queues by Deficit Round Robin and gives
+each queue its own CoDel instance\cite{rfc8290}. Four parameters govern it and
+none of them changes after configuration:
 \texttt{target} (5\,ms by default), \texttt{interval} (100\,ms),
 \texttt{limit} and \texttt{quantum}.
 
@@ -261,13 +262,14 @@ using deep reinforcement learning and in-band telemetry\cite{desired2024}.
 Runtime adaptation of a delay target is therefore not novel, and no claim of
 novelty is made for it here.
 
-Three families of queue discipline bear on this. Random Early Detection
-opened the field by dropping with a probability derived from average queue
-length\cite{red1993}, and its sensitivity to configuration is what prompted
-Adaptive RED. PIE replaced queue length with a delay estimate inside a
-proportional-integral controller\cite{rfc8033}. CoDel abandoned queue length
-altogether, dropping when the minimum sojourn time over a sliding interval
-exceeds a target\cite{nichols2012,rfc8289}; its authors argue that the two
+Three families of queue discipline bear on this. Random Early Detection was
+one of the first methods in the area, dropping with a probability derived from
+average queue length\cite{red1993}. Because it is sensitive to how it is
+configured, Adaptive RED followed. PIE takes a different route again,
+estimating delay and controlling it with a proportional-integral controller
+instead of working from queue length\cite{rfc8033}. CoDel abandoned queue
+length altogether and drops when the minimum sojourn time over a sliding
+interval exceeds a target\cite{nichols2012,rfc8289}. Its authors argue that the two
 parameters are expressed relative to path round-trip time by construction and
 therefore need no tuning. That claim is qualitative and has not, as far as we
 are aware, been given a boundary: it holds for a deployment whose target is
@@ -368,8 +370,8 @@ queue management and not a rate trade.
 Fair queueing on its own is not sufficient. SFQ isolates flows but applies no
 delay target, and its bulk queues sit at their 127-packet limit throughout, so
 its sparse probe reads \SfqProbeRttMeanSteady\,ms while the bulk flows sharing
-the same link read \SfqBulkRttMeanSteady\,ms. The scheduler and the AQM
-perform distinct jobs and both are required.
+the same link read \SfqBulkRttMeanSteady\,ms. The scheduler and the AQM do different
+jobs, and both are needed.
 
 The three \texttt{fq\_codel} arms, static, sham and adapted, are not separable
 from one another at this scale on any of the four outputs, which is the first
@@ -589,9 +591,9 @@ connected by virtual Ethernet pairs. The router carries \texttt{netem} for
 base propagation delay and a token-bucket filter at 10\,Mbit/s as its root
 queue discipline, with the discipline under test installed as the child of
 that shaper on the egress interface facing the server. Placing the bottleneck
-there puts it on the data path. An earlier two-node arrangement placed it so
-that it shaped the reverse direction, and every queue measurement taken that
-way described the acknowledgement path rather than the data path.
+there puts it on the data path. An earlier arrangement used only two nodes and
+shaped the reverse direction. Every queue measurement taken that way described
+the acknowledgement path, not the data.
 
 \subsection{Queue disciplines evaluated}
 
@@ -600,30 +602,29 @@ Nine configurations are compared under an identical bottleneck:
 CAKE\cite{cake2018}, static \texttt{fq\_codel}, and \texttt{fq\_codel} under
 the controller described below. CAKE is configured \texttt{besteffort}
 without its own bandwidth setting so that the token bucket remains the only
-shaper and every discipline meets the same bottleneck. A tenth arm, the sham
-controller, polls at the controller's cadence and executes the same
-classification and prediction code but applies no parameter change; it exists
-to separate the controller's computational cost from the effect of its
-decisions.
+shaper and every discipline meets the same bottleneck. A tenth arm is the sham
+controller. It runs at the same cadence and executes the same classification
+and prediction code, but changes no parameter, which is what separates the
+controller's processor cost from the effect of its decisions.
 
 \subsection{Controller}
 
 At each control tick the controller reads the queue discipline's own
 statistics together with per-flow state maintained by an eBPF program attached
 at the \texttt{tc} clsact egress hook\cite{ebpfqdisc2023}, classifies a congestion regime from
-drop rate and backlog, and estimates a trajectory by least squares over a
-ten-sample window. At each adjustment opportunity it applies an
+drop rate and backlog, and fits a trend to the last ten samples by least
+squares. At each adjustment opportunity it applies an
 additive-increase multiplicative-decrease rule taken from Adaptive
 RED\cite{ared2001}, with $\beta=0.9$ on decrease. Observation and adjustment
 run on separated timescales an order of magnitude apart, following the
 two-timescale stochastic approximation framework\cite{borkar1997}.
 
-Every bound, step size and regime threshold is expressed relative to the
-configured \texttt{target} rather than in absolute milliseconds. Expressed
-absolutely, a controller started against an 80\,ms target would take steps
-sixteen times smaller in relative terms than one started against 5\,ms, and
-the ratio dependence reported in Equation~\ref{eq:law} would then be partly an
-artefact of the controller's constants rather than a property of the queue.
+Every bound, step size and regime threshold is set relative to the configured
+\texttt{target}, not in absolute milliseconds. Suppose they were absolute. A
+controller started against an 80\,ms target would then take steps sixteen
+times smaller, in relative terms, than one started against 5\,ms, and the
+ratio dependence of Equation~\ref{eq:law} would be partly an artefact of the
+controller's own constants rather than a property of the queue.
 
 Flow-map contents are read through the \texttt{bpf(2)} system call directly
 rather than by invoking an external utility per sample, which reduces the cost
@@ -649,9 +650,10 @@ the run so that the congestion regime changes, and a mixed load adding sparse
 constant-rate UDP probes alongside bulk traffic. Each cell is repeated three
 times as an independent run. Differences between conditions are assessed with
 Welch's $t$-test, which does not assume equal group variances. Two-sided
-$p$-values are computed exactly from Student's $t$ distribution through the
-regularised incomplete beta function rather than by normal approximation,
-which at three samples per group materially overstates significance.
+$p$-values come from Student's $t$ distribution through the regularised
+incomplete beta function rather than from a normal approximation. At three
+samples per group the approximation makes results look more significant than
+they are.
 
 \subsection{Platform}
 

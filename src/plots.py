@@ -16,6 +16,7 @@ Naming convention — every file says what it is without opening it:
   fig11_timeseries_rtt_<wl>.png            RTT over time
   fig12_controller_behaviour.png           what ACAPE actually did
   fig13_sham_control.png                   controller CPU cost isolated
+  fig17_main_outputs_<wl>.png              the four main outputs compared
 
 Per-run figures are produced by src/make_gallery.py as
   run<NN>_<label>.png
@@ -763,6 +764,96 @@ def fig13(runs, wl, od):
     save(fig, od, f"fig13_sham_control_{wl}.png")
 
 
+
+# ── fig17: the main measured outputs, compared ───────────────────────────
+# Added because neither of the other comparison figures answers the question
+# a reader actually arrives with. fig01 shows one output across the systems;
+# fig08 shows every output but encodes rank rather than magnitude, so two
+# cells of the same colour can differ by a factor of eighty. This figure puts
+# the four outputs the study is about side by side, on their own scales, with
+# every value printed, so the comparison between the unmanaged baseline, the
+# Linux default, the adapted system and the best alternative can be read off
+# directly.
+MAIN_OUT = [
+    ("sparse_rtt_p95_ms",   "Tail latency, sparse probe\np95 RTT (ms)", True),
+    ("bulk_rtt_mean_ms",    "Bulk-flow latency\nmean RTT (ms)",        True),
+    ("backlog_mean_pkts",   "Queue occupancy\nmean backlog (packets)", True),
+    ("throughput_mbps",     "Goodput\n(Mbit/s)",                       False),
+]
+
+
+def fig17(runs, wl, od):
+    g = grouped(runs, wl)
+    if not g:
+        return
+    order = [k for k in ORDER if k in dict(g)]
+    gd = dict(g)
+    # Two by two rather than one by four. In a single-column journal page a
+    # four-panel strip is scaled to about a third of its drawn width and its
+    # labels stop being readable; a square grid keeps the type at size.
+    fig, axgrid = plt.subplots(2, 2, figsize=(13.0, 9.0))
+    fig.patch.set_facecolor("white")
+    axes = axgrid.ravel()
+
+    for ax, (metric, label, logx) in zip(axes, MAIN_OUT):
+        rows = []
+        for k in order:
+            m, h, _ = ci95([r.get(metric) for r in gd[k]])
+            if m is not None:
+                rows.append((k, m, h))
+        if not rows:
+            continue
+        y = np.arange(len(rows))[::-1]
+        vals = [m for _, m, _ in rows]
+        errs = [h for _, _, h in rows]
+        cols = [colour(k) for k, _, _ in rows]
+        if logx:
+            # Dots, not bars. A bar states its value by its length and length
+            # is only defined from zero, which a logarithmic axis does not
+            # have; on a log axis the bar would start wherever the axis
+            # happened to stop. Only the goodput panel, which is linear and
+            # zero-based, is drawn as bars.
+            ax.set_xscale("log")
+            lo = min(vals) * 0.45
+            for yy, (k, m, h) in zip(y, rows):
+                ax.hlines(yy, lo, m, color=GRID, linewidth=1.4, zorder=1)
+            for yy, (k, m, h) in zip(y, rows):
+                ax.errorbar([m], [yy], xerr=[[h], [h]], fmt="o",
+                            markersize=10, color=colour(k), ecolor=colour(k),
+                            elinewidth=1.5, capsize=4,
+                            markeredgecolor="white", markeredgewidth=1.3,
+                            zorder=3)
+            ax.set_xlim(lo, max(vals) * 3.4)
+        else:
+            ax.barh(y, vals, xerr=errs, color=cols, edgecolor="white",
+                    linewidth=0.8, height=0.72,
+                    error_kw=dict(elinewidth=1.4, capsize=3))
+            ax.set_xlim(0, max(v + e for v, e in zip(vals, errs)) * 1.30)
+        for yy, (k, m, h) in zip(y, rows):
+            txt = f"{m:,.0f}" if m >= 100 else (f"{m:.1f}" if m >= 10
+                                                else f"{m:.2f}")
+            ax.text(m + h + (m * 0.10 if logx else max(vals) * 0.03), yy, txt,
+                    va="center", ha="left", fontsize=11, color=TEXT)
+        ax.set_yticks(y)
+        ax.set_yticklabels([DISPLAY.get(k, k).replace("\n", " ")
+                            for k, _, _ in rows], fontsize=11)
+        ax.set_title(label, fontsize=12.5, color=TEXT, pad=10)
+        ax.grid(True, axis="x", color=GRID, linewidth=0.6, alpha=0.8)
+        ax.set_axisbelow(True)
+        for sp in ("top", "right", "left"):
+            ax.spines[sp].set_visible(False)
+        ax.spines["bottom"].set_color(GRID)
+        ax.tick_params(colors=TEXT, labelsize=10.5)
+        ax.set_xlabel("logarithmic scale" if logx else "linear, from zero",
+                      fontsize=10, color=TEXT)
+
+    # Springer Nature style puts the description in the caption, not inside
+    # the image, so no title is drawn here.
+    fig.tight_layout(h_pad=3.2, w_pad=2.0)
+    fig._acape_laid_out = True
+    save(fig, od, f"fig17_main_outputs_{wl}.png")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="results")
@@ -775,7 +866,7 @@ def main():
         if not grouped(runs, wl):
             continue
         for fn in (fig01, fig02, fig03, fig04, fig05, fig06,
-                   fig07, fig08, fig09, fig10, fig11, fig13):
+                   fig07, fig08, fig09, fig10, fig11, fig13, fig17):
             try:
                 fn(runs, wl, a.outdir)
             except Exception as e:

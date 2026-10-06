@@ -1,15 +1,40 @@
-%% ============================================================
-%% Self-contained. Compiles on Overleaf with no template class.
-%% New Project -> Upload Project -> this zip, then set this file as main.
-%% ============================================================
-\documentclass[10pt,twocolumn,a4paper]{article}
-\usepackage[margin=1.9cm]{geometry}
+%% =====================================================================
+%% Scientific Reports / Springer Nature submission.
+%%
+%% Structure follows the Springer Nature article template (sn-jnl): single
+%% column, numbered sections in the Scientific Reports order (Introduction,
+%% Results, Discussion, Methods), table captions above the table, figure
+%% captions below as "Fig. N", and a Declarations block.
+%%
+%% The preamble emulates that layout rather than calling \documentclass{sn-jnl},
+%% so the file compiles on a bare Overleaf project with no class file to
+%% install. To move to the official class, replace this preamble with the
+%% template's and keep everything from \begin{document} onward: the sectioning,
+%% float style and back matter already match.
+%% =====================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[left=2.6cm,right=2.6cm,top=2.6cm,bottom=2.6cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{booktabs,graphicx,amsmath,amssymb,url}
+\usepackage{booktabs,graphicx,amsmath,amssymb,url,array}
 \usepackage[hidelinks]{hyperref}
 \usepackage{caption}
-\captionsetup{font=small,labelfont=bf}
+\usepackage{titlesec}
+\usepackage{authblk}
+
+%% Springer Nature float style: "Fig. 1  caption", "Table 1  caption".
+\captionsetup[figure]{labelfont=bf,labelsep=space,font=small,name=Fig.}
+\captionsetup[table]{labelfont=bf,labelsep=space,font=small,
+                     position=above,skip=4pt}
+\providecommand{\botrule}{\bottomrule}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+\renewcommand\Affilfont{\small}
+\setlength{\affilsep}{0.6em}
 \providecommand{\keywords}[1]{\par\medskip\noindent\textbf{Keywords:} #1}
 \setlength{\parskip}{0pt}
 \sloppy
@@ -181,12 +206,15 @@
 \newcommand{\LawWorstThroughput}{-0.4}
 
 
-%% ---------- title ----------
-\title{\vspace{-1.2cm}When Does Adapting a Queue Discipline's Parameters Pay?
-A Scaling Law in \texttt{target}/RTT, Measured on Stock Linux}
-\author{Amritha S \quad Yugeshwaran P \quad Deepti Annuncia\\[2pt]
-\small Department of Electronics and Communication Engineering\\
-\small Vellore Institute of Technology, Chennai, India}
+%% ---------------------------------------------------------------- front
+\title{\vspace{-1.0cm}\bfseries When does adapting a queue discipline's
+parameters pay? A scaling law in \texttt{target}/RTT, measured on stock Linux}
+
+\author[1]{Amritha S}
+\author[1]{Yugeshwaran P}
+\author[1]{Deepti Annuncia}
+\affil[1]{Department of Electronics and Communication Engineering,
+Vellore Institute of Technology, Chennai, 600127, Tamil Nadu, India}
 \date{}
 
 \begin{document}
@@ -194,304 +222,415 @@ A Scaling Law in \texttt{target}/RTT, Measured on Stock Linux}
 
 \begin{abstract}
 \noindent
-Linux ships \texttt{fq\_codel} with four parameters fixed at configuration
-time. Whether adapting them at runtime is worth doing has been answered both
-ways, and neither answer states when the other holds. Across 178 runs spanning
-three workloads, eight alternative queue disciplines and path round-trip times
-from 2 to 200\,ms, we find the benefit of adaptation is governed not by path
-RTT but by the dimensionless ratio $r=\texttt{target}/\mathrm{RTT}$. The
-benefit follows a logistic curve in $r$ with ceiling \LawCeiling\,\% and half
-of that reached at $r=\LawHalfBenefit$ ($R^{2}=\LawRsq$), a form that holds
-across a 16-fold change in RTT and transfers to \texttt{codel} and PIE.
-Published guidance places a correctly configured deployment at $r$ between
+Linux ships \texttt{fq\_codel} as its default queue discipline with four
+parameters fixed at configuration time. Whether adapting those parameters
+while traffic runs is worth doing has been answered both ways in the
+literature, and neither answer states the conditions under which the other
+holds. Here we measure 178 runs spanning three workloads, eight alternative
+queue disciplines and path round-trip times from 2 to 200\,ms, and find that
+the benefit of adaptation is governed not by path RTT but by the
+dimensionless ratio $r=\texttt{target}/\mathrm{RTT}$. Benefit follows a
+logistic curve in $r$ with a ceiling of \LawCeiling\,\% and half of that
+reached at $r=\LawHalfBenefit$ ($R^{2}=\LawRsq$), a form that holds across a
+16-fold change in RTT and transfers to two further AQM mechanisms. Published
+configuration guidance places a correctly configured deployment at $r$ between
 0.05 and 0.10, so half the available benefit lies five to ten times outside
-that envelope: adaptation is a remedy for misconfiguration rather than an
-improvement on correct configuration. Two measurements frame the result.
-Flow queueing with a delay target cuts tail latency 99.0\,\% below an
-unmanaged queue at indistinguishable goodput, two orders of magnitude more
-than any tuning measured here; and CAKE, which needs no controller, beats the
-adapted system at every RTT tested. All hypotheses and decision thresholds
-were registered before the data existed.
+that envelope, which makes parameter adaptation a remedy for misconfiguration
+rather than an improvement on correct configuration. Two measured results
+frame this. Flow queueing combined with a delay target reduces tail latency by
+99.0\,\% relative to an unmanaged queue at indistinguishable goodput, an
+effect two orders of magnitude larger than any parameter tuning recorded here;
+and CAKE, an existing discipline requiring no controller, outperforms the
+adapted system at every path RTT tested. All hypotheses and their decision
+thresholds were registered in a public repository before the data existed.
 \end{abstract}
 
 \keywords{active queue management; bufferbloat; \texttt{fq\_codel}; CoDel;
-dimensionless scaling law; runtime parameter adaptation; Linux \texttt{tc};
-pre-registered evaluation}
+dimensionless scaling law; runtime parameter adaptation; Linux traffic
+control; pre-registered evaluation}
 
-\vspace{0.4em}
+\vspace{0.6em}
 
-%% =====================================================================
-\section{Introduction}
+%% ---------------------------------------------------------------- intro
+\section{Introduction}\label{sec:intro}
 
 Bufferbloat is the inflation of queueing delay by buffers larger than any
-control loop requires, while throughput stays unaffected\cite{gettys2012}.
-Linux answers it with \texttt{fq\_codel}: Deficit Round Robin across roughly a
-thousand flow queues, each with its own CoDel instance\cite{rfc8290}. Four
-parameters govern it and none changes once set: \texttt{target} (5\,ms),
-\texttt{interval} (100\,ms), \texttt{limit} and \texttt{quantum}.
+control loop requires, with throughput left unaffected\cite{gettys2012}. The
+Linux response is \texttt{fq\_codel}, which applies Deficit Round Robin across
+roughly a thousand flow queues and runs an independent CoDel instance in
+each\cite{rfc8290}. Four parameters govern it and none changes once set:
+\texttt{target} (5\,ms by default), \texttt{interval} (100\,ms),
+\texttt{limit} and \texttt{quantum}.
 
-Adapting those parameters at runtime has clear precedent. Adaptive RED adjusts
-a drop probability by an AIMD rule\cite{ared2001}; Ye and Leung adapt CoDel's
-interval analytically\cite{yeleung2020}; DESiRED adapts an AQM's delay target
-in P4 with deep reinforcement learning\cite{desired2024}. Runtime adaptation
-of a delay target is therefore not novel and we claim no novelty for it.
+Adapting those parameters while traffic runs has obvious appeal and clear
+precedent. Adaptive RED adjusts a maximum drop probability by an
+additive-increase multiplicative-decrease rule\cite{ared2001}; Ye and Leung
+derive stability conditions for CoDel and adapt its \texttt{interval}
+analytically\cite{yeleung2020}; DESiRED adapts an AQM's delay target in P4
+using deep reinforcement learning and in-band telemetry\cite{desired2024}.
+Runtime adaptation of a delay target is therefore not novel, and no claim of
+novelty is made for it here.
 
-What the literature does not supply is the condition under which adaptation
-pays. Systems report gains; independent evaluations report none; neither camp
-states when the other is right. RFC 7567 meanwhile recommends AQM that needs
-no per-flow configuration\cite{rfc7567}, which makes a null result for
-adaptation a reportable outcome rather than a failed experiment.
+Three families of queue discipline bear on this. Random Early Detection
+opened the field by dropping with a probability derived from average queue
+length\cite{red1993}, and its sensitivity to configuration is what prompted
+Adaptive RED. PIE replaced queue length with a delay estimate inside a
+proportional-integral controller\cite{rfc8033}. CoDel abandoned queue length
+altogether, dropping when the minimum sojourn time over a sliding interval
+exceeds a target\cite{nichols2012,rfc8289}; its authors argue that the two
+parameters are expressed relative to path round-trip time by construction and
+therefore need no tuning, and Equation~\ref{eq:law} below quantifies the
+point at which that argument stops holding. Beyond \texttt{fq\_codel}, CAKE
+integrates shaping, flow queueing and host fairness in one
+discipline\cite{cake2018}, FQ-PIE is the corresponding combination for
+PIE\cite{fqpie2019}, and L4S standardises a low-latency service class built on
+a dual-queue coupled AQM\cite{rfc9330,rfc9332}. All eight of these are
+measured here against one identical bottleneck.
 
-This paper establishes that condition experimentally, and it turns out to be a
-dimensionless ratio rather than any absolute quantity. Section~\ref{s:rel}
-places the work against the base paper and six recent systems,
-Section~\ref{s:method} describes the apparatus, Section~\ref{s:res} gives the
-measurements, and Section~\ref{s:law} derives and tests the law.
-
-%% =====================================================================
-\section{Related work}\label{s:rel}
-
-Random Early Detection opened the field, dropping with a probability derived
-from average queue length\cite{red1993}; its sensitivity to configuration
-prompted Adaptive RED\cite{ared2001}, whose AIMD policy and $\beta=0.9$
-decrease factor our controller adopts. PIE replaced queue length with a delay
-estimate inside a PI controller\cite{rfc8033}. CoDel abandoned queue length
-entirely, dropping when minimum sojourn time over a sliding interval exceeds a
-target\cite{nichols2012,rfc8289}; its authors argue the parameters are
-RTT-relative by construction and need no tuning. Equation~\ref{eq:law}
-quantifies where that argument stops holding. CAKE integrates shaping, flow
-queueing and host fairness\cite{cake2018}, FQ-PIE is the corresponding
-combination for PIE\cite{fqpie2019}, and L4S standardises a low-latency class
-on a dual-queue coupled AQM\cite{rfc9330,rfc9332}. All eight disciplines are
-measured here under one identical bottleneck.
-
-Table~\ref{t:sys} places this work against the base paper and six recent
-systems. Two things follow. Adapting a delay target at runtime is established,
-so the mechanism is not our contribution. And no entry states the condition
-under which its adaptation pays, which is what we supply.
+Among systems that adapt at runtime, QueuePilot learns a marking policy for
+small buffers by reinforcement learning\cite{queuepilot2023} and AQM-LLM
+distils a language model into a marking controller\cite{aqmllm2025}.
+Toopchinezhad and Ahmadi survey the machine-learning AQM literature and
+observe that heuristic schemes require careful parameter adjustment, which
+limits their applicability in deployment\cite{mlaqm2025}. SCRR revisits
+fair-queueing scheduling for modern link rates\cite{scrr2025}, and Ray et
+al.\ characterise how the presence of an AQM distorts speed-test
+measurement\cite{ray2025}. Table~\ref{tab:systems} places the present work
+against this line. Each of these systems reports that its adaptation improved
+something, and each adapts a single quantity; none states the conditions under
+which that adaptation is worth running, which is the gap addressed here.
 
 \begin{table}[htbp]
-\centering\footnotesize
-\caption{The base paper and six recent systems. None reports the condition
-under which its adaptation is worth running.}
-\label{t:sys}
+\centering\small
+\caption{The present work against six recent systems that adapt an active
+queue discipline at runtime. Each adapts a single quantity and reports a gain;
+none states the condition under which the adaptation is worth running.}
+\label{tab:systems}
 \begin{tabular}{@{}llll@{}}
 \toprule
-System & Year & Adapts & Method \\ \midrule
-Adaptive RED\cite{ared2001}   & 2001 & $\max_p$       & AIMD \\
-ACoDel\cite{yeleung2020}      & 2020 & \texttt{interval} & analytical \\
-QueuePilot\cite{queuepilot2023} & 2023 & marking prob. & offline RL \\
-DualPI2 / L4S\cite{rfc9332}   & 2023 & none           & dual queue \\
-DESiRED\cite{desired2024}     & 2024 & target delay   & deep RL \\
-AQM-LLM\cite{aqmllm2025}      & 2025 & action policy  & distilled LLM \\
-\textbf{This work}            & 2026 & four parameters & AIMD + gradient \\
-\bottomrule
+System & Year & Quantity adapted & Method \\ \midrule
+Adaptive RED\cite{ared2001}      & 2001 & maximum drop probability & AIMD \\
+ACoDel\cite{yeleung2020}         & 2020 & \texttt{interval}        & analytical \\
+QueuePilot\cite{queuepilot2023}  & 2023 & marking probability      & offline RL \\
+DualPI2 / L4S\cite{rfc9332}      & 2023 & none                     & dual queue \\
+DESiRED\cite{desired2024}        & 2024 & target delay             & deep RL \\
+AQM-LLM\cite{aqmllm2025}         & 2025 & action policy            & distilled LLM \\
+\textbf{This work}               & 2026 & four parameters          & AIMD with gradient \\
+\botrule
 \end{tabular}
 \end{table}
 
-Two pieces of apparatus are missing throughout. A controller that merely
-occupies the CPU is hard to tell from one that helps unless a third arm runs
-the same code and applies nothing, and the sparse probe is usually averaged
-into the bulk flows even where the discipline was built to treat them
-differently. Without both, a small difference cannot be attributed to
-anything.
+What that body of work does not supply is the condition under which adaptation
+pays. Systems report gains, independent evaluations report none, and neither
+camp states where the boundary between the two lies. RFC 7567 meanwhile
+recommends active queue management that requires no per-flow
+configuration\cite{rfc7567}, which makes a null result for adaptation a
+reportable outcome rather than a failed experiment. Two pieces of apparatus
+are missing throughout as well. A controller that merely occupies the
+processor is hard to distinguish from one that helps unless a third arm runs
+the same code and applies nothing; and the sparse probe traffic used to
+measure latency is usually averaged into the bulk flows, even where the
+discipline under test was designed to treat those two populations
+differently.
 
-%% =====================================================================
-\section{Method}\label{s:method}
+This study supplies the missing condition and the apparatus needed to
+establish it. The condition turns out to be a dimensionless ratio rather than
+any absolute quantity, which is what allows it to be stated once and applied
+to deployments of different speed and distance.
 
-Three network namespaces model a client, a router and a server. The router
-carries \texttt{netem} for base delay and a token-bucket shaper at 10\,Mbit/s
-as root qdisc, with the discipline under test as its child on the egress
-\emph{toward the server}, so the bottleneck sits on the data path. An earlier
-two-node arrangement shaped the reverse direction, and every backlog figure
-taken that way measured acknowledgements rather than data.
+%% -------------------------------------------------------------- results
+\section{Results}\label{sec:results}
 
-Nine configurations are compared: \texttt{pfifo}, SFQ, RED, \texttt{codel},
-PIE, FQ-PIE, CAKE, static \texttt{fq\_codel}, and \texttt{fq\_codel} under our
-controller. A tenth, the \emph{sham} controller, polls at the controller's
-cadence and runs the same classification and prediction code but applies no
-change, which separates the controller's CPU cost from its decisions.
+Every value reported here is generated from the committed measurement logs by
+the analysis scripts; none is entered by hand. Unless stated otherwise,
+figures describe the steady workload at a 20\,ms base path RTT over a
+10\,Mbit/s bottleneck, with means taken over three independent runs and
+uncertainties given as 95\,\% confidence intervals.
 
-The controller reads \texttt{tc} statistics and per-flow state from an eBPF
-program at the \texttt{tc} clsact egress hook, classifies a congestion regime,
-estimates a trajectory by least squares over a ten-sample window, and applies
-an AIMD adjustment. Observation and update run on separated timescales, an
-order of magnitude apart, following two-timescale stochastic
-approximation\cite{borkar1997}. Every bound and step size is expressed
-relative to the configured \texttt{target}, not in absolute milliseconds;
-expressed absolutely, a controller started against an 80\,ms target would take
-steps 16 times smaller in relative terms than against 5\,ms, and the measured
-effect would then be an artefact of the constants.
+\subsection{Comparison of the four measured outputs across all systems}
 
-Three latencies are measured separately: a sparse ICMP probe, bulk TCP flow
-RTT reported by \texttt{iperf3}, and a queue-delay proxy derived from backlog
-and rate. Workloads are a steady eight-flow bulk load, a staged load whose
-flow count varies from two to twenty-four during the run, and a mixed load
-adding sparse UDP probes. Each cell is repeated three times. Differences use
-Welch's $t$-test with exact two-sided $p$-values from the regularised
-incomplete beta function, since at three samples per group the normal
-approximation materially overstates significance. The transport is TCP
-CUBIC\cite{cubic2008} on Linux 6.12.48 with every discipline compiled in.
+Figure~\ref{fig:main} sets out the four outputs the study measures, side by
+side, for all ten configurations. Tail latency of the sparse probe and mean
+latency of the bulk flows are reported separately throughout, because
+flow-queueing disciplines privilege sparse flows by construction and a single
+averaged latency conceals that. Queue occupancy is the mechanism those
+latencies arise from, and goodput is the quantity a latency improvement might
+have been bought with.
 
-%% =====================================================================
-\section{Results}\label{s:res}
+The dominant effect is the presence of flow queueing with a delay target, not
+the tuning of one. An unmanaged first-in-first-out queue reaches
+\PfifoProbeRttPninetyfiveSteady\,ms at the 95th percentile against
+\FqCodelProbeRttPninetyfiveSteady\,ms for static \texttt{fq\_codel}, a
+99.0\,\% reduction ($p<0.001$), while goodput is statistically
+indistinguishable between them (\PfifoGoodputSteady\ against
+\FqCodelGoodputSteady\,Mbit/s, $p=0.20$). The goodput panel is drawn from zero
+precisely so that this can be seen: every system delivers the same throughput,
+so the latency ordering across three orders of magnitude is a property of
+queue management and not a rate trade.
 
-Every number below is generated from the committed run logs by the analysis
-scripts; none is entered by hand.
+Fair queueing on its own is not sufficient. SFQ isolates flows but applies no
+delay target, and its bulk queues sit at their 127-packet limit throughout, so
+its sparse probe reads \SfqProbeRttMeanSteady\,ms while the bulk flows sharing
+the same link read \SfqBulkRttMeanSteady\,ms. The scheduler and the AQM
+perform distinct jobs and both are required.
 
-\subsection{The dominant effect is not tuning}
-
-Figure~\ref{f:tail} gives 95th-percentile probe latency for all nine
-configurations. The disciplines that combine flow queueing with a delay target
-sit within a few milliseconds of one another; the unmanaged queue sits two
-orders of magnitude above, at \PfifoProbeRttPninetyfiveSteady\,ms against
-\FqCodelProbeRttPninetyfiveSteady\,ms, a 99.0\,\% reduction ($p<0.001$) at
-goodput that is statistically indistinguishable (\PfifoGoodputSteady\ against
-\FqCodelGoodputSteady\,Mbit/s, $p=0.20$). The static, sham and adapted
-\texttt{fq\_codel} points are not separable at this scale, which is the first
+The three \texttt{fq\_codel} arms, static, sham and adapted, are not separable
+from one another at this scale on any of the four outputs, which is the first
 indication that parameter tuning is a second-order effect.
 
-Fair queueing alone is not sufficient. SFQ isolates flows but applies no AQM,
-and its bulk queues sit at their 127-packet limit throughout: its probe reads
-\SfqProbeRttMeanSteady\,ms while the bulk flows sharing the link read
-\SfqBulkRttMeanSteady\,ms. The scheduler and the AQM do distinct jobs and both
-are necessary.
-
-\begin{figure*}[tbp]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.84\linewidth]{fig01_latency_tail_steady.png}
-\caption{Tail latency across all nine configurations under steady load,
-logarithmic axis. The dominant effect by two orders of magnitude is the
-presence of flow queueing with a delay target, not the tuning of its
-parameters. CAKE, which requires no controller, outperforms the adapted
-system. Values are means over three runs with 95\,\% confidence intervals.}
-\label{f:tail}
-\end{figure*}
+\includegraphics[width=\linewidth]{fig17_main_outputs_steady.png}
+\caption{The four measured outputs compared across all ten configurations
+under the steady workload. Lower is better for the three latency and
+occupancy panels, higher is better for goodput. Red marks the unmanaged
+baseline, blue the three \texttt{fq\_codel} arms including the adapted system.
+The first three outputs span orders of magnitude and are drawn on a
+logarithmic axis, where position carries the value; goodput is linear from
+zero, where bar length carries it. Points and bars are means over three runs
+and whiskers are 95\,\% confidence intervals.}
+\label{fig:main}
+\end{figure}
 
-\subsection{What adaptation achieves, parameter by parameter}
+\subsection{Effect of adaptation, parameter by parameter}
 
-Figure~\ref{f:all} places every measured quantity against every system.
+Figure~\ref{fig:allparams} gives every measured quantity against every system
+in one view, with each row's rank shown as colour and each row's true range
+printed beside it. The rank encoding makes within-row ordering legible across
+quantities whose units differ by orders of magnitude; the range column is
+there so that a row with strong colour contrast and no meaningful difference,
+such as goodput or fairness at 1.01$\times$, is not read as a result.
+
 Under the steady workload the controller produces a real but small
-improvement: mean backlog falls from \FqCodelBacklogSteady\ to
-\FqCodelAcapeBacklogSteady\ packets. The sham comparison attributes this to the
-control decisions rather than to the presence of a busy process, since the
-static-to-sham difference lies inside the confidence interval on every metric.
-Under the staged workload, the one built to exercise adaptation, no metric
-separates: adjustments lag the transitions they respond to.
+improvement: mean queue occupancy falls from \FqCodelBacklogSteady\ to
+\FqCodelAcapeBacklogSteady\ packets. The sham arm is what allows that to be
+attributed to the control decisions rather than to the presence of a busy
+process, since the difference between the static and sham arms lies inside the
+confidence interval on every one of the four outputs. Under the staged
+workload, which was built specifically to exercise adaptation by varying the
+flow count from two to twenty-four during the run, no output separates at all:
+adjustments lag the transitions they respond to.
 
-CAKE is the result that matters for practice. It requires no controller, no
-telemetry and no model, and it reaches
-\CakeProbeRttPninetyfiveSteady\,ms probe p95 against the adapted system's
-\FqCodelAcapeProbeRttPninetyfiveSteady\,ms. Switching discipline is worth more than
-tuning one.
+The comparison that matters for practice is with CAKE, which requires no
+controller, no telemetry and no model of the queue. It reaches
+\CakeProbeRttPninetyfiveSteady\,ms at the 95th percentile against
+\FqCodelAcapeProbeRttPninetyfiveSteady\,ms for the adapted system. Replacing
+the discipline is worth more than tuning it.
 
-\begin{figure*}[tbp]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.90\linewidth]{fig08_allparams_steady.png}
-\caption{Every measured quantity against every system, steady workload.
-Colour is each row's rank, light best to dark worst; cells are measured means.
-The spread column gives each row's real range, so rows with strong colour
-contrast but no meaningful difference, such as goodput and fairness at
-1.01$\times$, are not read as findings.}
-\label{f:all}
-\end{figure*}
+\includegraphics[width=\linewidth]{fig08_allparams_steady.png}
+\caption{Every measured quantity against every system under the steady
+workload. Colour encodes each row's rank, light best to dark worst, and cells
+carry the measured means. The spread column gives each row's true range as the
+ratio of its largest value to its smallest, so that rows with strong colour
+contrast but no meaningful difference are not mistaken for findings.}
+\label{fig:allparams}
+\end{figure}
 
-%% =====================================================================
-\section{A scaling law for when adaptation pays}\label{s:law}
+\subsection{A scaling law in \texttt{target}/RTT}
 
-The measurements above are taken at one path RTT. Sweeping base RTT from 2 to
-200\,ms while holding the configured \texttt{target} fixed shows the benefit
-of adaptation is not a function of RTT at all, but of the ratio
-$r=\texttt{target}/\mathrm{RTT}$. Fitting bulk-flow RTT reduction $b$ over
-\LawCells\ cells gives
+The results above are taken at a single path RTT. Sweeping the base RTT from 2
+to 200\,ms while holding the configured \texttt{target} fixed shows that the
+benefit of adaptation is not a function of path RTT at all, but of the
+dimensionless ratio $r=\texttt{target}/\mathrm{RTT}$. Fitting the reduction
+in bulk-flow RTT, $b$, over \LawCells\ cells gives
 %
 \begin{equation}
 b(r) \;=\; \frac{B}{1 + \left(r_{0}/r\right)^{k}},
-\quad
-\begin{aligned}
-B &= \LawCeiling\,\%\\
-r_{0} &= \LawHalfBenefit\\
-k &= \LawSteepness
-\end{aligned}
+\qquad
+B = \LawCeiling\,\%,\quad
+r_{0} = \LawHalfBenefit,\quad
+k = \LawSteepness,
 \label{eq:law}
 \end{equation}
 %
-with $R^{2}=\LawRsq$, where $B$ is the ceiling, $r_{0}$ the ratio at which half
-of it is reached and $k$ the sharpness of the transition
-(Figure~\ref{f:law}).
+with $R^{2}=\LawRsq$, where $B$ is the ceiling, $r_{0}$ the ratio at which
+half of it is reached and $k$ the sharpness of the transition.
+Figure~\ref{fig:law} shows the fit, and shows the same measurements plotted
+against path RTT alone, where they do not collapse.
 
-The hypotheses and their decision thresholds were committed to the repository
-before the data existed. Three held. A crossover exists: benefit stays
-under 1.5\,\% and is not significant below $r=0.25$, and reaches
-16.4--\LawPeakBenefit\,\% at $r\ge1$. The curve is invariant across a
-16-fold change in RTT: at fixed $r=1$, cells at 5, 20 and 80\,ms give 18.4,
-17.6 and 16.4\,\%, a spread of 2.0 percentage points against a 5-point
-threshold. Leave-one-out prediction of the interior ratios has a mean absolute
-error of 1.4 percentage points, worst case 3.5. The form also transfers to
-mechanisms the fit never saw: refitted independently, plain \texttt{codel}
-places $r_{0}$ at 0.42 against \texttt{fq\_codel}'s 0.49, and PIE, which
-shares nothing with CoDel beyond having a delay target, at 1.06
-($R^{2}=0.978$ and $0.992$).
+Hypotheses and decision thresholds were committed to a public repository
+before any of these data were collected, and three of the four held. A
+crossover exists: benefit remains under 1.5\,\% and is not statistically
+significant below $r=0.25$, and reaches 16.4 to \LawPeakBenefit\,\% at
+$r\ge1$. The curve is invariant to path RTT at fixed ratio: cells at 5, 20 and
+80\,ms with $r=1$ give 18.4, 17.6 and 16.4\,\%, a spread of 2.0 percentage
+points against a threshold of 5 set in advance. Leave-one-out prediction of
+the interior ratios has a mean absolute error of 1.4 percentage points, worst
+case 3.5. The functional form also transfers to mechanisms the fit never saw:
+refitted independently, plain \texttt{codel} places $r_{0}$ at 0.42 against
+\texttt{fq\_codel}'s 0.49, and PIE, which shares nothing with CoDel beyond
+possessing a delay target, places it at 1.06, with $R^{2}$ of 0.978 and 0.992
+respectively.
 
-One pre-registered test failed, and we report it. The spread in $r_{0}$ across the three
-mechanisms is 2.52$\times$, beyond the 2$\times$ threshold set in advance,
-driven entirely by PIE: the CoDel family agrees to 0.49 against 0.42. The three disciplines differ in their
-\texttt{target}/\texttt{interval} ratio as well as in mechanism, so the spread
-is confounded; the functional form transfers, the constant does not.
+One pre-registered test failed and is reported as such. The spread in $r_{0}$
+across the three mechanisms is 2.52$\times$, beyond the 2$\times$ threshold
+set in advance. It is driven entirely by PIE, the CoDel family agreeing to
+0.49 against 0.42, and the three disciplines differ in their
+\texttt{target}/\texttt{interval} ratio as well as in mechanism, so the
+measurement is confounded. The functional form transfers; the constant does
+not.
 
-\begin{figure}[tbp]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{fig16_scaling_law.png}
-\caption{Benefit of adaptation against $r=\texttt{target}/\mathrm{RTT}$ (left)
-and against path RTT alone (right). The same measurements collapse onto one
-curve under the ratio and scatter under RTT. Filled points are statistically
-significant.}
-\label{f:law}
+\includegraphics[width=0.88\linewidth]{fig16_scaling_law.png}
+\caption{Benefit of parameter adaptation against the dimensionless ratio
+$r=\texttt{target}/\mathrm{RTT}$ (left) and against path RTT alone (right).
+The same measurements collapse onto a single logistic curve under the ratio
+and scatter under RTT, which is the evidence that the ratio rather than the
+delay is the governing variable. Filled points are statistically significant,
+open points are not.}
+\label{fig:law}
 \end{figure}
 
-\paragraph{What it means in practice.}
-Published guidance places a correctly configured deployment at $r$ between
-0.05 and 0.10. Half the available benefit arrives only at
-$r=\LawHalfBenefit$, five to ten times outside that envelope. Adaptation is
-therefore a remedy for misconfiguration rather than an improvement on correct
-configuration, and the ratio is computable from two numbers an operator
-already has. Where $r$ is small, the correct action is to replace the
-discipline rather than tune it.
+%% ----------------------------------------------------------- discussion
+\section{Discussion}\label{sec:discussion}
 
-%% =====================================================================
-\section{Threats to validity}
+Equation~\ref{eq:law} has a direct operational reading. Published guidance
+places a correctly configured deployment at $r$ between 0.05 and 0.10, while
+half the available benefit arrives only at $r=\LawHalfBenefit$, five to ten
+times outside that envelope. On a correctly configured link, therefore, there
+is almost nothing for parameter adaptation to recover, and the honest
+description of what such a controller does is that it repairs
+misconfiguration. The ratio is computable from two numbers an operator already
+has, the configured target and a path RTT estimate, so the predicate can be
+evaluated before any controller is deployed.
 
-A single 10\,Mbit/s bottleneck in namespaces on one kernel is not a
-datacentre, and the ceiling $B$ should be expected to move with link rate and
-flow count; the dimensionless form is the portable claim, the constants are
-not. Three repetitions per cell give wide intervals, which is why the law is
-fitted across \LawCells\ cells rather than rested on any one. A second
-dimensionless group, \texttt{target} against the serialisation time of one
-MTU, was pre-registered and failed: benefit peaks at intermediate values
-rather than being floored, so $r$ alone does not close the problem.
+Where the ratio is small, the measurements point to a different action.
+Switching from \texttt{fq\_codel} to CAKE is worth more at every RTT tested
+than tuning \texttt{fq\_codel}'s four parameters, and it requires no runtime
+machinery at all. That the largest available improvement comes from a
+configuration change rather than from control is not a comfortable result for
+an adaptive system, but it is what the measurements show.
 
-%% =====================================================================
-\section{Conclusion}
+Several limits bound these claims. A single 10\,Mbit/s bottleneck in network
+namespaces on one kernel is not a datacentre, and the ceiling $B$ should be
+expected to move with link rate and flow count; the dimensionless form is the
+portable claim and the fitted constants are not. Three repetitions per cell
+give wide intervals, which is why the law is fitted across \LawCells\ cells
+rather than rested on any single one. A second dimensionless group, the
+configured target against the serialisation time of one maximum-size packet,
+was pre-registered and failed: benefit peaks at intermediate values rather
+than being floored below unity, so $r$ alone does not close the problem. And
+the cross-mechanism transfer established the form but not the constant, as
+described above.
 
-The question of whether runtime parameter adaptation of an AQM is worth doing
-has a quantitative answer, and it is a dimensionless one. Benefit follows a
-logistic curve in $r=\texttt{target}/\mathrm{RTT}$ with a ceiling of
-\LawCeiling\,\% and half-benefit at $r=\LawHalfBenefit$, invariant across a
-16-fold change in RTT and transferring in form to two other AQM mechanisms.
-Since correctly configured deployments sit an order of magnitude below the
-half-benefit point, the honest reading is that adaptation repairs
-misconfiguration, and that replacing the discipline is worth more than tuning
-it. The contribution is the predicate, not the mechanism, together with the
-apparatus needed to establish it: a sham-controller condition, separated
-sparse and bulk latencies, eight alternative disciplines under one bottleneck,
-and thresholds fixed before the measurements were taken.
+%% -------------------------------------------------------------- methods
+\section{Methods}\label{sec:methods}
 
+\subsection{Testbed}
+
+Three Linux network namespaces model a client, a router and a server,
+connected by virtual Ethernet pairs. The router carries \texttt{netem} for
+base propagation delay and a token-bucket filter at 10\,Mbit/s as its root
+queue discipline, with the discipline under test installed as the child of
+that shaper on the egress interface facing the server. Placing the bottleneck
+there puts it on the data path. An earlier two-node arrangement placed it so
+that it shaped the reverse direction, and every queue measurement taken that
+way described the acknowledgement path rather than the data path.
+
+\subsection{Queue disciplines evaluated}
+
+Nine configurations are compared under an identical bottleneck:
+\texttt{pfifo} with no AQM, SFQ, RED, \texttt{codel}, PIE, FQ-PIE,
+CAKE\cite{cake2018}, static \texttt{fq\_codel}, and \texttt{fq\_codel} under
+the controller described below. CAKE is configured \texttt{besteffort}
+without its own bandwidth setting so that the token bucket remains the only
+shaper and every discipline meets the same bottleneck. A tenth arm, the sham
+controller, polls at the controller's cadence and executes the same
+classification and prediction code but applies no parameter change; it exists
+to separate the controller's computational cost from the effect of its
+decisions.
+
+\subsection{Controller}
+
+At each control tick the controller reads the queue discipline's own
+statistics together with per-flow state maintained by an eBPF program attached
+at the \texttt{tc} clsact egress hook\cite{ebpfqdisc2023}, classifies a congestion regime from
+drop rate and backlog, and estimates a trajectory by least squares over a
+ten-sample window. At each adjustment opportunity it applies an
+additive-increase multiplicative-decrease rule taken from Adaptive
+RED\cite{ared2001}, with $\beta=0.9$ on decrease. Observation and adjustment
+run on separated timescales an order of magnitude apart, following the
+two-timescale stochastic approximation framework\cite{borkar1997}.
+
+Every bound, step size and regime threshold is expressed relative to the
+configured \texttt{target} rather than in absolute milliseconds. Expressed
+absolutely, a controller started against an 80\,ms target would take steps
+sixteen times smaller in relative terms than one started against 5\,ms, and
+the ratio dependence reported in Equation~\ref{eq:law} would then be partly an
+artefact of the controller's constants rather than a property of the queue.
+
+Flow-map contents are read through the \texttt{bpf(2)} system call directly
+rather than by invoking an external utility per sample, which reduces the cost
+of one control tick from 3.17 to 0.709\,s and avoids introducing a second
+process whose scheduling would confound the latency comparison the sham arm
+exists to isolate.
+
+\subsection{Measurements}
+
+Three latencies are recorded separately. A sparse ICMP probe measures the
+latency a thin flow experiences; \texttt{iperf3} reports the smoothed
+round-trip time of the bulk TCP flows; a queue-delay proxy is computed
+from instantaneous backlog and the configured rate, and flow fairness is
+reported as Jain's index\cite{jain1984}. The three are not
+interchangeable, and the ratio between the sparse and bulk latencies ranges
+from 1.0 to 9.6 across the systems tested.
+
+\subsection{Experimental design and statistics}
+
+Three workloads are used: a steady bulk load of eight TCP CUBIC\cite{cubic2008}
+flows, a staged load whose flow count varies from two to twenty-four during
+the run so that the congestion regime changes, and a mixed load adding sparse
+constant-rate UDP probes alongside bulk traffic. Each cell is repeated three
+times as an independent run. Differences between conditions are assessed with
+Welch's $t$-test, which does not assume equal group variances. Two-sided
+$p$-values are computed exactly from Student's $t$ distribution through the
+regularised incomplete beta function rather than by normal approximation,
+which at three samples per group materially overstates significance.
+
+\subsection{Platform}
+
+Experiments ran on Linux 6.12.48, configured with every evaluated queue
+discipline compiled in and BPF Type Format enabled, under hardware-assisted
+virtualisation.
+
+%% ----------------------------------------------------------- back matter
 \section*{Data availability}
-All code, kernel configuration, raw logs and analysis scripts are at
-\url{https://github.com/Amritha902/ccn-linux-qdisc-study}. Every value quoted
-here is generated from the committed logs by those scripts.
 
-\bibliographystyle{IEEEtran}
+All code, kernel configuration, raw measurement logs and analysis scripts are
+available at \url{https://github.com/Amritha902/ccn-linux-qdisc-study}. Every
+table and every numerical value quoted in this article is generated directly
+from the committed logs by the analysis scripts; none is entered by hand. The
+pre-registered hypotheses and their decision thresholds are committed to the
+same repository with timestamps preceding the corresponding measurement runs.
+
+\section*{Declarations}
+
+\textbf{Funding.} No funding was received for conducting this study.
+
+\textbf{Conflict of interest.} The authors declare no competing interests.
+
+\textbf{Ethics approval and consent to participate.} Not applicable.
+
+\textbf{Consent for publication.} Not applicable.
+
+\textbf{Materials availability.} Not applicable.
+
+\textbf{Code availability.} All analysis and experiment code is available at
+the repository given above.
+
+\textbf{Author contribution.} A.S. designed and implemented the testbed, the
+controller and the analysis pipeline, and wrote the manuscript. Y.P.
+contributed to the experimental design and the measurement campaigns. D.A.
+supervised the work. All authors reviewed the manuscript.
+
+%% sn-mathphys-num is the Springer Nature numeric style, but it ships only
+%% with the official SN template. unsrt is numeric by order of first citation
+%% and compiles on a bare project. Starting from the official template, change
+%% this one line to \bibliographystyle{sn-mathphys-num}.
+\bibliographystyle{unsrt}
 \bibliography{refs}
 
 \end{document}

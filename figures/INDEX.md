@@ -4,7 +4,7 @@ Every image in this repository, numbered and captioned.
 
 - **11** methodology evidence captures (STEP)
 - **63** per-run result figures (RUN)
-- **38** analysis figures (FIG)
+- **40** analysis figures (FIG)
 
 ## Methodology evidence
 
@@ -66,6 +66,8 @@ Each is a verbatim capture of a command that was actually executed.
 | **FIG 36** | fig14_mixed_workload | [`fig14_mixed_workload.png`](comparison/fig14_mixed_workload.png) |
 | **FIG 37** | fig15_rtt_sweep | [`fig15_rtt_sweep.png`](comparison/fig15_rtt_sweep.png) |
 | **FIG 38** | fig16_scaling_law | [`fig16_scaling_law.png`](comparison/fig16_scaling_law.png) |
+| **FIG 39** | fig17_main_outputs_staged | [`fig17_main_outputs_staged.png`](comparison/fig17_main_outputs_staged.png) |
+| **FIG 40** | fig17_main_outputs_steady | [`fig17_main_outputs_steady.png`](comparison/fig17_main_outputs_steady.png) |
 
 ## Per-run figures
 

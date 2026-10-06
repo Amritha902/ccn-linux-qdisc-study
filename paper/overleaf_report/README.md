@@ -15,7 +15,7 @@
   inlined, so the generated fact macros, the three result tables and the
   scaling-law table are all inside it. Nothing has to be regenerated.
 - `refs.bib`, 23 references.
-- 49 PNG figures the document places, flat, named exactly as it
+- 51 PNG figures the document places, flat, named exactly as it
   asks for them.
 - 112 further project figures, also flat: the per-run time series the
   report tabulates rather than embeds, and the remaining captures. LaTeX reads
@@ -23,7 +23,7 @@
   affecting the compile or the page count, and adding one takes a single line
   with no file to go and find.
 
-Total 163 files.
+Total 165 files.
 
 ## If something does not compile
 
@@ -34,7 +34,7 @@ Total 163 files.
   the zip rather than individual files.
 - **Compile times out**: Overleaf bills compile time per project, and this one
   carries the full figure set. Deleting the unused PNGs is safe; the document
-  names only the 49 it places.
+  names only the 51 it places.
 - **`IEEEtran.bst` not found**: Overleaf ships it. If a local TeX install does
   not, change `\bibliographystyle{IEEEtran}` to `\bibliographystyle{unsrt}`.
 

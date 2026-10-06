@@ -686,6 +686,18 @@
       "title": "fig16_scaling_law.png",
       "caption": "fig16_scaling_law",
       "path": "comparison/fig16_scaling_law.png"
+    },
+    {
+      "id": "FIG 39",
+      "title": "fig17_main_outputs_staged.png",
+      "caption": "fig17_main_outputs_staged",
+      "path": "comparison/fig17_main_outputs_staged.png"
+    },
+    {
+      "id": "FIG 40",
+      "title": "fig17_main_outputs_steady.png",
+      "caption": "fig17_main_outputs_steady",
+      "path": "comparison/fig17_main_outputs_steady.png"
     }
   ]
 }

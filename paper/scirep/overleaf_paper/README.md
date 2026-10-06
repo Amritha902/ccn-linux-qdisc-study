@@ -1,4 +1,4 @@
-# Overleaf upload: the conference paper
+# Overleaf upload: the Scientific Reports manuscript
 
 ## What to do
 
@@ -11,26 +11,30 @@
 
 ## What is in the zip
 
-- `paper.tex`, the whole manuscript in one file. Two-column article class,
-  self-contained preamble, no `\input` left and no custom `.cls` required, so
-  it compiles on a bare Overleaf project.
-- `refs.bib`, 18 of its entries cited by the text.
+- `paper.tex`, the whole manuscript in one file. Single column in the
+  Springer Nature layout that Scientific Reports uses, with a self-contained
+  preamble, no `\input` left and no custom `.cls` required, so it compiles on
+  a bare Overleaf project. To move to the official Springer Nature template,
+  replace the preamble with the template's and keep everything from
+  `\begin{document}` onward: sectioning, float style and the Declarations
+  block already match, and the bibliography style switches on one line.
+- `refs.bib`, 23 of its entries cited by the text.
 - 3 PNG figures the manuscript places, flat, named exactly as it
   asks for them.
-- 158 further PNG figures from the project, also flat: the remaining
+- 160 further PNG figures from the project, also flat: the remaining
   comparison plots for both workloads, the implementation captures and the
   per-run time series. LaTeX reads only what `\includegraphics` names, so
   these sit in the project without affecting the compile or the page count.
   Adding one to the paper is a single `\includegraphics` line, with no file
   to go and find.
 
-Total 163 files.
+Total 165 files.
 
 ## The 3 figures the manuscript places
 
-- `fig01_latency_tail_steady.png` - tail latency across all nine disciplines, ours against theirs
 - `fig08_allparams_steady.png` - every measured quantity against every system, parameter level
 - `fig16_scaling_law.png` - the contribution: benefit collapses onto one curve under target/RTT
+- `fig17_main_outputs_steady.png` - the four measured outputs compared across all ten configurations
 
 ## If something does not compile
 
@@ -56,9 +60,9 @@ Nothing else has to be wired up.
 
 ## Figure inventory
 
-The 158 figures beyond the manuscript's own, by group:
+The 160 figures beyond the manuscript's own, by group:
 
 - **implementation captures (step*)**: 11 files
 - **per-run time series (run*)**: 108 files
-- **comparison and analysis plots**: 39 files
+- **comparison and analysis plots**: 41 files
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a self-contained Overleaf project for the conference paper.
+"""Build a self-contained Overleaf project for the Scientific Reports paper.
 
 The source of truth is submission.tex, not main.tex: submission.tex carries
 edits made after the last flatten and re-running flatten.py would discard
@@ -77,8 +77,8 @@ cited = sorted({k.strip() for m in re.findall(r"\\cite\{([^}]+)\}", tex)
                 for k in m.split(",")})
 
 why = {
-    "fig01_latency_tail_steady.png":
-        "tail latency across all nine disciplines, ours against theirs",
+    "fig17_main_outputs_steady.png":
+        "the four measured outputs compared across all ten configurations",
     "fig08_allparams_steady.png":
         "every measured quantity against every system, parameter level",
     "fig16_scaling_law.png":
@@ -97,7 +97,7 @@ groups = {"implementation captures (step*)": [f for f in extra
 inventory = "\n".join(f"- **{k}**: {len(v)} files" for k, v in groups.items()
                        if v)
 
-readme = f"""# Overleaf upload: the conference paper
+readme = f"""# Overleaf upload: the Scientific Reports manuscript
 
 ## What to do
 
@@ -110,9 +110,13 @@ readme = f"""# Overleaf upload: the conference paper
 
 ## What is in the zip
 
-- `paper.tex`, the whole manuscript in one file. Two-column article class,
-  self-contained preamble, no `\\input` left and no custom `.cls` required, so
-  it compiles on a bare Overleaf project.
+- `paper.tex`, the whole manuscript in one file. Single column in the
+  Springer Nature layout that Scientific Reports uses, with a self-contained
+  preamble, no `\\input` left and no custom `.cls` required, so it compiles on
+  a bare Overleaf project. To move to the official Springer Nature template,
+  replace the preamble with the template's and keep everything from
+  `\\begin{{document}}` onward: sectioning, float style and the Declarations
+  block already match, and the bibliography style switches on one line.
 - `refs.bib`, {len(cited)} of its entries cited by the text.
 - {len(wanted)} PNG figures the manuscript places, flat, named exactly as it
   asks for them.

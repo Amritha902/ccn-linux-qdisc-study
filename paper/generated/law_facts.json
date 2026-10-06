@@ -15,5 +15,8 @@
  "LawWorstThroughput": "-0.4",
  "LawDropRiseHigh": "63",
  "LawInvariance": "holds",
- "LawHoldout": "predictive"
+ "LawHoldout": "predictive",
+ "LawLooLogistic": "1.21",
+ "LawLooSimple": "2.41",
+ "LawLooStep": "4.86"
 }

@@ -121,7 +121,7 @@ Linux ships \texttt{fq\_codel} as its default queue discipline with four
 parameters fixed at configuration time. Whether adapting them at runtime is
 worth doing has been answered both ways in the literature. This report
 establishes that both answers are correct and that a single dimensionless
-number decides which applies. Across 178 measured runs spanning three
+number decides which applies. Across 210 measured runs spanning three
 workloads, eight alternative queue disciplines and path round-trip times from
 2 to 200\,ms, the benefit of adaptation is governed not by path RTT but by the
 ratio $r=\texttt{target}/\mathrm{RTT}$, saturating at \LawCeiling\% with half

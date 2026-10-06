@@ -26,6 +26,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Scientific Reports and most journals require raster figures at 300 dpi or
+# better at the size they are printed. 150 is a screen resolution.
+FIG_DPI = 300
+
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from findings import welch
 
@@ -504,7 +509,7 @@ def main():
                  fontsize=12, color=TEXT)
     fig.tight_layout(rect=[0, 0, 1, 0.9])
     p = os.path.join(a.outdir, "fig16_scaling_law.png")
-    fig.savefig(p, dpi=150, facecolor="white"); plt.close(fig)
+    fig.savefig(p, dpi=FIG_DPI, facecolor="white"); plt.close(fig)
     print("\n  wrote", p)
 
 

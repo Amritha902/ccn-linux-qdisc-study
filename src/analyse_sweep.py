@@ -16,6 +16,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Scientific Reports and most journals require raster figures at 300 dpi or
+# better at the size they are printed. 150 is a screen resolution.
+FIG_DPI = 300
+
+
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from findings import welch
@@ -135,7 +140,7 @@ def mixed_report(runs, outdir):
                  fontsize=12, color=TEXT)
     fig.tight_layout(rect=[0, 0, 1, 0.88])
     p = os.path.join(outdir, "fig14_mixed_workload.png")
-    fig.savefig(p, dpi=150, facecolor="white"); plt.close(fig); print("\n  wrote", p)
+    fig.savefig(p, dpi=FIG_DPI, facecolor="white"); plt.close(fig); print("\n  wrote", p)
 
 
 def rtt_report(runs, outdir, baseline_runs):
@@ -222,7 +227,7 @@ def rtt_report(runs, outdir, baseline_runs):
                  fontsize=13.5, color=TEXT)
     fig.tight_layout(rect=[0, 0, 1, 0.88])
     p = os.path.join(outdir, "fig15_rtt_sweep.png")
-    fig.savefig(p, dpi=150, facecolor="white"); plt.close(fig); print("\n  wrote", p)
+    fig.savefig(p, dpi=FIG_DPI, facecolor="white"); plt.close(fig); print("\n  wrote", p)
 
 
 def main():

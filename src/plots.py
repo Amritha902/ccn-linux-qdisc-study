@@ -45,6 +45,10 @@ INK      = "#5B6670"   # every system with no special role
 BASE_HL  = "#e34948"   # pfifo, the unmanaged baseline
 TEST_HL  = "#2a78d6"   # the three fq_codel arms, the systems under test
 GRID, TEXT = "#D9D9D9", "#2B2B2B"
+# Scientific Reports and most journals require raster figures at 300 dpi or
+# better at the size they are printed. 150 is a screen resolution.
+FIG_DPI = 300
+
 
 # Figures are placed at 0.95\linewidth and scaled down again to fit
 # 0.4\textheight, so a 9 pt label in the PNG can reach the page at under 6 pt.
@@ -233,7 +237,7 @@ def save(fig, outdir, name):
         except Exception:
             pass
     p = os.path.join(outdir, name)
-    fig.savefig(p, dpi=150, facecolor="white", bbox_inches="tight")
+    fig.savefig(p, dpi=FIG_DPI, facecolor="white", bbox_inches="tight")
     plt.close(fig)
     print(f"  {name}")
     return p

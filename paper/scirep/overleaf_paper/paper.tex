@@ -222,11 +222,13 @@
 \title{\vspace{-1.0cm}\bfseries When does adapting a queue discipline's
 parameters pay? A scaling law in \texttt{target}/RTT, measured on stock Linux}
 
-\author[1]{Amritha S}
+\author[1]{Amritha S$^{*}$}
 \author[1]{Yugeshwaran P}
 \author[1]{Deepti Annuncia}
 \affil[1]{Department of Electronics and Communication Engineering,
 Vellore Institute of Technology, Chennai, 600127, Tamil Nadu, India}
+\affil[ ]{\vspace{0.3em}\small *Corresponding author. E-mail:
+\href{mailto:amritha16112005@gmail.com}{amritha16112005@gmail.com}}
 \date{}
 
 \begin{document}
@@ -235,30 +237,23 @@ Vellore Institute of Technology, Chennai, 600127, Tamil Nadu, India}
 \begin{abstract}
 \noindent
 Linux ships \texttt{fq\_codel} as its default queue discipline with four
-parameters fixed at configuration time. Whether adapting those parameters
-while traffic runs is worth doing has been answered both ways in the
-literature, and neither answer states the conditions under which the other
-holds. Here we measure 210 runs spanning three workloads, eight alternative
-queue disciplines and path round-trip times from 2 to 200\,ms, and find that
-the benefit of adaptation is governed not by path RTT but by the
-dimensionless ratio $r=\texttt{target}/\mathrm{RTT}$. Benefit follows a
-logistic curve in $r$ with a ceiling of \LawCeiling\,\% and half of that
-reached at $r=\LawHalfBenefit$ ($R^{2}=\LawRsq$), a form that holds across a
-16-fold change in RTT and transfers to two further AQM mechanisms. The ratio
-fixes the shape but not the ceiling: holding $r$ at 1 while sweeping the link
-rate over a 25-fold range moves the benefit from \RateBenefitMin\ to
-\RateBenefitMax\,\%, so the fitted ceiling is a property of the operating
-point rather than of the mechanism. Published
-configuration guidance places a correctly configured deployment at $r$ between
-0.05 and 0.10, so half the available benefit lies five to ten times outside
-that envelope, which makes parameter adaptation a remedy for misconfiguration
-rather than an improvement on correct configuration. Two measured results
-frame this. Flow queueing combined with a delay target reduces tail latency by
-99.0\,\% relative to an unmanaged queue at indistinguishable goodput, an
-effect two orders of magnitude larger than any parameter tuning recorded here;
-and CAKE, an existing discipline requiring no controller, outperforms the
-adapted system at every path RTT tested. All hypotheses and their decision
-thresholds were registered in a public repository before the data existed.
+parameters fixed at configuration time. Whether adapting them while traffic
+runs is worth doing has been answered both ways, and neither answer states
+when the other holds. Across 210 runs spanning three workloads, eight
+queue disciplines and path round-trip times from 2 to 200\,ms, the benefit is
+governed not by path RTT but by the dimensionless ratio
+$r=\texttt{target}/\mathrm{RTT}$, following a logistic curve with half of its
+ceiling reached at $r=\LawHalfBenefit$ ($R^{2}=\LawRsq$). The form holds
+across a 16-fold change in RTT and transfers to two further AQM mechanisms,
+but the ceiling does not: holding $r$ at 1 while sweeping link rate 25-fold
+moves the benefit from \RateBenefitMin\ to \RateBenefitMax\,\%. Published
+guidance places a correctly configured deployment at $r$ between 0.05 and
+0.10, five to ten times below the half-benefit point, making adaptation a
+remedy for misconfiguration rather than an improvement on correct
+configuration. Flow queueing with a delay target cuts tail latency 99.0\,\%
+below an unmanaged queue at indistinguishable goodput, and CAKE, which needs
+no controller, beats the adapted system at every RTT tested. All hypotheses and
+thresholds were registered before the data existed.
 \end{abstract}
 
 \keywords{active queue management; bufferbloat; \texttt{fq\_codel}; CoDel;

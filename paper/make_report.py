@@ -179,7 +179,9 @@ and described where its argument sits. Section~\ref{s:cmp} compares this work
 against the base paper and six recent systems at parameter level.
 Section~\ref{s:law} derives and tests the scaling law.
 Section~\ref{s:defects} documents the nine measurement defects found during
-the work. Appendix~\ref{s:app} holds the complete figure set.
+the work. Every figure the report places is one its argument needs; the
+complete output of the analysis pipeline, including the per-workload variants
+not reproduced here, is in \texttt{figures/} in the repository.
 """)
 
 # ------------------------------------------------------------------ 1b
@@ -279,18 +281,17 @@ kernel has no such code. Every experiment therefore runs inside a virtual
 machine built for the purpose.
 """)
 A(fig("step01_session_kernel_cannot_run_the_aqms_under_study.png"))
-A(r"""Figure~\ref{f:step02} shows the replacement: a 6.12.48 kernel configured
-and built with \texttt{fq\_codel}, CoDel, CAKE, PIE, FQ-PIE, RED,
-\texttt{netem}, TBF and HTB all compiled in rather than modular, and with BTF
-enabled so that eBPF programs can be verified against kernel types. This is
-the kernel every measurement in this report was taken on.
-""")
-A(fig("step02_kernel_built_with_every_aqm_compiled_in.png"))
-A(r"""Availability is then demonstrated rather than assumed.
-Each discipline is instantiated in turn on a real virtual
-Ethernet device inside the guest (Figure~\ref{f:step03}), so that a later null
-result for one of them cannot be explained by the discipline having been
-absent.
+A(r"""The replacement is a 6.12.48 kernel configured and built with
+\texttt{fq\_codel}, CoDel, CAKE, PIE, FQ-PIE, RED, \texttt{netem}, TBF and
+HTB all compiled in rather than modular, and with BTF enabled so that eBPF
+programs can be verified against kernel types. Every measurement in this
+report was taken on it.
+
+That the build succeeded is weaker evidence than that the disciplines work, so
+availability is demonstrated rather than assumed: each one is instantiated in
+turn on a real virtual Ethernet device inside the guest
+(Figure~\ref{f:step03}), which is what rules out explaining a later null
+result by the discipline having been absent.
 """)
 A(fig("step03_aqm_availability_confirmed_inside_the_vm.png"))
 
@@ -474,13 +475,15 @@ The static, sham and adapted \texttt{fq\_codel} points are not separable at
 this scale. That is the first indication that parameter tuning is a second-order
 effect, and it is visible before any statistics are applied.
 """)
+A(fig("fig17_main_outputs_steady.png", star=True,
+      width=r"0.97\linewidth"))
 A(fig("fig01_latency_tail_steady.png"))
-A(r"""Throughput rules out the obvious objection. Figure~\ref{f:fig03} confirms that the latency differences are not bought
-with throughput. Goodput is flat across every configuration including the
-unmanaged queue, so the latency ordering is a property of queue management
-rather than a rate trade.
+A(r"""Throughput rules out the obvious objection, and the goodput panel of
+Figure~\ref{f:fig17} is drawn from zero so that it can be seen rather than
+asserted. Every configuration including the unmanaged queue delivers the same
+goodput, so the latency ordering across three orders of magnitude is a
+property of queue management and not a rate trade.
 """)
-A(fig("fig03_throughput_steady.png"))
 
 A(r"""\subsection{Step 2: the two latencies are not interchangeable}
 
@@ -494,14 +497,12 @@ under SFQ, which isolates flows but applies no delay target. That is why both
 latencies appear throughout this report.
 """)
 A(fig("fig02_latency_sparse_vs_bulk_steady.png"))
-A(r"""Underlying those latencies is the queue occupancy in
-Figure~\ref{f:fig04}, and the drop rates in Figure~\ref{f:fig06} that produce
-it. Occupancy
-and drop rate move together in the expected direction: the disciplines holding
-the shortest queues are the ones dropping earliest.
+A(r"""The mechanism behind both latencies is queue occupancy, given in the
+third panel of Figure~\ref{f:fig17}, together with the drop rates in the
+all-parameter view of Section~\ref{s:cmp}. The two move together in the
+expected direction: the disciplines holding the shortest queues are the ones
+dropping earliest.
 """)
-A(fig("fig04_backlog_steady.png"))
-A(fig("fig06_droprate_steady.png"))
 
 A(r"""\subsection{Step 3: separating the controller's cost from its decisions}
 
@@ -554,33 +555,27 @@ sham and adapted rows differ very little, which is the same conclusion the
 preceding steps reach one metric at a time.
 """)
 A(fig("fig08_allparams_steady.png", star=True, width=r"0.98\linewidth"))
-A(r"""Figure~\ref{f:fig07} sets latency against goodput, with the goodput axis
-running from zero to the link rate rather than being cropped to the data. Every
-system sits in the same vertical line at about 9.4\,Mbit/s while latency spans
-two orders of magnitude, so there is no trade-off to read horizontally: the
-latency ordering is bought with nothing. Figure~\ref{f:fig05} gives the
-fairness index on a zero-based axis for the same reason. Fairness sits at the
-ceiling for every flow-queueing discipline, within a total range of 0.5\%, so
-it does not discriminate between them here.
+A(r"""Two rows of that view are worth reading as null results rather than
+findings. Goodput spans 1.01 times across all ten systems and fairness the
+same, both inside their confidence intervals, so neither discriminates between
+the disciplines here. The spread column is printed beside each row for exactly
+this reason: strong colour contrast within a row says only that the systems
+have been ranked, not that the ranking means anything.
 """)
-A(fig("fig07_tradeoff_steady.png"))
-A(fig("fig05_fairness_steady.png"))
 
 A(r"""\subsection{Step 5: under a load that changes, adaptation does not help}
 
 Under the steady workload the controller reduces mean queue occupancy by
 9.6\%. Under the staged workload, whose flow count varies during the run, it
-produces no improvement at all. Figures~\ref{f:fig10} and \ref{f:fig11} show
-why: the queue and latency time series under the staged load contain
-transitions the controller responds to only after they have happened, because
-its adjustments lag the change that triggered them.
+produces no improvement at all. The reason is visible in the controller trace
+of Figure~\ref{f:fig12}: the staged load contains transitions the controller
+responds to only after they have happened, because its adjustments lag the
+change that triggered them.
 
 This matters more than the steady-state number. An adaptive mechanism that
 helps only when conditions are static is of limited value, since static
 conditions are precisely those a fixed configuration already serves.
 """)
-A(fig("fig10_timeseries_backlog_staged.png"))
-A(fig("fig11_timeseries_rtt_staged.png"))
 
 A(r"""\subsection{Step 6: an alternative requiring no controller does better}
 
@@ -841,31 +836,7 @@ it accounts for both.
 
 # ------------------------------------------------------------------ appendix
 A(r"""\appendix
-\section{Complete figure set}\label{s:app}
-
-Figures already discussed above are not repeated. The remainder of the
-analysis output follows, with captions from the figure index.
 """)
-shown = {"fig01_latency_tail_steady.png", "fig02_latency_sparse_vs_bulk_steady.png",
-         "fig03_throughput_steady.png", "fig04_backlog_steady.png",
-         "fig05_fairness_steady.png", "fig06_droprate_steady.png",
-         "fig07_tradeoff_steady.png", "fig08_allparams_steady.png",
-         "fig10_timeseries_backlog_staged.png", "fig11_timeseries_rtt_staged.png",
-         "fig12_controller_behaviour.png", "fig13_sham_control_steady.png",
-         "fig14_mixed_workload.png", "fig15_rtt_sweep.png",
-         "fig16_scaling_law.png"}
-for e in IDX["figures"]:
-    n = e["path"].split("/")[-1]
-    if n not in shown:
-        A(fig(n, label=False, index=True))
-A(r"""\section{Implementation captures not shown above}
-
-""")
-for e in IDX["steps"]:
-    n = e["path"].split("/")[-1]
-    if not n.startswith(("step01", "step02", "step03", "step04", "step05",
-                         "step06", "step07", "step08", "step09")):
-        A(fig(n, label=False, index=True))
 
 A(r"""\section{Per-run figures}
 

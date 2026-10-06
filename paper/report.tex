@@ -110,7 +110,9 @@ and described where its argument sits. Section~\ref{s:cmp} compares this work
 against the base paper and six recent systems at parameter level.
 Section~\ref{s:law} derives and tests the scaling law.
 Section~\ref{s:defects} documents the nine measurement defects found during
-the work. Appendix~\ref{s:app} holds the complete figure set.
+the work. Every figure the report places is one its argument needs; the
+complete output of the analysis pipeline, including the per-workload variants
+not reproduced here, is in \texttt{figures/} in the repository.
 
 \section{Literature survey}\label{s:lit}
 
@@ -212,24 +214,17 @@ machine built for the purpose.
 \label{f:step01}
 \end{figure}
 
-Figure~\ref{f:step02} shows the replacement: a 6.12.48 kernel configured
-and built with \texttt{fq\_codel}, CoDel, CAKE, PIE, FQ-PIE, RED,
-\texttt{netem}, TBF and HTB all compiled in rather than modular, and with BTF
-enabled so that eBPF programs can be verified against kernel types. This is
-the kernel every measurement in this report was taken on.
+The replacement is a 6.12.48 kernel configured and built with
+\texttt{fq\_codel}, CoDel, CAKE, PIE, FQ-PIE, RED, \texttt{netem}, TBF and
+HTB all compiled in rather than modular, and with BTF enabled so that eBPF
+programs can be verified against kernel types. Every measurement in this
+report was taken on it.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{step02_kernel_built_with_every_aqm_compiled_in.png}
-\caption{Kernel built with every AQM compiled in. A 6.12.48 kernel was configured and built with fq\_codel, CoDel, CAKE, PIE, FQ-PIE, RED, netem, TBF and HTB all built in (=y), plus BTF for eBPF. This kernel is what the experiments run on.}
-\label{f:step02}
-\end{figure}
-
-Availability is then demonstrated rather than assumed.
-Each discipline is instantiated in turn on a real virtual
-Ethernet device inside the guest (Figure~\ref{f:step03}), so that a later null
-result for one of them cannot be explained by the discipline having been
-absent.
+That the build succeeded is weaker evidence than that the disciplines work, so
+availability is demonstrated rather than assumed: each one is instantiated in
+turn on a real virtual Ethernet device inside the guest
+(Figure~\ref{f:step03}), which is what rules out explaining a later null
+result by the discipline having been absent.
 
 \begin{figure}[htbp]
 \centering
@@ -444,6 +439,13 @@ The static, sham and adapted \texttt{fq\_codel} points are not separable at
 this scale. That is the first indication that parameter tuning is a second-order
 effect, and it is visible before any statistics are applied.
 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.97\linewidth,height=0.4\textheight,keepaspectratio]{fig17_main_outputs_steady.png}
+\caption{fig17\_main\_outputs\_steady.png. fig17\_main\_outputs\_steady}
+\label{f:fig17}
+\end{figure*}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig01_latency_tail_steady.png}
@@ -451,17 +453,11 @@ effect, and it is visible before any statistics are applied.
 \label{f:fig01}
 \end{figure}
 
-Throughput rules out the obvious objection. Figure~\ref{f:fig03} confirms that the latency differences are not bought
-with throughput. Goodput is flat across every configuration including the
-unmanaged queue, so the latency ordering is a property of queue management
-rather than a rate trade.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig03_throughput_steady.png}
-\caption{fig03\_throughput\_steady.png. Goodput (from iperf3 sum\_received), axis zoomed to show it is flat (steady workload)}
-\label{f:fig03}
-\end{figure}
+Throughput rules out the obvious objection, and the goodput panel of
+Figure~\ref{f:fig17} is drawn from zero so that it can be seen rather than
+asserted. Every configuration including the unmanaged queue delivers the same
+goodput, so the latency ordering across three orders of magnitude is a
+property of queue management and not a rate trade.
 
 \subsection{Step 2: the two latencies are not interchangeable}
 
@@ -481,25 +477,11 @@ latencies appear throughout this report.
 \label{f:fig02}
 \end{figure}
 
-Underlying those latencies is the queue occupancy in
-Figure~\ref{f:fig04}, and the drop rates in Figure~\ref{f:fig06} that produce
-it. Occupancy
-and drop rate move together in the expected direction: the disciplines holding
-the shortest queues are the ones dropping earliest.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig04_backlog_steady.png}
-\caption{fig04\_backlog\_steady.png. Mean queue occupancy, log scale (steady workload)}
-\label{f:fig04}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig06_droprate_steady.png}
-\caption{fig06\_droprate\_steady.png. AQM drop rate and end-to-end TCP retransmissions (steady workload)}
-\label{f:fig06}
-\end{figure}
+The mechanism behind both latencies is queue occupancy, given in the
+third panel of Figure~\ref{f:fig17}, together with the drop rates in the
+all-parameter view of Section~\ref{s:cmp}. The two move together in the
+expected direction: the disciplines holding the shortest queues are the ones
+dropping earliest.
 
 \subsection{Step 3: separating the controller's cost from its decisions}
 
@@ -569,55 +551,25 @@ preceding steps reach one metric at a time.
 \label{f:fig08}
 \end{figure*}
 
-Figure~\ref{f:fig07} sets latency against goodput, with the goodput axis
-running from zero to the link rate rather than being cropped to the data. Every
-system sits in the same vertical line at about 9.4\,Mbit/s while latency spans
-two orders of magnitude, so there is no trade-off to read horizontally: the
-latency ordering is bought with nothing. Figure~\ref{f:fig05} gives the
-fairness index on a zero-based axis for the same reason. Fairness sits at the
-ceiling for every flow-queueing discipline, within a total range of 0.5\%, so
-it does not discriminate between them here.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig07_tradeoff_steady.png}
-\caption{fig07\_tradeoff\_steady.png. Latency vs throughput trade-off (steady workload)}
-\label{f:fig07}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig05_fairness_steady.png}
-\caption{fig05\_fairness\_steady.png. Jain's fairness index, axis zoomed (steady workload)}
-\label{f:fig05}
-\end{figure}
+Two rows of that view are worth reading as null results rather than
+findings. Goodput spans 1.01 times across all ten systems and fairness the
+same, both inside their confidence intervals, so neither discriminates between
+the disciplines here. The spread column is printed beside each row for exactly
+this reason: strong colour contrast within a row says only that the systems
+have been ranked, not that the ranking means anything.
 
 \subsection{Step 5: under a load that changes, adaptation does not help}
 
 Under the steady workload the controller reduces mean queue occupancy by
 9.6\%. Under the staged workload, whose flow count varies during the run, it
-produces no improvement at all. Figures~\ref{f:fig10} and \ref{f:fig11} show
-why: the queue and latency time series under the staged load contain
-transitions the controller responds to only after they have happened, because
-its adjustments lag the change that triggered them.
+produces no improvement at all. The reason is visible in the controller trace
+of Figure~\ref{f:fig12}: the staged load contains transitions the controller
+responds to only after they have happened, because its adjustments lag the
+change that triggered them.
 
 This matters more than the steady-state number. An adaptive mechanism that
 helps only when conditions are static is of limited value, since static
 conditions are precisely those a fixed configuration already serves.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig10_timeseries_backlog_staged.png}
-\caption{fig10\_timeseries\_backlog\_staged.png. Queue occupancy over time (staged workload)}
-\label{f:fig10}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig11_timeseries_rtt_staged.png}
-\caption{fig11\_timeseries\_rtt\_staged.png. Measured RTT over time (20 Hz probe) (staged workload)}
-\label{f:fig11}
-\end{figure}
 
 \subsection{Step 6: an alternative requiring no controller does better}
 
@@ -888,175 +840,6 @@ literature claims and more useful than the evaluations reporting nothing, and
 it accounts for both.
 
 \appendix
-\section{Complete figure set}\label{s:app}
-
-Figures already discussed above are not repeated. The remainder of the
-analysis output follows, with captions from the figure index.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig01_latency_tail_staged.png}
-\caption{\texttt{fig01\_latency\_tail\_staged.png}. fig01\_latency\_tail\_staged.png. Tail latency (p95 RTT, sparse probe flow) across all systems, log scale (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig02_latency_sparse_vs_bulk_staged.png}
-\caption{\texttt{fig02\_latency\_sparse\_vs\_bulk\_staged.png}. fig02\_latency\_sparse\_vs\_bulk\_staged.png. Sparse probe flow vs bulk TCP flow RTT, why the two differ (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig03_throughput_staged.png}
-\caption{\texttt{fig03\_throughput\_staged.png}. fig03\_throughput\_staged.png. Goodput (from iperf3 sum\_received), axis zoomed to show it is flat (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig04_backlog_staged.png}
-\caption{\texttt{fig04\_backlog\_staged.png}. fig04\_backlog\_staged.png. Mean queue occupancy, log scale (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig05_fairness_staged.png}
-\caption{\texttt{fig05\_fairness\_staged.png}. fig05\_fairness\_staged.png. Jain's fairness index, axis zoomed (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig06_droprate_staged.png}
-\caption{\texttt{fig06\_droprate\_staged.png}. fig06\_droprate\_staged.png. AQM drop rate and end-to-end TCP retransmissions (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig07_tradeoff_staged.png}
-\caption{\texttt{fig07\_tradeoff\_staged.png}. fig07\_tradeoff\_staged.png. Latency vs throughput trade-off (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig08_allparams_staged.png}
-\caption{\texttt{fig08\_allparams\_staged.png}. fig08\_allparams\_staged.png. All measured parameters × all systems, normalised heatmap with measured values (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_backlog_mean_pkts_staged.png}
-\caption{\texttt{fig09\_seeds\_backlog\_mean\_pkts\_staged.png}. fig09\_seeds\_backlog\_mean\_pkts\_staged.png. Per-seed values, every individual run shown, mean marked, backlog mean pkts (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_backlog_mean_pkts_steady.png}
-\caption{\texttt{fig09\_seeds\_backlog\_mean\_pkts\_steady.png}. fig09\_seeds\_backlog\_mean\_pkts\_steady.png. Per-seed values, every individual run shown, mean marked, backlog mean pkts (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_bulk_rtt_mean_ms_staged.png}
-\caption{\texttt{fig09\_seeds\_bulk\_rtt\_mean\_ms\_staged.png}. fig09\_seeds\_bulk\_rtt\_mean\_ms\_staged.png. Per-seed values, every individual run shown, mean marked, bulk rtt mean ms (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_bulk_rtt_mean_ms_steady.png}
-\caption{\texttt{fig09\_seeds\_bulk\_rtt\_mean\_ms\_steady.png}. fig09\_seeds\_bulk\_rtt\_mean\_ms\_steady.png. Per-seed values, every individual run shown, mean marked, bulk rtt mean ms (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_jain_staged.png}
-\caption{\texttt{fig09\_seeds\_jain\_staged.png}. fig09\_seeds\_jain\_staged.png. Per-seed values, every individual run shown, mean marked, jain (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_jain_steady.png}
-\caption{\texttt{fig09\_seeds\_jain\_steady.png}. fig09\_seeds\_jain\_steady.png. Per-seed values, every individual run shown, mean marked, jain (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_retransmits_staged.png}
-\caption{\texttt{fig09\_seeds\_retransmits\_staged.png}. fig09\_seeds\_retransmits\_staged.png. Per-seed values, every individual run shown, mean marked, retransmits (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_retransmits_steady.png}
-\caption{\texttt{fig09\_seeds\_retransmits\_steady.png}. fig09\_seeds\_retransmits\_steady.png. Per-seed values, every individual run shown, mean marked, retransmits (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_sparse_rtt_p95_ms_staged.png}
-\caption{\texttt{fig09\_seeds\_sparse\_rtt\_p95\_ms\_staged.png}. fig09\_seeds\_sparse\_rtt\_p95\_ms\_staged.png. Per-seed values, every individual run shown, mean marked, sparse rtt p95 ms (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_sparse_rtt_p95_ms_steady.png}
-\caption{\texttt{fig09\_seeds\_sparse\_rtt\_p95\_ms\_steady.png}. fig09\_seeds\_sparse\_rtt\_p95\_ms\_steady.png. Per-seed values, every individual run shown, mean marked, sparse rtt p95 ms (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_throughput_mbps_staged.png}
-\caption{\texttt{fig09\_seeds\_throughput\_mbps\_staged.png}. fig09\_seeds\_throughput\_mbps\_staged.png. Per-seed values, every individual run shown, mean marked, throughput mbps (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig09_seeds_throughput_mbps_steady.png}
-\caption{\texttt{fig09\_seeds\_throughput\_mbps\_steady.png}. fig09\_seeds\_throughput\_mbps\_steady.png. Per-seed values, every individual run shown, mean marked, throughput mbps (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig10_timeseries_backlog_steady.png}
-\caption{\texttt{fig10\_timeseries\_backlog\_steady.png}. fig10\_timeseries\_backlog\_steady.png. Queue occupancy over time (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig11_timeseries_rtt_steady.png}
-\caption{\texttt{fig11\_timeseries\_rtt\_steady.png}. fig11\_timeseries\_rtt\_steady.png. Measured RTT over time (20 Hz probe) (steady workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig13_sham_control_staged.png}
-\caption{\texttt{fig13\_sham\_control\_staged.png}. fig13\_sham\_control\_staged.png. Sham-controller condition, separates controller CPU cost from control decisions (staged workload)}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig17_main_outputs_staged.png}
-\caption{\texttt{fig17\_main\_outputs\_staged.png}. fig17\_main\_outputs\_staged.png. fig17\_main\_outputs\_staged}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{fig17_main_outputs_steady.png}
-\caption{\texttt{fig17\_main\_outputs\_steady.png}. fig17\_main\_outputs\_steady.png. fig17\_main\_outputs\_steady}
-\end{figure}
-
-\section{Implementation captures not shown above}
-
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{step10_throughput_overshoot__sum_sent_exceeds_the_link_.png}
-\caption{\texttt{step10\_throughput\_overshoot\_\_sum\_sent\_exceeds\_the\_link\_.png}. Throughput overshoot: sum\_sent exceeds the link rate. iperf3's sum\_sent counts bytes handed to the socket, not bytes delivered. Under pfifo's 1000-packet buffer the sender fills the queue and reports 12.16 Mbps on a 10 Mbit link - physically impossible as a throughput. The excess appears as an 827-packet backlog and 2381 ms p95 RTT, not as delivered data. Every flow-queueing AQM shows no overshoot. This is why goodput is taken from sum\_received.}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\linewidth,height=0.4\textheight,keepaspectratio]{step11_drop_rates_in_the_original_logs_exceed_the_link_.png}
-\caption{\texttt{step11\_drop\_rates\_in\_the\_original\_logs\_exceed\_the\_link\_.png}. Drop rates in the original logs exceed the link's packet rate. A 10 Mbit link carrying 1514-byte packets passes at most 826 packets/s, and iperf3 reported \textasciitilde{}179 retransmits/s. The original logs record 100,000-138,000 drops/s - up to 155x the physical packet rate. This is the arithmetic that first showed the measurements could not describe the data path.}
-\end{figure}
 
 \section{Per-run figures}
 

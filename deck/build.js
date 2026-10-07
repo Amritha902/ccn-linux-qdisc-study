@@ -341,7 +341,7 @@ dark('What the measurements show', 'RESULTS')
 {
   const s = light('Does adapting the parameters help?');
   card(s, M, 1.2, W - 2*M, 0.95, 'E8F1F6');
-  s.addText('A small gain under steady load. Nothing under a load that changes.',
+  s.addText('Nothing separates from zero, under either load.',
     { x: M + 0.35, y: 1.4, w: W - 2*M - 0.7, h: 0.55, fontSize: 18, bold: true,
       color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
 
@@ -351,11 +351,11 @@ dark('What the measurements show', 'RESULTS')
     bold: true, color: MUTE, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 }));
 
   const rows = [
-    ['Mean backlog',      '-9.6%   p=0.050', GOOD, '+2.2%   p=0.66', MUTE],
-    ['p95 RTT (probe)',   '-0.5%   p=0.047', GOOD, '+3.2%   p=0.07', MUTE],
-    ['Mean RTT (probe)',  '+0.4%   p=0.48',  MUTE, '+1.6%   p=0.050', WARN],
-    ['Mean RTT (bulk)',   '-1.4%   p=0.38',  MUTE, '-0.5%   p=0.52', MUTE],
-    ['Goodput / fairness','unchanged',       MUTE, 'unchanged',      MUTE],
+    ['Mean backlog',      '-9.6%  CI +-1.00 pkt', MUTE, '+2.2%   n.s.', MUTE],
+    ['p95 RTT (probe)',   '-0.5%  n.s.',          MUTE, '+3.2%   n.s.', MUTE],
+    ['Mean RTT (probe)',  '+0.4%  n.s.',          MUTE, '+1.6%   n.s.', MUTE],
+    ['Mean RTT (bulk)',   '-1.4%  n.s.',          MUTE, '-0.5%   n.s.', MUTE],
+    ['Goodput / fairness','unchanged',            MUTE, 'unchanged',    MUTE],
   ];
   rows.forEach((r, i) => {
     const y = 2.65 + i * 0.62;
@@ -369,7 +369,7 @@ dark('What the measurements show', 'RESULTS')
       color: r[4], fontFace: BF, isTextBox: true, margin: 0 });
   });
 
-  s.addText('The workload designed to give the controller something to respond to is the one where it helps least. The sham condition rules out overhead, so these are its decisions.',
+  s.addText('The largest movement, backlog, has an interval of +-1.00 packets and covers zero. At three repetitions the design resolves about 3.5%, so these bound the effect rather than disprove it. The sham arm shows the controller\'s processor cost is not detectable either, so this is not a cost masking a benefit. The law explains it: these runs sit at r = 0.25.',
     { x: M, y: 5.85, w: W - 2*M, h: 0.6, fontSize: 13, italic: true, color: INK,
       fontFace: BF, isTextBox: true });
   s.addNotes('Steady load has a stable operating point to converge on; staged load does not, and the adjustments lag the transitions.');
@@ -406,6 +406,93 @@ dark('What the measurements show', 'RESULTS')
   s.addText('For a practitioner wanting lower latency on this class of link, changing queue discipline is a larger and far simpler win than tuning fq_codel\'s parameters. We report this because it is the most useful thing a reader can take away.',
     { x: M + 0.35, y: 5.35, w: W - 2*M - 0.7, h: 0.65, fontSize: 13, color: BODY,
       fontFace: BF, isTextBox: true, margin: 0 });
+}
+
+/* ------------------------------------------------- 13a the law opener */
+dark('When does adapting pay?', 'THE SCALING LAW');
+
+/* --------------------------------------------- 13b the governing ratio */
+{
+  const s = light('The answer is a ratio, not a delay');
+  s.addText('Sweeping path RTT from 2 to 200 ms showed the benefit is not a function of RTT at all.',
+    { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 15, color: BODY, fontFace: BF, isTextBox: true });
+
+  card(s, M, 1.75, W - 2*M, 1.15, 'E8F1F6');
+  s.addText('r  =  target / RTT', { x: M + 0.35, y: 1.95, w: 4.2, h: 0.75,
+    fontSize: 30, bold: true, color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
+  s.addText('A dimensionless number an operator already has: the configured target, and an estimate of the path.',
+    { x: M + 5.0, y: 2.05, w: 6.6, h: 0.7, fontSize: 13.5, color: BODY,
+      fontFace: BF, isTextBox: true, margin: 0 });
+
+  s.addImage({ path: 'figures/comparison/fig16_scaling_law.png',
+               x: M, y: 3.05, w: W - 2*M, h: 3.4, sizing: { type: 'contain', w: W - 2*M, h: 3.4 } });
+  s.addText('Left: benefit against the ratio, collapsing onto one curve. Right: the same runs against RTT alone, scattered.',
+    { x: M, y: 6.55, w: W - 2*M, h: 0.4, fontSize: 12, color: MUTE, fontFace: BF, isTextBox: true });
+  s.addNotes('This is the contribution. The mechanism is old; the number at which it starts to matter is what was missing.');
+}
+
+/* ------------------------------------------------ 13c the law and its test */
+{
+  const s = light('b(r) = B / (1 + (r0/r)^k)');
+  const stats = [
+    ['B  =  20.5 %', 'the ceiling'],
+    ['r0  =  0.50', 'half the benefit is reached here'],
+    ['k  =  2.6', 'how sharp the transition is'],
+    ['R2  =  0.986', 'over 10 cells'],
+  ];
+  stats.forEach((t, i) => {
+    const x = M + (i % 2) * 6.1, y = 1.25 + Math.floor(i / 2) * 1.05;
+    card(s, x, y, 5.8, 0.9);
+    s.addText(t[0], { x: x + 0.3, y: y + 0.1, w: 3.0, h: 0.4, fontSize: 19, bold: true,
+      color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
+    s.addText(t[1], { x: x + 0.3, y: y + 0.52, w: 5.2, h: 0.3, fontSize: 12,
+      color: BODY, fontFace: BF, isTextBox: true, margin: 0 });
+  });
+
+  card(s, M, 3.5, W - 2*M, 1.5, 'E8F1F6');
+  s.addText('Registered before the data existed. Three of four held.',
+    { x: M + 0.35, y: 3.68, w: 11.5, h: 0.35, fontSize: 14, bold: true, color: DEEP,
+      fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 });
+  s.addText('A crossover exists. The curve is invariant across a 16-fold change in RTT, 2.0 points against a 5-point threshold. Leave-one-out predicts held-out cells to 1.4 points. The form transfers to codel and PIE; the constant does not, and that fourth test failed.',
+    { x: M + 0.35, y: 4.05, w: 11.5, h: 0.85, fontSize: 13, color: BODY,
+      fontFace: BF, isTextBox: true, margin: 0 });
+
+  card(s, M, 5.25, W - 2*M, 1.35, 'FBEEF0');
+  s.addText('What it means', { x: M + 0.35, y: 5.42, w: 11.5, h: 0.32, fontSize: 13,
+    bold: true, color: WARN, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 });
+  s.addText('Correct configuration sits at r between 0.05 and 0.10. Half the available benefit arrives only at r = 0.50, five to ten times outside that. Adaptation repairs misconfiguration; it does not improve a correctly configured link.',
+    { x: M + 0.35, y: 5.78, w: 11.5, h: 0.75, fontSize: 13.5, color: INK,
+      fontFace: BF, isTextBox: true, margin: 0 });
+}
+
+/* ------------------------------------------ 13d the ceiling is not fixed */
+{
+  const s = light('The ratio fixes the shape, not the ceiling');
+  s.addText('Holding r = 1 and sweeping the link rate 25-fold. Only the rate changes.',
+    { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 15, color: BODY, fontFace: BF, isTextBox: true });
+
+  const hdr = ['Link rate', 'Benefit at r = 1', 'p'];
+  const cx = [M + 0.3, M + 4.6, M + 8.8];
+  hdr.forEach((h, j) => s.addText(h, { x: cx[j], y: 1.8, w: 3.6, h: 0.3, fontSize: 11.5,
+    bold: true, color: MUTE, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 }));
+
+  const rows = [['2 Mbit/s', '+13.2 %', '0.0005'], ['5 Mbit/s', '+18.2 %', '< 0.0001'],
+                ['10 Mbit/s', '+18.0 %', '< 0.0001'], ['20 Mbit/s', '+14.1 %', '0.0004'],
+                ['50 Mbit/s', '+7.1 %', '0.0172']];
+  rows.forEach((r, i) => {
+    const y = 2.15 + i * 0.6;
+    s.addShape(P.ShapeType.roundRect, { x: M, y, w: W - 2*M, h: 0.52, rectRadius: 0.05,
+      fill: { color: i % 2 ? 'F6FAFC' : TINT }, line: { color: 'E2ECF2', width: 0.5 } });
+    r.forEach((v, j) => s.addText(v, { x: cx[j], y: y + 0.12, w: 4.0, h: 0.32,
+      fontSize: 13.5, bold: j < 2, color: j === 0 ? INK : (j === 1 ? GOOD : BODY),
+      fontFace: BF, isTextBox: true, margin: 0 }));
+  });
+
+  card(s, M, 5.3, W - 2*M, 1.4, 'E8F1F6');
+  s.addText('An 11-point spread, against the 5-point threshold we used to call the RTT comparison consistent. Every cell is significant, so this is real. The fitted ceiling of 20.5 % is the ceiling at 10 Mbit/s, not a constant of the mechanism.',
+    { x: M + 0.35, y: 5.5, w: 11.5, h: 1.0, fontSize: 14, color: INK,
+      fontFace: BF, isTextBox: true, margin: 0 });
+  s.addNotes('We had this data and had not looked. A referee would have asked. r governs the RTT dimension; a second group governs the ceiling.');
 }
 
 /* --------------------------------------------------- 13 verification opener */
@@ -506,7 +593,7 @@ dark('What did not survive verification', 'INTEGRITY')
   card(s, M, 4.5, W - 2*M, 1.7, 'E8F1F6');
   s.addText('The claim we can defend', { x: M + 0.35, y: 4.68, w: 11.5, h: 0.35,
     fontSize: 14, bold: true, color: DEEP, fontFace: BF, isTextBox: true, margin: 0, charSpacing: 1 });
-  s.addText('The first controlled evaluation of runtime parameter adaptation for a flow-queueing AQM on stock Linux — and the finding that it does not measurably help.',
+  s.addText('A falsifiable predicate for when adapting an AQM\'s parameters pays, pre-registered and tested to destruction, with the controlled apparatus needed to establish it.',
     { x: M + 0.35, y: 5.05, w: 11.5, h: 1.0, fontSize: 17, bold: true, color: INK,
       fontFace: HF, isTextBox: true, margin: 0 });
   s.addNotes('The null result is only credible because of the control condition. That is what makes it a contribution rather than a failure.');
@@ -516,22 +603,23 @@ dark('What did not survive verification', 'INTEGRITY')
 {
   const s = dark('What we are left with', 'CONCLUSION');
   const pts = [
-    ['Flow queueing with a delay target is what matters', '~100× tail-latency reduction at zero goodput cost'],
-    ['Tuning its parameters is not', 'Backlog -9.6% under steady load, nothing under a changing one; CAKE beats it outright'],
-    ['The methodology is the contribution', 'Seven silent failure classes, the invariants that catch them, and a released artefact'],
+    ['Flow queueing with a delay target is what matters', 'About 100x tail-latency reduction at no goodput cost'],
+    ['Whether tuning helps is decided by r = target/RTT', 'Half the benefit at r = 0.50; correct configuration sits five to ten times below that'],
+    ['The ratio fixes the shape, not the ceiling', 'At r = 1 the benefit still runs 7.1 to 18.2% across a 25-fold change in link rate'],
+    ['Where r is small, switch discipline instead', 'CAKE needs no controller and beats the adapted system at every RTT tested'],
   ];
   pts.forEach((p, i) => {
-    const y = 4.15 + i * 0.95;
-    s.addShape(P.ShapeType.roundRect, { x: M, y, w: W - 2*M, h: 0.82, rectRadius: 0.07,
+    const y = 3.78 + i * 0.80;
+    s.addShape(P.ShapeType.roundRect, { x: M, y, w: W - 2*M, h: 0.72, rectRadius: 0.07,
       fill: { color: '2C3568' }, line: { width: 0 } });
-    dot(s, M + 0.3, y + 0.2, 0.42, TEAL, String(i + 1));
-    s.addText(p[0], { x: M + 0.95, y: y + 0.08, w: 11.0, h: 0.36, fontSize: 15, bold: true,
+    dot(s, M + 0.3, y + 0.16, 0.40, TEAL, String(i + 1));
+    s.addText(p[0], { x: M + 0.95, y: y + 0.05, w: 11.0, h: 0.34, fontSize: 14, bold: true,
       color: PAPER, fontFace: BF, isTextBox: true, margin: 0 });
-    s.addText(p[1], { x: M + 0.95, y: y + 0.44, w: 11.0, h: 0.33, fontSize: 12.5,
+    s.addText(p[1], { x: M + 0.95, y: y + 0.38, w: 11.0, h: 0.31, fontSize: 11.5,
       color: 'A9C3DE', fontFace: BF, isTextBox: true, margin: 0 });
   });
   s.addText('github.com/Amritha902/ccn-linux-qdisc-study   ·   every number in the paper generated from the logs',
-    { x: M, y: 7.0, w: W - 2*M, h: 0.35, fontSize: 12, color: '7F97B8', fontFace: BF, isTextBox: true });
+    { x: M, y: 7.05, w: W - 2*M, h: 0.35, fontSize: 12, color: '7F97B8', fontFace: BF, isTextBox: true });
 }
 
 P.writeFile({ fileName: 'deck/ACAPE_2026.pptx' }).then(() => console.log('wrote deck/ACAPE_2026.pptx'));

@@ -100,6 +100,5 @@ the logs.
 
 ## Remaining work
 
-One item, and it needs a human: the corresponding-author address in
-`paper/scirep/submission.tex` is a personal one and should be an institutional
-address if there is one.
+None outstanding. All three contributors carry their VIT addresses in both
+documents, and the corresponding author is Amritha S.

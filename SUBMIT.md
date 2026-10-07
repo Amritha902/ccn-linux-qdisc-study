@@ -21,9 +21,12 @@ sectioning, float style and Declarations block already match.
 
 ## Before you submit
 
-One edit, and it needs you: the corresponding-author address near the top of
-`paper.tex` is a personal one. Swap it for an institutional address if you
-have one.
+Check one thing. The three addresses are taken from the original IEEE draft in
+`filespr/`: `amritha.s2023@`, `yugeshwaran.p2023@` and `deepti.annucia2023@`,
+all at `vitstudent.ac.in`. The third spells the surname *annucia* while the
+author line spells it *Annuncia*. That is how the original file has it, so it
+is probably the address VIT issued, but confirm it before submitting: a wrong
+corresponding address is expensive to fix later.
 
 Scientific Reports also asks for figures as separate files. The zip already
 contains them as individual PNGs.

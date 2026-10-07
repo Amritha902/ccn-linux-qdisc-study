@@ -204,11 +204,14 @@ Linux Queue Disciplines}\\[0.5cm]
 {\normalsize Complete Methodology, Results and Comparison}\\[2.2cm]
 
 {\large\bfseries Submitted by}\\[0.5cm]
-{\large Amritha S}\\[0.15cm]
-{\large Yugeshwaran P}\\[0.55cm]
-{\large\bfseries Under the guidance of}\\[0.3cm]
-{\large Deepti Annuncia}\\[0.2cm]
-{\normalsize Department of Electronics and Communication Engineering}\\[1.4cm]
+{\large Amritha S}\\[0.1cm]
+{\small\texttt{amritha.s2023@vitstudent.ac.in}}\\[0.35cm]
+{\large Yugeshwaran P}\\[0.1cm]
+{\small\texttt{yugeshwaran.p2023@vitstudent.ac.in}}\\[0.7cm]
+{\large\bfseries Under the guidance of}\\[0.35cm]
+{\large Deepti Annuncia}\\[0.1cm]
+{\small\texttt{deepti.annucia2023@vitstudent.ac.in}}\\[0.2cm]
+{\normalsize Department of Electronics and Communication Engineering}\\[1.1cm]
 
 \vfill
 {\normalsize Every measurement in this report was produced on a purpose-built
@@ -232,7 +235,7 @@ ratio $r=\texttt{target}/\mathrm{RTT}$, saturating at \LawCeiling\% with half
 of that reached at $r=\LawHalfBenefit$. Published guidance places a correctly
 configured deployment at $r$ between 0.05 and 0.10, so half the available
 benefit arrives five to ten times outside that envelope: adaptation is a
-remedy for misconfiguration rather than an improvement on correct
+remedy for misconfiguration, and not an improvement on correct
 configuration. The report gives the full methodology, the complete result set
 with every figure described at its point of use, a parameter-level comparison
 against the base paper and six recent systems, and the nine measurement
@@ -373,7 +376,7 @@ Section~\ref{s:results} rather than assumed negligible, because it is not.
 The cloud container available for this work runs a Firecracker kernel with
 every queue discipline compiled out and no loadable-module support, so
 \texttt{fq\_codel} cannot be instantiated in it at all.
-Figure~\ref{f:step01} is that failure, captured rather than described: an
+Figure~\ref{f:step01} is that failure, captured, not described: an
 attempt to attach the discipline under study returns an error because the
 kernel has no such code. Every experiment therefore runs inside a virtual
 machine built for the purpose.
@@ -387,12 +390,12 @@ machine built for the purpose.
 
 The replacement is a 6.12.48 kernel configured and built with
 \texttt{fq\_codel}, CoDel, CAKE, PIE, FQ-PIE, RED, \texttt{netem}, TBF and
-HTB all compiled in rather than modular, and with BTF enabled so that eBPF
+HTB all compiled in, not modular, and with BTF enabled so that eBPF
 programs can be verified against kernel types. Every measurement in this
 report was taken on it.
 
 That the build succeeded is weaker evidence than that the disciplines work, so
-availability is demonstrated rather than assumed: each one is instantiated in
+availability is demonstrated, not assumed: each one is instantiated in
 turn on a real virtual Ethernet device inside the guest
 (Figure~\ref{f:step03}), which is what rules out explaining a later null
 result by the discipline having been absent.
@@ -642,8 +645,8 @@ two orders of magnitude above them, at
 statistically indistinguishable.
 
 The static, sham and adapted \texttt{fq\_codel} points are not separable at
-this scale. That is the first indication that parameter tuning is a second-order
-effect, and it is visible before any statistics are applied.
+this scale, which is the first sign that parameter tuning is a second-order
+effect. It is visible before any statistics are applied.
 
 \begin{figure*}[htbp]
 \centering
@@ -1058,10 +1061,10 @@ ratio, and statistically indistinguishable from zero below $r\approx0.25$ even
 where the controller demonstrably acts.
 
 Because correct configuration sits an order of magnitude below the crossover,
-runtime parameter adaptation is a remedy for misconfiguration rather than an
-improvement on correct configuration. That is narrower than the systems
-literature claims and more useful than the evaluations reporting nothing, and
-it accounts for both.
+runtime parameter adaptation is a remedy for misconfiguration, not an
+improvement on correct configuration. That is narrower than what the systems
+literature asserts and more useful than the evaluations that report nothing,
+and it accounts for both.
 
 \section{Contributions}
 
@@ -1069,12 +1072,14 @@ The report is the work of three contributors, and the division is recorded
 here so each part of it can be attributed.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.35em]
-\item \textbf{Amritha S} built the testbed, the controller and the analysis
-      pipeline, ran the measurement campaigns, and wrote this report and the
-      accompanying manuscript.
-\item \textbf{Yugeshwaran P} contributed to the experimental design and to
-      the measurement campaigns.
-\item \textbf{Deepti Annuncia} supervised the work.
+\item \textbf{Amritha S} (\texttt{amritha.s2023@vitstudent.ac.in}) built the
+      testbed, the controller and the analysis pipeline, ran the measurement
+      campaigns, and wrote this report and the accompanying manuscript.
+\item \textbf{Yugeshwaran P} (\texttt{yugeshwaran.p2023@vitstudent.ac.in})
+      contributed to the experimental design and to the measurement
+      campaigns.
+\item \textbf{Deepti Annuncia}
+      (\texttt{deepti.annucia2023@vitstudent.ac.in}) supervised the work.
 \end{itemize}
 
 All three reviewed the report. Where the text says what a measurement forced
@@ -1088,7 +1093,7 @@ timestamps preceding the runs they govern.
 \section{Per-run figures}
 
 One figure per experimental run, 63 in all, each showing that run's time
-series. They are tabulated rather than embedded because the analysis figures
+series. They are tabulated instead of embedded because the analysis figures
 above aggregate them; every file is in \texttt{figures/runs/}.
 
 \begin{longtable}{p{1.5cm}p{5.0cm}p{9.5cm}}

@@ -494,7 +494,13 @@ crossover exists: benefit remains under 1.5\,\% and is not statistically
 significant below $r=0.25$, and reaches 16.4 to \LawPeakBenefit\,\% at
 $r\ge1$. The curve is invariant to path RTT at fixed ratio: cells at 5, 20 and
 80\,ms with $r=1$ give 18.4, 17.6 and 16.4\,\%, a spread of 2.0 percentage
-points against a threshold of 5 set in advance. Leave-one-out prediction of
+points against a threshold of 5 set in advance. That test is run at $r=1$ for
+a reason. Below the crossover the controller does not classify cells sharing a
+ratio into the same congestion regime, so it applies a different control law
+to each and they are not strictly comparable: at $r=0.25$ the 5\,ms and
+20\,ms targets fall either side of the regime boundary. All three cells at
+$r=1$ take the same law, which is what makes the comparison there a test of
+the ratio rather than of the controller's own classifier. Leave-one-out prediction of
 the interior ratios has a mean absolute error of 1.4 percentage points, worst
 case 3.5. The functional form also transfers to mechanisms the fit never saw:
 refitted independently over the cells each mechanism has in common, plain

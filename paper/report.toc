@@ -36,5 +36,6 @@
 \contentsline {section}{\numberline {7}Measurement defects found and corrected}{23}{section.7}%
 \contentsline {section}{\numberline {8}Threats to validity}{23}{section.8}%
 \contentsline {section}{\numberline {9}Conclusion}{24}{section.9}%
+\contentsline {section}{\numberline {10}Contributions}{24}{section.10}%
 \contentsline {section}{\numberline {A}Per-run figures}{24}{appendix.A}%
 \contentsline {section}{\numberline {B}Reproducing every number}{27}{appendix.B}%

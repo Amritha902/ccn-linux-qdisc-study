@@ -4,16 +4,20 @@
 % On Overleaf: New Project -> Templates -> search "Springer Nature".
 % Open it, then in its main .tex file:
 %
-%   1. keep the template's own \documentclass and preamble,
-%   2. paste the macro block below into that preamble, before
-%      \begin{document},
-%   3. replace everything between \begin{document} and \end{document}
-%      with the body below,
+%   1. keep the template's own \documentclass and the packages it loads,
+%   2. paste the macro block below into that preamble,
+%   3. delete everything from the template's \title down to, but not
+%      including, its \end{document}, and paste the second block in its
+%      place. That block carries its own \title, \author, \affil,
+%      \begin{document} and \maketitle, so the template must not keep a
+%      second copy of any of them,
 %   4. upload the three PNGs and refs.bib to the project root,
 %   5. set \bibliographystyle{sn-mathphys-num}, which that template ships.
 %
 % The sectioning, float style and Declarations block already match the
 % template, so nothing else needs rewiring.
+%
+% Generated from submission.tex by sync_generated.py; do not edit by hand.
 % =====================================================================
 
 % ---------- paste into the preamble ----------
@@ -197,7 +201,7 @@
 \newcommand{\SfqProbeRttPninetyfiveSteady}{36.1}
 
 
-% ---------- paste between \begin{document} and \end{document} ----------
+% ---------- paste in place of the template's \title ... \end{document} ----------
 %% ---------------------------------------------------------------- front
 \title{\vspace{-1.0cm}\bfseries When does adapting a queue discipline's
 parameters pay? A scaling law in \texttt{target}/RTT, measured on stock Linux}
@@ -214,6 +218,7 @@ Vellore Institute of Technology, Chennai, 600127, Tamil Nadu, India}
 \href{mailto:deepti.annucia2023@vitstudent.ac.in}{deepti.annucia2023@vitstudent.ac.in}}
 \date{}
 
+\begin{document}
 \maketitle
 
 \begin{abstract}
@@ -714,5 +719,3 @@ supervised the work. All authors reviewed the manuscript.
 %% this one line to \bibliographystyle{sn-mathphys-num}.
 \bibliographystyle{unsrt}
 \bibliography{refs}
-
-

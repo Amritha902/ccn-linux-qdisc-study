@@ -39,3 +39,9 @@ paper/scirep/overleaf_paper/*.bbl
 paper/scirep/overleaf_paper/*.blg
 paper/*.zip
 paper/scirep/*.zip
+
+# combined submission bundle, rebuilt by paper/make_full_bundle.py
+ACAPE_submission_bundle.zip
+
+__pycache__/
+*.pyc

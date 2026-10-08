@@ -235,7 +235,7 @@ ratio $r=\texttt{target}/\mathrm{RTT}$, saturating at \LawCeiling\% with half
 of that reached at $r=\LawHalfBenefit$. Published guidance places a correctly
 configured deployment at $r$ between 0.05 and 0.10, so half the available
 benefit arrives five to ten times outside that envelope: adaptation is a
-remedy for misconfiguration, and not an improvement on correct
+remedy for misconfiguration, not an improvement on correct
 configuration. The report gives the full methodology, the complete result set
 with every figure described at its point of use, a parameter-level comparison
 against the base paper and six recent systems, and the nine measurement
@@ -268,12 +268,12 @@ Adaptive RED adjusts a drop probability by an additive-increase
 multiplicative-decrease rule; Ye and Leung adapt CoDel's interval
 analytically; DESiRED adapts an AQM's delay target in P4 with deep
 reinforcement learning. Runtime adaptation of a delay target is therefore not
-novel and no such claim is made here.
+novel and we make no such claim.
 
 What the literature does not supply is the condition under which adaptation
 pays. Systems report gains; independent evaluations report none; neither camp
-states when the other is right. This report establishes that condition
-experimentally, and it is a dimensionless ratio.
+states when the other is right. We establish that condition experimentally,
+and it is a dimensionless ratio.
 
 \paragraph{Structure.} Section~\ref{s:lit} surveys the literature this
 work sits in and states what it does not supply. Section~\ref{s:method} gives
@@ -299,8 +299,8 @@ RFC 7567 sets the IETF position, recommending that devices deploy AQM by
 default and explicitly preferring schemes that need no per-flow
 configuration\cite{rfc7567}. That preference for the absence of manual tuning
 is the standard against which any adaptive scheme has to be judged, and it is
-why a null result for adaptation is treated here as a reportable outcome
-rather than a failed experiment.
+why we treat a null result for adaptation as a reportable outcome rather
+than a failed experiment.
 
 \subsection{Drop-probability schemes}
 
@@ -338,7 +338,7 @@ learning\cite{queuepilot2023}, and AQM-LLM distils a language model into a
 marking controller\cite{aqmllm2025}. DESiRED performs runtime adaptation of
 an AQM's delay target in P4 using deep reinforcement learning and in-band
 telemetry\cite{desired2024}. Runtime adaptation of a delay target is
-therefore not novel, and no such claim is made here. Toopchinezhad and Ahmadi
+therefore not novel, and we make no such claim. Toopchinezhad and Ahmadi
 survey the machine-learning AQM literature and observe that heuristic schemes
 require careful parameter adjustment, which limits their real-world
 applicability\cite{mlaqm2025}. SCRR revisits fair-queueing scheduling for
@@ -356,7 +356,7 @@ nothing, which none of this literature does. Sparse and bulk latency are
 averaged into a single figure even where the discipline under test was built
 to treat the two populations differently. Comparison sets stop at two or three
 disciplines. Numerical predictions, where they appear at all, were written
-after the measurements they describe. The claim made here is therefore not the
+after the measurements they describe. Our claim is therefore not the
 adaptation mechanism, which is old, but the predicate that says when it pays,
 and the apparatus needed to establish it.
 
@@ -364,18 +364,18 @@ and the apparatus needed to establish it.
 
 eBPF at the \texttt{tc} clsact hook permits per-flow state to be maintained
 in kernel maps and read from userspace\cite{ebpfqdisc2023}. The telemetry
-path used here reads those maps through \texttt{bpf(2)} directly rather than
-by spawning \texttt{bpftool}, which reduced the cost of one control tick from
-3.17\,s to 0.709\,s. Its remaining cost is measured and reported in
-Section~\ref{s:results} rather than assumed negligible, because it is not.
+path used here reads those maps through \texttt{bpf(2)} directly instead of
+spawning \texttt{bpftool}, which reduced the cost of one control tick from
+3.17\,s to 0.709\,s. We measure what that cost still is and report it in
+Section~\ref{s:results}, because it is not negligible.
 
 \section{Methodology}\label{s:method}
 
 \subsection{Why a purpose-built kernel was required}
 
-The cloud container available for this work runs a Firecracker kernel with
-every queue discipline compiled out and no loadable-module support, so
-\texttt{fq\_codel} cannot be instantiated in it at all.
+Our cloud container runs a Firecracker kernel with every queue discipline
+compiled out and no loadable-module support, so \texttt{fq\_codel} cannot be
+instantiated in it at all.
 Figure~\ref{f:step01} is that failure, captured, not described: an
 attempt to attach the discipline under study returns an error because the
 kernel has no such code. Every experiment therefore runs inside a virtual
@@ -397,7 +397,7 @@ report was taken on it.
 That the build succeeded is weaker evidence than that the disciplines work, so
 availability is demonstrated, not assumed: each one is instantiated in
 turn on a real virtual Ethernet device inside the guest
-(Figure~\ref{f:step03}), which is what rules out explaining a later null
+(Figure~\ref{f:step03}). That check rules out explaining a later null
 result by the discipline having been absent.
 
 \begin{figure}[htbp]
@@ -444,10 +444,10 @@ the queue carries full-size packets.
 An eBPF program at the \texttt{tc} clsact egress hook maintains per-flow state
 in kernel maps: an LRU hash keyed by flow tuple and a per-CPU array of
 aggregate counters. Userspace reads those maps through \texttt{bpf(2)}
-directly rather than by spawning \texttt{bpftool}, which reduces the cost of
+directly instead of spawning \texttt{bpftool}, which reduces the cost of
 one control tick from 3.17\,s to 0.709\,s.
 
-The capture in Figure~\ref{f:step06} has the program compiling with BTF, attaching at the
+Figure~\ref{f:step06} captures the program compiling with BTF, attaching at the
 hook, and being verified as JIT-compiled. Figure~\ref{f:step07} is the
 important one: it shows the maps returning \emph{non-zero} per-flow state
 while traffic runs. An earlier version of this path loaded correctly,
@@ -493,7 +493,7 @@ the two-timescale stochastic approximation
 framework\cite{borkar1997}.
 
 Every bound, step size and threshold is expressed relative to the configured
-target $t_0$ rather than as an absolute time:
+target $t_0$, not as an absolute time:
 
 \begin{center}\small
 \begin{tabular}{ll}
@@ -510,11 +510,11 @@ control period & $0.5\,\mathrm{s}\times(t_0/5\,\mathrm{ms})$ \\
 \end{center}
 
 The multipliers are chosen so that the 5\,ms default reproduces the previous
-absolute values exactly, which is what allows every run taken before the
-change to stand. Section~\ref{s:defects} explains why relative expression is
+absolute values exactly, so every run taken before the
+change still stands. Section~\ref{s:defects} explains why relative expression is
 not a stylistic choice: four separate defects in this controller were absolute
 constants, and two of them would have manufactured a confirmation of the
-result this report establishes.
+result we establish here.
 
 \subsection{Measurement}
 
@@ -546,19 +546,19 @@ controller. A tenth arm, the sham controller, runs the full polling and
 classification path and applies no parameter change, which separates the
 controller's computational cost from the effect of its decisions.
 
-The workloads are three: a steady bulk load of eight TCP CUBIC\cite{cubic2008} flows; a
+Three workloads are used: a steady bulk load of eight TCP CUBIC\cite{cubic2008} flows; a
 staged load whose flow count varies from two to twenty-four during the run;
 and a mixed load adding sparse constant-rate UDP probes alongside the bulk
 traffic. Each cell is repeated three times and reported with 95\% confidence
 intervals. The \texttt{--seed} argument indexes an independent repetition
-rather than seeding a pseudo-random generator: \texttt{iperf3} exposes no
+and does not seed a pseudo-random generator: \texttt{iperf3} exposes no
 seed and the disciplines are deterministic given the traffic, so repetitions
-differ through real timing variation, which is the quantity the intervals
+differ through real timing variation, the quantity the intervals
 describe.
 
-The controller's behaviour is pinned by the regression tests in
-Figure~\ref{f:step08}, one per defect, so that a corrected defect cannot
-silently return.
+Regression tests pin the controller's behaviour, one per defect
+(Figure~\ref{f:step08}), so that a corrected defect cannot silently
+return.
 
 \begin{figure}[htbp]
 \centering
@@ -644,9 +644,8 @@ two orders of magnitude above them, at
 \FqCodelProbeRttPninetyfiveSteady\,ms, a 99.0\% reduction at goodput that is
 statistically indistinguishable.
 
-The static, sham and adapted \texttt{fq\_codel} points are not separable at
-this scale, which is the first sign that parameter tuning is a second-order
-effect. It is visible before any statistics are applied.
+Static, sham and adapted \texttt{fq\_codel} are not separable at this scale,
+the first sign that parameter tuning is a second-order effect. It is visible before any statistics are applied.
 
 \begin{figure*}[htbp]
 \centering
@@ -663,8 +662,8 @@ effect. It is visible before any statistics are applied.
 \end{figure}
 
 Throughput rules out the obvious objection, and the goodput panel of
-Figure~\ref{f:fig17} is drawn from zero so that it can be seen rather than
-asserted. Every configuration including the unmanaged queue delivers the same
+Figure~\ref{f:fig17} is drawn from zero so that the reader can check it by
+eye. Every configuration including the unmanaged queue delivers the same
 goodput, so the latency ordering across three orders of magnitude is a
 property of queue management and not a rate trade.
 
@@ -700,7 +699,7 @@ code, then applies nothing. Any gap between static and sham is the cost of
 running the controller. Any gap between sham and adapted is the effect of its
 decisions.
 
-The figure plots each arm as its difference from the static arm rather than as
+The figure plots each arm as its difference from the static arm instead of as
 a bar, because the differences are small enough that a bar chart would have to
 crop its own baseline to show them, and a cropped baseline turns a fraction of
 a percent into a visibly taller bar. Read against the zero line, every
@@ -708,8 +707,8 @@ interval covers zero. The largest point estimate is the adapted arm's 9.6\%
 reduction in mean backlog, and its interval runs from $-24$\% to $+5$\%.
 
 Two conclusions follow, and they are different in kind. The controller's
-computational cost is not detectable at this link rate, which is a
-prerequisite for interpreting the rest of the work rather than a result. And
+computational cost is not detectable at this link rate. That is a
+prerequisite for reading the rest of the work, not a result in itself. And
 the effect of its decisions is not detectable either, on any of the four
 metrics, under the steady workload at 20\,ms. The scaling law of
 Section~\ref{s:law} explains why: this cell sits at $r=0.25$, where the
@@ -729,7 +728,7 @@ Within a single run, Figure~\ref{f:fig12} traces the controller: the
 regime it classifies, the parameter trajectory that classification produces,
 and the queue it responds to. A controller that classifies continuously but
 never adjusts anything is indistinguishable from the static configuration in a
-summary statistic, which is why the number of adjustments is reported for
+summary statistic, so the number of adjustments is reported for
 every cell in this work.
 
 \begin{figure}[htbp]
@@ -747,10 +746,10 @@ can be compared, and the measured value is printed in each cell. Goodput,
 probe and bulk round-trip time, queue occupancy, drop rate, retransmissions
 and Jain's fairness index\cite{jain1984} appear together.
 
-The block structure is the result. The flow-queueing disciplines with a delay
+A block structure is the result. Flow-queueing disciplines with a delay
 target form one band that separates from the rest on every latency column
 while remaining indistinguishable on goodput. Within that band the static,
-sham and adapted rows differ very little, which is the same conclusion the
+sham and adapted rows differ very little, the same conclusion the
 preceding steps reach one metric at a time.
 
 \begin{figure*}[htbp]
@@ -760,7 +759,7 @@ preceding steps reach one metric at a time.
 \label{f:fig08}
 \end{figure*}
 
-Two rows of that view are worth reading as null results rather than
+Two rows of that view are worth reading as null results, not
 findings. Goodput spans 1.01 times across all ten systems and fairness the
 same, both inside their confidence intervals, so neither discriminates between
 the disciplines here. The spread column is printed beside each row for exactly
@@ -793,15 +792,15 @@ independently would be entitled to distrust everything else in the report.
 
 The controller contains a predictive branch intended to act on a worsening
 trajectory before the regime classification escalates. Under steady load it
-never fired. The reason is structural rather than a tuning problem: an
+never fired. The reason is structural, not a tuning problem: an
 adjustment requires five consecutive identical regime classifications, and the
 predictive branch is reachable only when the trajectory disagrees with the
-regime, which that stability requirement excludes. The predictive-control
-claim is therefore withdrawn rather than asserted.
+regime, which that stability requirement excludes. We therefore withdraw the
+predictive-control claim.
 
 \subsection{Step 8: sparse flows under mixed traffic}
 
-The mixed workload appears in Figure~\ref{f:fig14}, where sparse UDP probes run
+Figure~\ref{f:fig14} shows the mixed workload, where sparse UDP probes run
 alongside the bulk flows. Every flow-queueing discipline with a delay target
 cuts sparse-flow loss from roughly 8\% to below 0.03\%. The effect is large
 and it is a property of the discipline class, not of the controller.
@@ -860,7 +859,7 @@ This work & 2026 & four parameters & AIMD + gradient & \texttt{tc} + eBPF & 4 \\
 Two things follow from that table. Adapting an AQM's delay target at runtime
 is established, by DESiRED, so the mechanism is not the contribution here.
 And no entry in the table states the condition under which its adaptation
-pays, which is what this report supplies.
+pays. That condition is what we supply here.
 
 \subsection{Four omissions common to the whole table}
 
@@ -871,7 +870,7 @@ process and a useful one are indistinguishable in the results. Averaging the
 sparse probe into the bulk flows discards the very distinction that flow
 queueing exists to create. A comparison against two or three disciplines
 cannot say whether the gain belongs to the adaptation or to the family of
-discipline it was tried on, which is why eight alternatives share one
+discipline it was tried on, so eight alternatives share one
 bottleneck here. And a prediction written after its measurement is not a
 prediction.
 
@@ -907,8 +906,8 @@ That is a stronger claim than the table, and unlike the table it can be wrong.
 Because a saturating curve can be fitted to almost any monotone data, the
 hypothesis, its three predictions and their numerical thresholds were
 committed to the repository \emph{before} the campaign that tests them ran.
-The commit adding \texttt{docs/SCALING\_LAW.md} precedes the commit adding the
-results directory, and the version history shows it.
+Version history shows the commit adding \texttt{docs/SCALING\_LAW.md}
+preceding the commit that adds the results directory.
 
 \subsection{Result}
 
@@ -965,9 +964,9 @@ account in terms of RTT reproduces.
 
 \subsection{What it costs, and what it means}
 
-The gain is bought with up to \LawDropRiseHigh\% more drops and comparable
-retransmissions, at a throughput cost never exceeding
-\LawWorstThroughput\% in any cell measured. The ratio governs the exchange
+That gain is bought with up to \LawDropRiseHigh\% more drops and comparable
+retransmissions. Throughput moves least of all: the largest change in any
+cell is \LawWorstThroughput\%. The ratio governs the exchange
 rate as well as the gain.
 
 Published guidance places \texttt{target} at 5 to 10 percent of
@@ -975,8 +974,8 @@ Published guidance places \texttt{target} at 5 to 10 percent of
 correctly configured deployment sits at $r$ between 0.05 and 0.10. Half the
 available benefit arrives at $r=\LawHalfBenefit$, five to ten times outside
 that envelope. Parameter adaptation is therefore best understood as a remedy
-for misconfiguration rather than an improvement on correct configuration,
-which explains the null results in this work and elsewhere as one effect
+for misconfiguration, not an improvement on correct configuration. That
+reading explains the null results in this work and elsewhere as one effect
 rather than several.
 
 \section{Measurement defects found and corrected}\label{s:defects}
@@ -1068,8 +1067,8 @@ and it accounts for both.
 
 \section{Contributions}
 
-The report is the work of three contributors, and the division is recorded
-here so each part of it can be attributed.
+Three contributors did this work, and the division is recorded here so each
+part of it can be attributed.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=0.35em]
 \item \textbf{Amritha S} (\texttt{amritha.s2023@vitstudent.ac.in}) built the
@@ -1083,7 +1082,7 @@ here so each part of it can be attributed.
 \end{itemize}
 
 All three reviewed the report. Where the text says what a measurement forced
-rather than what was planned, that is a record of the work as it happened: the
+instead of what was planned, that is a record of the work as it happened: the
 pre-registered hypotheses and their decision thresholds are committed with
 timestamps preceding the runs they govern.
 

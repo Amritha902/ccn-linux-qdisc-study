@@ -1,15 +1,23 @@
-all: preview.pdf
+# submission.tex is the manuscript and the only source. It is self-contained:
+# sync_generated.py inlines the macro block from ../generated/, so a plain
+# pdflatex run builds it with no \input to resolve.
+#
+# There is deliberately no "clean" target that touches submission.tex.
 
-preview.pdf: preview.tex body.tex refs.bib
-	pdflatex -interaction=nonstopmode preview.tex >/dev/null
-	bibtex preview >/dev/null || true
-	pdflatex -interaction=nonstopmode preview.tex >/dev/null
-	pdflatex -interaction=nonstopmode preview.tex >/dev/null
-	@echo "built preview.pdf"
+all: submission.pdf
 
-flatten:
-	@python3 flatten.py
+submission.pdf: submission.tex refs.bib
+	python3 sync_generated.py
+	pdflatex -interaction=nonstopmode submission.tex >/dev/null
+	bibtex submission >/dev/null || true
+	pdflatex -interaction=nonstopmode submission.tex >/dev/null
+	pdflatex -interaction=nonstopmode submission.tex >/dev/null
+	@echo "built submission.pdf"
+
+overleaf: submission.pdf
+	python3 make_overleaf.py
 
 clean:
-	rm -f *.aux *.log *.out *.bbl *.blg preview.pdf submission.tex
-.PHONY: all flatten clean
+	rm -f *.aux *.log *.out *.bbl *.blg
+
+.PHONY: all overleaf clean

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Build a self-contained Overleaf project for the Scientific Reports paper.
 
-The source of truth is submission.tex, not main.tex: submission.tex carries
-edits made after the last flatten and re-running flatten.py would discard
-them. This script therefore treats submission.tex as the manuscript, resolves
-any \input that remains, flattens the figure paths, and copies only the
-figures the manuscript actually references.
+submission.tex is the manuscript and the only source. This resolves any
+\input that remains in it, flattens the figure paths so nothing depends on
+\graphicspath, and copies the figures it references plus the full set from
+figures/ so any of them can be swapped in on Overleaf.
 """
 import os, re, shutil, zipfile
 

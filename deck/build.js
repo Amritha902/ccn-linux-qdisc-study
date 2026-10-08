@@ -4,7 +4,7 @@ P.layout = 'LAYOUT_WIDE';              // 13.3 x 7.5 in
 P.author = 'Amritha S, Yugeshwaran P, Deepti Annuncia';
 P.title  = 'Runtime Parameter Adaptation for fq_codel';
 
-// Ocean Gradient palette — deep blue dominant, teal support, midnight accent
+// Ocean Gradient palette: deep blue dominant, teal support, midnight accent
 const DEEP = '065A82', TEAL = '1C7293', MID = '21295C';
 const INK = '13233B', BODY = '3A4A5F', MUTE = '7B8A9C';
 const PAPER = 'FFFFFF', TINT = 'EEF4F8', WARN = 'B23A48', GOOD = '2C7A5A';
@@ -46,11 +46,13 @@ function dot(s, x, y, d, col, glyph) {
 /* ---------------------------------------------------------------- 1 title */
 {
   const s = dark('Runtime Parameter Adaptation\nfor fq_codel', 'VIT CHENNAI  ·  DEPT. OF ECE, SENSE');
-  s.addText('A measured evaluation on stock Linux — and what the measurements had to survive',
+  s.addText('A measured evaluation on stock Linux, and what the measurements had to survive',
     { x: M, y: 4.35, w: W - 2*M, h: 0.5, fontSize: 17, color: 'A9C3DE',
       fontFace: BF, italic: true, isTextBox: true });
   s.addText('Amritha S   ·   Yugeshwaran P   ·   Deepti Annuncia',
-    { x: M, y: 5.5, w: W - 2*M, h: 0.4, fontSize: 14, color: '8FA8C4', fontFace: BF, isTextBox: true });
+    { x: M, y: 5.38, w: W - 2*M, h: 0.4, fontSize: 14, color: '8FA8C4', fontFace: BF, isTextBox: true });
+  s.addText('amritha.s2023@vitstudent.ac.in   ·   yugeshwaran.p2023@vitstudent.ac.in   ·   deepti.annucia2023@vitstudent.ac.in',
+    { x: M, y: 5.78, w: W - 2*M, h: 0.34, fontSize: 10, color: '6C87A6', fontFace: BF, isTextBox: true });
   s.addNotes('The deck covers what we built, why we made each design choice, what we found, and what did not survive verification.');
 }
 
@@ -108,7 +110,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
        isTextBox: true, margin: 0, lineSpacing: 18 });
   s.addText([
     { text: 'Measured:  9,777 Mbps unshaped', options: { breakLine: true, bold: true } },
-    { text: '66 bytes/packet — pure TCP ACKs', options: { breakLine: true } },
+    { text: '66 bytes/packet, pure TCP ACKs', options: { breakLine: true } },
     { text: '~130,000 drops/s on an 826 pkt/s link', options: {} },
   ], { x: M + 0.3, y: 3.75, w: 5.4, h: 1.3, fontSize: 13, color: WARN, fontFace: BF,
        isTextBox: true, margin: 0, lineSpacing: 18 });
@@ -123,8 +125,8 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
        isTextBox: true, margin: 0, lineSpacing: 18 });
   s.addText([
     { text: 'Measured:  9.38 Mbps shaped', options: { breakLine: true, bold: true } },
-    { text: '1509 bytes/packet — real data', options: { breakLine: true } },
-    { text: '~19 drops/s — physically plausible', options: {} },
+    { text: '1509 bytes/packet, real data', options: { breakLine: true } },
+    { text: '~19 drops/s, physically plausible', options: {} },
   ], { x: 7.2, y: 3.75, w: 5.1, h: 1.3, fontSize: 13, color: GOOD, fontFace: BF,
        isTextBox: true, margin: 0, lineSpacing: 18 });
 
@@ -140,7 +142,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
   s.addText('CHOICE  ·  a 20 Hz sparse probe AND in-band bulk-flow RTT from TCP_INFO',
     { x: M, y: 1.15, w: W - 2*M, h: 0.38, fontSize: 14, bold: true, color: DEEP,
       fontFace: BF, isTextBox: true, charSpacing: 1 });
-  s.addText('fq_codel\'s new-flow heuristic deliberately privileges sparse flows. A ping is a sparse flow, so it measures the best case — not what the bulk traffic sees.',
+  s.addText('fq_codel\'s new-flow heuristic deliberately privileges sparse flows. A ping is a sparse flow, so it measures the best case, not what the bulk traffic sees.',
     { x: M, y: 1.58, w: W - 2*M, h: 0.5, fontSize: 14.5, color: BODY, fontFace: BF, isTextBox: true });
 
   const hdr = ['Discipline', 'Sparse probe', 'Bulk flows', 'Ratio'];
@@ -171,7 +173,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
   s.addText('Quoting only the probe inverts the ranking.',
     { x: M + 0.35, y: 5.82, w: W - 2*M - 0.7, h: 0.38, fontSize: 17, bold: true,
       color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
-  s.addText('By probe RTT, SFQ (30.7 ms) beats CoDel (39.2 ms). By what the data flows actually experience, SFQ is 294 ms against CoDel\'s 44 ms — nearly 7x worse. SFQ gives the probe its own short queue but has no AQM, so the bulk queues sit at its 127-packet limit throughout.',
+  s.addText('By probe RTT, SFQ (30.7 ms) beats CoDel (39.2 ms). By what the data flows actually experience, SFQ is 294 ms against CoDel\'s 44 ms, nearly 7x worse. SFQ gives the probe its own short queue but has no AQM, so the bulk queues sit at its 127-packet limit throughout.',
     { x: M + 0.35, y: 6.2, w: W - 2*M - 0.7, h: 0.65, fontSize: 12.5, color: BODY,
       fontFace: BF, isTextBox: true, margin: 0 });
   s.addNotes('The probe-to-bulk ratio is a discipline signature. Any AQM paper quoting a single ping number may be ranking systems backwards.');
@@ -180,7 +182,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
 /* ----------------------------------------------- 6 choice: sham control */
 {
   const s = light('Why we run a controller that does nothing');
-  s.addText('CHOICE  ·  a sham condition — the controller polls at the same cadence but applies no change',
+  s.addText('CHOICE  ·  a sham condition: the controller polls at the same cadence but applies no change',
     { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 14, bold: true, color: DEEP,
       fontFace: BF, isTextBox: true, charSpacing: 1 });
   s.addText('The controller is an extra process polling every 500 ms. In a 2-vCPU emulated VM that alone can add latency. Without a control condition, "the controller made it slower" and "the controller\'s decisions made it slower" are indistinguishable.',
@@ -230,7 +232,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
   s.addText('bpf(2) in process', { x: 7.15, y: 2.0, w: 5.1, h: 0.4, fontSize: 16,
     bold: true, color: GOOD, fontFace: HF, isTextBox: true, margin: 0 });
   s.addText([
-    { text: 'tick restored to 0.709 s — 4.5× faster', options: { breakLine: true } },
+    { text: 'tick restored to 0.709 s, 4.5× faster', options: { breakLine: true } },
     { text: 'no extra process, so no CPU confound', options: { breakLine: true } },
     { text: 'raw bytes, so no hex-string decode bug', options: {} },
   ], { x: 7.15, y: 2.5, w: 5.1, h: 1.6, fontSize: 13, color: BODY, fontFace: BF,
@@ -249,7 +251,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
 /* ------------------------------------------- 8 choice: staged workload */
 {
   const s = light('Why the workload changes during the run');
-  s.addText('CHOICE  ·  a staged load — 2 flows, then 24, then back to 2',
+  s.addText('CHOICE  ·  a staged load: 2 flows, then 24, then back to 2',
     { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 14, bold: true, color: DEEP,
       fontFace: BF, isTextBox: true, charSpacing: 1 });
   s.addText('A controller that classifies congestion into four states can only be tested by a workload that visits more than one of them.',
@@ -275,7 +277,7 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
   ], { x: 7.15, y: 3.1, w: 5.1, h: 1.4, fontSize: 13, color: BODY, fontFace: BF,
        isTextBox: true, margin: 0, lineSpacing: 19 });
 
-  s.addText('Under constant overload the original controller ratcheted target to its floor every run and stopped — always exactly 15 adjustments, which is just the number of ×0.9 steps from 5 ms to 1 ms. That is a constant, not a measurement.',
+  s.addText('Under constant overload the original controller ratcheted target to its floor every run and stopped, always exactly 15 adjustments, which is just the number of ×0.9 steps from 5 ms to 1 ms. That is a constant, not a measurement.',
     { x: M, y: 5.0, w: W - 2*M, h: 0.9, fontSize: 14, italic: true, color: INK,
       fontFace: BF, isTextBox: true });
   s.addNotes('15 = ceil(log(1/5)/log(0.9)). It appeared in 24 of 32 runs.');
@@ -285,9 +287,9 @@ dark('Why we chose what we chose', 'DESIGN RATIONALE')
 {
   const s = light('Why these metrics and these baselines');
   const items = [
-    ['Goodput from sum_received', 'iperf3\'s sum_sent counts bytes handed to the socket. Under pfifo it read 12.16 Mbps on a 10 Mbit link — the sender filling a bloated buffer. Only sum_received crossed the bottleneck.', DEEP],
-    ['Nine queue disciplines', 'pfifo, SFQ, RED, CoDel, PIE, FQ-PIE, CAKE, fq_codel, fq_codel+ACAPE. A comparison that omits the obvious alternatives is not a comparison — and PIE and CAKE are genuinely competitive.', TEAL],
-    ['Three repetitions, exact statistics', 'Confidence intervals from Student\'s t via the incomplete beta function, not a normal approximation — which at n=3 overstates significance and flipped one of our own conclusions.', MID],
+    ['Goodput from sum_received', 'iperf3\'s sum_sent counts bytes handed to the socket. Under pfifo it read 12.16 Mbps on a 10 Mbit link, the sender filling a bloated buffer. Only sum_received crossed the bottleneck.', DEEP],
+    ['Nine queue disciplines', 'pfifo, SFQ, RED, CoDel, PIE, FQ-PIE, CAKE, fq_codel, fq_codel+ACAPE. A comparison that omits the obvious alternatives is not a comparison, and PIE and CAKE are genuinely competitive.', TEAL],
+    ['Three repetitions, exact statistics', 'Confidence intervals from Student\'s t via the incomplete beta function, not a normal approximation, which at n=3 overstates significance and flipped one of our own conclusions.', MID],
   ];
   items.forEach((it, i) => {
     const y = 1.35 + i * 1.62;
@@ -311,7 +313,7 @@ dark('What the measurements show', 'RESULTS')
 /* --------------------------------------------- 11 the dominant effect */
 {
   const s = light('The effect that dominates everything');
-  s.addText('Presence or absence of a flow-queueing AQM — not the tuning of one',
+  s.addText('Presence or absence of a flow-queueing AQM, not the tuning of one',
     { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 15, color: BODY, fontFace: BF, isTextBox: true });
 
   const stats = [['2371 ms', 'p95 RTT\npfifo, no AQM', WARN],
@@ -331,7 +333,7 @@ dark('What the measurements show', 'RESULTS')
   s.addText('Two orders of magnitude, at no throughput or fairness cost.',
     { x: M + 0.35, y: 4.45, w: W - 2*M - 0.7, h: 0.45, fontSize: 19, bold: true,
       color: DEEP, fontFace: HF, isTextBox: true, margin: 0 });
-  s.addText('Every flow-queueing discipline with a delay target — fq_codel, FQ-PIE, CAKE — lands near 23 ms. Single-queue AQMs (CoDel, PIE) land near 45 ms. SFQ, which has fair queueing but no AQM, bloats to 115 packets. The AQM and the scheduler each do a distinct job, and both matter far more than parameter choice.',
+  s.addText('Every flow-queueing discipline with a delay target (fq_codel, FQ-PIE, CAKE) lands near 23 ms. Single-queue AQMs (CoDel, PIE) land near 45 ms. SFQ, which has fair queueing but no AQM, bloats to 115 packets. The AQM and the scheduler each do a distinct job, and both matter far more than parameter choice.',
     { x: M + 0.35, y: 4.95, w: W - 2*M - 0.7, h: 1.0, fontSize: 14, color: BODY,
       fontFace: BF, isTextBox: true, margin: 0 });
   s.addNotes('This is the clean, defensible, reproducible result of the study.');
@@ -569,18 +571,18 @@ dark('What did not survive verification', 'INTEGRITY')
     { x: M, y: 1.2, w: W - 2*M, h: 0.4, fontSize: 15, color: BODY, fontFace: BF, isTextBox: true });
 
   card(s, M, 1.75, 5.85, 2.45, 'FBEEF0');
-  s.addText('Already done — cannot claim', { x: M + 0.3, y: 1.95, w: 5.25, h: 0.38,
+  s.addText('Already done: cannot claim', { x: M + 0.3, y: 1.95, w: 5.25, h: 0.38,
     fontSize: 15, bold: true, color: WARN, fontFace: HF, isTextBox: true, margin: 0 });
   s.addText([
     { text: 'DESiRED (2024) adapts an AQM target at runtime with DRL + INT on P4', options: { breakLine: true, bullet: true } },
     { text: 'Adaptive RED (2001) is the AIMD rule we borrow', options: { breakLine: true, bullet: true } },
-    { text: 'ACoDel (2020) adapts CoDel\'s interval — with a stability proof we lack', options: { breakLine: true, bullet: true } },
+    { text: 'ACoDel (2020) adapts CoDel\'s interval, with a stability proof we lack', options: { breakLine: true, bullet: true } },
     { text: 'QueuePilot (2023), AQM-LLM (2026) learn AQM policies', options: { bullet: true } },
   ], { x: M + 0.3, y: 2.4, w: 5.25, h: 1.7, fontSize: 12, color: BODY, fontFace: BF,
        isTextBox: true, margin: 0, paraSpaceAfter: 6 });
 
   card(s, 6.85, 1.75, 5.75, 2.45, 'EAF4EE');
-  s.addText('Not done by anyone — our claim', { x: 7.15, y: 1.95, w: 5.15, h: 0.38,
+  s.addText('Not done by anyone: our claim', { x: 7.15, y: 1.95, w: 5.15, h: 0.38,
     fontSize: 15, bold: true, color: GOOD, fontFace: HF, isTextBox: true, margin: 0 });
   s.addText([
     { text: 'A sham-controller condition separating CPU cost from decisions', options: { breakLine: true, bullet: true } },

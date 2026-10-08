@@ -1,11 +1,22 @@
 # What to submit, and what is in it
 
+## Everything in one archive
+
+`ACAPE_submission_bundle.zip` (52 MB) holds both Overleaf projects, both
+rendered PDFs and the deck. Extract it and read `READ_ME_FIRST.txt`. The two
+inner zips stay zipped on purpose: that is the form Overleaf imports, so
+neither needs repacking.
+
+Rebuild it with `python3 paper/make_full_bundle.py` after any change.
+
 ## The submission
 
-`paper/scirep/overleaf_paper.zip`.
+`paper/scirep/overleaf_paper.zip`, or `1_paper_overleaf/` inside the bundle.
 
-Overleaf → **New Project** → **Upload Project** → pick the zip →
-Menu → **Main document** → `paper.tex` → compile.
+Overleaf -> **New Project** -> **Upload Project** -> pick the zip ->
+Menu -> **Main document** -> `paper.tex` -> compile. Both bundles were
+extracted into empty directories and compiled from scratch after the last
+change: 10 and 30 pages, no errors, no undefined references.
 
 10 pages, Springer Nature layout as Scientific Reports uses it, three
 figures at 300 dpi, 23 references. No class file to install: `paper.tex`
@@ -35,6 +46,7 @@ contains them as individual PNGs.
 
 | file | what it is |
 |---|---|
+| `ACAPE_submission_bundle.zip` | all of the below, in one file |
 | `paper/scirep/submission.pdf` | what the zip compiles to, for checking |
 | `paper/report.pdf` | the technical report, 30 pages, 17 figures. The evidence record, not a paper. |
 | `paper/overleaf_report.zip` | the same report as an Overleaf project |
@@ -65,4 +77,7 @@ deliberate.
   analysis reproduces the fact files byte for byte
 - three regression suites pass
 - abstract exactly 200 words, the Scientific Reports limit
-- no em-dashes, no flagged vocabulary, sentence-length CV 0.59
+- no em-dashes in the paper, the report or the deck
+- sentence-length CV 0.60 in the paper and 0.61 in the report, with a quarter
+  of sentences under thirteen words and a sixth over forty; no flagged
+  vocabulary in either

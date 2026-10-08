@@ -1,6 +1,6 @@
 # Presentation
 
-`ACAPE_2026.pptx`, 17 slides built from the verified work. Regenerate with:
+`ACAPE_2026.pptx`, 22 slides built from the verified work. Regenerate with:
 
 ```bash
 npm install pptxgenjs     # once
@@ -16,10 +16,25 @@ cannot drift from what the script says.
 |---|---|
 | 1, 2 | The question: should fq_codel's four fixed parameters adapt? |
 | 3, 9 | **Design rationale**, why each choice was made |
-| 10, 12 | Results: the dominant effect, and whether adaptation helps |
-| 13, 15 | What did not survive verification, and how each defect was caught |
-| 16 | Where this sits against 2023, 2026 work; what we can and cannot claim |
-| 17 | Conclusion |
+| 10, 13 | Results: the dominant effect, whether adaptation helps, and CAKE |
+| 14, 17 | **The scaling law**: the governing ratio, the fit and its pre-registered tests, and the finding that the ceiling is not fixed |
+| 18, 20 | What did not survive verification, and how each defect was caught |
+| 21 | Where this sits against recent work |
+| 22 | Conclusion |
+
+## The scaling-law section
+
+Added after the campaign that produced it; the earlier deck predates the law
+and framed the work as a null result.
+
+- **The governing ratio** is `target/RTT`, with the figure showing the
+  measurements collapsing onto one curve under it and scattering under RTT
+- **The fit and its tests**: ceiling 20.5%, half-benefit at r = 0.50, over ten
+  cells, with the three pre-registered tests that held and the fourth that
+  failed
+- **The ceiling is not fixed**: holding r = 1 and sweeping the link rate
+  25-fold moves the benefit from 7.1 to 18.2%, so the fitted ceiling belongs
+  to the operating point and not the mechanism
 
 ## The design-rationale section
 
@@ -37,5 +52,10 @@ Each slide states the choice, then the measurement or failure that forced it:
   that visits more than one state
 - **Goodput from sum_received, nine disciplines, exact statistics**, each
   added because its absence had already produced a wrong number
+
+The results slides state the null honestly: the largest movement, mean
+backlog, carries an interval of plus or minus 1.00 packets and covers zero,
+and at three repetitions the design resolves about 3.5%, so the measurements
+bound the effect rather than disprove it.
 
 Speaker notes are attached to the substantive slides.

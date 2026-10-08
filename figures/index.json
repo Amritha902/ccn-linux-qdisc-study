@@ -668,6 +668,36 @@
       "title": "fig13_sham_control_steady.png",
       "caption": "Sham-controller condition \u2014 separates controller CPU cost from control decisions (steady workload)",
       "path": "comparison/fig13_sham_control_steady.png"
+    },
+    {
+      "id": "FIG 36",
+      "title": "fig14_mixed_workload.png",
+      "caption": "fig14_mixed_workload",
+      "path": "comparison/fig14_mixed_workload.png"
+    },
+    {
+      "id": "FIG 37",
+      "title": "fig15_rtt_sweep.png",
+      "caption": "fig15_rtt_sweep",
+      "path": "comparison/fig15_rtt_sweep.png"
+    },
+    {
+      "id": "FIG 38",
+      "title": "fig16_scaling_law.png",
+      "caption": "fig16_scaling_law",
+      "path": "comparison/fig16_scaling_law.png"
+    },
+    {
+      "id": "FIG 39",
+      "title": "fig17_main_outputs_staged.png",
+      "caption": "fig17_main_outputs_staged",
+      "path": "comparison/fig17_main_outputs_staged.png"
+    },
+    {
+      "id": "FIG 40",
+      "title": "fig17_main_outputs_steady.png",
+      "caption": "fig17_main_outputs_steady",
+      "path": "comparison/fig17_main_outputs_steady.png"
     }
   ]
 }

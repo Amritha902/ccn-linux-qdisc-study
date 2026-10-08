@@ -1,0 +1,120 @@
+<mxfile host="app.diagrams.net" version="24.7.17">
+  <diagram id="acape-arch" name="Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="tHost" value="Host: QEMU, custom kernel 6.12.48 (all AQMs built in, BTF enabled)" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=2;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="700" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dp" value="DATA PLANE&#10;(network namespaces)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F7FA;strokeColor=#9AA5B1;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;fontSize=11;fontStyle=1;fontColor=#52606D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1020" height="230" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cli" value="ns_client&#10;192.168.1.2&#10;&#10;iperf3: 8 bulk TCP CUBIC&#10;+ sparse UDP probes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4C78A8;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="70" y="110" width="170" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rtr" value="ns_router&#10;192.168.1.1 / 192.168.2.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4E5;strokeColor=#F58518;verticalAlign=top;spacingTop=8;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="80" width="420" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="netem" value="netem&#10;base RTT 2-200 ms" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F58518;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="350" y="120" width="110" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="tbf" value="TBF root 1:&#10;shaper, 2-50 Mbit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F58518;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="475" y="120" width="110" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="aqm" value="AQM under test 10:&#10;fq_codel | codel | PIE&#10;CAKE | FQ-PIE | RED | SFQ" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE8E8;strokeColor=#E45756;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="112" width="130" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl1" value="veth_rs egress: the bottleneck is on the DATA path" style="text;html=1;align=center;fontSize=9;fontColor=#8A6D3B;" vertex="1" parent="1">
+          <mxGeometry x="350" y="178" width="380" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ebpf" value="eBPF tc_monitor.o @ clsact egress&#10;LRU_HASH per-flow + PERCPU_ARRAY" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EAF6EA;strokeColor=#54A24B;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="350" y="202" width="380" height="36" as="geometry" />
+        </mxCell>
+
+        <mxCell id="srv" value="ns_server&#10;192.168.2.2&#10;&#10;iperf3 -s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4C78A8;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="860" y="110" width="170" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4C78A8;strokeWidth=2;endArrow=block;" edge="1" parent="1" source="cli" target="rtr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#4C78A8;strokeWidth=2;endArrow=block;" edge="1" parent="1" source="rtr" target="srv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cp" value="CONTROL PLANE&#10;(userspace, 1 process)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F7FA;strokeColor=#9AA5B1;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;fontSize=11;fontStyle=1;fontColor=#52606D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="1020" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s1" value="1. OBSERVE&#10;&#10;tc -s qdisc: backlog, drops&#10;bpf(2): per-flow state&#10;period T = 0.5 ms x (t0/5 ms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF6EA;strokeColor=#54A24B;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="70" y="350" width="185" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="2. CLASSIFY&#10;&#10;regime from drop rate + backlog&#10;NORMAL / LIGHT / MODERATE / HEAVY&#10;thresholds scale as (5 ms / t0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4C78A8;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="275" y="350" width="195" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="3. PREDICT&#10;&#10;gradient over 10-tick window&#10;trajectory: WORSENING /&#10;STABLE / RECOVERING" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3EAF6;strokeColor=#B279A2;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="490" y="350" width="185" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="4. ACT (AIMD)&#10;&#10;HEAVY: target x 0.9&#10;LIGHT: target + 0.5 ms x (t0/5)&#10;bounds [0.04 t0, 4 t0]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4E5;strokeColor=#F58518;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="695" y="350" width="185" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="5. APPLY&#10;&#10;tc qdisc change&#10;read back and verify&#10;log old / new / applied" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8E8;strokeColor=#E45756;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="900" y="350" width="140" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c4" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="s4" target="s5"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="up" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#54A24B;strokeWidth=2;endArrow=block;dashed=1;exitX=0.5;exitY=0;entryX=0.25;entryY=1;" edge="1" parent="1" source="s1" target="ebpf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="upl" value="read" style="text;html=1;fontSize=9;fontColor=#54A24B;" vertex="1" parent="1">
+          <mxGeometry x="170" y="292" width="40" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="dn" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#E45756;strokeWidth=2;endArrow=block;exitX=0.5;exitY=0;entryX=0.9;entryY=1;" edge="1" parent="1" source="s5" target="aqm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dnl" value="write" style="text;html=1;fontSize=9;fontColor=#E45756;" vertex="1" parent="1">
+          <mxGeometry x="930" y="280" width="40" height="16" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sham" value="CONTROL CONDITION (sham): stages 1-4 run at the same cadence, stage 5 applies nothing.&#10;Any sham-vs-static difference is the controller's CPU cost, not the effect of its decisions." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9AA5B1;dashed=1;fontSize=10;align=left;spacingLeft=10;fontColor=#52606D;" vertex="1" parent="1">
+          <mxGeometry x="70" y="478" width="970" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mp" value="MEASUREMENT AND ANALYSIS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F7FA;strokeColor=#9AA5B1;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;fontSize=11;fontStyle=1;fontColor=#52606D;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="1020" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="THREE LATENCIES, measured separately&#10;&#10;sparse probe: ping at 20 Hz&#10;bulk in-band: iperf3 TCP_INFO per interval&#10;queue delay: from tc backlog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#4C78A8;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="70" y="586" width="280" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="178 RUNS&#10;&#10;8 disciplines + static + sham + adaptive&#10;3 workloads: steady, staged, mixed&#10;3 repetitions, 95% CI throughout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF6EA;strokeColor=#54A24B;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="370" y="586" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="GENERATED OUTPUT&#10;&#10;analyse.py, analyse_law.py, plots.py&#10;every number enters LaTeX as a macro&#10;so prose cannot drift from data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4E5;strokeColor=#F58518;fontSize=10;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="640" y="586" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="RESULT&#10;&#10;b(r) = B / (1 + (r0/r)^k)&#10;B = 20.5%&#10;r0 = 0.50&#10;R² = 0.986" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE8E8;strokeColor=#E45756;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="910" y="586" width="130" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="m1" target="m2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="m2" target="m3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=2;strokeColor=#52606D;endArrow=block;" edge="1" parent="1" source="m3" target="m4"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="note" value="Every bound, step size and threshold is expressed relative to the configured target t0, not as an absolute time." style="text;html=1;align=left;fontSize=10;fontStyle=2;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="728" width="800" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -37,6 +37,7 @@ documented at its call site and covered by tests/test_acape.py:
 """
 
 import argparse, csv, json, os, re, signal, struct, subprocess, sys, time
+import statistics
 from collections import deque
 from datetime import datetime
 
@@ -48,16 +49,150 @@ except ImportError:
 VERSION = "6.0.0"
 
 # ── Control constants ─────────────────────────────────────────────────────
-T_MIN, T_MAX     = 0.2, 20.0      # ms  (v5 floored at 1ms; sub-ms now expressible)
-I_MIN, I_MAX     = 20.0, 300.0    # ms
+# F5. The target and interval bounds were absolute: 0.2 to 20 ms and 20 to
+# 300 ms. That is harmless at the 5 ms default but silently wrong anywhere
+# else. Started against a qdisc configured with target 80 ms, the controller
+# read 80 from tc and the clamp cut it to 20 on the very first tick, a
+# fourfold reduction decided by a constant rather than by any control
+# decision. A ratio-invariance experiment run that way would have compared a
+# static 80 ms target against an adapted 20 ms one and reported a large
+# benefit that had nothing to do with control.
+#
+# The bounds are now a fixed multiple of whatever target the qdisc is
+# configured with, so the controller explores the same relative range wherever
+# it is deployed. The multipliers are chosen to reproduce the previous
+# absolute values exactly at the 5 ms default:
+#
+#     T_MIN = 0.04 * 5 = 0.2      T_MAX = 4  * 5 = 20
+#     I_MIN = 4    * 5 = 20       I_MAX = 60 * 5 = 300
+#
+# so every run in every earlier campaign is bit-identical under this change,
+# and only non-default targets behave differently, where the old behaviour was
+# simply a bug.
+T_MIN_R, T_MAX_R = 0.04, 4.0      # x configured target
+# F9. The interval bounds were a multiple of the configured TARGET, which
+# bakes in fq_codel's own interval/target ratio of 20 (100ms against 5ms).
+# PIE's ratio is 1: its tupdate default is 15ms at a 15ms target. Bounds of
+# [4*t0, 60*t0] therefore put PIE's configured tupdate BELOW the floor, and the
+# first adjustment quadrupled it from 15ms to 60ms, a change to PIE's control
+# period that no control decision asked for. The same defect as F5, one level
+# up: a constant calibrated on one qdisc's shape, imposed on another's.
+#
+# Bounds are now a multiple of the configured INTERVAL, so each qdisc keeps its
+# own shape. The multipliers reproduce the previous values exactly at
+# fq_codel's 100ms default: 0.2*100 = 20 and 3*100 = 300.
+I_MIN_R, I_MAX_R = 0.2, 3.0       # x configured interval
+I_RATIO          = 10.0           # interval/target floor, set from the qdisc
+T_MIN, T_MAX     = 0.2, 20.0      # ms, overwritten by set_bounds()
+I_MIN, I_MAX     = 20.0, 300.0    # ms, overwritten by set_bounds()
+
+
+def set_bounds(t0, i0=None):
+    """Scale the bounds and step sizes to the configured operating point.
+
+    t0 is the configured target, i0 the configured interval. Target-derived
+    quantities scale with t0; the interval bounds scale with i0 so a qdisc
+    whose interval/target ratio differs from fq_codel's is not forced onto
+    fq_codel's shape (F9). Omitting i0 assumes fq_codel's ratio of 20, which
+    keeps the single-argument call behaving exactly as before.
+    """
+    global T_MIN, T_MAX, I_MIN, I_MAX, STEP_SCALE, DR_SCALE, T2_INTERVAL, I_RATIO
+    if not t0 or t0 <= 0:
+        return
+    T_MIN, T_MAX = T_MIN_R * t0, T_MAX_R * t0
+    iref = i0 if (i0 and i0 > 0) else t0 * 20
+    I_MIN, I_MAX = I_MIN_R * iref, I_MAX_R * iref
+    # Preserve the qdisc's own interval/target coupling rather than CoDel's.
+    # At fq_codel's defaults this is 100/5 = 20, and the old rule's floor of 10
+    # never bound, so behaviour there is unchanged.
+    I_RATIO = (iref / t0) / 2.0
+    STEP_SCALE = t0 / BASE_TARGET
+    DR_SCALE = BASE_TARGET / t0
+    # F8. The control loop period was absolute. CoDel's interval scales with
+    # the target, so at a 16x target the controller was sampling every 0.5 s
+    # against a 1.6 s AQM interval: three samples inside a single cycle rather
+    # than an average over several. The regime classification then flickers
+    # between LIGHT, MODERATE and HEAVY, the stable_cnt >= STABLE_ROUNDS gate
+    # never opens, and not one adjustment fires in a whole run. Measured at
+    # target 80 ms: 86 ticks, regimes split 31/28/27, target unchanged at
+    # 80.000 throughout, zero rows in the adjustment log.
+    #
+    # The loop period is scaled so it stays the same multiple of the AQM's own
+    # interval (five times it) wherever the controller is deployed. At the 5 ms
+    # default the scale is 1.0 and the period is the 0.5 s it always was.
+    T2_INTERVAL = T2_BASE * STEP_SCALE
 L_MIN, L_MAX     = 64, 4096       # packets
 BETA             = 0.9            # multiplicative decrease (Floyd et al. 2001)
 ALPHA_T, ALPHA_L = 0.5, 64        # additive increase
-DR_LIGHT, DR_MOD, DR_HEAVY = 1.0, 10.0, 30.0    # drops/s
+# F6. The multiplicative decrease is scale-free, but the additive steps were
+# not. A 0.2 ms step is 4% of a 5 ms target and 0.25% of an 80 ms one, so the
+# same controller adapted an order of magnitude more slowly, in relative
+# terms, the larger the target it was deployed against. Measured on the first
+# ratio-invariance run, a 20 ms target moved only 20 to 18.4 ms over 84 ticks,
+# an 8% excursion where 5 ms would have moved 32%.
+#
+# For a ratio-invariance experiment that is fatal in the opposite direction to
+# F5: the controller would do less at large targets, show less benefit, and
+# the ratio hypothesis would be recorded as refuted by an artefact of its own
+# step size.
+#
+# The time-valued steps are now scaled by the configured target over the 5 ms
+# default, so every step is the same fraction of the operating point. The
+# scale is fixed per run rather than tracking the drifting target, which keeps
+# the 5 ms default exactly bit-identical: STEP_SCALE is then 1.0 and every
+# step is the constant it always was.
+# ── Self-gating ───────────────────────────────────────────────────────────
+# The scaling law says the benefit of adaptation is governed by
+# r = target/RTT, is not statistically distinguishable from zero below
+# r = 0.417, and reaches half its ceiling at r = 0.50. Below the crossover the
+# controller still pays a cost: measured drop rate and retransmissions rise by
+# roughly 10% at r = 0.25 for a 1.4% latency gain that is not significant.
+#
+# A controller that knows the law can decline to act. GATE_R is set to 0.4,
+# just under the lowest ratio at which a benefit was measurable, so the gate
+# opens wherever the benefit was real and stays shut where only the cost was.
+#
+# The ratio has to be computed from what the controller can observe, or the
+# gate is not a contribution. RTT comes from the eBPF flow telemetry, and the
+# statistic used is the median of a sliding window rather than the running
+# minimum that is conventional for base-RTT estimation: measured against a
+# known netem delay the median tracked it to 0.7% while the minimum was wrong
+# by a factor of five. src/check_rtt_estimator.py is the check.
+GATE_R           = 0.4            # gate opens at or above this ratio
+GATE_WINDOW      = 20             # ticks of RTT samples behind the median
+GATE_MIN_SAMPLES = 8              # do not decide before this many samples
+
+BASE_TARGET      = 5.0            # ms, the target these constants were tuned at
+T2_BASE          = 0.5            # s, control loop period at BASE_TARGET
+STEP_SCALE       = 1.0            # overwritten by set_bounds()
+# F7. The regime thresholds are drop rates in drops per second, a quantity
+# with units of 1/time, so they are not scale-free. At ratio 1.0 the measured
+# static drop rate is 59.3/s at target 5 ms, 20.2/s at 20 ms and 7.1/s at
+# 80 ms, which against the fixed thresholds below classifies the same relative
+# congestion as HEAVY, MODERATE and LIGHT respectively. The three cells that
+# ratio invariance requires to be treated identically would each have received
+# a different control law, and at 80 ms the LIGHT branch increases the target,
+# the opposite action.
+#
+# The thresholds are therefore scaled by BASE_TARGET/t0. Two honest caveats.
+# The measured drop rate falls as roughly t^-0.78 rather than the t^-1 this
+# scaling assumes, so the correction is not exact. And what P2 actually needs
+# is weaker than exactness: it needs every compared cell to receive the same
+# control law. Under this scaling all three land in HEAVY with margin (59.3
+# against 30, 20.2 against 7.5, 7.1 against 1.875), which is verified from the
+# trajectories after the runs rather than assumed here.
+#
+# Backlog is deliberately not scaled. Measured at ratio 1.0 it moves by only
+# x0.90 and x2.17 across a sixteenfold change in target, so it is close to
+# invariant already and scaling it would introduce an error rather than remove
+# one. composite_gradient() normalises by these thresholds, so it follows
+# automatically.
+DR_LIGHT, DR_MOD, DR_HEAVY = 1.0, 10.0, 30.0    # drops/s at BASE_TARGET
+DR_SCALE = 1.0                                   # overwritten by set_bounds()
 BL_LIGHT, BL_MOD, BL_HEAVY = 20, 100, 300       # packets
 GRAD_WINDOW   = 10
 STABLE_ROUNDS = 5
-T2_INTERVAL   = 0.5
+T2_INTERVAL   = 0.5     # s at BASE_TARGET, scaled by set_bounds()
 T3_EVERY_N    = 10
 G_THRESH      = 0.5
 
@@ -179,11 +314,23 @@ def get_params(ns, iface, handle=None, kind="fq_codel"):
             v = parse_time_to_ms(m.group(1))
             if v is not None:
                 p["target"] = v
-        m = re.search(r"interval (\S+?)(?:\s|$)", head)
-        if m:
-            v = parse_time_to_ms(m.group(1))
-            if v is not None:
-                p["interval"] = v
+        # The controller's `interval` state is whatever the qdisc calls its
+        # update period, so it must be read under that qdisc's own name.
+        # PIE calls it tupdate and has no `interval` at all, so searching only
+        # for `interval` left the state at its hardcoded 100 ms default while
+        # PIE was actually configured with 15 ms, and the first adjustment then
+        # wrote tupdate 100ms: a 6.7x change to PIE's update period that the
+        # controller never decided to make. PARAM_SETS already names the
+        # mapping, so it is used here rather than duplicated.
+        names = [tc for tc, st in PARAM_SETS.get(kind, PARAM_SETS["fq_codel"])
+                 if st == "interval"] or ["interval"]
+        for nm in names:
+            m = re.search(rf"{nm} (\S+?)(?:\s|$)", head)
+            if m:
+                v = parse_time_to_ms(m.group(1))
+                if v is not None:
+                    p["interval"] = v
+                break
         m = re.search(r"limit (\d+)p?", head)
         if m:
             p["limit"] = int(m.group(1))
@@ -194,14 +341,40 @@ def get_params(ns, iface, handle=None, kind="fq_codel"):
     return p
 
 
+# Which parameters each delay-targeting qdisc actually accepts, and under what
+# name. Writing fq_codel's four at a plain `codel` or a `pie` makes tc reject
+# the whole command, so the controller could only ever drive fq_codel. Keeping
+# this as a table is what lets the same control law be tested on a different
+# AQM algorithm, which is the point of the cross-AQM experiment: PIE regulates
+# a drop probability with a proportional-integral controller rather than a
+# sojourn threshold, so if the same ratio governs it, the result is about delay
+# targets in general and not about CoDel's mechanism.
+#
+# `tupdate` is PIE's update period, the closest analogue of CoDel's interval,
+# so the controller's interval state maps onto it.
+PARAM_SETS = {
+    "fq_codel": [("target", "target"), ("interval", "interval"),
+                 ("limit", "limit"), ("quantum", "quantum")],
+    "codel":    [("target", "target"), ("interval", "interval"),
+                 ("limit", "limit")],
+    "pie":      [("target", "target"), ("tupdate", "interval"),
+                 ("limit", "limit")],
+    "fq_pie":   [("target", "target"), ("tupdate", "interval"),
+                 ("limit", "limit")],
+}
+TIME_PARAMS = {"target", "interval", "tupdate"}
+
+
 def apply_params(ns, iface, p, parent="1:1", handle="10:", kind="fq_codel", dry=False):
     """F3: emit microsecond resolution and verify by reading back."""
+    spec = PARAM_SETS.get(kind, PARAM_SETS["fq_codel"])
     cmd = ["ip", "netns", "exec", ns, "tc", "qdisc", "change", "dev", iface,
-           "parent", parent, "handle", handle, kind,
-           "target", fmt_time(p["target"]),
-           "interval", fmt_time(p["interval"]),
-           "limit", str(int(p["limit"])),
-           "quantum", str(int(p["quantum"]))]
+           "parent", parent, "handle", handle, kind]
+    for tc_name, state_key in spec:
+        if state_key not in p:
+            continue
+        cmd += [tc_name, (fmt_time(p[state_key]) if tc_name in TIME_PARAMS
+                          else str(int(p[state_key])))]
     if dry:
         print("  [DRY] " + " ".join(cmd))
         return True, dict(p)
@@ -410,17 +583,18 @@ def gradient(history, attr):
 
 
 def classify(dr, bl):
-    if dr > DR_HEAVY or bl > BL_HEAVY:
+    """F7: drop-rate thresholds scale with the operating point, backlog does not."""
+    if dr > DR_HEAVY * DR_SCALE or bl > BL_HEAVY:
         return "HEAVY"
-    if dr > DR_MOD or bl > BL_MOD:
+    if dr > DR_MOD * DR_SCALE or bl > BL_MOD:
         return "MODERATE"
-    if dr > DR_LIGHT or bl > BL_LIGHT:
+    if dr > DR_LIGHT * DR_SCALE or bl > BL_LIGHT:
         return "LIGHT"
     return "NORMAL"
 
 
 def composite_gradient(dr_g, bl_g):
-    return 0.6 * dr_g / DR_HEAVY + 0.4 * bl_g / BL_HEAVY
+    return 0.6 * dr_g / (DR_HEAVY * DR_SCALE) + 0.4 * bl_g / BL_HEAVY
 
 
 def predict(regime, dr_g, bl_g):
@@ -463,14 +637,15 @@ def aimd(regime, traj, pred, params, workload):
         r = f"{pfx} mult-decrease beta={beta:.2f}"
     elif eff == "MODERATE":
         # Recovering out of HEAVY: ease off instead of another full cut.
-        p["target"] -= 0.2; p["limit"] -= 32
+        p["target"] -= 0.2 * STEP_SCALE; p["limit"] -= 32
         r = f"{pfx} additive-decrease"
     elif eff == "LIGHT":
-        p["target"] += ALPHA_T; p["interval"] += 5; p["limit"] += ALPHA_L
+        p["target"] += ALPHA_T * STEP_SCALE; p["interval"] += 5 * STEP_SCALE
+        p["limit"] += ALPHA_L
         r = f"{pfx} additive-increase"
     else:
         if traj == "RECOVERING":
-            p["target"] += 0.2; p["limit"] += 16
+            p["target"] += 0.2 * STEP_SCALE; p["limit"] += 16
             r = f"{pfx} gentle-increase"
         else:
             return params, "stable", False
@@ -479,8 +654,13 @@ def aimd(regime, traj, pred, params, workload):
     p["target"]   = max(T_MIN, min(T_MAX, p["target"]))
     p["interval"] = max(I_MIN, min(I_MAX, p["interval"]))
     p["limit"]    = max(L_MIN, min(L_MAX, int(p["limit"])))
-    if p["interval"] <= p["target"] * 10:
-        p["interval"] = min(I_MAX, p["target"] * 10)
+    # F9. This enforced interval >= 10*target, which is CoDel's own coupling:
+    # its interval must span a path RTT while its target is a small fraction of
+    # one. PIE's tupdate sits at roughly 1x its target, so the rule inflated
+    # PIE's control period by an order of magnitude the moment it fired. The
+    # coupling now preserves whatever ratio the qdisc was configured with.
+    if I_RATIO and p["interval"] < p["target"] * I_RATIO:
+        p["interval"] = min(I_MAX, p["target"] * I_RATIO)
     return p, f"{r} | regime={regime} pred={pred} wkld={workload}", predictive
 
 
@@ -515,7 +695,20 @@ def run(args):
     ebpf_on = bool(ebpf and ebpf.active)
 
     params = get_params(args.ns, args.iface, handle=args.handle, kind=args.kind)
+    # F5: scale the parameter bounds to the target the qdisc is actually
+    # configured with, before any adjustment can be clamped against them.
+    configured_target = params.get("target")
+    configured_interval = params.get("interval")
+    set_bounds(configured_target, configured_interval)
+    print(f"[acape] bounds for target {configured_target}ms "
+          f"interval {configured_interval}ms: "
+          f"target {T_MIN:.3g}-{T_MAX:.3g}ms interval {I_MIN:.3g}-{I_MAX:.3g}ms "
+          f"(interval/target ratio {(configured_interval/configured_target if configured_target else 0):.1f})",
+          flush=True)
     history = deque(maxlen=GRAD_WINDOW)
+    rttbuf = deque(maxlen=GATE_WINDOW)      # for the self-gate's RTT estimate
+    gate_open = None                        # None until enough samples
+    gate_flips = 0
     sbuf = deque(maxlen=8)
     stable_cnt = adj_count = pred_count = tick = 0
     t0 = time.time()
@@ -571,6 +764,27 @@ def run(args):
         rtt_g = gradient(list(history), "rtt_proxy_ms")
         pred, traj = predict(regime, dr_g, bl_g)
 
+        # ---- self-gate --------------------------------------------------
+        # Estimate the path's base RTT from observation, derive r, and decide
+        # whether acting is worth its cost. Decided every tick so the decision
+        # follows the path rather than being fixed at startup.
+        if ed["rtt_ms"] > 0:
+            rttbuf.append(ed["rtt_ms"])
+        r_est = None
+        if args.gate and len(rttbuf) >= GATE_MIN_SAMPLES:
+            rtt_est = statistics.median(rttbuf)
+            if rtt_est > 0:
+                r_est = configured_target / rtt_est
+                now_open = r_est >= GATE_R
+                if gate_open is not None and now_open != gate_open:
+                    gate_flips += 1
+                if gate_open is None:
+                    print(f"[acape] gate {'OPEN' if now_open else 'SHUT'}: "
+                          f"target {configured_target:.3g}ms / est RTT "
+                          f"{rtt_est:.2f}ms = r {r_est:.3f} "
+                          f"(threshold {GATE_R})", flush=True)
+                gate_open = now_open
+
         sbuf.append(regime)
         stable_cnt = (stable_cnt + 1 if len(sbuf) >= STABLE_ROUNDS and
                       len(set(list(sbuf)[-STABLE_ROUNDS:])) == 1 else 0)
@@ -590,7 +804,11 @@ def run(args):
                          regime, traj, pred, workload])
             sf.flush()
 
-        if args.adapt and tick % T3_EVERY_N == 0 and stable_cnt >= STABLE_ROUNDS:
+        # The gate withholds adjustment; it does not stop measurement, so a
+        # gated run still records what it would have seen.
+        gated_off = args.gate and gate_open is False
+        if (args.adapt and not gated_off
+                and tick % T3_EVERY_N == 0 and stable_cnt >= STABLE_ROUNDS):
             old = dict(params)
             new_p, reason, predictive = aimd(regime, traj, pred, params, workload)
             if (abs(new_p["target"] - old["target"]) > 0.01 or
@@ -624,7 +842,17 @@ def run(args):
         print(f"WARNING: {ebpf.decode_errors} eBPF decode errors (not silently ignored)")
     summary = {"ticks": tick, "adjustments": adj_count, "predictive": pred_count,
                "mode": mode, "prog_id": ebpf.prog_id if ebpf else None,
-               "metrics": mpath, "adj": apath, "state": spath}
+               "metrics": mpath, "adj": apath, "state": spath,
+               # What the self-gate decided, so an evaluation can tell a gate
+               # that stayed shut from a controller that had nothing to do.
+               "gate": bool(args.gate),
+               "gate_open": gate_open,
+               "gate_flips": gate_flips,
+               "gate_r_est": (round(configured_target / statistics.median(rttbuf), 4)
+                              if rttbuf else None),
+               "gate_rtt_est_ms": (round(statistics.median(rttbuf), 3)
+                                   if rttbuf else None),
+               "gate_threshold": GATE_R}
     with open(os.path.join(args.logdir, f"acape_summary_{tag}.json"), "w") as fh:
         json.dump(summary, fh, indent=2)
 
@@ -640,6 +868,8 @@ def main():
     p.add_argument("--tag", default=None)
     p.add_argument("--duration", type=float, default=0)
     p.add_argument("--rate-mbit", type=float, default=10.0)
+    p.add_argument("--gate", action="store_true",
+                   help="self-gate: compute r = target/RTT from observed telemetry and withhold adaptation below GATE_R")
     p.add_argument("--adapt", action="store_true", help="enable AIMD control")
     p.add_argument("--ebpf", action="store_true", help="attach eBPF telemetry")
     p.add_argument("--dry", action="store_true")

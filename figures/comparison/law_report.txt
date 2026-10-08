@@ -1,0 +1,107 @@
+
+============================================================================================
+IS THE BENEFIT OF ADAPTATION GOVERNED BY target/RTT?
+============================================================================================
+Benefit = reduction in mean bulk-flow RTT, static vs adapted fq_codel.
+
+  target    RTT   ratio    static   adapted   benefit  gain ms        p   adj  verdict
+--------------------------------------------------------------------------------------------
+adj is the mean number of parameter adjustments the controller made.
+A cell where it is zero or near zero is not measuring adaptation.
+--------------------------------------------------------------------------------------------
+       5      2   2.500     26.33     21.11     19.8%     5.22   0.0015     7  significant
+       5      3   1.667     26.23     20.95     20.1%     5.28   0.0001     7  significant
+       5      5   1.000     27.68     22.58     18.4%     5.10   0.0000     8  significant
+      20     20   1.000     61.36     50.58     17.6%    10.78   0.0000    10  significant
+      80     80   1.000    181.08    151.35     16.4%    29.73   0.0003    11  significant
+       5      8   0.625     30.31     26.55     12.4%     3.75   0.0001     7  significant
+       5     12   0.417     34.18     30.92      9.5%     3.26   0.0014     7  significant
+       5     20   0.250     36.39     35.87      1.4%     0.52   0.3817     6  not significant
+       5     40   0.125     52.75     52.73      0.0%     0.02   0.8956     8  not significant
+       5    200   0.025    208.00    207.47      0.3%     0.53   0.4328     0  not significant
+
+  absolute gain above r=0.4: 3.26 to 29.73 ms
+  absolute gain below r=0.4: 0.02 to 0.53 ms
+  The gain collapses in milliseconds as well as in percent, so the
+  null at low ratio is not an artefact of the larger denominator.
+
+--------------------------------------------------------------------------------------------
+WHAT THE LATENCY IS BOUGHT WITH
+--------------------------------------------------------------------------------------------
+Percentage change, adapted against static, in the same cells.
+A shrinking target makes CoDel drop earlier, so senders back off
+sooner. If the ratio governs the benefit it should govern this too.
+
+   ratio  RTT gain    drops  retrans    thrpt     qest  backlog
+--------------------------------------------------------------------------------------------
+qest is backlog-derived, not a measured sojourn; backlog is a tc counter.
+   2.500     19.8%   +56.1%   +36.0%    -0.3%   -17.6%   -15.7%
+   1.667     20.1%   +56.2%   +36.6%    -0.3%   -18.6%   -15.4%
+   1.000     18.4%   +59.8%   +38.3%    -0.0%    -8.4%   -12.5%
+   1.000     17.6%   +47.7%   +39.9%    +0.0%   -33.4%   -29.4%
+   1.000     16.4%   +63.0%   +68.4%    -0.1%   -32.2%   -31.5%
+   0.625     12.4%   +36.1%   +14.9%    -0.3%    -5.6%    -9.2%
+   0.417      9.5%   +29.5%   +11.6%    -0.0%   -25.5%   -14.8%
+   0.250      1.4%    +6.9%    +9.7%    -0.1%   -11.6%    -9.6%
+   0.125      0.0%    -0.2%    +0.8%    -0.1%    +3.0%    +3.6%
+   0.025      0.3%    -1.3%    -2.6%    -0.4%   -20.1%   -21.8%
+--------------------------------------------------------------------------------------------
+  worst throughput change across all cells: -0.4%
+
+--------------------------------------------------------------------------------------------
+EXCLUDED: CELLS WHERE THE CONTROLLER NEVER ACTED
+--------------------------------------------------------------------------------------------
+The adapted arm made no adjustment at all, so these compare static
+against static. Their null is true by construction and cannot be
+evidence about queueing, so they are outside the fit and the tests.
+
+  target 5ms rtt 80ms (r=0.062): 0 adjustments, measured -0.6%
+  target 20ms rtt 80ms (r=0.250): 0 adjustments, measured +0.5%
+
+  Cause: the scaled HEAVY threshold lands on the operating drop
+  rate, so the regime oscillates and the stability gate that
+  requires five consecutive identical classifications never opens.
+
+--------------------------------------------------------------------------------------------
+P2  RATIO INVARIANCE (the falsifiable test)
+--------------------------------------------------------------------------------------------
+Configurations sharing a ratio but differing in RTT should show the
+same benefit. If benefit tracks RTT instead, the hypothesis is wrong.
+
+  ratio  1.00:  t=5/rtt=5 -> +18.4%, t=20/rtt=20 -> +17.6%, t=80/rtt=80 -> +16.4%
+                spread 2.0 percentage points  -> consistent
+
+--------------------------------------------------------------------------------------------
+FIT
+--------------------------------------------------------------------------------------------
+  benefit(r) = 20.5 / (1 + (0.50/r)^2.6)    R^2 = 0.986
+  half-benefit at r = 0.50  (target 0.50x the path RTT)
+
+--------------------------------------------------------------------------------------------
+P3  HOLD-OUT PREDICTION (leave-one-out, interior ratios)
+--------------------------------------------------------------------------------------------
+Each row refits the curve with that point removed, then predicts it.
+
+  target    RTT   ratio   predicted   measured    error
+--------------------------------------------------------------------------------------------
+       5     40   0.125        0.5%       0.0%    +0.5pp
+       5     20   0.250        3.5%       1.4%    +2.1pp
+       5     12   0.417        6.1%       9.5%    -3.5pp
+       5      8   0.625       14.1%      12.4%    +1.7pp
+       5      5   1.000       17.3%      18.4%    -1.1pp
+      20     20   1.000       17.6%      17.6%    +0.0pp
+      80     80   1.000       17.9%      16.4%    +1.5pp
+       5      3   1.667       19.0%      20.1%    -1.1pp
+--------------------------------------------------------------------------------------------
+  mean absolute prediction error 1.4 percentage points   (worst 3.5)
+
+============================================================================================
+CONCLUSION: the ratio target/RTT, not RTT, governs the benefit.
+Invariance is demonstrated at ratio 1 over a 16-fold range of RTT, and the fitted curve predicts
+held-out interior ratios to 1.4 percentage points.
+
+Scope, stated rather than implied: this holds at fixed
+target/interval, which was scaled with the target throughout, and
+rests on cells where the controller demonstrably acted. Cells where
+it never adjusted are excluded above and prove nothing either way.
+============================================================================================

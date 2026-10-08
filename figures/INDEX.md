@@ -4,7 +4,7 @@ Every image in this repository, numbered and captioned.
 
 - **11** methodology evidence captures (STEP)
 - **63** per-run result figures (RUN)
-- **35** analysis figures (FIG)
+- **40** analysis figures (FIG)
 
 ## Methodology evidence
 
@@ -30,8 +30,8 @@ Each is a verbatim capture of a command that was actually executed.
 |---|---|---|
 | **FIG 01** | Tail latency (p95 RTT, sparse probe flow) across all systems, log scale (staged workload) | [`fig01_latency_tail_staged.png`](comparison/fig01_latency_tail_staged.png) |
 | **FIG 02** | Tail latency (p95 RTT, sparse probe flow) across all systems, log scale (steady workload) | [`fig01_latency_tail_steady.png`](comparison/fig01_latency_tail_steady.png) |
-| **FIG 03** | Sparse probe flow vs bulk TCP flow RTT, why the two differ (staged workload) | [`fig02_latency_sparse_vs_bulk_staged.png`](comparison/fig02_latency_sparse_vs_bulk_staged.png) |
-| **FIG 04** | Sparse probe flow vs bulk TCP flow RTT, why the two differ (steady workload) | [`fig02_latency_sparse_vs_bulk_steady.png`](comparison/fig02_latency_sparse_vs_bulk_steady.png) |
+| **FIG 03** | Sparse probe flow vs bulk TCP flow RTT — why the two differ (staged workload) | [`fig02_latency_sparse_vs_bulk_staged.png`](comparison/fig02_latency_sparse_vs_bulk_staged.png) |
+| **FIG 04** | Sparse probe flow vs bulk TCP flow RTT — why the two differ (steady workload) | [`fig02_latency_sparse_vs_bulk_steady.png`](comparison/fig02_latency_sparse_vs_bulk_steady.png) |
 | **FIG 05** | Goodput (from iperf3 sum_received), axis zoomed to show it is flat (staged workload) | [`fig03_throughput_staged.png`](comparison/fig03_throughput_staged.png) |
 | **FIG 06** | Goodput (from iperf3 sum_received), axis zoomed to show it is flat (steady workload) | [`fig03_throughput_steady.png`](comparison/fig03_throughput_steady.png) |
 | **FIG 07** | Mean queue occupancy, log scale (staged workload) | [`fig04_backlog_staged.png`](comparison/fig04_backlog_staged.png) |
@@ -44,25 +44,30 @@ Each is a verbatim capture of a command that was actually executed.
 | **FIG 14** | Latency vs throughput trade-off (steady workload) | [`fig07_tradeoff_steady.png`](comparison/fig07_tradeoff_steady.png) |
 | **FIG 15** | All measured parameters × all systems, normalised heatmap with measured values (staged workload) | [`fig08_allparams_staged.png`](comparison/fig08_allparams_staged.png) |
 | **FIG 16** | All measured parameters × all systems, normalised heatmap with measured values (steady workload) | [`fig08_allparams_steady.png`](comparison/fig08_allparams_steady.png) |
-| **FIG 17** | Per-seed values, every individual run shown, mean marked, backlog mean pkts (staged workload) | [`fig09_seeds_backlog_mean_pkts_staged.png`](comparison/fig09_seeds_backlog_mean_pkts_staged.png) |
-| **FIG 18** | Per-seed values, every individual run shown, mean marked, backlog mean pkts (steady workload) | [`fig09_seeds_backlog_mean_pkts_steady.png`](comparison/fig09_seeds_backlog_mean_pkts_steady.png) |
-| **FIG 19** | Per-seed values, every individual run shown, mean marked, bulk rtt mean ms (staged workload) | [`fig09_seeds_bulk_rtt_mean_ms_staged.png`](comparison/fig09_seeds_bulk_rtt_mean_ms_staged.png) |
-| **FIG 20** | Per-seed values, every individual run shown, mean marked, bulk rtt mean ms (steady workload) | [`fig09_seeds_bulk_rtt_mean_ms_steady.png`](comparison/fig09_seeds_bulk_rtt_mean_ms_steady.png) |
-| **FIG 21** | Per-seed values, every individual run shown, mean marked, jain (staged workload) | [`fig09_seeds_jain_staged.png`](comparison/fig09_seeds_jain_staged.png) |
-| **FIG 22** | Per-seed values, every individual run shown, mean marked, jain (steady workload) | [`fig09_seeds_jain_steady.png`](comparison/fig09_seeds_jain_steady.png) |
-| **FIG 23** | Per-seed values, every individual run shown, mean marked, retransmits (staged workload) | [`fig09_seeds_retransmits_staged.png`](comparison/fig09_seeds_retransmits_staged.png) |
-| **FIG 24** | Per-seed values, every individual run shown, mean marked, retransmits (steady workload) | [`fig09_seeds_retransmits_steady.png`](comparison/fig09_seeds_retransmits_steady.png) |
-| **FIG 25** | Per-seed values, every individual run shown, mean marked, sparse rtt p95 ms (staged workload) | [`fig09_seeds_sparse_rtt_p95_ms_staged.png`](comparison/fig09_seeds_sparse_rtt_p95_ms_staged.png) |
-| **FIG 26** | Per-seed values, every individual run shown, mean marked, sparse rtt p95 ms (steady workload) | [`fig09_seeds_sparse_rtt_p95_ms_steady.png`](comparison/fig09_seeds_sparse_rtt_p95_ms_steady.png) |
-| **FIG 27** | Per-seed values, every individual run shown, mean marked, throughput mbps (staged workload) | [`fig09_seeds_throughput_mbps_staged.png`](comparison/fig09_seeds_throughput_mbps_staged.png) |
-| **FIG 28** | Per-seed values, every individual run shown, mean marked, throughput mbps (steady workload) | [`fig09_seeds_throughput_mbps_steady.png`](comparison/fig09_seeds_throughput_mbps_steady.png) |
+| **FIG 17** | Per-seed values — every individual run shown, mean marked — backlog mean pkts (staged workload) | [`fig09_seeds_backlog_mean_pkts_staged.png`](comparison/fig09_seeds_backlog_mean_pkts_staged.png) |
+| **FIG 18** | Per-seed values — every individual run shown, mean marked — backlog mean pkts (steady workload) | [`fig09_seeds_backlog_mean_pkts_steady.png`](comparison/fig09_seeds_backlog_mean_pkts_steady.png) |
+| **FIG 19** | Per-seed values — every individual run shown, mean marked — bulk rtt mean ms (staged workload) | [`fig09_seeds_bulk_rtt_mean_ms_staged.png`](comparison/fig09_seeds_bulk_rtt_mean_ms_staged.png) |
+| **FIG 20** | Per-seed values — every individual run shown, mean marked — bulk rtt mean ms (steady workload) | [`fig09_seeds_bulk_rtt_mean_ms_steady.png`](comparison/fig09_seeds_bulk_rtt_mean_ms_steady.png) |
+| **FIG 21** | Per-seed values — every individual run shown, mean marked — jain (staged workload) | [`fig09_seeds_jain_staged.png`](comparison/fig09_seeds_jain_staged.png) |
+| **FIG 22** | Per-seed values — every individual run shown, mean marked — jain (steady workload) | [`fig09_seeds_jain_steady.png`](comparison/fig09_seeds_jain_steady.png) |
+| **FIG 23** | Per-seed values — every individual run shown, mean marked — retransmits (staged workload) | [`fig09_seeds_retransmits_staged.png`](comparison/fig09_seeds_retransmits_staged.png) |
+| **FIG 24** | Per-seed values — every individual run shown, mean marked — retransmits (steady workload) | [`fig09_seeds_retransmits_steady.png`](comparison/fig09_seeds_retransmits_steady.png) |
+| **FIG 25** | Per-seed values — every individual run shown, mean marked — sparse rtt p95 ms (staged workload) | [`fig09_seeds_sparse_rtt_p95_ms_staged.png`](comparison/fig09_seeds_sparse_rtt_p95_ms_staged.png) |
+| **FIG 26** | Per-seed values — every individual run shown, mean marked — sparse rtt p95 ms (steady workload) | [`fig09_seeds_sparse_rtt_p95_ms_steady.png`](comparison/fig09_seeds_sparse_rtt_p95_ms_steady.png) |
+| **FIG 27** | Per-seed values — every individual run shown, mean marked — throughput mbps (staged workload) | [`fig09_seeds_throughput_mbps_staged.png`](comparison/fig09_seeds_throughput_mbps_staged.png) |
+| **FIG 28** | Per-seed values — every individual run shown, mean marked — throughput mbps (steady workload) | [`fig09_seeds_throughput_mbps_steady.png`](comparison/fig09_seeds_throughput_mbps_steady.png) |
 | **FIG 29** | Queue occupancy over time (staged workload) | [`fig10_timeseries_backlog_staged.png`](comparison/fig10_timeseries_backlog_staged.png) |
 | **FIG 30** | Queue occupancy over time (steady workload) | [`fig10_timeseries_backlog_steady.png`](comparison/fig10_timeseries_backlog_steady.png) |
 | **FIG 31** | Measured RTT over time (20 Hz probe) (staged workload) | [`fig11_timeseries_rtt_staged.png`](comparison/fig11_timeseries_rtt_staged.png) |
 | **FIG 32** | Measured RTT over time (20 Hz probe) (steady workload) | [`fig11_timeseries_rtt_steady.png`](comparison/fig11_timeseries_rtt_steady.png) |
 | **FIG 33** | What the ACAPE controller actually did: target, backlog, eBPF telemetry, regime | [`fig12_controller_behaviour.png`](comparison/fig12_controller_behaviour.png) |
-| **FIG 34** | Sham-controller condition, separates controller CPU cost from control decisions (staged workload) | [`fig13_sham_control_staged.png`](comparison/fig13_sham_control_staged.png) |
-| **FIG 35** | Sham-controller condition, separates controller CPU cost from control decisions (steady workload) | [`fig13_sham_control_steady.png`](comparison/fig13_sham_control_steady.png) |
+| **FIG 34** | Sham-controller condition — separates controller CPU cost from control decisions (staged workload) | [`fig13_sham_control_staged.png`](comparison/fig13_sham_control_staged.png) |
+| **FIG 35** | Sham-controller condition — separates controller CPU cost from control decisions (steady workload) | [`fig13_sham_control_steady.png`](comparison/fig13_sham_control_steady.png) |
+| **FIG 36** | fig14_mixed_workload | [`fig14_mixed_workload.png`](comparison/fig14_mixed_workload.png) |
+| **FIG 37** | fig15_rtt_sweep | [`fig15_rtt_sweep.png`](comparison/fig15_rtt_sweep.png) |
+| **FIG 38** | fig16_scaling_law | [`fig16_scaling_law.png`](comparison/fig16_scaling_law.png) |
+| **FIG 39** | fig17_main_outputs_staged | [`fig17_main_outputs_staged.png`](comparison/fig17_main_outputs_staged.png) |
+| **FIG 40** | fig17_main_outputs_steady | [`fig17_main_outputs_steady.png`](comparison/fig17_main_outputs_steady.png) |
 
 ## Per-run figures
 
@@ -70,66 +75,66 @@ One figure per experiment run. No run is omitted.
 
 | ID | Run | Measured | Image |
 |---|---|---|---|
-| **RUN 01** | cake_staged_s1 | cake, staged workload, seed 1, goodput 9.1985 Mbps, p95 RTT 22.2 ms, backlog 8.92 pkt | [`run01_cake_staged_s1.png`](runs/run01_cake_staged_s1.png) |
-| **RUN 02** | cake_staged_s2 | cake, staged workload, seed 2, goodput 9.2728 Mbps, p95 RTT 22.3 ms, backlog 11.2 pkt | [`run02_cake_staged_s2.png`](runs/run02_cake_staged_s2.png) |
-| **RUN 03** | cake_staged_s3 | cake, staged workload, seed 3, goodput 9.25 Mbps, p95 RTT 22.3 ms, backlog 11.28 pkt | [`run03_cake_staged_s3.png`](runs/run03_cake_staged_s3.png) |
-| **RUN 04** | cake_steady_s1 | cake, steady workload, seed 1, goodput 9.4098 Mbps, p95 RTT 22.8 ms, backlog 6.89 pkt | [`run04_cake_steady_s1.png`](runs/run04_cake_steady_s1.png) |
-| **RUN 05** | cake_steady_s2 | cake, steady workload, seed 2, goodput 9.4085 Mbps, p95 RTT 23.0 ms, backlog 6.55 pkt | [`run05_cake_steady_s2.png`](runs/run05_cake_steady_s2.png) |
-| **RUN 06** | cake_steady_s3 | cake, steady workload, seed 3, goodput 9.4236 Mbps, p95 RTT 22.9 ms, backlog 6.58 pkt | [`run06_cake_steady_s3.png`](runs/run06_cake_steady_s3.png) |
-| **RUN 07** | codel_staged_s1 | codel, staged workload, seed 1, goodput 9.2517 Mbps, p95 RTT 193.0 ms, backlog 23.58 pkt | [`run07_codel_staged_s1.png`](runs/run07_codel_staged_s1.png) |
-| **RUN 08** | codel_staged_s2 | codel, staged workload, seed 2, goodput 9.2975 Mbps, p95 RTT 126.0 ms, backlog 23.71 pkt | [`run08_codel_staged_s2.png`](runs/run08_codel_staged_s2.png) |
-| **RUN 09** | codel_staged_s3 | codel, staged workload, seed 3, goodput 9.2825 Mbps, p95 RTT 197.0 ms, backlog 25.09 pkt | [`run09_codel_staged_s3.png`](runs/run09_codel_staged_s3.png) |
-| **RUN 10** | codel_steady_s1 | codel, steady workload, seed 1, goodput 9.4456 Mbps, p95 RTT 43.7 ms, backlog 8.98 pkt | [`run10_codel_steady_s1.png`](runs/run10_codel_steady_s1.png) |
-| **RUN 11** | codel_steady_s2 | codel, steady workload, seed 2, goodput 9.445 Mbps, p95 RTT 46.7 ms, backlog 8.63 pkt | [`run11_codel_steady_s2.png`](runs/run11_codel_steady_s2.png) |
-| **RUN 12** | codel_steady_s3 | codel, steady workload, seed 3, goodput 9.4614 Mbps, p95 RTT 44.9 ms, backlog 8.04 pkt | [`run12_codel_steady_s3.png`](runs/run12_codel_steady_s3.png) |
-| **RUN 13** | fq_codel_acape_ebpf_staged_s1 | fq_codel + ACAPE + eBPF, staged workload, seed 1, goodput None Mbps, p95 RTT 24.7 ms, backlog 11.19 pkt | [`run13_fq_codel_acape_ebpf_staged_s1.png`](runs/run13_fq_codel_acape_ebpf_staged_s1.png) |
-| **RUN 14** | fq_codel_acape_ebpf_staged_s2 | fq_codel + ACAPE + eBPF, staged workload, seed 2, goodput None Mbps, p95 RTT 25.3 ms, backlog 11.93 pkt | [`run14_fq_codel_acape_ebpf_staged_s2.png`](runs/run14_fq_codel_acape_ebpf_staged_s2.png) |
-| **RUN 15** | fq_codel_acape_ebpf_staged_s3 | fq_codel + ACAPE + eBPF, staged workload, seed 3, goodput None Mbps, p95 RTT 24.5 ms, backlog 12.96 pkt | [`run15_fq_codel_acape_ebpf_staged_s3.png`](runs/run15_fq_codel_acape_ebpf_staged_s3.png) |
-| **RUN 16** | fq_codel_acape_staged_s1 | fq_codel + ACAPE, staged workload, seed 1, goodput 9.1339 Mbps, p95 RTT 23.5 ms, backlog 12.5 pkt | [`run16_fq_codel_acape_staged_s1.png`](runs/run16_fq_codel_acape_staged_s1.png) |
-| **RUN 17** | fq_codel_acape_staged_s2 | fq_codel + ACAPE, staged workload, seed 2, goodput 9.1986 Mbps, p95 RTT 23.3 ms, backlog 10.4 pkt | [`run17_fq_codel_acape_staged_s2.png`](runs/run17_fq_codel_acape_staged_s2.png) |
-| **RUN 18** | fq_codel_acape_staged_s3 | fq_codel + ACAPE, staged workload, seed 3, goodput 9.2051 Mbps, p95 RTT 23.6 ms, backlog 10.16 pkt | [`run18_fq_codel_acape_staged_s3.png`](runs/run18_fq_codel_acape_staged_s3.png) |
-| **RUN 19** | fq_codel_acape_steady_s1 | fq_codel + ACAPE, steady workload, seed 1, goodput 9.3894 Mbps, p95 RTT 24.5 ms, backlog 6.34 pkt | [`run19_fq_codel_acape_steady_s1.png`](runs/run19_fq_codel_acape_steady_s1.png) |
-| **RUN 20** | fq_codel_acape_steady_s2 | fq_codel + ACAPE, steady workload, seed 2, goodput 9.4088 Mbps, p95 RTT 24.4 ms, backlog 5.84 pkt | [`run20_fq_codel_acape_steady_s2.png`](runs/run20_fq_codel_acape_steady_s2.png) |
-| **RUN 21** | fq_codel_acape_steady_s3 | fq_codel + ACAPE, steady workload, seed 3, goodput 9.4093 Mbps, p95 RTT 24.4 ms, backlog 6.24 pkt | [`run21_fq_codel_acape_steady_s3.png`](runs/run21_fq_codel_acape_steady_s3.png) |
-| **RUN 22** | fq_codel_sham_staged_s1 | fq_codel, staged workload, seed 1, goodput 9.1858 Mbps, p95 RTT 23.6 ms, backlog 11.93 pkt | [`run22_fq_codel_sham_staged_s1.png`](runs/run22_fq_codel_sham_staged_s1.png) |
-| **RUN 23** | fq_codel_sham_staged_s2 | fq_codel, staged workload, seed 2, goodput 9.2323 Mbps, p95 RTT 23.5 ms, backlog 10.3 pkt | [`run23_fq_codel_sham_staged_s2.png`](runs/run23_fq_codel_sham_staged_s2.png) |
-| **RUN 24** | fq_codel_sham_staged_s3 | fq_codel, staged workload, seed 3, goodput 9.1657 Mbps, p95 RTT 23.4 ms, backlog 12.26 pkt | [`run24_fq_codel_sham_staged_s3.png`](runs/run24_fq_codel_sham_staged_s3.png) |
-| **RUN 25** | fq_codel_sham_steady_s1 | fq_codel, steady workload, seed 1, goodput 9.4098 Mbps, p95 RTT 24.6 ms, backlog 6.82 pkt | [`run25_fq_codel_sham_steady_s1.png`](runs/run25_fq_codel_sham_steady_s1.png) |
-| **RUN 26** | fq_codel_sham_steady_s2 | fq_codel, steady workload, seed 2, goodput 9.3923 Mbps, p95 RTT 24.6 ms, backlog 6.73 pkt | [`run26_fq_codel_sham_steady_s2.png`](runs/run26_fq_codel_sham_steady_s2.png) |
-| **RUN 27** | fq_codel_sham_steady_s3 | fq_codel, steady workload, seed 3, goodput 9.392 Mbps, p95 RTT 24.5 ms, backlog 6.79 pkt | [`run27_fq_codel_sham_steady_s3.png`](runs/run27_fq_codel_sham_steady_s3.png) |
-| **RUN 28** | fq_codel_staged_s1 | fq_codel, staged workload, seed 1, goodput 9.232 Mbps, p95 RTT 23.3 ms, backlog 11.15 pkt | [`run28_fq_codel_staged_s1.png`](runs/run28_fq_codel_staged_s1.png) |
-| **RUN 29** | fq_codel_staged_s2 | fq_codel, staged workload, seed 2, goodput 9.2362 Mbps, p95 RTT 23.4 ms, backlog 11.8 pkt | [`run29_fq_codel_staged_s2.png`](runs/run29_fq_codel_staged_s2.png) |
-| **RUN 30** | fq_codel_staged_s3 | fq_codel, staged workload, seed 3, goodput 9.2382 Mbps, p95 RTT 23.5 ms, backlog 10.88 pkt | [`run30_fq_codel_staged_s3.png`](runs/run30_fq_codel_staged_s3.png) |
-| **RUN 31** | fq_codel_steady_s1 | fq_codel, steady workload, seed 1, goodput 9.3904 Mbps, p95 RTT 24.6 ms, backlog 6.47 pkt | [`run31_fq_codel_steady_s1.png`](runs/run31_fq_codel_steady_s1.png) |
-| **RUN 32** | fq_codel_steady_s2 | fq_codel, steady workload, seed 2, goodput 9.4243 Mbps, p95 RTT 24.6 ms, backlog 6.83 pkt | [`run32_fq_codel_steady_s2.png`](runs/run32_fq_codel_steady_s2.png) |
-| **RUN 33** | fq_codel_steady_s3 | fq_codel, steady workload, seed 3, goodput 9.4266 Mbps, p95 RTT 24.5 ms, backlog 7.07 pkt | [`run33_fq_codel_steady_s3.png`](runs/run33_fq_codel_steady_s3.png) |
-| **RUN 34** | fq_pie_staged_s1 | fq_pie, staged workload, seed 1, goodput 9.2375 Mbps, p95 RTT 23.3 ms, backlog 18.24 pkt | [`run34_fq_pie_staged_s1.png`](runs/run34_fq_pie_staged_s1.png) |
-| **RUN 35** | fq_pie_staged_s2 | fq_pie, staged workload, seed 2, goodput 9.1944 Mbps, p95 RTT 23.2 ms, backlog 18.87 pkt | [`run35_fq_pie_staged_s2.png`](runs/run35_fq_pie_staged_s2.png) |
-| **RUN 36** | fq_pie_staged_s3 | fq_pie, staged workload, seed 3, goodput 9.2358 Mbps, p95 RTT 23.2 ms, backlog 18.71 pkt | [`run36_fq_pie_staged_s3.png`](runs/run36_fq_pie_staged_s3.png) |
-| **RUN 37** | fq_pie_steady_s1 | fq_pie, steady workload, seed 1, goodput 9.4285 Mbps, p95 RTT 23.3 ms, backlog 11.62 pkt | [`run37_fq_pie_steady_s1.png`](runs/run37_fq_pie_steady_s1.png) |
-| **RUN 38** | fq_pie_steady_s2 | fq_pie, steady workload, seed 2, goodput 9.4996 Mbps, p95 RTT 23.2 ms, backlog 12.73 pkt | [`run38_fq_pie_steady_s2.png`](runs/run38_fq_pie_steady_s2.png) |
-| **RUN 39** | fq_pie_steady_s3 | fq_pie, steady workload, seed 3, goodput 9.4297 Mbps, p95 RTT 23.3 ms, backlog 11.47 pkt | [`run39_fq_pie_steady_s3.png`](runs/run39_fq_pie_steady_s3.png) |
-| **RUN 40** | pfifo_staged_s1 | pfifo, staged workload, seed 1, goodput 8.5918 Mbps, p95 RTT 2339.0 ms, backlog 564.36 pkt | [`run40_pfifo_staged_s1.png`](runs/run40_pfifo_staged_s1.png) |
-| **RUN 41** | pfifo_staged_s2 | pfifo, staged workload, seed 2, goodput 8.303 Mbps, p95 RTT 2300.0 ms, backlog 558.08 pkt | [`run41_pfifo_staged_s2.png`](runs/run41_pfifo_staged_s2.png) |
-| **RUN 42** | pfifo_staged_s3 | pfifo, staged workload, seed 3, goodput 8.2458 Mbps, p95 RTT 2315.0 ms, backlog 588.19 pkt | [`run42_pfifo_staged_s3.png`](runs/run42_pfifo_staged_s3.png) |
-| **RUN 43** | pfifo_steady_s1 | pfifo, steady workload, seed 1, goodput 9.4101 Mbps, p95 RTT 2359.0 ms, backlog 778.62 pkt | [`run43_pfifo_steady_s1.png`](runs/run43_pfifo_steady_s1.png) |
-| **RUN 44** | pfifo_steady_s2 | pfifo, steady workload, seed 2, goodput 9.4736 Mbps, p95 RTT 2339.0 ms, backlog 793.82 pkt | [`run44_pfifo_steady_s2.png`](runs/run44_pfifo_steady_s2.png) |
-| **RUN 45** | pfifo_steady_s3 | pfifo, steady workload, seed 3, goodput 9.4757 Mbps, p95 RTT 2334.0 ms, backlog 795.29 pkt | [`run45_pfifo_steady_s3.png`](runs/run45_pfifo_steady_s3.png) |
-| **RUN 46** | pie_staged_s1 | pie, staged workload, seed 1, goodput 9.1959 Mbps, p95 RTT 51.0 ms, backlog 10.75 pkt | [`run46_pie_staged_s1.png`](runs/run46_pie_staged_s1.png) |
-| **RUN 47** | pie_staged_s2 | pie, staged workload, seed 2, goodput 9.2418 Mbps, p95 RTT 47.8 ms, backlog 10.0 pkt | [`run47_pie_staged_s2.png`](runs/run47_pie_staged_s2.png) |
-| **RUN 48** | pie_staged_s3 | pie, staged workload, seed 3, goodput 9.2322 Mbps, p95 RTT 46.9 ms, backlog 10.24 pkt | [`run48_pie_staged_s3.png`](runs/run48_pie_staged_s3.png) |
-| **RUN 49** | pie_steady_s1 | pie, steady workload, seed 1, goodput 9.406 Mbps, p95 RTT 47.4 ms, backlog 8.7 pkt | [`run49_pie_steady_s1.png`](runs/run49_pie_steady_s1.png) |
-| **RUN 50** | pie_steady_s2 | pie, steady workload, seed 2, goodput 9.4254 Mbps, p95 RTT 47.2 ms, backlog 8.77 pkt | [`run50_pie_steady_s2.png`](runs/run50_pie_steady_s2.png) |
-| **RUN 51** | pie_steady_s3 | pie, steady workload, seed 3, goodput 9.4072 Mbps, p95 RTT 46.2 ms, backlog 9.05 pkt | [`run51_pie_steady_s3.png`](runs/run51_pie_steady_s3.png) |
-| **RUN 52** | red_staged_s1 | red, staged workload, seed 1, goodput 9.2535 Mbps, p95 RTT 94.2 ms, backlog 21.39 pkt | [`run52_red_staged_s1.png`](runs/run52_red_staged_s1.png) |
-| **RUN 53** | red_staged_s2 | red, staged workload, seed 2, goodput 9.1977 Mbps, p95 RTT 94.0 ms, backlog 22.31 pkt | [`run53_red_staged_s2.png`](runs/run53_red_staged_s2.png) |
-| **RUN 54** | red_staged_s3 | red, staged workload, seed 3, goodput 9.2849 Mbps, p95 RTT 94.3 ms, backlog 21.73 pkt | [`run54_red_staged_s3.png`](runs/run54_red_staged_s3.png) |
-| **RUN 55** | red_steady_s1 | red, steady workload, seed 1, goodput 9.4726 Mbps, p95 RTT 87.3 ms, backlog 26.57 pkt | [`run55_red_steady_s1.png`](runs/run55_red_steady_s1.png) |
-| **RUN 56** | red_steady_s2 | red, steady workload, seed 2, goodput 9.3863 Mbps, p95 RTT 88.3 ms, backlog 26.63 pkt | [`run56_red_steady_s2.png`](runs/run56_red_steady_s2.png) |
-| **RUN 57** | red_steady_s3 | red, steady workload, seed 3, goodput 9.4894 Mbps, p95 RTT 86.5 ms, backlog 26.85 pkt | [`run57_red_steady_s3.png`](runs/run57_red_steady_s3.png) |
-| **RUN 58** | sfq_staged_s1 | sfq, staged workload, seed 1, goodput 9.1821 Mbps, p95 RTT 57.4 ms, backlog 96.93 pkt | [`run58_sfq_staged_s1.png`](runs/run58_sfq_staged_s1.png) |
-| **RUN 59** | sfq_staged_s2 | sfq, staged workload, seed 2, goodput 9.4066 Mbps, p95 RTT 55.0 ms, backlog 92.86 pkt | [`run59_sfq_staged_s2.png`](runs/run59_sfq_staged_s2.png) |
-| **RUN 60** | sfq_staged_s3 | sfq, staged workload, seed 3, goodput 9.1979 Mbps, p95 RTT 57.4 ms, backlog 99.79 pkt | [`run60_sfq_staged_s3.png`](runs/run60_sfq_staged_s3.png) |
-| **RUN 61** | sfq_steady_s1 | sfq, steady workload, seed 1, goodput 9.3558 Mbps, p95 RTT 36.2 ms, backlog 117.58 pkt | [`run61_sfq_steady_s1.png`](runs/run61_sfq_steady_s1.png) |
-| **RUN 62** | sfq_steady_s2 | sfq, steady workload, seed 2, goodput 9.3542 Mbps, p95 RTT 36.1 ms, backlog 115.49 pkt | [`run62_sfq_steady_s2.png`](runs/run62_sfq_steady_s2.png) |
-| **RUN 63** | sfq_steady_s3 | sfq, steady workload, seed 3, goodput 9.4238 Mbps, p95 RTT 36.0 ms, backlog 116.42 pkt | [`run63_sfq_steady_s3.png`](runs/run63_sfq_steady_s3.png) |
+| **RUN 01** | cake_staged_s1 | cake, staged workload, seed 1 — goodput 9.1985 Mbps, p95 RTT 22.2 ms, backlog 8.92 pkt | [`run01_cake_staged_s1.png`](runs/run01_cake_staged_s1.png) |
+| **RUN 02** | cake_staged_s2 | cake, staged workload, seed 2 — goodput 9.2728 Mbps, p95 RTT 22.3 ms, backlog 11.2 pkt | [`run02_cake_staged_s2.png`](runs/run02_cake_staged_s2.png) |
+| **RUN 03** | cake_staged_s3 | cake, staged workload, seed 3 — goodput 9.25 Mbps, p95 RTT 22.3 ms, backlog 11.28 pkt | [`run03_cake_staged_s3.png`](runs/run03_cake_staged_s3.png) |
+| **RUN 04** | cake_steady_s1 | cake, steady workload, seed 1 — goodput 9.4098 Mbps, p95 RTT 22.8 ms, backlog 6.89 pkt | [`run04_cake_steady_s1.png`](runs/run04_cake_steady_s1.png) |
+| **RUN 05** | cake_steady_s2 | cake, steady workload, seed 2 — goodput 9.4085 Mbps, p95 RTT 23.0 ms, backlog 6.55 pkt | [`run05_cake_steady_s2.png`](runs/run05_cake_steady_s2.png) |
+| **RUN 06** | cake_steady_s3 | cake, steady workload, seed 3 — goodput 9.4236 Mbps, p95 RTT 22.9 ms, backlog 6.58 pkt | [`run06_cake_steady_s3.png`](runs/run06_cake_steady_s3.png) |
+| **RUN 07** | codel_staged_s1 | codel, staged workload, seed 1 — goodput 9.2517 Mbps, p95 RTT 193.0 ms, backlog 23.58 pkt | [`run07_codel_staged_s1.png`](runs/run07_codel_staged_s1.png) |
+| **RUN 08** | codel_staged_s2 | codel, staged workload, seed 2 — goodput 9.2975 Mbps, p95 RTT 126.0 ms, backlog 23.71 pkt | [`run08_codel_staged_s2.png`](runs/run08_codel_staged_s2.png) |
+| **RUN 09** | codel_staged_s3 | codel, staged workload, seed 3 — goodput 9.2825 Mbps, p95 RTT 197.0 ms, backlog 25.09 pkt | [`run09_codel_staged_s3.png`](runs/run09_codel_staged_s3.png) |
+| **RUN 10** | codel_steady_s1 | codel, steady workload, seed 1 — goodput 9.4456 Mbps, p95 RTT 43.7 ms, backlog 8.98 pkt | [`run10_codel_steady_s1.png`](runs/run10_codel_steady_s1.png) |
+| **RUN 11** | codel_steady_s2 | codel, steady workload, seed 2 — goodput 9.445 Mbps, p95 RTT 46.7 ms, backlog 8.63 pkt | [`run11_codel_steady_s2.png`](runs/run11_codel_steady_s2.png) |
+| **RUN 12** | codel_steady_s3 | codel, steady workload, seed 3 — goodput 9.4614 Mbps, p95 RTT 44.9 ms, backlog 8.04 pkt | [`run12_codel_steady_s3.png`](runs/run12_codel_steady_s3.png) |
+| **RUN 13** | fq_codel_acape_ebpf_staged_s1 | fq_codel + ACAPE + eBPF, staged workload, seed 1 — goodput None Mbps, p95 RTT 24.7 ms, backlog 11.19 pkt | [`run13_fq_codel_acape_ebpf_staged_s1.png`](runs/run13_fq_codel_acape_ebpf_staged_s1.png) |
+| **RUN 14** | fq_codel_acape_ebpf_staged_s2 | fq_codel + ACAPE + eBPF, staged workload, seed 2 — goodput None Mbps, p95 RTT 25.3 ms, backlog 11.93 pkt | [`run14_fq_codel_acape_ebpf_staged_s2.png`](runs/run14_fq_codel_acape_ebpf_staged_s2.png) |
+| **RUN 15** | fq_codel_acape_ebpf_staged_s3 | fq_codel + ACAPE + eBPF, staged workload, seed 3 — goodput None Mbps, p95 RTT 24.5 ms, backlog 12.96 pkt | [`run15_fq_codel_acape_ebpf_staged_s3.png`](runs/run15_fq_codel_acape_ebpf_staged_s3.png) |
+| **RUN 16** | fq_codel_acape_staged_s1 | fq_codel + ACAPE, staged workload, seed 1 — goodput 9.1339 Mbps, p95 RTT 23.5 ms, backlog 12.5 pkt | [`run16_fq_codel_acape_staged_s1.png`](runs/run16_fq_codel_acape_staged_s1.png) |
+| **RUN 17** | fq_codel_acape_staged_s2 | fq_codel + ACAPE, staged workload, seed 2 — goodput 9.1986 Mbps, p95 RTT 23.3 ms, backlog 10.4 pkt | [`run17_fq_codel_acape_staged_s2.png`](runs/run17_fq_codel_acape_staged_s2.png) |
+| **RUN 18** | fq_codel_acape_staged_s3 | fq_codel + ACAPE, staged workload, seed 3 — goodput 9.2051 Mbps, p95 RTT 23.6 ms, backlog 10.16 pkt | [`run18_fq_codel_acape_staged_s3.png`](runs/run18_fq_codel_acape_staged_s3.png) |
+| **RUN 19** | fq_codel_acape_steady_s1 | fq_codel + ACAPE, steady workload, seed 1 — goodput 9.3894 Mbps, p95 RTT 24.5 ms, backlog 6.34 pkt | [`run19_fq_codel_acape_steady_s1.png`](runs/run19_fq_codel_acape_steady_s1.png) |
+| **RUN 20** | fq_codel_acape_steady_s2 | fq_codel + ACAPE, steady workload, seed 2 — goodput 9.4088 Mbps, p95 RTT 24.4 ms, backlog 5.84 pkt | [`run20_fq_codel_acape_steady_s2.png`](runs/run20_fq_codel_acape_steady_s2.png) |
+| **RUN 21** | fq_codel_acape_steady_s3 | fq_codel + ACAPE, steady workload, seed 3 — goodput 9.4093 Mbps, p95 RTT 24.4 ms, backlog 6.24 pkt | [`run21_fq_codel_acape_steady_s3.png`](runs/run21_fq_codel_acape_steady_s3.png) |
+| **RUN 22** | fq_codel_sham_staged_s1 | fq_codel, staged workload, seed 1 — goodput 9.1858 Mbps, p95 RTT 23.6 ms, backlog 11.93 pkt | [`run22_fq_codel_sham_staged_s1.png`](runs/run22_fq_codel_sham_staged_s1.png) |
+| **RUN 23** | fq_codel_sham_staged_s2 | fq_codel, staged workload, seed 2 — goodput 9.2323 Mbps, p95 RTT 23.5 ms, backlog 10.3 pkt | [`run23_fq_codel_sham_staged_s2.png`](runs/run23_fq_codel_sham_staged_s2.png) |
+| **RUN 24** | fq_codel_sham_staged_s3 | fq_codel, staged workload, seed 3 — goodput 9.1657 Mbps, p95 RTT 23.4 ms, backlog 12.26 pkt | [`run24_fq_codel_sham_staged_s3.png`](runs/run24_fq_codel_sham_staged_s3.png) |
+| **RUN 25** | fq_codel_sham_steady_s1 | fq_codel, steady workload, seed 1 — goodput 9.4098 Mbps, p95 RTT 24.6 ms, backlog 6.82 pkt | [`run25_fq_codel_sham_steady_s1.png`](runs/run25_fq_codel_sham_steady_s1.png) |
+| **RUN 26** | fq_codel_sham_steady_s2 | fq_codel, steady workload, seed 2 — goodput 9.3923 Mbps, p95 RTT 24.6 ms, backlog 6.73 pkt | [`run26_fq_codel_sham_steady_s2.png`](runs/run26_fq_codel_sham_steady_s2.png) |
+| **RUN 27** | fq_codel_sham_steady_s3 | fq_codel, steady workload, seed 3 — goodput 9.392 Mbps, p95 RTT 24.5 ms, backlog 6.79 pkt | [`run27_fq_codel_sham_steady_s3.png`](runs/run27_fq_codel_sham_steady_s3.png) |
+| **RUN 28** | fq_codel_staged_s1 | fq_codel, staged workload, seed 1 — goodput 9.232 Mbps, p95 RTT 23.3 ms, backlog 11.15 pkt | [`run28_fq_codel_staged_s1.png`](runs/run28_fq_codel_staged_s1.png) |
+| **RUN 29** | fq_codel_staged_s2 | fq_codel, staged workload, seed 2 — goodput 9.2362 Mbps, p95 RTT 23.4 ms, backlog 11.8 pkt | [`run29_fq_codel_staged_s2.png`](runs/run29_fq_codel_staged_s2.png) |
+| **RUN 30** | fq_codel_staged_s3 | fq_codel, staged workload, seed 3 — goodput 9.2382 Mbps, p95 RTT 23.5 ms, backlog 10.88 pkt | [`run30_fq_codel_staged_s3.png`](runs/run30_fq_codel_staged_s3.png) |
+| **RUN 31** | fq_codel_steady_s1 | fq_codel, steady workload, seed 1 — goodput 9.3904 Mbps, p95 RTT 24.6 ms, backlog 6.47 pkt | [`run31_fq_codel_steady_s1.png`](runs/run31_fq_codel_steady_s1.png) |
+| **RUN 32** | fq_codel_steady_s2 | fq_codel, steady workload, seed 2 — goodput 9.4243 Mbps, p95 RTT 24.6 ms, backlog 6.83 pkt | [`run32_fq_codel_steady_s2.png`](runs/run32_fq_codel_steady_s2.png) |
+| **RUN 33** | fq_codel_steady_s3 | fq_codel, steady workload, seed 3 — goodput 9.4266 Mbps, p95 RTT 24.5 ms, backlog 7.07 pkt | [`run33_fq_codel_steady_s3.png`](runs/run33_fq_codel_steady_s3.png) |
+| **RUN 34** | fq_pie_staged_s1 | fq_pie, staged workload, seed 1 — goodput 9.2375 Mbps, p95 RTT 23.3 ms, backlog 18.24 pkt | [`run34_fq_pie_staged_s1.png`](runs/run34_fq_pie_staged_s1.png) |
+| **RUN 35** | fq_pie_staged_s2 | fq_pie, staged workload, seed 2 — goodput 9.1944 Mbps, p95 RTT 23.2 ms, backlog 18.87 pkt | [`run35_fq_pie_staged_s2.png`](runs/run35_fq_pie_staged_s2.png) |
+| **RUN 36** | fq_pie_staged_s3 | fq_pie, staged workload, seed 3 — goodput 9.2358 Mbps, p95 RTT 23.2 ms, backlog 18.71 pkt | [`run36_fq_pie_staged_s3.png`](runs/run36_fq_pie_staged_s3.png) |
+| **RUN 37** | fq_pie_steady_s1 | fq_pie, steady workload, seed 1 — goodput 9.4285 Mbps, p95 RTT 23.3 ms, backlog 11.62 pkt | [`run37_fq_pie_steady_s1.png`](runs/run37_fq_pie_steady_s1.png) |
+| **RUN 38** | fq_pie_steady_s2 | fq_pie, steady workload, seed 2 — goodput 9.4996 Mbps, p95 RTT 23.2 ms, backlog 12.73 pkt | [`run38_fq_pie_steady_s2.png`](runs/run38_fq_pie_steady_s2.png) |
+| **RUN 39** | fq_pie_steady_s3 | fq_pie, steady workload, seed 3 — goodput 9.4297 Mbps, p95 RTT 23.3 ms, backlog 11.47 pkt | [`run39_fq_pie_steady_s3.png`](runs/run39_fq_pie_steady_s3.png) |
+| **RUN 40** | pfifo_staged_s1 | pfifo, staged workload, seed 1 — goodput 8.5918 Mbps, p95 RTT 2339.0 ms, backlog 564.36 pkt | [`run40_pfifo_staged_s1.png`](runs/run40_pfifo_staged_s1.png) |
+| **RUN 41** | pfifo_staged_s2 | pfifo, staged workload, seed 2 — goodput 8.303 Mbps, p95 RTT 2300.0 ms, backlog 558.08 pkt | [`run41_pfifo_staged_s2.png`](runs/run41_pfifo_staged_s2.png) |
+| **RUN 42** | pfifo_staged_s3 | pfifo, staged workload, seed 3 — goodput 8.2458 Mbps, p95 RTT 2315.0 ms, backlog 588.19 pkt | [`run42_pfifo_staged_s3.png`](runs/run42_pfifo_staged_s3.png) |
+| **RUN 43** | pfifo_steady_s1 | pfifo, steady workload, seed 1 — goodput 9.4101 Mbps, p95 RTT 2359.0 ms, backlog 778.62 pkt | [`run43_pfifo_steady_s1.png`](runs/run43_pfifo_steady_s1.png) |
+| **RUN 44** | pfifo_steady_s2 | pfifo, steady workload, seed 2 — goodput 9.4736 Mbps, p95 RTT 2339.0 ms, backlog 793.82 pkt | [`run44_pfifo_steady_s2.png`](runs/run44_pfifo_steady_s2.png) |
+| **RUN 45** | pfifo_steady_s3 | pfifo, steady workload, seed 3 — goodput 9.4757 Mbps, p95 RTT 2334.0 ms, backlog 795.29 pkt | [`run45_pfifo_steady_s3.png`](runs/run45_pfifo_steady_s3.png) |
+| **RUN 46** | pie_staged_s1 | pie, staged workload, seed 1 — goodput 9.1959 Mbps, p95 RTT 51.0 ms, backlog 10.75 pkt | [`run46_pie_staged_s1.png`](runs/run46_pie_staged_s1.png) |
+| **RUN 47** | pie_staged_s2 | pie, staged workload, seed 2 — goodput 9.2418 Mbps, p95 RTT 47.8 ms, backlog 10.0 pkt | [`run47_pie_staged_s2.png`](runs/run47_pie_staged_s2.png) |
+| **RUN 48** | pie_staged_s3 | pie, staged workload, seed 3 — goodput 9.2322 Mbps, p95 RTT 46.9 ms, backlog 10.24 pkt | [`run48_pie_staged_s3.png`](runs/run48_pie_staged_s3.png) |
+| **RUN 49** | pie_steady_s1 | pie, steady workload, seed 1 — goodput 9.406 Mbps, p95 RTT 47.4 ms, backlog 8.7 pkt | [`run49_pie_steady_s1.png`](runs/run49_pie_steady_s1.png) |
+| **RUN 50** | pie_steady_s2 | pie, steady workload, seed 2 — goodput 9.4254 Mbps, p95 RTT 47.2 ms, backlog 8.77 pkt | [`run50_pie_steady_s2.png`](runs/run50_pie_steady_s2.png) |
+| **RUN 51** | pie_steady_s3 | pie, steady workload, seed 3 — goodput 9.4072 Mbps, p95 RTT 46.2 ms, backlog 9.05 pkt | [`run51_pie_steady_s3.png`](runs/run51_pie_steady_s3.png) |
+| **RUN 52** | red_staged_s1 | red, staged workload, seed 1 — goodput 9.2535 Mbps, p95 RTT 94.2 ms, backlog 21.39 pkt | [`run52_red_staged_s1.png`](runs/run52_red_staged_s1.png) |
+| **RUN 53** | red_staged_s2 | red, staged workload, seed 2 — goodput 9.1977 Mbps, p95 RTT 94.0 ms, backlog 22.31 pkt | [`run53_red_staged_s2.png`](runs/run53_red_staged_s2.png) |
+| **RUN 54** | red_staged_s3 | red, staged workload, seed 3 — goodput 9.2849 Mbps, p95 RTT 94.3 ms, backlog 21.73 pkt | [`run54_red_staged_s3.png`](runs/run54_red_staged_s3.png) |
+| **RUN 55** | red_steady_s1 | red, steady workload, seed 1 — goodput 9.4726 Mbps, p95 RTT 87.3 ms, backlog 26.57 pkt | [`run55_red_steady_s1.png`](runs/run55_red_steady_s1.png) |
+| **RUN 56** | red_steady_s2 | red, steady workload, seed 2 — goodput 9.3863 Mbps, p95 RTT 88.3 ms, backlog 26.63 pkt | [`run56_red_steady_s2.png`](runs/run56_red_steady_s2.png) |
+| **RUN 57** | red_steady_s3 | red, steady workload, seed 3 — goodput 9.4894 Mbps, p95 RTT 86.5 ms, backlog 26.85 pkt | [`run57_red_steady_s3.png`](runs/run57_red_steady_s3.png) |
+| **RUN 58** | sfq_staged_s1 | sfq, staged workload, seed 1 — goodput 9.1821 Mbps, p95 RTT 57.4 ms, backlog 96.93 pkt | [`run58_sfq_staged_s1.png`](runs/run58_sfq_staged_s1.png) |
+| **RUN 59** | sfq_staged_s2 | sfq, staged workload, seed 2 — goodput 9.4066 Mbps, p95 RTT 55.0 ms, backlog 92.86 pkt | [`run59_sfq_staged_s2.png`](runs/run59_sfq_staged_s2.png) |
+| **RUN 60** | sfq_staged_s3 | sfq, staged workload, seed 3 — goodput 9.1979 Mbps, p95 RTT 57.4 ms, backlog 99.79 pkt | [`run60_sfq_staged_s3.png`](runs/run60_sfq_staged_s3.png) |
+| **RUN 61** | sfq_steady_s1 | sfq, steady workload, seed 1 — goodput 9.3558 Mbps, p95 RTT 36.2 ms, backlog 117.58 pkt | [`run61_sfq_steady_s1.png`](runs/run61_sfq_steady_s1.png) |
+| **RUN 62** | sfq_steady_s2 | sfq, steady workload, seed 2 — goodput 9.3542 Mbps, p95 RTT 36.1 ms, backlog 115.49 pkt | [`run62_sfq_steady_s2.png`](runs/run62_sfq_steady_s2.png) |
+| **RUN 63** | sfq_steady_s3 | sfq, steady workload, seed 3 — goodput 9.4238 Mbps, p95 RTT 36.0 ms, backlog 116.42 pkt | [`run63_sfq_steady_s3.png`](runs/run63_sfq_steady_s3.png) |

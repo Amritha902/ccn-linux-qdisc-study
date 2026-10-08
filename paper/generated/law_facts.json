@@ -1,0 +1,22 @@
+{
+ "LawCells": "10",
+ "LawCeiling": "20.5",
+ "LawHalfBenefit": "0.50",
+ "LawSteepness": "2.6",
+ "LawRsq": "0.986",
+ "LawPeakBenefit": "20.1",
+ "LawRatioMax": "2.500",
+ "LawRatioMin": "0.025",
+ "LawLowestSigRatio": "0.417",
+ "LawGainHiMin": "3.26",
+ "LawGainHiMax": "29.73",
+ "LawGainLoMin": "0.02",
+ "LawGainLoMax": "0.53",
+ "LawWorstThroughput": "-0.4",
+ "LawDropRiseHigh": "63",
+ "LawInvariance": "holds",
+ "LawHoldout": "predictive",
+ "LawLooLogistic": "1.21",
+ "LawLooSimple": "2.41",
+ "LawLooStep": "4.86"
+}

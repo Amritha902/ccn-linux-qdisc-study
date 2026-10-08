@@ -23,7 +23,7 @@ Three tables:
 | `fq_pie` | Flow queueing + PIE | ✓ (DRR) | sojourn time | `limit`, `flows`, `target`, `tupdate`, `alpha`, `beta`, `quantum`, `ecn_prob` | `limit 1024 target 15ms tupdate 15ms` |
 | `cake` | Integrated shaper + AQM | ✓ (DRR, 8-way set-associative) | sojourn time (internal) | `bandwidth`, `rtt`, `besteffort`/`diffserv*`, `flows`/`dual*host`, `nat`, `ack-filter`, `overhead` | `besteffort` (TBF is the sole shaper) |
 | `fq_codel` | Flow queueing + CoDel | ✓ (DRR) | sojourn time | **`target`**, **`interval`**, **`limit`**, **`quantum`**, `flows`, `memory_limit`, `ecn`, `ce_threshold`, `drop_batch` | `target 5ms interval 100ms limit 1024 quantum 1514` |
-| `fq_codel` + ACAPE | Flow queueing + CoDel, adapted | ✓ (DRR) | sojourn time, adapted | the four in bold, adjusted at runtime | initial values as above; bounds `target ∈ [0.2, 20] ms`, `interval ∈ [20, 300] ms`, `limit ∈ [64, 4096]`, `quantum ∈ {300, 1514, 3000} B` |
+| `fq_codel` + ACAPE | Flow queueing + CoDel, adapted | ✓ (DRR) | sojourn time, adapted | the four in bold, adjusted at runtime | initial values as above; bounds set relative to the configured values, `target ∈ [0.04, 4] × target₀`, `interval ∈ [0.2, 3] × interval₀`, `limit ∈ [64, 4096]`, `quantum ∈ {300, 1514, 3000} B` |
 
 All disciplines sit as the child of an identical TBF shaper
 (`rate 10mbit burst 32kbit latency 400ms`) on the router's egress toward the

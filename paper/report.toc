@@ -1,0 +1,41 @@
+\contentsline {section}{Abstract}{1}{Doc-Start}%
+\contentsline {section}{\numberline {1}Introduction}{7}{section.1}%
+\contentsline {paragraph}{Structure.}{7}{paragraph*.1}%
+\contentsline {section}{\numberline {2}Literature survey}{7}{section.2}%
+\contentsline {subsection}{\numberline {2.1}The problem and the standard it set}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Drop-probability schemes}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Delay-target schemes}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Runtime adaptation, the line this work sits in}{8}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}What that line does not supply}{8}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Programmable telemetry}{8}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Methodology}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Why a purpose-built kernel was required}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Topology, and why the first one was wrong}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Flow telemetry, and the silent failure it had}{11}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Controller}{11}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Measurement}{13}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Experimental design}{13}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Results}{13}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Step 1: flow queueing dominates everything else}{14}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Step 2: the two latencies are not interchangeable}{16}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Step 3: separating the controller's cost from its decisions}{16}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Step 4: what adaptation achieves, parameter by parameter}{18}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Step 5: under a load that changes, adaptation does not help}{18}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Step 6: an alternative requiring no controller does better}{19}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Step 7: the predictive path never engaged}{19}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Step 8: sparse flows under mixed traffic}{19}{subsection.4.8}%
+\contentsline {section}{\numberline {5}Comparison}{20}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Disciplines under test and their parameters}{20}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Against the base paper and six recent systems}{20}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Four omissions common to the whole table}{21}{subsection.5.3}%
+\contentsline {section}{\numberline {6}The scaling law}{21}{section.6}%
+\contentsline {subsection}{\numberline {6.1}From an unexplained table to a hypothesis}{21}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Pre-registration}{22}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Result}{22}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}What it costs, and what it means}{23}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Measurement defects found and corrected}{23}{section.7}%
+\contentsline {section}{\numberline {8}Threats to validity}{23}{section.8}%
+\contentsline {section}{\numberline {9}Conclusion}{24}{section.9}%
+\contentsline {section}{\numberline {10}Contributions}{24}{section.10}%
+\contentsline {section}{\numberline {A}Per-run figures}{24}{appendix.A}%
+\contentsline {section}{\numberline {B}Reproducing every number}{27}{appendix.B}%

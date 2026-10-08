@@ -1,6 +1,12 @@
 # ACAPE, Runtime Parameter Adaptation for `fq_codel`
 
-**A measured evaluation of whether adapting `fq_codel`'s parameters at runtime improves on its defaults.**
+**A measured evaluation of whether adapting `fq_codel`'s parameters at runtime improves on its defaults, and a pre-registered law saying when it does.**
+
+The answer is a dimensionless ratio. Benefit is governed by `r = target/RTT`,
+with half of it reached at `r = 0.50`, while a correctly configured deployment
+sits five to ten times below that. Adaptation repairs misconfiguration rather
+than improving on correct configuration. See `STATUS.md` for the result in
+full and `SUBMIT.md` for the deliverables.
 
 Amritha S · Yugeshwaran P · Deepti Annuncia
 Department of Electronics and Communication Engineering, SENSE, VIT Chennai
@@ -21,6 +27,7 @@ It contains:
 - an **eBPF flow-telemetry pipeline** at the `tc` egress hook, read through `bpf(2)`
 - a **userspace controller** adapting all four parameters by AIMD under a
  gradient-based congestion trajectory estimate
+- a **pre-registered scaling law** saying when that adaptation is worth running
 - a **reproducible experiment suite** over 9 queue-discipline configurations,
  2 workloads and 3 seeds
 - an **analysis pipeline** that generates every table and figure directly from

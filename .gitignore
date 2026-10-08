@@ -42,6 +42,7 @@ paper/scirep/*.zip
 
 # combined submission bundle, rebuilt by paper/make_full_bundle.py
 ACAPE_submission_bundle.zip
+ACAPE_submission_bundle_lean.zip
 
 __pycache__/
 *.pyc

@@ -2,21 +2,26 @@
 
 ## Everything in one archive
 
-`ACAPE_submission_bundle.zip` (52 MB) holds both Overleaf projects, both
-rendered PDFs and the deck. Extract it and read `READ_ME_FIRST.txt`. The two
-inner zips stay zipped on purpose: that is the form Overleaf imports, so
-neither needs repacking.
+`python3 paper/make_full_bundle.py` writes two archives. Both hold both
+Overleaf projects, both rendered PDFs and the deck; extract either and read
+`READ_ME_FIRST.txt`. The two inner zips stay zipped on purpose: that is the
+form Overleaf imports, so neither needs repacking.
 
-Rebuild it with `python3 paper/make_full_bundle.py` after any change.
+| archive | size | figures in the Overleaf projects |
+|---|---|---|
+| `ACAPE_submission_bundle.zip` | 52 MB | every figure the pipeline produces, so any can be swapped in without going back to the repository |
+| `ACAPE_submission_bundle_lean.zip` | 7.5 MB | only the three and seventeen the documents place, which fits an email attachment |
+
+The text, the references and the PDFs are identical in the two. All four inner
+projects were extracted into empty directories and compiled from scratch: ten
+and thirty pages, no errors, no undefined references, no missing figures.
 
 ## The submission
 
 `paper/scirep/overleaf_paper.zip`, or `1_paper_overleaf/` inside the bundle.
 
 Overleaf -> **New Project** -> **Upload Project** -> pick the zip ->
-Menu -> **Main document** -> `paper.tex` -> compile. Both bundles were
-extracted into empty directories and compiled from scratch after the last
-change: 10 and 30 pages, no errors, no undefined references.
+Menu -> **Main document** -> `paper.tex` -> compile.
 
 10 pages, Springer Nature layout as Scientific Reports uses it, three
 figures at 300 dpi, 23 references. No class file to install: `paper.tex`
@@ -47,6 +52,7 @@ contains them as individual PNGs.
 | file | what it is |
 |---|---|
 | `ACAPE_submission_bundle.zip` | all of the below, in one file |
+| `ACAPE_submission_bundle_lean.zip` | the same, small enough to email |
 | `paper/scirep/submission.pdf` | what the zip compiles to, for checking |
 | `paper/report.pdf` | the technical report, 30 pages, 17 figures. The evidence record, not a paper. |
 | `paper/overleaf_report.zip` | the same report as an Overleaf project |

@@ -299,7 +299,7 @@ parameters are expressed relative to path round-trip time by construction and
 therefore need no tuning. That claim is qualitative and has not, as far as we
 are aware, been given a boundary: it holds for a deployment whose target is
 scaled to its path and says nothing about one whose is not.
-Equation~\ref{eq:law} supplies the boundary, which is the contribution here.
+Equation~\ref{eq:law} supplies that boundary, and it is our contribution.
 The mechanism is old and the direction of the effect is unsurprising; what was
 missing is the number at which it begins to matter. Beyond \texttt{fq\_codel}, CAKE
 integrates shaping, flow queueing and host fairness in one
@@ -321,7 +321,7 @@ al.\ characterise how the presence of an AQM distorts speed-test
 measurement\cite{ray2025}. Table~\ref{tab:systems} places the present work
 against this line. Each of these systems reports that its adaptation improved
 something, and each adapts a single quantity; none states the conditions under
-which that adaptation is worth running, which is the gap addressed here.
+which that adaptation is worth running. We address that gap.
 
 \begin{table}[htbp]
 \centering\small
@@ -349,7 +349,7 @@ pays. Systems report gains, independent evaluations report none, and neither
 camp states where the boundary between the two lies. RFC 7567 meanwhile
 recommends active queue management that requires no per-flow
 configuration\cite{rfc7567}, which makes a null result for adaptation a
-reportable outcome rather than a failed experiment. Two pieces of apparatus
+reportable outcome and not a failed experiment. Two pieces of apparatus
 are missing throughout as well. A controller that merely occupies the
 processor is hard to distinguish from one that helps unless a third arm runs
 the same code and applies nothing; and the sparse probe traffic used to
@@ -357,10 +357,10 @@ measure latency is usually averaged into the bulk flows, even where the
 discipline under test was designed to treat those two populations
 differently.
 
-This study supplies the missing condition and the apparatus needed to
-establish it. The condition turns out to be a dimensionless ratio rather than
-any absolute quantity, which is what allows it to be stated once and applied
-to deployments of different speed and distance.
+We supply that missing condition here, together with the apparatus needed to
+establish it. The condition turns out to be a dimensionless ratio and not
+any absolute quantity, so it can be stated once and applied to deployments
+of different speed and distance.
 
 %% -------------------------------------------------------------- results
 \section{Results}\label{sec:results}
@@ -390,7 +390,7 @@ indistinguishable between them (\PfifoGoodputSteady\ against
 \FqCodelGoodputSteady\,Mbit/s, $p=0.20$). The goodput panel is drawn from zero
 precisely so that this can be seen: every system delivers the same throughput,
 so the latency ordering across three orders of magnitude is a property of
-queue management and not a rate trade.
+queue management; it is not a rate trade.
 
 Fair queueing on its own is not sufficient. SFQ isolates flows but applies no
 delay target, and its bulk queues sit at their 127-packet limit throughout, so
@@ -432,7 +432,7 @@ estimate, but its 95\,\% confidence interval spans $\pm1.00$ packets and so
 covers zero, and the same is true of the other three outputs. Three
 repetitions per arm is not a design that can resolve small effects: at the
 seed-to-seed variation observed here it separates a benefit of about
-\RateMDE\,\% from zero, so these null results bound the effect rather than
+\RateMDE\,\% from zero, so these null results bound the effect; they do not
 establish its absence. The sham arm
 narrows what the null can be attributed to: the static and sham arms also lie
 within each other's intervals on all four outputs, so the controller's
@@ -491,8 +491,8 @@ its place out of sample, not merely in fit.
 Figure~\ref{fig:law} shows the fit, and shows the same measurements plotted
 against path RTT alone, where they do not collapse.
 
-Hypotheses and decision thresholds were committed to a public repository
-before any of these data were collected, and three of the four held. A
+We committed our hypotheses and their decision thresholds to a public
+repository before collecting any of these data, and three of the four held. A
 crossover exists: benefit remains under 1.5\,\% and is not statistically
 significant below $r=0.25$, and reaches 16.4 to \LawPeakBenefit\,\% at
 $r\ge1$. The curve is invariant to path RTT at fixed ratio: cells at 5, 20 and
@@ -511,11 +511,11 @@ refitted independently over the cells each mechanism has in common, plain
 PIE, which shares nothing with CoDel beyond possessing a delay target, places
 it at 1.06, with $R^{2}$ of 0.978 and 0.992 respectively. The 0.49 here is the
 same quantity as the \LawHalfBenefit\ of Equation~\ref{eq:law}, refitted on
-the seven cells common to all three mechanisms rather than the full
+the seven cells common to all three mechanisms, not the full
 \LawCells; the small difference is the cost of the smaller fitting set and
 not a second estimate.
 
-One pre-registered test failed and is reported as such. The spread in $r_{0}$
+One pre-registered test failed, and we report it as such. The spread in $r_{0}$
 across the three mechanisms is 2.52$\times$, beyond the 2$\times$ threshold
 set in advance. It is driven entirely by PIE, the CoDel family agreeing to
 0.49 against 0.42, and the three disciplines differ in their
@@ -525,7 +525,7 @@ not.
 
 \subsection{The ratio fixes the shape, not the ceiling}\label{sec:rate}
 
-The sweep above varies path RTT at a fixed 10\,Mbit/s bottleneck, so it
+Our sweep varies path RTT at a fixed 10\,Mbit/s bottleneck, so it
 establishes that $r$ governs the benefit along the RTT dimension and says
 nothing about the other one. A separate campaign supplies it: static and
 adapted pairs at \RateMin, 5, 10, 20 and \RateMax\,Mbit/s, three
@@ -537,7 +537,7 @@ Table~\ref{tab:rate} gives the result, and it is not invariant. Benefit
 ranges from \RateBenefitMin\ to \RateBenefitMax\,\%, a spread of
 \RateSpread\ percentage points, against the 5-point threshold this study
 used to call the RTT comparison consistent. Every cell is individually
-significant, so this is a real dependence and not sampling noise. It is also
+significant, so the dependence is real; it is not sampling noise. It is also
 not monotonic: benefit peaks near $s\approx\RatePeakS$ and falls away at both
 ends, where $s$ is the configured target measured in units of the time one
 maximum-size packet takes to leave the interface.
@@ -546,7 +546,7 @@ This is the pre-registered second dimensionless group, and reporting it is
 what the earlier failure of that hypothesis amounts to in practice. The
 consequence for Equation~\ref{eq:law} is specific: $r$ determines where the
 transition sits and how sharp it is, and the fitted $B$ of \LawCeiling\,\%
-is the ceiling at 10\,Mbit/s rather than a constant of the mechanism. An
+is the ceiling at 10\,Mbit/s, not a constant of the mechanism. An
 operator reading the predicate should take $r$ as telling them whether
 adaptation can help and the rate column as telling them roughly how much.
 
@@ -567,8 +567,8 @@ runs, and $p$ is from Welch's test.}
 \caption{Benefit of parameter adaptation against the dimensionless ratio
 $r=\texttt{target}/\mathrm{RTT}$ (left) and against path RTT alone (right).
 The same measurements collapse onto a single logistic curve under the ratio
-and scatter under RTT, which is the evidence that the ratio rather than the
-delay is the governing variable. Filled points are statistically significant,
+and scatter under RTT. That is the evidence that the ratio, not the
+delay, is the governing variable. Filled points are statistically significant,
 open points are not.}
 \label{fig:law}
 \end{figure}
@@ -596,16 +596,16 @@ Where the ratio is small, the measurements point to a different action.
 Switching from \texttt{fq\_codel} to CAKE is worth more at every RTT tested
 than tuning \texttt{fq\_codel}'s four parameters, and it requires no runtime
 machinery at all. That the largest available improvement comes from a
-configuration change rather than from control is not a comfortable result for
+configuration change, not from control, is not a comfortable result for
 an adaptive system, but it is what the measurements show.
 
-Several limits bound these claims. Network namespaces on one kernel are not a
+We should be clear about what bounds these claims. Network namespaces on one kernel are not a
 datacentre, and the ceiling $B$ does move with link rate, as
 Section~\ref{sec:rate} measures directly: the dimensionless form is the
 portable claim and the fitted constants are not. Flow count was not varied and
 should be expected to matter in the same way. Three repetitions per cell
-give wide intervals, which is why the law is fitted across \LawCells\ cells
-rather than rested on any single one. The second dimensionless group of
+give wide intervals, and that is why we fit the law across \LawCells\ cells
+instead of resting it on any single one. The second dimensionless group of
 Section~\ref{sec:rate} was pre-registered with the prediction that benefit
 would be floored below unity; it instead peaks at intermediate values, so $r$
 alone does not close the problem and a complete predicate needs both groups. And
@@ -628,14 +628,14 @@ the acknowledgement path, not the data.
 
 \subsection{Queue disciplines evaluated}
 
-Nine configurations are compared under an identical bottleneck:
+We compare nine configurations under an identical bottleneck:
 \texttt{pfifo} with no AQM, SFQ, RED, \texttt{codel}, PIE, FQ-PIE,
 CAKE\cite{cake2018}, static \texttt{fq\_codel}, and \texttt{fq\_codel} under
 the controller described below. CAKE is configured \texttt{besteffort}
 without its own bandwidth setting so that the token bucket remains the only
 shaper and every discipline meets the same bottleneck. A tenth arm is the sham
 controller. It runs at the same cadence and executes the same classification
-and prediction code, but changes no parameter, which is what separates the
+and prediction code, but changes no parameter. That separation is what isolates the
 controller's processor cost from the effect of its decisions.
 
 \subsection{Controller}
@@ -655,7 +655,7 @@ Every bound, step size and regime threshold is set relative to the configured
 controller started against an 80\,ms target would then take steps sixteen
 times smaller, in relative terms, than one started against 5\,ms, and the
 ratio dependence of Equation~\ref{eq:law} would be partly an artefact of the
-controller's own constants rather than a property of the queue.
+controller's own constants, not a property of the queue.
 
 Flow-map contents are read through the \texttt{bpf(2)} system call directly
 rather than by invoking an external utility per sample, which reduces the cost
@@ -665,7 +665,7 @@ exists to isolate.
 
 \subsection{Measurements}
 
-Three latencies are recorded separately: a sparse ICMP probe for the latency
+We record three latencies separately: a sparse ICMP probe for the latency
 a thin flow experiences, the smoothed round-trip time of the bulk TCP flows as
 reported by \texttt{iperf3}, and a queue-delay proxy computed from
 instantaneous backlog and the configured rate. They are not interchangeable,
@@ -675,14 +675,14 @@ byte count and flow fairness is reported as Jain's index\cite{jain1984}.
 
 \subsection{Experimental design and statistics}
 
-Three workloads are used: a steady bulk load of eight TCP CUBIC\cite{cubic2008}
+We use three workloads: a steady bulk load of eight TCP CUBIC\cite{cubic2008}
 flows, a staged load whose flow count varies from two to twenty-four during
 the run so that the congestion regime changes, and a mixed load adding sparse
 constant-rate UDP probes alongside bulk traffic. Each cell is repeated three
 times as an independent run. Differences between conditions are assessed with
 Welch's $t$-test, which does not assume equal group variances. Two-sided
 $p$-values come from Student's $t$ distribution through the regularised
-incomplete beta function rather than from a normal approximation. At three
+incomplete beta function and not from a normal approximation. At three
 samples per group the approximation makes results look more significant than
 they are.
 
@@ -691,8 +691,8 @@ they are.
 Experiments ran on Linux 6.12.48 under hardware-assisted virtualisation. The
 kernel is unmodified upstream source; the only departure from a distribution
 build is the configuration, which compiles every evaluated queue discipline in
-rather than as a module and enables BPF Type Format. No kernel code was
-patched, which is what \emph{stock Linux} in the title refers to: the
+instead of as a module, and enables BPF Type Format. No kernel code was
+patched. That is what \emph{stock Linux} in the title means: the
 disciplines under test are the ones a deployment would get.
 
 %% ----------------------------------------------------------- back matter
